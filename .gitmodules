@@ -1,0 +1,3 @@
+[submodule "Submodules/VisualStudioProps"]
+	path = Submodules/VisualStudioProps
+	url = https://github.com/Sunday111/VisualStudioProps
