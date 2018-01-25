@@ -1,6 +1,35 @@
 #include <d3d11.h>
 #include <stdexcept>
 
+std::string DispatchHRESULT(HRESULT hresult) {
+	std::string result;
+	char* errorText = nullptr;
+	FormatMessage(
+		// use system message tables to retrieve error text
+		FORMAT_MESSAGE_FROM_SYSTEM |
+		// allocate buffer on local heap for error text
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		// Important! will fail otherwise, since we're not 
+		// (and CANNOT) pass insertion parameters
+		FORMAT_MESSAGE_IGNORE_INSERTS,
+
+		// unused with FORMAT_MESSAGE_FROM_SYSTEM
+		NULL,
+		hresult,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPTSTR)&errorText,
+		0,
+		nullptr);
+
+	if (errorText) {
+		result = errorText;
+		LocalFree(errorText);
+		return result;
+	}
+
+	return result;
+}
+
 template<typename T>
 class D3DPtr {
 public:
@@ -215,8 +244,5 @@ private:
 int main() {
 	Renderer renderer;
 	renderer.Initialize();
-
-	Renderer r2;
-	r2.Initialize();
 	return 0;
 }
