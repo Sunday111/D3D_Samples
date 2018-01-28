@@ -2,9 +2,9 @@
 
 #include "MainWindow.h"
 #include "WinWrappers\WinWrappers.h"
-#include "System.h"
+#include "ISystem.h"
 
-class WindowSystem : public System {
+class WindowSystem : public ISystem {
 public:
     using TChar = char;
     using WA = WinAPI<TChar>;
@@ -27,7 +27,7 @@ public:
         });
     }
 
-    bool Update() override {
+    bool Update(IApplication*) override {
         return CallAndRethrow("WindowSystem::Update", [&]() {
             MSG msg;
             if (WA::PeekMessage_(&msg, nullptr, 0, 0, PM_REMOVE)) {

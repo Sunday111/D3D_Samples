@@ -14,14 +14,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
             {
                 Application::CreateParams params;
-                params.WindowParams.hInstance = hInstance;
-                params.WindowParams.nCmdShow = nCmdShow;
-                params.WindowParams.WindowTitle = "Main Window";
-                params.WindowParams.Width = 1280;
-                params.WindowParams.Height = 720;
+                params.hInstance = hInstance;
+                params.nCmdShow = nCmdShow;
+                params.WindowTitle = "Main Window";
+                params.Width = 1280;
+                params.Height = 720;
+                params.VSync = true;
+                params.noDeviceMulithreading = false;
 
                 #ifdef _DEBUG
-                params.GraphicsParams.debugDevice = true;
+                params.debugDevice = true;
                 #endif
 
                 app = std::make_unique<Application>(params);

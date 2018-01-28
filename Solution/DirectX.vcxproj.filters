@@ -2,14 +2,18 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="..\Code\DirectX\main.cpp" />
+    <ClCompile Include="..\Code\DirectX\GraphicsSystem.cpp" />
+    <ClCompile Include="..\Code\DirectX\MainWindow.cpp" />
+    <ClCompile Include="..\Code\DirectX\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Code\DirectX\MainWindow.h" />
     <ClInclude Include="..\Code\DirectX\Renderer.h" />
-    <ClInclude Include="..\Code\DirectX\System.h" />
     <ClInclude Include="..\Code\DirectX\GraphicsSystem.h" />
     <ClInclude Include="..\Code\DirectX\WindowSystem.h" />
     <ClInclude Include="..\Code\DirectX\BaseApplication.h" />
     <ClInclude Include="..\Code\DirectX\Application.h" />
+    <ClInclude Include="..\Code\DirectX\ISystem.h" />
+    <ClInclude Include="..\Code\DirectX\IApplication.h" />
   </ItemGroup>
 </Project>
