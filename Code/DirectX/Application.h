@@ -3,6 +3,7 @@
 #include "BaseApplication.h"
 #include "WindowSystem.h"
 #include "GraphicsSystem.h"
+#include "ResourceSystem.h"
 #include <chrono>
 
 float CalcAverageTick(long long newtick);
@@ -29,6 +30,10 @@ public:
         CallAndRethrow("Application::Application", [&]() {
             Initialize(params);
         });
+    }
+
+    ResourceSystem* GetResourceSystem() const {
+        return m_resourceSystem;
     }
 
     WindowSystem* GetWindowSystem() const {
@@ -59,8 +64,15 @@ public:
 protected:
     void Initialize(CreateParams& params) {
         CallAndRethrow("Application::Initialize", [&]() {
+            InitializeResourceSystem();
             InitializeWindowSystem(params);
             InitializeGraphicsSystem(params);
+        });
+    }
+
+    void InitializeResourceSystem() {
+        CallAndRethrow("Application::InitializeResourceSystem", [&]() {
+            m_resourceSystem = static_cast<ResourceSystem*>(AddSystem(std::make_unique<ResourceSystem>()));
         });
     }
 
@@ -72,10 +84,7 @@ protected:
             p.hInstance = params.hInstance;
             p.nCmdShow = params.nCmdShow;
             p.WindowTitle = params.WindowTitle;
-
-            auto windowSystem = std::make_unique<WindowSystem>(p);
-            m_windowSystem = windowSystem.get();
-            AddSystem(std::move(windowSystem));
+            m_windowSystem = static_cast<WindowSystem*>(AddSystem(std::make_unique<WindowSystem>(p)));
         });
     }
 
@@ -87,15 +96,13 @@ protected:
             p.debugDevice = params.debugDevice;
             p.noDeviceMultithreading = params.noDeviceMulithreading;
             p.hWnd = m_windowSystem->GetWindow()->GetHandle();
-
-            auto graphicsSystem = std::make_unique<GraphicsSystem>(this, p);
-            m_graphicsSystem = graphicsSystem.get();
-            AddSystem(std::move(graphicsSystem));
+            m_graphicsSystem = static_cast<GraphicsSystem*>(AddSystem(std::make_unique<GraphicsSystem>(this, p)));
         });
     }
 
 private:
     bool m_vSync = true;
+    ResourceSystem* m_resourceSystem = nullptr;
     WindowSystem* m_windowSystem = nullptr;
     GraphicsSystem* m_graphicsSystem = nullptr;
 };

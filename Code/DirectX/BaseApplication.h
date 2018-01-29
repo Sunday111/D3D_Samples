@@ -30,8 +30,9 @@ public:
         });
     }
 
-    void AddSystem(std::unique_ptr<ISystem> system) {
+    ISystem* AddSystem(std::unique_ptr<ISystem> system) {
         m_systems.push_back(std::move(system));
+        return m_systems.back().get();
     }
 
 private:

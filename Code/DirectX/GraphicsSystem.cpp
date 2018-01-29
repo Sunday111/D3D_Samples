@@ -26,13 +26,14 @@ namespace {
 }
 
 GraphicsSystem::GraphicsSystem(Application* app, Renderer::CreateParams& params) :
-    m_renderer(params)
+    m_renderer(params),
+    m_app(app)
 {
     app->GetWindowSystem()->GetWindow()->Subscribe(this);
 
     {// Read and compile shaders
-        m_vertexShader = m_renderer.CreateShaderFromFile<ShaderType::Vertex>("Shader.hlsl", "VShader", ShaderVersion::_5_0);
-        m_pixelShader = m_renderer.CreateShaderFromFile<ShaderType::Pixel>("Shader.hlsl", "PShader", ShaderVersion::_5_0);
+        m_vertexShader = CreateShaderFromFile<ShaderType::Vertex>("Shader.hlsl", "VShader", ShaderVersion::_5_0);
+        m_pixelShader = CreateShaderFromFile<ShaderType::Pixel>("Shader.hlsl", "PShader", ShaderVersion::_5_0);
     }
 
     {// Create vertex buffer
