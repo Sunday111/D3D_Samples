@@ -1,17 +1,22 @@
 #pragma once
 
+#include <thread>
+
 #include "BaseApplication.h"
+#include "FrameRateCounter.h"
 #include "WindowSystem.h"
 #include "GraphicsSystem.h"
 #include "ResourceSystem.h"
-#include <chrono>
-
-float CalcAverageTick(long long newtick);
 
 class Application :
     public BaseApplication
 {
 public:
+    using Period = std::chrono::nanoseconds;
+    static constexpr auto FpsSamplesCount = 100;
+    static constexpr auto DesiredFPS = 60;
+    using TFrameRateCounter = FrameRateCounter<Period, FpsSamplesCount>;
+
     struct CreateParams {
         HINSTANCE hInstance = nullptr;
         const char* WindowTitle = nullptr;
@@ -45,20 +50,23 @@ public:
     }
 
     bool Update() override {
-        if (m_vSync) {
-            auto t0 = std::chrono::high_resolution_clock::now();
-            auto retVal = BaseApplication::Update();
-            auto t1 = std::chrono::high_resolution_clock::now();
-            auto dt = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0);
-            auto average = CalcAverageTick(dt.count());
-            auto sleep = (decltype(average))(1000000000.f / 60.f) - average;
-            if (sleep > 0) {
-                Sleep((DWORD)(sleep / 1000000));
+        return CallAndRethrow("Application::Update", [&]() {
+            if (m_vSync) {
+                using namespace std::chrono;
+                auto t0 = high_resolution_clock::now();
+                auto retVal = BaseApplication::Update();
+                auto t1 = high_resolution_clock::now();
+                auto average = m_fpsCounter.CalcAverageTick(t1 - t0);
+                auto sleep = TFrameRateCounter::GetDesiredFrameDuration(DesiredFPS) - average;
+                if (sleep.count() > 0) {
+                    //std::this_thread::sleep_for(sleep);
+                    Sleep((DWORD)duration_cast<milliseconds>(sleep).count());
+                }
+                return retVal;
+            } else {
+                return BaseApplication::Update();
             }
-            return retVal;
-        } else {
-            return BaseApplication::Update();
-        }
+        });
     }
 
 protected:
@@ -105,4 +113,5 @@ private:
     ResourceSystem* m_resourceSystem = nullptr;
     WindowSystem* m_windowSystem = nullptr;
     GraphicsSystem* m_graphicsSystem = nullptr;
+    TFrameRateCounter m_fpsCounter;
 };
