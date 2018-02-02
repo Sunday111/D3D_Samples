@@ -7,6 +7,7 @@
 #include "WindowSystem.h"
 #include "GraphicsSystem.h"
 #include "ResourceSystem.h"
+#include "Ui/UiSystem.h"
 
 class Application :
     public BaseApplication
@@ -75,6 +76,7 @@ protected:
             InitializeResourceSystem();
             InitializeWindowSystem(params);
             InitializeGraphicsSystem(params);
+            InitializeUiSystem(params);
         });
     }
 
@@ -108,10 +110,19 @@ protected:
         });
     }
 
+    void InitializeUiSystem(CreateParams& params) {
+        UnusedVar(params);
+        CallAndRethrow("Application::InitializeUiSystem", [&]() {
+            m_uiSystem = static_cast<UiSystem*>(AddSystem(std::make_unique<UiSystem>(this)));
+        });
+    }
+
 private:
     bool m_vSync = true;
     ResourceSystem* m_resourceSystem = nullptr;
     WindowSystem* m_windowSystem = nullptr;
     GraphicsSystem* m_graphicsSystem = nullptr;
+    UiSystem* m_uiSystem = nullptr;
+
     TFrameRateCounter m_fpsCounter;
 };

@@ -32,8 +32,8 @@ GraphicsSystem::GraphicsSystem(Application* app, Renderer::CreateParams& params)
     app->GetWindowSystem()->GetWindow()->Subscribe(this);
 
     {// Read and compile shaders
-        m_vertexShader = CreateShaderFromFile<ShaderType::Vertex>("Shader.hlsl", "VShader", ShaderVersion::_5_0);
-        m_pixelShader = CreateShaderFromFile<ShaderType::Pixel>("Shader.hlsl", "PShader", ShaderVersion::_5_0);
+        m_vertexShader = CreateShaderFromFile<ShaderType::Vertex>("Assets/Shaders/Shader.hlsl", "VShader", ShaderVersion::_5_0);
+        m_pixelShader = CreateShaderFromFile<ShaderType::Pixel>("Assets/Shaders/Shader.hlsl", "PShader", ShaderVersion::_5_0);
     }
 
     {// Create vertex buffer

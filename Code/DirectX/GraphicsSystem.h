@@ -26,6 +26,10 @@ public:
         });
     }
 
+    Renderer& GetRenderer() {
+        return m_renderer;
+    }
+
 private:
     Application* m_app = nullptr;
     Renderer m_renderer;
