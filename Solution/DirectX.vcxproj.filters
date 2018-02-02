@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="..\Code\DirectX\main.cpp" />
     <ClCompile Include="..\Code\DirectX\GraphicsSystem.cpp" />
-    <ClCompile Include="..\Code\DirectX\MainWindow.cpp" />
     <ClCompile Include="..\Code\DirectX\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
