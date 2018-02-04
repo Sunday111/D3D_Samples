@@ -1,12 +1,13 @@
 #pragma once
 
-#include "ComPtr.h"
+#include <fstream>
 #include <d3d11.h>
 #include <d3dcompiler.h>
-#include <fstream>
-#include "WinWrappers\WinWrappers.h"
-#include "Shader.h"
 #include "EverydayTools\Array\ArrayView.h"
+#include "WinWrappers\WinWrappers.h"
+#include "ComPtr.h"
+#include "Shader.h"
+#include "Texture.h"
 
 template<typename Element>
 class BufferMapper {
@@ -71,6 +72,19 @@ public:
         if (m_swapchain.Get()) {
             m_swapchain->SetFullscreenState(false, nullptr);
         }
+    }
+
+    std::unique_ptr<Texture> CreateTexture(uint32_t w, uint32_t h, TextureFormat format, TextureFlags flags) {
+        return CallAndRethrow("Renderer::CreateTexture", [&] {
+            return std::make_unique<Texture>(m_device.Get(), w, h, format, flags);
+        });
+    }
+
+    template<ResourceViewType type>
+    decltype(auto) CreateTextureView(Texture* texture, TextureFormat format) {
+        return CallAndRethrow("Renderer::CreateTextureView", [&] {
+            return texture->GetView<type>(m_device.Get(), format);
+        });
     }
 
     template<ShaderType shaderType>

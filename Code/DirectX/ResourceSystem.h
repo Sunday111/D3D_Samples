@@ -13,7 +13,7 @@ namespace resource_system_details {
     using TimePoint = chr::time_point<Clock>;
 }
 
-class IResource : public RefCountObject {
+class IResource : public IRefCountObject {
 public:
     virtual void ReadFromFile(const char* filename) = 0;
     virtual const char* GetFilename() const = 0;
@@ -76,9 +76,9 @@ public:
     IntrusivePtr<T> GetResource(const char* filename) {
         return CallAndRethrow("ResourceSystem::GetResource", [&]() {
             {
-                auto load = Find(filename);
-                if (load != nullptr) {
-                    return edt::StaticPointerCast<T>(load);
+                auto loaded = Find(filename);
+                if (loaded != nullptr) {
+                    return edt::DynamicPointerCast<T>(loaded);
                 }
             }
 

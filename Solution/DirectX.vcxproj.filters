@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="..\Code\DirectX\main.cpp" />
     <ClCompile Include="..\Code\DirectX\GraphicsSystem.cpp" />
-    <ClCompile Include="..\Code\DirectX\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Code\DirectX\MainWindow.h" />
@@ -20,5 +19,6 @@
     <ClInclude Include="..\Code\DirectX\ComPtr.h" />
     <ClInclude Include="..\Code\DirectX\FileResource.h" />
     <ClInclude Include="..\Code\DirectX\FrameRateCounter.h" />
+    <ClInclude Include="..\Code\DirectX\Texture.h" />
   </ItemGroup>
 </Project>

@@ -6,32 +6,48 @@
 
 class IRefCountObject {
 public:
+    virtual int GetReferencesCount() const = 0;
+    virtual int AddReference() const = 0;
+    virtual int ReleaseReference() const = 0;
     virtual ~IRefCountObject() = default;
 };
 
-class RefCountObject : public IRefCountObject {
+template
+<
+    typename T,
+    typename Enable = std::enable_if_t<std::is_base_of_v<IRefCountObject, T>>
+>
+class RefCountImpl : public virtual T {
 private:
+    int GetReferencesCount() const override {
+        return m_refs;
+    }
+
+    int AddReference() const override {
+        return ++m_refs;
+    }
+
+    int ReleaseReference() const override {
+        assert(m_refs > 0);
+        return --m_refs;
+    }
+
     friend class RefCounter;
     mutable int m_refs = 0;
 };
 
 class RefCounter {
 public:
-    static void AddReference(const IRefCountObject* obj) {
-        auto cased = static_cast<const RefCountObject*>(obj);
-        ++cased->m_refs;
+    static int AddReference(const IRefCountObject* obj) {
+        return obj->AddReference();
     }
 
     static int ReleaseReference(const IRefCountObject* obj) {
-        auto cased = static_cast<const RefCountObject*>(obj);
-        assert(cased->m_refs > 0);
-        cased->m_refs -= 1;
-        return cased->m_refs;
+        return obj->ReleaseReference();
     }
 
     static int GetReferencesCount(const IRefCountObject* obj) {
-        auto cased = static_cast<const RefCountObject*>(obj);
-        return cased->m_refs;
+        return obj->GetReferencesCount();
     }
 };
 

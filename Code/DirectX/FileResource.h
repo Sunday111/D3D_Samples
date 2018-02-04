@@ -6,7 +6,7 @@
 #include "ResourceSystem.h"
 #include "EverydayTools\Array\ArrayView.h"
 
-class FileResource : public IResource {
+class FileResource : public RefCountImpl<IResource> {
 public:
     void ReadFromFile(const char* filename) override {
         CallAndRethrow("FileResource::ReadFromFile", [&]() {

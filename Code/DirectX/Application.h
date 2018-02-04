@@ -7,6 +7,7 @@
 #include "WindowSystem.h"
 #include "GraphicsSystem.h"
 #include "ResourceSystem.h"
+#include "WinWrappers\WinWrappers.h"
 
 class Application :
     public BaseApplication
@@ -60,7 +61,7 @@ public:
                 auto sleep = TFrameRateCounter::GetDesiredFrameDuration(DesiredFPS) - average;
                 if (sleep.count() > 0) {
                     //std::this_thread::sleep_for(sleep);
-                    Sleep((DWORD)duration_cast<milliseconds>(sleep).count());
+                    Sleep(sleep);
                 }
                 return retVal;
             } else {

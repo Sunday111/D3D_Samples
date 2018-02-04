@@ -4,7 +4,6 @@
 #include <algorithm>
 
 namespace {
-
     struct vec3 {
         union {
             float arr[3];
@@ -50,6 +49,14 @@ GraphicsSystem::GraphicsSystem(Application* app, Renderer::CreateParams& params)
         desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
         m_vertices = m_renderer.CreateBuffer(desc, vertices);
+    }
+
+    {
+        uint32_t w = 1280, h = 720;
+        auto renderTarget = m_renderer.CreateTexture(w, h, TextureFormat::R8_G8_B8_A8_UNORM, TextureFlags::RenderTarget | TextureFlags::ShaderResource);
+        auto depthStencil = m_renderer.CreateTexture(w, h, TextureFormat::R24_G8_TYPELESS, TextureFlags::DepthStencil | TextureFlags::ShaderResource);
+        auto rtv = m_renderer.CreateTextureView<ResourceViewType::RenderTarget>(renderTarget.get(), renderTarget->GetFormat());
+        auto dsv = m_renderer.CreateTextureView<ResourceViewType::DepthStencil>(depthStencil.get(), TextureFormat::D24_UNORM_S8_UINT);
     }
 
     {
