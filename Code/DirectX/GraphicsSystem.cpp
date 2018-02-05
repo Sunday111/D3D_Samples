@@ -70,7 +70,7 @@ GraphicsSystem::GraphicsSystem(Application* app, Renderer::CreateParams& params)
 
 bool GraphicsSystem::Update(IApplication* iapp) {
     {// Change vertex buffer to see runtime result
-        BufferMapper<Vertex> bufferMap(m_vertices.Get(), m_renderer.GetDeviceContext(), D3D11_MAP_WRITE_DISCARD);
+        BufferMapper<Vertex> bufferMap(m_vertices.Get(), m_renderer.GetDevice()->GetContext(), D3D11_MAP_WRITE_DISCARD);
         Vertex vertices[] = {
             {  0.0f,   0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f },
             {  0.45f, -0.5,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f },
@@ -90,13 +90,26 @@ bool GraphicsSystem::Update(IApplication* iapp) {
         angle += da;
     }
     UnusedVar(iapp);
-    m_renderer.SetShader(m_vertexShader);
-    m_renderer.SetShader(m_pixelShader);
+    auto device = m_renderer.GetDevice();
+    device->SetShader(m_vertexShader);
+    device->SetShader(m_pixelShader);
     m_renderer.SetInputLayout(m_inputLayout.Get());
     m_renderer.SetVertexBuffer(m_vertices.Get(), sizeof(Vertex), 0);
     m_renderer.SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     m_renderer.Clear(0.0f, 0.2f, 0.4f, 1.0f);
-    m_renderer.Draw(3, 0);
+    {
+        D3D11_VIEWPORT vp{ 0, 0, 500, 500, 1.f, 1.f };
+        m_renderer.SetViewport(vp);
+        m_renderer.Draw(3, 0);
+    }
+
+    {
+        D3D11_VIEWPORT vp{ 500, 0, 500, 500, 1.f, 1.f };
+        m_renderer.SetViewport(vp);
+        m_renderer.Draw(3, 0);
+    }
+
+
     m_renderer.Present();
 
     return true;

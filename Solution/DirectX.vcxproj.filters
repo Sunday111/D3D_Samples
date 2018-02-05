@@ -3,6 +3,7 @@
   <ItemGroup>
     <ClCompile Include="..\Code\DirectX\main.cpp" />
     <ClCompile Include="..\Code\DirectX\GraphicsSystem.cpp" />
+    <ClCompile Include="..\Code\DirectX\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Code\DirectX\MainWindow.h" />

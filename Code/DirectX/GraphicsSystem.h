@@ -22,7 +22,8 @@ public:
         return CallAndRethrow("GraphicsSystem::CreateShaderFromFile<>", [&]() {
             auto resourceSystem = m_app->GetResourceSystem();
             auto fileResource = resourceSystem->GetResource<FileResource>(fileName);
-            return m_renderer.CreateShader<shaderType>(fileResource->GetDataView(), entryPoint, shaderVersion);
+            auto device = m_renderer.GetDevice();
+            return device->CreateShader<shaderType>(fileResource->GetDataView(), entryPoint, shaderVersion);
         });
     }
 
