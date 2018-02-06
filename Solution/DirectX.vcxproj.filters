@@ -22,4 +22,7 @@
     <ClInclude Include="..\Code\DirectX\FrameRateCounter.h" />
     <ClInclude Include="..\Code\DirectX\Texture.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\Submodules\EverydayTools\Utility\VisualStudio\ArrayView.natvis" />
+  </ItemGroup>
 </Project>

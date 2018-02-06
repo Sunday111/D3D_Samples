@@ -16,7 +16,8 @@ enum class ResourceViewType {
 enum class TextureFormat {
     R8_G8_B8_A8_UNORM,
     R24_G8_TYPELESS,
-    D24_UNORM_S8_UINT
+    D24_UNORM_S8_UINT,
+    R24_UNORM_X8_TYPELESS
 };
 
 enum class TextureFlags {
@@ -49,6 +50,7 @@ static DXGI_FORMAT ToDXGI_Format(TextureFormat format) {
         case TextureFormat::R8_G8_B8_A8_UNORM: return DXGI_FORMAT_R8G8B8A8_UNORM;
         case TextureFormat::R24_G8_TYPELESS: return DXGI_FORMAT_R24G8_TYPELESS;
         case TextureFormat::D24_UNORM_S8_UINT: return DXGI_FORMAT_D24_UNORM_S8_UINT;
+        case TextureFormat::R24_UNORM_X8_TYPELESS: return DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
         default: throw std::runtime_error("This texture format is not implemented here");
         }
     });
@@ -64,15 +66,17 @@ using CreateResourceViewMethodType = HRESULT(ID3D11Device::*)(ID3D11Resource*, c
 template
 <
     typename InterfaceType,
-    typename Description,
-    CreateResourceViewMethodType<InterfaceType, Description> createMethod,
-    decltype(Description::ViewDimension) viewDimension
+    typename DescriptionType,
+    CreateResourceViewMethodType<InterfaceType, DescriptionType> createMethod,
+    decltype(DescriptionType::ViewDimension) viewDimension
 >
 class TextureViewTraitsBase
 {
 public:
     using Interface = InterfaceType;
-    static Description CreateDescription(TextureFormat format) {
+    using Description = DescriptionType;
+
+    static Description CreateBaseDescription(TextureFormat format) {
         return CallAndRethrow("TextureViewTraitsBase::CreateDescription", [&] {
             Description desc{};
             desc.Format = ToDXGI_Format(format);
@@ -80,14 +84,18 @@ public:
             return desc;
         });
     }
-    static ComPtr<Interface> MakeInstance(ID3D11Device* device, ID3D11Resource* resource, TextureFormat format) {
+
+    static ComPtr<Interface> MakeInstance(ID3D11Device* device, ID3D11Resource* resource, Description* desc) {
         return CallAndRethrow("TextureViewTraitsBase::MakeInstance", [&] {
-            auto desc = CreateDescription(format);
             ComPtr<Interface> result;
-            auto hresult = (device->*createMethod)(resource, &desc, result.Receive());
+            auto hresult = (device->*createMethod)(resource, desc, result.Receive());
             WinAPI<char>::ThrowIfError(hresult);
             return result;
         });
+    }
+
+    static void FillDescSpecific(Description& desc) {
+        UnusedVar(desc);
     }
 };
 
@@ -101,7 +109,12 @@ class TextureViewTraits<ResourceViewType::RenderTarget> :
         D3D11_RENDER_TARGET_VIEW_DESC,
         &ID3D11Device::CreateRenderTargetView,
         D3D11_RTV_DIMENSION_TEXTURE2D>
-{};
+{
+public:
+    static decltype(auto) CreateDescription(TextureFormat format) {
+        return CreateBaseDescription(format);
+    }
+};
 
 template<>
 class TextureViewTraits<ResourceViewType::DepthStencil> :
@@ -110,7 +123,12 @@ class TextureViewTraits<ResourceViewType::DepthStencil> :
         D3D11_DEPTH_STENCIL_VIEW_DESC,
         &ID3D11Device::CreateDepthStencilView,
         D3D11_DSV_DIMENSION_TEXTURE2D>
-{};
+{
+public:
+    static decltype(auto) CreateDescription(TextureFormat format) {
+        return CreateBaseDescription(format);
+    }
+};
 
 template<>
 class TextureViewTraits<ResourceViewType::ShaderResource> :
@@ -119,7 +137,15 @@ class TextureViewTraits<ResourceViewType::ShaderResource> :
         D3D11_SHADER_RESOURCE_VIEW_DESC,
         &ID3D11Device::CreateShaderResourceView,
         D3D11_SRV_DIMENSION_TEXTURE2D>
-{};
+{
+public:
+    static decltype(auto) CreateDescription(TextureFormat format) {
+        auto res = CreateBaseDescription(format);
+        res.Texture2D.MipLevels = (UINT)-1;
+        res.Texture2D.MostDetailedMip = 0;
+        return res;
+    }
+};
 
 template<>
 class TextureViewTraits<ResourceViewType::RandomAccess> :
@@ -128,20 +154,39 @@ class TextureViewTraits<ResourceViewType::RandomAccess> :
         D3D11_UNORDERED_ACCESS_VIEW_DESC,
         &ID3D11Device::CreateUnorderedAccessView,
         D3D11_UAV_DIMENSION_TEXTURE2D>
-{};
+{
+public:
+    static decltype(auto) CreateDescription(TextureFormat format) {
+        return CreateBaseDescription(format);
+    }
+};
+
+template<ResourceViewType type>
+decltype(auto) MakeTextureViewDescription(TextureFormat format) {
+    using Traits = TextureViewTraits<type>;
+    auto result = CreateBaseDescription(format);
+    return result;
+}
 
 template<ResourceViewType type>
 class TextureView : public RefCountImpl<ITextureView>
 {
 public:
     using Traits = TextureViewTraits<type>;
+    using InterfacePtr = ComPtr<typename Traits::Interface>;
+
+    TextureView(InterfacePtr&& ptr) :
+        m_view(std::move(ptr))
+    {
+    }
 
     TextureView(ID3D11Device* device, ITexture* texture, TextureFormat format) :
         m_format(format)
     {
         CallAndRethrow("TextureView::TextureView", [&] {
             auto nativeTexture = static_cast<ID3D11Texture2D*>(texture->GetNativeInterface());
-            m_view = Traits::MakeInstance(device, nativeTexture, format);
+            auto desc = Traits::CreateDescription(format);
+            m_view = Traits::MakeInstance(device, nativeTexture, &desc);
         });
     }
 
@@ -157,8 +202,18 @@ public:
         return m_format;
     }
 
+    decltype(auto) GetView() const {
+        return m_view.Get();
+    }
+
+    TextureView& operator=(InterfacePtr&& ptr) {
+        m_view = std::move(ptr);
+        return *this;
+    }
+
+private:
     TextureFormat m_format;
-    ComPtr<typename Traits::Interface> m_view;
+    InterfacePtr m_view;
 };
 
 class Texture : public RefCountImpl<ITexture>

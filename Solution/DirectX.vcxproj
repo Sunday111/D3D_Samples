@@ -40,6 +40,9 @@
     <ClInclude Include="..\Code\DirectX\Texture.h" />
     <ClInclude Include="..\Code\DirectX\WindowSystem.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\Submodules\EverydayTools\Utility\VisualStudio\ArrayView.natvis" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{61768B37-1B56-4B1A-9617-6309BE9E9A8D}</ProjectGuid>

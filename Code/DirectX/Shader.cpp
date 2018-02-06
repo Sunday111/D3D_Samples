@@ -18,6 +18,16 @@ ComPtr<ID3DBlob> CompileShaderToBlob(const char* code, const char* entryPoint, S
             }
             throw std::runtime_error(std::move(errorMessage));
         };
+
+        UINT flags1 = 0
+        #ifdef _DEBUG
+            | D3DCOMPILE_DEBUG
+            | D3DCOMPILE_SKIP_OPTIMIZATION
+            | D3DCOMPILE_WARNINGS_ARE_ERRORS
+            | D3DCOMPILE_ALL_RESOURCES_BOUND
+        #endif;
+            ;
+
         WinAPI<char>::HandleError(D3DCompile(
             code,
             datasize,
@@ -26,7 +36,7 @@ ComPtr<ID3DBlob> CompileShaderToBlob(const char* code, const char* entryPoint, S
             nullptr,              // Includes
             entryPoint,           // Main function of shader
             shaderTarget,         // shader target
-            0,                    // Flags for compile constants
+            flags1,               // Flags for compile constants
             0,                    // Flags for compile effects constants
             shaderBlob.Receive(), // Output compiled shader
             errorBlob.Receive()   // Compile error messages

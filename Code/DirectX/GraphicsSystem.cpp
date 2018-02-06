@@ -22,6 +22,10 @@ namespace {
         vec3 pos;
         rgba col;
     };
+
+    struct VertexUi {
+        float x, y, u, v;
+    };
 }
 
 GraphicsSystem::GraphicsSystem(Application* app, Renderer::CreateParams& params) :
@@ -29,17 +33,34 @@ GraphicsSystem::GraphicsSystem(Application* app, Renderer::CreateParams& params)
     m_app(app)
 {
     app->GetWindowSystem()->GetWindow()->Subscribe(this);
+    auto device = m_renderer.GetDevice()->GetDevice();
 
     {// Read and compile shaders
-        m_vertexShader = CreateShaderFromFile<ShaderType::Vertex>("Assets/Shaders/Shader.hlsl", "VShader", ShaderVersion::_5_0);
-        m_pixelShader = CreateShaderFromFile<ShaderType::Pixel>("Assets/Shaders/Shader.hlsl", "PShader", ShaderVersion::_5_0);
+        { // Draw shader
+            D3D11_INPUT_ELEMENT_DESC elementDesc[] {
+                { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+            };
+            m_drawShader.vs = CreateShaderFromFile<ShaderType::Vertex>("Assets/Shaders/Shader.hlsl", "VShader", ShaderVersion::_5_0);
+            m_drawShader.ps = CreateShaderFromFile<ShaderType::Pixel>("Assets/Shaders/Shader.hlsl", "PShader", ShaderVersion::_5_0);
+            m_drawShader.layout = m_renderer.CreateInputLayout(elementDesc, 2, m_drawShader.vs.bytecode.Get());
+        }
+        { // Ui shader
+            D3D11_INPUT_ELEMENT_DESC elementDesc[] {
+                { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,    0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0,  8, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+            };
+            m_uiShader.vs = CreateShaderFromFile<ShaderType::Vertex>("Assets/Shaders/Ui.hlsl", "VShader", ShaderVersion::_5_0);
+            m_uiShader.ps = CreateShaderFromFile<ShaderType::Pixel>("Assets/Shaders/Ui.hlsl", "PShader", ShaderVersion::_5_0);
+            m_uiShader.layout = m_renderer.CreateInputLayout(elementDesc, 2, m_uiShader.vs.bytecode.Get());
+        }
     }
 
     {// Create vertex buffer
         Vertex vertices[] = {
-            { 0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f },
-            { 0.45f, -0.5, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f },
-            { -0.45f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f }
+            { -0.50f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f },
+            { -0.05f, -0.5,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f },
+            { -0.95f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f }
         };
 
         D3D11_BUFFER_DESC desc{};
@@ -47,68 +68,153 @@ GraphicsSystem::GraphicsSystem(Application* app, Renderer::CreateParams& params)
         desc.ByteWidth = sizeof(vertices);
         desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-        m_vertices = m_renderer.CreateBuffer(desc, vertices);
+        m_buffers[0].buffer = m_renderer.CreateBuffer(desc, vertices);
+        m_buffers[0].stride = sizeof(Vertex);
+        m_buffers[0].topo = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+        m_buffers[0].cpuData.resize(desc.ByteWidth);
+        memcpy(m_buffers[0].cpuData.data(), vertices, desc.ByteWidth);
     }
 
-    {
-        uint32_t w = 1280, h = 720;
-        auto renderTarget = m_renderer.CreateTexture(w, h, TextureFormat::R8_G8_B8_A8_UNORM, TextureFlags::RenderTarget | TextureFlags::ShaderResource);
-        auto depthStencil = m_renderer.CreateTexture(w, h, TextureFormat::R24_G8_TYPELESS, TextureFlags::DepthStencil | TextureFlags::ShaderResource);
-        auto rtv = m_renderer.CreateTextureView<ResourceViewType::RenderTarget>(renderTarget.get(), renderTarget->GetFormat());
-        auto dsv = m_renderer.CreateTextureView<ResourceViewType::DepthStencil>(depthStencil.get(), TextureFormat::D24_UNORM_S8_UINT);
-    }
-
-    {
-        D3D11_INPUT_ELEMENT_DESC elementDesc[]{
-            { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+    {// Create vertex buffer
+        Vertex vertices[] = {
+            {  0.50f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f },
+            {  0.95f, -0.5,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f },
+            {  0.05f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f }
         };
-        m_inputLayout = m_renderer.CreateInputLayout(elementDesc, 2, m_vertexShader.bytecode.Get());
+
+        D3D11_BUFFER_DESC desc{};
+        desc.Usage = D3D11_USAGE_DYNAMIC;
+        desc.ByteWidth = sizeof(vertices);
+        desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        m_buffers[1].buffer = m_renderer.CreateBuffer(desc, vertices);
+        m_buffers[1].stride = sizeof(Vertex);
+        m_buffers[1].topo = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+        m_buffers[1].cpuData.resize(desc.ByteWidth);
+        memcpy(m_buffers[1].cpuData.data(), vertices, desc.ByteWidth);
+    }
+
+    {
+        VertexUi vertices[] = {
+            { -1.0f, -1.0f, 0.0f, 1.0f },
+            { -1.0f,  1.0f, 0.0f, 0.0f },
+            {  1.0f, -1.0f, 1.0f, 1.0f },
+            {  1.0f,  1.0f, 1.0f, 0.0f },
+        };
+
+        D3D11_BUFFER_DESC desc {};
+        desc.Usage = D3D11_USAGE_DYNAMIC;
+        desc.ByteWidth = sizeof(vertices);
+        desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        m_buffers[2].buffer = m_renderer.CreateBuffer(desc, vertices);
+        m_buffers[2].stride = sizeof(VertexUi);
+        m_buffers[2].topo = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+        m_buffers[2].cpuData.resize(desc.ByteWidth);
+        memcpy(m_buffers[2].cpuData.data(), vertices, desc.ByteWidth);
+    }
+
+    // Create textures
+    for (auto& rt : m_renderTargets) {
+        rt.rt = std::make_unique<Texture>(device, params.Width, params.Height, TextureFormat::R8_G8_B8_A8_UNORM, TextureFlags::RenderTarget | TextureFlags::ShaderResource);
+        rt.rt_rtv = rt.rt->GetView<ResourceViewType::RenderTarget>(device, rt.rt->GetFormat());
+        rt.rt_srv = rt.rt->GetView<ResourceViewType::ShaderResource>(device, rt.rt->GetFormat());
+        rt.ds = std::make_unique<Texture>(device, params.Width, params.Height, TextureFormat::R24_G8_TYPELESS, TextureFlags::DepthStencil | TextureFlags::ShaderResource);
+        rt.ds_dsv = rt.ds->GetView<ResourceViewType::DepthStencil>(device, TextureFormat::D24_UNORM_S8_UINT);
+        rt.ds_srv = rt.ds->GetView<ResourceViewType::ShaderResource>(device, TextureFormat::R24_UNORM_X8_TYPELESS);
+    }
+    
+    {// Create sampler
+        CD3D11_SAMPLER_DESC samplerDesc(D3D11_DEFAULT);
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+        device->CreateSamplerState(&samplerDesc, m_sampler.Receive());
     }
 }
 
 bool GraphicsSystem::Update(IApplication* iapp) {
-    {// Change vertex buffer to see runtime result
-        BufferMapper<Vertex> bufferMap(m_vertices.Get(), m_renderer.GetDevice()->GetContext(), D3D11_MAP_WRITE_DISCARD);
-        Vertex vertices[] = {
-            {  0.0f,   0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f },
-            {  0.45f, -0.5,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f },
-            { -0.45f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f }
-        };
+    UnusedVar(iapp);
+    auto device = m_renderer.GetDevice();
+    float clearColor[4] {
+        0.0f, 0.2f, 0.4f, 1.0f
+    };
 
-        static float angle = 0.f;
-        constexpr float da = 0.01f;
+    static float angle = 0.f;
+    constexpr float delta_angle = 0.001f;
+    angle += delta_angle;
 
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                vertices[i].col.arr[j] = angle - std::floor(angle);
+    {// This code moves vertices
+        {
+            BufferMapper<Vertex> mapper(m_buffers[0].buffer.Get(), device->GetContext(), D3D11_MAP_WRITE_DISCARD);
+            auto view = m_buffers[0].MakeViewCPU<Vertex>();
+            for (size_t i = 0; i < view.GetSize(); ++i) {
+                view[i].pos.x += 0.003f * std::sin(angle);
+                mapper.At(i) = view[i];
             }
         }
 
-        bufferMap.Write(vertices, 3);
-        angle += da;
+        {
+            BufferMapper<Vertex> mapper(m_buffers[1].buffer.Get(), device->GetContext(), D3D11_MAP_WRITE_DISCARD);
+            auto view = m_buffers[1].MakeViewCPU<Vertex>();
+            for (size_t i = 0; i < view.GetSize(); ++i) {
+                view[i].pos.x += 0.003f * std::sin(angle + 3.14159f);
+                mapper.At(i) = view[i];
+            }
+        }
     }
-    UnusedVar(iapp);
-    auto device = m_renderer.GetDevice();
-    device->SetShader(m_vertexShader);
-    device->SetShader(m_pixelShader);
-    m_renderer.SetInputLayout(m_inputLayout.Get());
-    m_renderer.SetVertexBuffer(m_vertices.Get(), sizeof(Vertex), 0);
-    m_renderer.SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    m_renderer.Clear(0.0f, 0.2f, 0.4f, 1.0f);
-    {
-        D3D11_VIEWPORT vp{ 0, 0, 500, 500, 1.f, 1.f };
-        m_renderer.SetViewport(vp);
+
+    for(int i = 0; i < 2; ++i) {
+        device->GetContext()->ClearRenderTargetView(m_renderTargets[i].rt_rtv->GetView(), clearColor);
+        device->GetContext()->ClearDepthStencilView(m_renderTargets[i].ds_dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+        m_renderTargets[i].Activate(device.Get());
+        m_drawShader.Activate(device.Get());
+        m_buffers[i].Activate(device.Get());
         m_renderer.Draw(3, 0);
     }
 
     {
-        D3D11_VIEWPORT vp{ 500, 0, 500, 500, 1.f, 1.f };
-        m_renderer.SetViewport(vp);
-        m_renderer.Draw(3, 0);
+        device->GetContext()->ClearRenderTargetView(m_renderTargets[2].rt_rtv->GetView(), clearColor);
+        device->GetContext()->ClearDepthStencilView(m_renderTargets[2].ds_dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+        m_renderTargets[2].Activate(device.Get());
+
+        ID3D11ShaderResourceView* textures[] {
+            m_renderTargets[0].rt_srv->GetView(),
+            m_renderTargets[1].rt_srv->GetView(),
+            m_renderTargets[0].ds_srv->GetView(),
+            m_renderTargets[1].ds_srv->GetView(),
+        };
+        device->GetContext()->PSSetShaderResources(0, 4, textures);
+
+        auto sampler = m_sampler.Get();
+        device->GetContext()->PSSetSamplers(0, 1, &sampler);
+        m_uiShader.Activate(device.Get());
+        m_buffers[2].Activate(device.Get());
+        m_renderer.Draw(4, 0);
+
+        // Unset texture
+        ZeroMemory(textures, sizeof(textures));
+        device->GetContext()->PSSetShaderResources(0, 4, textures);
+
+        // Unset sampler
+        sampler = nullptr;
+        device->GetContext()->PSSetSamplers(0, 1, &sampler);
     }
 
+    {// Select render target to present
+        int iRT = 0;
+        if (HIWORD(GetKeyState(VK_F2))) {
+            iRT = 1;
+        }
+        else if (HIWORD(GetKeyState(VK_F3))) {
+            iRT = 2;
+        }
+
+        ID3D11Resource* finalRT;
+        auto finalRenderTarget = m_renderer.GetSwapchainRenderTargetView();
+        finalRenderTarget->GetView()->GetResource(&finalRT);
+        auto renderTargetToShow = static_cast<ID3D11Texture2D*>(m_renderTargets[iRT].rt->GetNativeInterface());
+        device->GetContext()->CopyResource(finalRT, renderTargetToShow);
+    }
 
     m_renderer.Present();
 

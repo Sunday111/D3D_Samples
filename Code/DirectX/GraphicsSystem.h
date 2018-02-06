@@ -4,12 +4,21 @@
 #include "Renderer.h"
 #include "MainWindow.h"
 #include "FileResource.h"
+#include "EverydayTools/Observable.h"
 
 class Application;
 
+class IGraphicsListener {
+public:
+    virtual void BeforeRendering() = 0;
+    virtual void AfterRendering() = 0;
+    virtual ~IGraphicsListener() = default;
+};
+
 class GraphicsSystem :
     public ISystem,
-    public MainWindow<char>::IObserver
+    public IMainWindowListener,
+    public Observable<GraphicsSystem, IGraphicsListener>
 {
 public:
     using CreateParams = Renderer::CreateParams;
@@ -34,8 +43,58 @@ public:
 private:
     Application* m_app = nullptr;
     Renderer m_renderer;
-    ComPtr<ID3D11Buffer> m_vertices;
-    ComPtr<ID3D11InputLayout> m_inputLayout;
-    Shader<ShaderType::Vertex> m_vertexShader;
-    Shader<ShaderType::Pixel> m_pixelShader;
+
+    struct BufferInfo {
+        void Activate(Device* device, uint32_t offset = 0) {
+            auto pBuffer = buffer.Get();
+            auto pContext = device->GetContext();
+            pContext->IASetVertexBuffers(0, 1, &pBuffer, &stride, &offset);
+            pContext->IASetPrimitiveTopology(topo);
+        }
+
+        template<typename T>
+        edt::DenseArrayView<T> MakeViewCPU() {
+            return CallAndRethrow("BufferInfo::MakeViewCPU", [&]() {
+                if (cpuData.size() % sizeof(T) != 0) {
+                    throw std::runtime_error("Trying to map to invalid type!");
+                }
+                return edt::DenseArrayView<T>((T*)&cpuData[0], cpuData.size() / sizeof(T));
+            });
+        }
+
+        uint32_t stride;
+        ComPtr<ID3D11Buffer> buffer;
+        D3D_PRIMITIVE_TOPOLOGY topo;
+        std::vector<uint8_t> cpuData;
+    } m_buffers[3];
+
+    struct ShaderInfo {
+        void Activate(Device* device) {
+            device->SetShader(vs);
+            device->SetShader(ps);
+            device->GetContext()->IASetInputLayout(layout.Get());
+        }
+
+        ComPtr<ID3D11InputLayout> layout;
+        Shader<ShaderType::Vertex> vs;
+        Shader<ShaderType::Pixel> ps;
+    };
+    
+    struct RT {
+        void Activate(Device* device) {
+            device->SetRenderTarget(rt_rtv.Get(), ds_dsv.Get());
+        }
+
+        std::unique_ptr<Texture> rt;
+        IntrusivePtr<TextureView<ResourceViewType::RenderTarget>> rt_rtv;
+        IntrusivePtr<TextureView<ResourceViewType::ShaderResource>> rt_srv;
+
+        std::unique_ptr<Texture> ds;
+        IntrusivePtr<TextureView<ResourceViewType::DepthStencil>> ds_dsv;
+        IntrusivePtr<TextureView<ResourceViewType::ShaderResource>> ds_srv;
+    } m_renderTargets[3];
+
+    ShaderInfo m_drawShader;
+    ShaderInfo m_uiShader;
+    ComPtr<ID3D11SamplerState> m_sampler;
 };

@@ -114,6 +114,15 @@ public:
         });
     }
 
+    void SetRenderTarget(TextureView<ResourceViewType::RenderTarget>* rtv, TextureView<ResourceViewType::DepthStencil>* dsv = nullptr) {
+        auto pRTV = rtv->GetView();
+        ID3D11DepthStencilView* pDSV = nullptr;
+        if (dsv) {
+            pDSV = dsv->GetView();
+        }
+        m_deviceContext->OMSetRenderTargets(1, &pRTV, pDSV);
+    }
+
 private:
     ComPtr<ID3D11Device> m_device;
     ComPtr<ID3D11DeviceContext> m_deviceContext;
@@ -136,7 +145,7 @@ public:
             scd.BufferDesc.Height = h;
             scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;      // how swap chain is to be used
             scd.OutputWindow = hWnd;                                // the window to be used
-            scd.SampleDesc.Count = 4;                               // how many multisamples
+            scd.SampleDesc.Count = 1;                               // how many multisamples
             scd.Windowed = TRUE;                                    // windowed/full-screen mode
             scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
             auto pDevice = static_cast<ID3D11Device*>(device->GetNativeDevice());
@@ -294,11 +303,6 @@ public:
         m_device->GetContext()->Draw(vertexCount, startvert);
     }
 
-    void Clear(float r, float g, float b, float a) {
-        float clearColor[] = { r, g, b, a };
-        m_device->GetContext()->ClearRenderTargetView(m_renderTargetView.Get(), clearColor);
-    }
-
     void Present(unsigned interval = 0, unsigned flags = 0) {
         m_swapchain->GetInterface()->Present(interval, flags);
     }
@@ -307,6 +311,10 @@ public:
         CallAndRethrow("Renderer::SetViewport", [&] {
             m_device->GetContext()->RSSetViewports(1, &viewport);
         });
+    }
+
+    decltype(auto) GetSwapchainRenderTargetView() {
+        return m_renderTargetView;
     }
 
 protected:
@@ -331,9 +339,7 @@ protected:
     void InitializeRenderTarget(CreateParams& params) {
         CallAndRethrow("Renderer::InitializeRenderTarget", [&]() {
             UnusedVar(params);
-            m_renderTargetView = m_swapchain->MakeRenderTargetView();
-            auto renderTargetView = m_renderTargetView.Get();
-            m_device->GetContext()->OMSetRenderTargets(1, &renderTargetView, nullptr);
+            m_renderTargetView = IntrusivePtr<TextureView<ResourceViewType::RenderTarget>>::MakeInstance(m_swapchain->MakeRenderTargetView());
         });
     }
 
@@ -353,5 +359,5 @@ private:
     bool m_fullscreen = false;
     IntrusivePtr<Device> m_device;
     IntrusivePtr<SwapChain> m_swapchain;
-    ComPtr<ID3D11RenderTargetView> m_renderTargetView;
+    IntrusivePtr<TextureView<ResourceViewType::RenderTarget>> m_renderTargetView;
 };

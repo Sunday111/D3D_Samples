@@ -2,19 +2,23 @@
 
 #include "WinWrappers\WinWrappers.h"
 #include "EverydayTools\UnusedVar.h"
+#include "EverydayTools\Observable.h"
 
 #include <algorithm>
 #include <vector>
 
+class IMainWindowListener {
+public:
+    virtual void OnWindowResize(int w, int h) = 0;
+    virtual ~IMainWindowListener() = default;
+};
+
 template<typename TChar>
 class MainWindow :
-    public Window<TChar, ::MainWindow> {
+    public Window<TChar, ::MainWindow>,
+    public Observable<MainWindow<TChar>, IMainWindowListener>
+{
 public:
-    class IObserver {
-    public:
-        virtual void OnWindowResize(int w, int h) = 0;
-        virtual ~IObserver() = default;
-    };
 
     MainWindow(HWND handle = nullptr) :
         Window<TChar, ::MainWindow>(handle) {
@@ -28,7 +32,7 @@ public:
         switch (msg)
         {
         case WM_SIZE:
-            ForEachObserver([&](IObserver* p) {
+            ForEachListener([&](IMainWindowListener* p) {
                 p->OnWindowResize(LOWORD(lParam), HIWORD(lParam));
                 return false;
             });
@@ -37,35 +41,6 @@ public:
 
         return WA::DefWindowProc_(hWnd, msg, wParam, lParam);
     }
-
-    template<typename F>
-    bool ForEachObserver(F&& f) {
-        for (auto& observer : m_observers) {
-            if (f(observer)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    void Subscribe(IObserver* observer) {
-        auto it = std::lower_bound(m_observers.begin(), m_observers.end(), observer);
-        if (it != m_observers.end() && *it == observer) {
-            throw std::runtime_error("Already subscribed!");
-        }
-        m_observers.insert(it, observer);
-    }
-
-    void Unsubscribe(IObserver* observer) {
-        auto it = std::lower_bound(m_observers.begin(), m_observers.end(), observer);
-        if (it == m_observers.end() || *it != observer) {
-            throw std::runtime_error("Failed to unsubscribe: observer not found!");
-        }
-        m_observers.erase(observer);
-    }
-
-private:
-    std::vector<IObserver*> m_observers;
 };
 
 template<typename TChar>
