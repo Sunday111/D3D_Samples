@@ -105,7 +105,7 @@ public:
     template<ShaderType shaderType>
     void SetShader(Shader<shaderType>& shader) {
         CallAndRethrow("Renderer::SetShader<>", [&]() {
-            using Traits = ShaderTraits<shaderType>;
+            using Traits = shader_details::ShaderTraits<shaderType>;
             Traits::Set(
                 m_deviceContext.Get(),
                 shader.shader.Get(),
