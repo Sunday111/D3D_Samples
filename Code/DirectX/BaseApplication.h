@@ -13,13 +13,13 @@ class BaseApplication :
 public:
 
     void Run() {
-        CallAndRethrow("BaseApplication::Run", [&]() {
+        CallAndRethrowM + [&]{
             while (Update());
-        });
+        };
     }
 
     virtual bool Update() {
-        return CallAndRethrow("BaseApplication::Update", [&]() {
+        return CallAndRethrowM + [&]{
             bool finished = false;
             for (auto& system : m_systems) {
                 if (!system->Update(this)) {
@@ -27,7 +27,7 @@ public:
                 }
             }
             return !finished;
-        });
+        };
     }
 
     ISystem* AddSystem(std::unique_ptr<ISystem> system) {

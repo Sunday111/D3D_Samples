@@ -1,7 +1,7 @@
 #include "Shader.h"
 
 ComPtr<ID3DBlob> CompileShaderToBlob(const char* code, const char* entryPoint, ShaderType shaderType, ShaderVersion shaderVersion) {
-    return CallAndRethrow("Renderer::CompileShaderToBlob", [&]() {
+    return CallAndRethrowM + [&] {
         auto datasize = std::char_traits<char>::length(code);
         D3D_SHADER_MACRO macro[] = { nullptr, nullptr };
         auto shaderTarget = ShaderTypeToShaderTarget(shaderType, shaderVersion);
@@ -42,11 +42,11 @@ ComPtr<ID3DBlob> CompileShaderToBlob(const char* code, const char* entryPoint, S
             errorBlob.Receive()   // Compile error messages
         ), onCompileError);
         return shaderBlob;
-    });
+    };
 }
 
 const char* ShaderTypeToShaderTarget(ShaderType shaderType, ShaderVersion shaderVersion) {
-    return CallAndRethrow("Renderer::ShaderTypeToShaderTarget", [&]() {
+    return CallAndRethrowM + [&] {
         switch (shaderVersion)
         {
         case ShaderVersion::_5_0:
@@ -81,5 +81,5 @@ const char* ShaderTypeToShaderTarget(ShaderType shaderType, ShaderVersion shader
         default:
             throw std::invalid_argument("This version is not supported");
         }
-    });
+    };
 }

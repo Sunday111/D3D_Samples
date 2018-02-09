@@ -9,7 +9,7 @@
 class FileResource : public RefCountImpl<IResource> {
 public:
     void ReadFromFile(const char* filename) override {
-        CallAndRethrow("FileResource::ReadFromFile", [&]() {
+        CallAndRethrowM + [&]{
             std::ifstream file(filename, std::ios::binary | std::ios::ate);
             m_filename = filename;
             if (!file.is_open()) {
@@ -21,7 +21,7 @@ public:
             file.seekg(0, std::ios::beg);
             m_buffer.resize(static_cast<size_t>(size) + 1);
             file.read((char*)&m_buffer[0], size);
-        });
+        };
     }
 
     const char* GetFilename() const override {

@@ -33,9 +33,9 @@ public:
     Application(CreateParams& params) :
         m_vSync(params.VSync)
     {
-        CallAndRethrow("Application::Application", [&]() {
+        CallAndRethrowM + [&]{
             Initialize(params);
-        });
+        };
     }
 
     ResourceSystem* GetResourceSystem() const {
@@ -51,7 +51,7 @@ public:
     }
 
     bool Update() override {
-        return CallAndRethrow("Application::Update", [&]() {
+        return CallAndRethrowM + [&]{
             if (m_vSync) {
                 using namespace std::chrono;
                 auto t0 = high_resolution_clock::now();
@@ -67,26 +67,26 @@ public:
             } else {
                 return BaseApplication::Update();
             }
-        });
+        };
     }
 
 protected:
     void Initialize(CreateParams& params) {
-        CallAndRethrow("Application::Initialize", [&]() {
+        CallAndRethrowM + [&]{
             InitializeResourceSystem();
             InitializeWindowSystem(params);
             InitializeGraphicsSystem(params);
-        });
+        };
     }
 
     void InitializeResourceSystem() {
-        CallAndRethrow("Application::InitializeResourceSystem", [&]() {
+        CallAndRethrowM + [&]{
             m_resourceSystem = static_cast<ResourceSystem*>(AddSystem(std::make_unique<ResourceSystem>()));
-        });
+        };
     }
 
     void InitializeWindowSystem(CreateParams& params) {
-        CallAndRethrow("Application::InitializeWindowSystem", [&]() {
+        CallAndRethrowM + [&]{
             WindowSystem::CreateParams p;
             p.Width = params.Width;
             p.Height = params.Height;
@@ -94,11 +94,11 @@ protected:
             p.nCmdShow = params.nCmdShow;
             p.WindowTitle = params.WindowTitle;
             m_windowSystem = static_cast<WindowSystem*>(AddSystem(std::make_unique<WindowSystem>(p)));
-        });
+        };
     }
 
     void InitializeGraphicsSystem(CreateParams& params) {
-        CallAndRethrow("Application::InitializeGraphicsSystem", [&]() {
+        CallAndRethrowM + [&]{
             GraphicsSystem::CreateParams p;
             p.Width = params.Width;
             p.Height = params.Height;
@@ -106,7 +106,7 @@ protected:
             p.noDeviceMultithreading = params.noDeviceMulithreading;
             p.hWnd = m_windowSystem->GetWindow()->GetHandle();
             m_graphicsSystem = static_cast<GraphicsSystem*>(AddSystem(std::make_unique<GraphicsSystem>(this, p)));
-        });
+        };
     }
 
 private:

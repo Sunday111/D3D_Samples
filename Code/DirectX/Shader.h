@@ -49,11 +49,11 @@ namespace shader_details {
     {
         using Interface = InterfaceType;
         static ComPtr<Interface> Create(ID3D11Device* device, const void* bytecode, SIZE_T size, ID3D11ClassLinkage* linkage) {
-            return CallAndRethrow("ShaderTraitsBase::Create", [&] {
+            return CallAndRethrowM + [&] {
                 ComPtr<Interface> result;
                 WinAPI<char>::ThrowIfError((device->*createMethod)(bytecode, size, linkage, result.Receive()));
                 return result;
-            });
+            };
         }
     
         static void Set(ID3D11DeviceContext* context, Interface* shader, ID3D11ClassInstance*const* instances, uint32_t count) {
@@ -132,9 +132,9 @@ public:
     using Interface = typename Traits::Interface;
 
     void Compile(const char* code, const char* entryPoint, ShaderVersion shaderVersion) {
-        CallAndRethrow("Shader::Compile", [&] {
+        CallAndRethrowM + [&] {
             bytecode = CompileShaderToBlob(code, entryPoint, shaderType, shaderVersion);
-        });
+        };
     }
 
     void Create(ID3D11Device* device) {

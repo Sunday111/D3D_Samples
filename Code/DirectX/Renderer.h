@@ -31,7 +31,7 @@ public:
     };
 
     Device(CreateParams params) {
-        CallAndRethrow("Device::Device", [&] {
+        CallAndRethrowM + [&] {
             unsigned flags = 0;
             if (params.debugDevice) {
                 flags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -53,7 +53,7 @@ public:
                 m_device.Receive(),
                 nullptr,
                 m_deviceContext.Receive()));
-        });
+        };
     }
 
     void* GetNativeDevice() const override {
@@ -74,12 +74,12 @@ public:
 
     template<ShaderType shaderType>
     decltype(auto) CreateShader(const char* code, const char* entryPoint, ShaderVersion shaderVersion) {
-        return CallAndRethrow("Renderer::CreateShader<>(const char* code, ...)", [&]() {
+        return CallAndRethrowM + [&] {
             Shader<shaderType> result;
             result.Compile(code, entryPoint, shaderVersion);
             result.Create(m_device.Get());
             return result;
-        });
+        };
     }
 
     template<ShaderType shaderType>
@@ -89,7 +89,7 @@ public:
 
     template<ShaderType shaderType>
     decltype(auto) CreateShader(std::istream& code, const char* entryPoint, ShaderVersion shaderVersion) {
-        return CallAndRethrow("Renderer::CreateShader<>(std::istream& code, ...)", [&]() {
+        return CallAndRethrowM + [&] {
             auto startpos = code.tellg();
             code.seekg(0, std::ios::end);
             auto endpos = code.tellg();
@@ -99,19 +99,19 @@ public:
             readcode.resize(size);
             code.read(&readcode[0], size);
             return CreateShader<shaderType>(readcode.data(), entryPoint, shaderVersion);
-        });
+        };
     }
 
     template<ShaderType shaderType>
     void SetShader(Shader<shaderType>& shader) {
-        CallAndRethrow("Renderer::SetShader<>", [&]() {
+        CallAndRethrowM + [&] {
             using Traits = shader_details::ShaderTraits<shaderType>;
             Traits::Set(
                 m_deviceContext.Get(),
                 shader.shader.Get(),
                 nullptr,
                 0);
-        });
+        };
     }
 
     void SetRenderTarget(TextureView<ResourceViewType::RenderTarget>* rtv, TextureView<ResourceViewType::DepthStencil>* dsv = nullptr) {
@@ -134,7 +134,7 @@ public:
     SwapChain(IntrusivePtr<IDevice> device, uint32_t w, uint32_t h, HWND hWnd) :
         m_device(device)
     {
-        CallAndRethrow("SwapChain::SwapChain", [&] {
+        CallAndRethrowM + [&] {
             ComPtr<IDXGIFactory> factory;
             WinAPI<char>::ThrowIfError(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(factory.Receive())));
 
@@ -150,7 +150,7 @@ public:
             scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
             auto pDevice = static_cast<ID3D11Device*>(device->GetNativeDevice());
             WinAPI<char>::ThrowIfError(factory->CreateSwapChain(pDevice, &scd, m_swapchain.Receive()));
-        });
+        };
     }
 
     void* GetNativeInterface() const {
@@ -162,7 +162,7 @@ public:
     }
 
     ComPtr<ID3D11RenderTargetView> MakeRenderTargetView() {
-        return CallAndRethrow("SwapChain::MakeRenderTargetView", [&] {
+        return CallAndRethrowM + [&] {
             ComPtr<ID3D11Texture2D> backBuffer;
             // get the address of the back buffer
             WinAPI<char>::ThrowIfError(m_swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)backBuffer.Receive()));
@@ -171,7 +171,7 @@ public:
             ComPtr<ID3D11RenderTargetView> result;
             WinAPI<char>::ThrowIfError(device->CreateRenderTargetView(backBuffer.Get(), nullptr, result.Receive()));
             return result;
-        });
+        };
     }
 
 private:
@@ -249,16 +249,16 @@ public:
     }
 
     std::unique_ptr<Texture> CreateTexture(uint32_t w, uint32_t h, TextureFormat format, TextureFlags flags) {
-        return CallAndRethrow("Renderer::CreateTexture", [&] {
+        return CallAndRethrowM + [&] {
             return std::make_unique<Texture>(m_device->GetDevice(), w, h, format, flags);
-        });
+        };
     }
 
     template<ResourceViewType type>
     decltype(auto) CreateTextureView(Texture* texture, TextureFormat format) {
-        return CallAndRethrow("Renderer::CreateTextureView", [&] {
+        return CallAndRethrowM + [&] {
             return texture->GetView<type>(m_device->GetDevice(), format);
-        });
+        };
     }
 
     ComPtr<ID3D11Buffer> CreateBuffer(D3D11_BUFFER_DESC desc, void* initialData = nullptr) {
@@ -276,7 +276,7 @@ public:
     }
 
     ComPtr<ID3D11InputLayout> CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC* elementDescriptor, unsigned elementsCount, ID3D10Blob* shader) {
-        return CallAndRethrow("Renderer::CreateInputLayout", [&]() {
+        return CallAndRethrowM + [&] {
             ComPtr<ID3D11InputLayout> result;
             WinAPI<char>::ThrowIfError(
                 m_device->GetDevice()->CreateInputLayout(
@@ -284,7 +284,7 @@ public:
                     shader->GetBufferPointer(), shader->GetBufferSize(),
                     result.Receive()));
             return result;
-        });
+        };
     }
 
     void SetInputLayout(ID3D11InputLayout* layout) {
@@ -308,9 +308,9 @@ public:
     }
 
     void SetViewport(D3D11_VIEWPORT viewport) {
-        CallAndRethrow("Renderer::SetViewport", [&] {
+        CallAndRethrowM + [&] {
             m_device->GetContext()->RSSetViewports(1, &viewport);
-        });
+        };
     }
 
     decltype(auto) GetSwapchainRenderTargetView() {
@@ -319,39 +319,39 @@ public:
 
 protected:
     void Initialize(CreateParams& params) {
-        CallAndRethrow("Renderer::Initialize", [&]() {
+        CallAndRethrowM + [&] {
             InitializeD3D(params);
             InitializeRenderTarget(params);
             InitializeViewport(params);
-        });
+        };
     }
 
     void InitializeD3D(CreateParams& params) {
-        CallAndRethrow("Renderer::InitializeD3D", [&]() {
+        CallAndRethrowM + [&] {
             Device::CreateParams deviceParams;
             deviceParams.debugDevice = params.debugDevice;
             deviceParams.noDeviceMultithreading = params.noDeviceMultithreading;
             m_device = IntrusivePtr<Device>::MakeInstance(deviceParams);
             m_swapchain = IntrusivePtr<SwapChain>::MakeInstance(m_device, params.Width, params.Height, params.hWnd);
-        });
+        };
     }
 
     void InitializeRenderTarget(CreateParams& params) {
-        CallAndRethrow("Renderer::InitializeRenderTarget", [&]() {
+        CallAndRethrowM + [&] {
             UnusedVar(params);
             m_renderTargetView = IntrusivePtr<TextureView<ResourceViewType::RenderTarget>>::MakeInstance(m_swapchain->MakeRenderTargetView());
-        });
+        };
     }
 
     void InitializeViewport(CreateParams& params) {
-        CallAndRethrow("Renderer::InitializeViewport", [&]() {
+        CallAndRethrowM + [&] {
             D3D11_VIEWPORT viewport{};
             viewport.TopLeftX = 0;
             viewport.TopLeftY = 0;
             viewport.Width = static_cast<float>(params.Width);
             viewport.Height = static_cast<float>(params.Height);
             SetViewport(viewport);
-        });
+        };
     }
     
 private:

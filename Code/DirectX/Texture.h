@@ -45,7 +45,7 @@ public:
 };
 
 static DXGI_FORMAT ToDXGI_Format(TextureFormat format) {
-    return CallAndRethrow("ToDXGI_Format", [&] {
+    return CallAndRethrowM + [&] {
         switch (format) {
         case TextureFormat::R8_G8_B8_A8_UNORM: return DXGI_FORMAT_R8G8B8A8_UNORM;
         case TextureFormat::R24_G8_TYPELESS: return DXGI_FORMAT_R24G8_TYPELESS;
@@ -53,7 +53,7 @@ static DXGI_FORMAT ToDXGI_Format(TextureFormat format) {
         case TextureFormat::R24_UNORM_X8_TYPELESS: return DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
         default: throw std::runtime_error("This texture format is not implemented here");
         }
-    });
+    };
 }
 
 template
@@ -77,21 +77,21 @@ public:
     using Description = DescriptionType;
 
     static Description CreateBaseDescription(TextureFormat format) {
-        return CallAndRethrow("TextureViewTraitsBase::CreateDescription", [&] {
+        return CallAndRethrowM + [&] {
             Description desc{};
             desc.Format = ToDXGI_Format(format);
             desc.ViewDimension = viewDimension;
             return desc;
-        });
+        };
     }
 
     static ComPtr<Interface> MakeInstance(ID3D11Device* device, ID3D11Resource* resource, Description* desc) {
-        return CallAndRethrow("TextureViewTraitsBase::MakeInstance", [&] {
+        return CallAndRethrowM + [&] {
             ComPtr<Interface> result;
             auto hresult = (device->*createMethod)(resource, desc, result.Receive());
             WinAPI<char>::ThrowIfError(hresult);
             return result;
-        });
+        };
     }
 
     static void FillDescSpecific(Description& desc) {
@@ -183,11 +183,11 @@ public:
     TextureView(ID3D11Device* device, ITexture* texture, TextureFormat format) :
         m_format(format)
     {
-        CallAndRethrow("TextureView::TextureView", [&] {
+        CallAndRethrowM + [&] {
             auto nativeTexture = static_cast<ID3D11Texture2D*>(texture->GetNativeInterface());
             auto desc = Traits::CreateDescription(format);
             m_view = Traits::MakeInstance(device, nativeTexture, &desc);
-        });
+        };
     }
 
     ResourceViewType GetViewType() const override {
@@ -225,7 +225,7 @@ public:
     }
 
     static UINT MakeBindFlags(TextureFlags flags) {
-        return CallAndRethrow("Texture::MakeBindFlags", [&] {
+        return CallAndRethrowM + [&] {
             // Check for confilected flags:
             if (FlagIsSet<TextureFlags::RenderTarget>(flags) &&
                 FlagIsSet<TextureFlags::DepthStencil>(flags)) {
@@ -242,11 +242,11 @@ public:
                 result |= D3D11_BIND_SHADER_RESOURCE;
             }
             return result;
-        });
+        };
     }
 
     static D3D11_TEXTURE2D_DESC MakeTextureDescription(uint32_t w, uint32_t h, TextureFormat format, TextureFlags flags) {
-        return CallAndRethrow("Texture::MakeTextureDescription", [&] {
+        return CallAndRethrowM + [&] {
             D3D11_TEXTURE2D_DESC d{};
             d.Width = w;
             d.Height = h;
@@ -257,13 +257,13 @@ public:
             d.Usage = D3D11_USAGE_DEFAULT;
             d.BindFlags = MakeBindFlags(flags);
             return d;
-        });
+        };
     }
 
     Texture(ID3D11Device* device, uint32_t w, uint32_t h, TextureFormat format, TextureFlags flags, void* initialData = nullptr) :
         m_format(format)
     {
-        CallAndRethrow("Texture::Texture", [&] {
+        CallAndRethrowM + [&] {
             auto desc = MakeTextureDescription(w, h, format, flags);
             HRESULT hres = S_OK;
             if (initialData) {
@@ -274,16 +274,16 @@ public:
                 hres = device->CreateTexture2D(&desc, nullptr, m_texture.Receive());
             }
             WinAPI<char>::ThrowIfError(hres);
-        });
+        };
     }
 
     template<ResourceViewType type>
     IntrusivePtr<TextureView<type>> GetView(ID3D11Device* device, TextureFormat format) {
-        return CallAndRethrow("Texture::GetView", [&] {
+        return CallAndRethrowM + [&] {
             auto result = IntrusivePtr<TextureView<type>>::MakeInstance(device, this, format);
             m_views.push_back(result);
             return result;
-        });
+        };
     }
 
     void* GetNativeInterface() const override {

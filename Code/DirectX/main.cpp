@@ -9,7 +9,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     using WA = WinAPI<TChar>;
     UnusedVar(hPrevInstance, lpCmdLine);
     try {
-        return CallAndRethrow("Main", [&]() {
+        return CallAndRethrow("Main", [&] {
             std::unique_ptr<Application> app;
 
             {
@@ -28,6 +28,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
                 app = std::make_unique<Application>(params);
             }
+
             app->Run();
             return 0;
         });

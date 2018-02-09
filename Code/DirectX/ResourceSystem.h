@@ -74,7 +74,7 @@ public:
 
     template<typename T>
     IntrusivePtr<T> GetResource(const char* filename) {
-        return CallAndRethrow("ResourceSystem::GetResource", [&]() {
+        return CallAndRethrowM + [&] {
             {
                 auto loaded = Find(filename);
                 if (loaded != nullptr) {
@@ -86,7 +86,7 @@ public:
             ptr->ReadFromFile(filename);
             m_resources.emplace(std::make_pair(std::string(filename), ResourceInfo(ptr, CurrentTime())));
             return ptr;
-        });
+        };
     }
 
 private:

@@ -28,12 +28,12 @@ public:
 
     template<ShaderType shaderType>
     decltype(auto) CreateShaderFromFile(const char* fileName, const char* entryPoint, ShaderVersion shaderVersion) {
-        return CallAndRethrow("GraphicsSystem::CreateShaderFromFile<>", [&]() {
+        return CallAndRethrowM + [&]{
             auto resourceSystem = m_app->GetResourceSystem();
             auto fileResource = resourceSystem->GetResource<FileResource>(fileName);
             auto device = m_renderer.GetDevice();
             return device->CreateShader<shaderType>(fileResource->GetDataView(), entryPoint, shaderVersion);
-        });
+        };
     }
 
     Renderer& GetRenderer() {
@@ -46,20 +46,22 @@ private:
 
     struct BufferInfo {
         void Activate(Device* device, uint32_t offset = 0) {
-            auto pBuffer = buffer.Get();
-            auto pContext = device->GetContext();
-            pContext->IASetVertexBuffers(0, 1, &pBuffer, &stride, &offset);
-            pContext->IASetPrimitiveTopology(topo);
+            CallAndRethrowM + [&] {
+                auto pBuffer = buffer.Get();
+                auto pContext = device->GetContext();
+                pContext->IASetVertexBuffers(0, 1, &pBuffer, &stride, &offset);
+                pContext->IASetPrimitiveTopology(topo);
+            };
         }
 
         template<typename T>
         edt::DenseArrayView<T> MakeViewCPU() {
-            return CallAndRethrow("BufferInfo::MakeViewCPU", [&]() {
+            return CallAndRethrowM + [&] {
                 if (cpuData.size() % sizeof(T) != 0) {
                     throw std::runtime_error("Trying to map to invalid type!");
                 }
                 return edt::DenseArrayView<T>((T*)&cpuData[0], cpuData.size() / sizeof(T));
-            });
+            };
         }
 
         uint32_t stride;
@@ -70,9 +72,11 @@ private:
 
     struct ShaderInfo {
         void Activate(Device* device) {
-            device->SetShader(vs);
-            device->SetShader(ps);
-            device->GetContext()->IASetInputLayout(layout.Get());
+            CallAndRethrowM + [&] {
+                device->SetShader(vs);
+                device->SetShader(ps);
+                device->GetContext()->IASetInputLayout(layout.Get());
+            };
         }
 
         ComPtr<ID3D11InputLayout> layout;

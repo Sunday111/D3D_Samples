@@ -18,17 +18,17 @@ public:
     };
 
     WindowSystem(CreateParams params) {
-        CallAndRethrow("WindowSystem::WindowSystem", [&]() {
+        CallAndRethrowM + [&] {
             m_windowClass = std::make_unique<MainWindowClass<TChar>>(params.hInstance);
             m_window = m_windowClass->MakeWindow(params.WindowTitle);
             m_window->Show(params.nCmdShow);
             m_window->SetWindowClientSize(params.Width, params.Height);
             m_window->Update();
-        });
+        };
     }
 
     bool Update(IApplication*) override {
-        return CallAndRethrow("WindowSystem::Update", [&]() {
+        return CallAndRethrowM + [&] {
             MSG msg;
             if (WA::PeekMessage_(&msg, nullptr, 0, 0, PM_REMOVE)) {
                 // Handle windows messages
@@ -39,7 +39,7 @@ public:
                 }
             }
             return true;
-        });
+        };
     }
 
     MainWindow<TChar>* GetWindow() const {
