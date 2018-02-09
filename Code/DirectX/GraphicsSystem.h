@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ISystem.h"
-#include "Renderer.h"
+#include "Rendering/Renderer.h"
 #include "MainWindow.h"
 #include "FileResource.h"
 #include "EverydayTools/Observable.h"

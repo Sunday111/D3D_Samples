@@ -21,23 +21,22 @@
   <ItemGroup>
     <ClCompile Include="..\Code\DirectX\GraphicsSystem.cpp" />
     <ClCompile Include="..\Code\DirectX\main.cpp" />
-    <ClCompile Include="..\Code\DirectX\Shader.cpp" />
+    <ClCompile Include="..\Code\DirectX\Rendering\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Code\DirectX\Application.h" />
     <ClInclude Include="..\Code\DirectX\BaseApplication.h" />
-    <ClInclude Include="..\Code\DirectX\ComPtr.h" />
     <ClInclude Include="..\Code\DirectX\FileResource.h" />
     <ClInclude Include="..\Code\DirectX\FrameRateCounter.h" />
     <ClInclude Include="..\Code\DirectX\GraphicsSystem.h" />
     <ClInclude Include="..\Code\DirectX\IApplication.h" />
     <ClInclude Include="..\Code\DirectX\MainWindow.h" />
     <ClInclude Include="..\Code\DirectX\RefCounter.h" />
-    <ClInclude Include="..\Code\DirectX\Renderer.h" />
     <ClInclude Include="..\Code\DirectX\ISystem.h" />
+    <ClInclude Include="..\Code\DirectX\Rendering\Renderer.h" />
+    <ClInclude Include="..\Code\DirectX\Rendering\Shader.h" />
+    <ClInclude Include="..\Code\DirectX\Rendering\Texture.h" />
     <ClInclude Include="..\Code\DirectX\ResourceSystem.h" />
-    <ClInclude Include="..\Code\DirectX\Shader.h" />
-    <ClInclude Include="..\Code\DirectX\Texture.h" />
     <ClInclude Include="..\Code\DirectX\WindowSystem.h" />
   </ItemGroup>
   <ItemGroup>

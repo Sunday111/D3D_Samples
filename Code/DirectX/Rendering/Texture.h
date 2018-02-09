@@ -4,7 +4,7 @@
 #include "EverydayTools\EnumFlag.h"
 #include "EverydayTools\Exception\CallAndRethrow.h"
 #include "RefCounter.h"
-#include "ComPtr.h"
+#include "WinWrappers\ComPtr.h"
 
 enum class ResourceViewType {
     RenderTarget,

@@ -3,11 +3,12 @@
   <ItemGroup>
     <ClCompile Include="..\Code\DirectX\main.cpp" />
     <ClCompile Include="..\Code\DirectX\GraphicsSystem.cpp" />
-    <ClCompile Include="..\Code\DirectX\Shader.cpp" />
+    <ClCompile Include="..\Code\DirectX\Rendering\Shader.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Code\DirectX\MainWindow.h" />
-    <ClInclude Include="..\Code\DirectX\Renderer.h" />
     <ClInclude Include="..\Code\DirectX\GraphicsSystem.h" />
     <ClInclude Include="..\Code\DirectX\WindowSystem.h" />
     <ClInclude Include="..\Code\DirectX\BaseApplication.h" />
@@ -16,13 +17,24 @@
     <ClInclude Include="..\Code\DirectX\IApplication.h" />
     <ClInclude Include="..\Code\DirectX\RefCounter.h" />
     <ClInclude Include="..\Code\DirectX\ResourceSystem.h" />
-    <ClInclude Include="..\Code\DirectX\Shader.h" />
-    <ClInclude Include="..\Code\DirectX\ComPtr.h" />
     <ClInclude Include="..\Code\DirectX\FileResource.h" />
     <ClInclude Include="..\Code\DirectX\FrameRateCounter.h" />
-    <ClInclude Include="..\Code\DirectX\Texture.h" />
+    <ClInclude Include="..\Code\DirectX\Rendering\Renderer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\DirectX\Rendering\Shader.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\DirectX\Rendering\Texture.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\Submodules\EverydayTools\Utility\VisualStudio\ArrayView.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{be0cabf7-b7c1-4200-9b72-294e6e0da5ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

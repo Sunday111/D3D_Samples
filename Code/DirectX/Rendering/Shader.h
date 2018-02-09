@@ -1,12 +1,10 @@
 #pragma once
 
-#include <d3d11.h>
-#include <d3dcompiler.h>
-#include "ComPtr.h"
-#include "ResourceSystem.h"
+#include "d3d11.h"
+#include "d3dcompiler.h"
 #include "EverydayTools\Exception\CallAndRethrow.h"
+#include "WinWrappers\ComPtr.h"
 #include "WinWrappers\WinWrappers.h"
-#include "RefCounter.h"
 
 class Device;
 
@@ -23,12 +21,6 @@ enum class ShaderVersion {
     _5_0,
     _4_1,
     _4_0,
-};
-
-class IShader : public IRefCountObject
-{
-public:
-    virtual ~IShader() = default;
 };
 
 namespace shader_details {
@@ -125,7 +117,7 @@ const char* ShaderTypeToShaderTarget(ShaderType shaderType, ShaderVersion shader
 ComPtr<ID3DBlob> CompileShaderToBlob(const char* code, const char* entryPoint, ShaderType shaderType, ShaderVersion shaderVersion);
 
 template<ShaderType shaderType>
-class Shader : public RefCountImpl<IShader>
+class Shader
 {
 public:
     using Traits = shader_details::ShaderTraits<shaderType>;

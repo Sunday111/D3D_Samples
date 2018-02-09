@@ -1,13 +1,13 @@
 #pragma once
 
 #include <fstream>
-#include <d3d11.h>
-#include <d3dcompiler.h>
+#include "d3d11.h"
+#include "d3dcompiler.h"
 #include "EverydayTools\Array\ArrayView.h"
-#include "WinWrappers\WinWrappers.h"
-#include "ComPtr.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "WinWrappers\WinWrappers.h"
+#include "WinWrappers\ComPtr.h"
 
 class IDevice : public IRefCountObject {
 public:
