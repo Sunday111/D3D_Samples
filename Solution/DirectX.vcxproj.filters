@@ -18,7 +18,6 @@
     <ClInclude Include="..\Code\DirectX\RefCounter.h" />
     <ClInclude Include="..\Code\DirectX\ResourceSystem.h" />
     <ClInclude Include="..\Code\DirectX\FileResource.h" />
-    <ClInclude Include="..\Code\DirectX\FrameRateCounter.h" />
     <ClInclude Include="..\Code\DirectX\Rendering\Renderer.h">
       <Filter>Rendering</Filter>
     </ClInclude>

@@ -3,7 +3,6 @@
 #include <thread>
 
 #include "BaseApplication.h"
-#include "FrameRateCounter.h"
 #include "WindowSystem.h"
 #include "GraphicsSystem.h"
 #include "ResourceSystem.h"
@@ -13,10 +12,6 @@ class Application :
     public BaseApplication
 {
 public:
-    using Period = std::chrono::nanoseconds;
-    static constexpr auto FpsSamplesCount = 100;
-    static constexpr auto DesiredFPS = 60;
-    using TFrameRateCounter = FrameRateCounter<Period, FpsSamplesCount>;
 
     struct CreateParams {
         HINSTANCE hInstance = nullptr;
@@ -31,7 +26,7 @@ public:
     };
 
     Application(CreateParams& params) :
-        m_vSync(params.VSync)
+        BaseApplication(params.VSync)
     {
         CallAndRethrowM + [&]{
             Initialize(params);
@@ -48,26 +43,6 @@ public:
 
     GraphicsSystem* GetGraphicsSystem() const {
         return m_graphicsSystem;
-    }
-
-    bool Update() override {
-        return CallAndRethrowM + [&]{
-            if (m_vSync) {
-                using namespace std::chrono;
-                auto t0 = high_resolution_clock::now();
-                auto retVal = BaseApplication::Update();
-                auto t1 = high_resolution_clock::now();
-                auto average = m_fpsCounter.CalcAverageTick(t1 - t0);
-                auto sleep = TFrameRateCounter::GetDesiredFrameDuration(DesiredFPS) - average;
-                if (sleep.count() > 0) {
-                    //std::this_thread::sleep_for(sleep);
-                    Sleep(sleep);
-                }
-                return retVal;
-            } else {
-                return BaseApplication::Update();
-            }
-        };
     }
 
 protected:
@@ -110,10 +85,7 @@ protected:
     }
 
 private:
-    bool m_vSync = true;
     ResourceSystem* m_resourceSystem = nullptr;
     WindowSystem* m_windowSystem = nullptr;
     GraphicsSystem* m_graphicsSystem = nullptr;
-
-    TFrameRateCounter m_fpsCounter;
 };

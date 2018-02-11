@@ -27,7 +27,6 @@
     <ClInclude Include="..\Code\DirectX\Application.h" />
     <ClInclude Include="..\Code\DirectX\BaseApplication.h" />
     <ClInclude Include="..\Code\DirectX\FileResource.h" />
-    <ClInclude Include="..\Code\DirectX\FrameRateCounter.h" />
     <ClInclude Include="..\Code\DirectX\GraphicsSystem.h" />
     <ClInclude Include="..\Code\DirectX\IApplication.h" />
     <ClInclude Include="..\Code\DirectX\MainWindow.h" />
