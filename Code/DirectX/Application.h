@@ -3,7 +3,7 @@
 #include <thread>
 
 #include "SystemsApp/BaseApplication.h"
-#include "WindowSystem.h"
+#include "WindowSystem/WindowSystem.h"
 #include "GraphicsSystem.h"
 #include "ResourceSystem/ResourceSystem.h"
 #include "WinWrappers/WinWrappers.h"

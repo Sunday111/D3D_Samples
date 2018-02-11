@@ -2,7 +2,7 @@
 
 #include "SystemsApp/ISystem.h"
 #include "Rendering/Renderer.h"
-#include "MainWindow.h"
+#include "WindowSystem/MainWindow.h"
 #include "ResourceSystem/FileResource.h"
 #include "EverydayTools/Observable.h"
 

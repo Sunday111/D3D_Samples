@@ -16,3 +16,6 @@
 [submodule "Submodules/D3D_Tools"]
 	path = Submodules/D3D_Tools
 	url = https://github.com/Sunday111/D3D_Tools
+[submodule "Submodules/WindowSystem"]
+	path = Submodules/WindowSystem
+	url = https://github.com/Sunday111/SystemsApp-WindowSystem

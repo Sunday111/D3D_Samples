@@ -5,9 +5,7 @@
     <ClCompile Include="..\Code\DirectX\GraphicsSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Code\DirectX\MainWindow.h" />
     <ClInclude Include="..\Code\DirectX\GraphicsSystem.h" />
-    <ClInclude Include="..\Code\DirectX\WindowSystem.h" />
     <ClInclude Include="..\Code\DirectX\Application.h" />
     <ClInclude Include="..\Code\DirectX\Rendering\Renderer.h">
       <Filter>Rendering</Filter>
