@@ -1,8 +1,8 @@
 #pragma once
 
 #include "MainWindow.h"
-#include "WinWrappers\WinWrappers.h"
-#include "ISystem.h"
+#include "WinWrappers/WinWrappers.h"
+#include "SystemsApp/ISystem.h"
 
 class WindowSystem : public ISystem {
 public:

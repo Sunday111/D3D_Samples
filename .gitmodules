@@ -7,3 +7,9 @@
 [submodule "Submodules/EverydayTools"]
 	path = Submodules/EverydayTools
 	url = https://github.com/Sunday111/EverydayTools
+[submodule "Submodules/SystemsApp"]
+	path = Submodules/SystemsApp
+	url = https://github.com/Sunday111/SystemsApp
+[submodule "Submodules/ResourceSystem"]
+	path = Submodules/ResourceSystem
+	url = https://github.com/Sunday111/SystemsApp-ResourceSystem

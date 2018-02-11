@@ -3,10 +3,9 @@
 #include "d3d11.h"
 #include "EverydayTools\EnumFlag.h"
 #include "EverydayTools\Exception\CallAndRethrow.h"
-#include "RefCounter.h"
-#include "WinWrappers\ComPtr.h"
-
-#include "D3D_Tools\Texture.h"
+#include "SystemsApp/RefCounter.h"
+#include "WinWrappers/ComPtr.h"
+#include "D3D_Tools/Texture.h"
 
 using d3d_tools::ResourceViewType;
 using d3d_tools::TextureFormat;

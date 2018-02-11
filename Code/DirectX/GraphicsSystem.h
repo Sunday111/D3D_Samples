@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ISystem.h"
+#include "SystemsApp/ISystem.h"
 #include "Rendering/Renderer.h"
 #include "MainWindow.h"
-#include "FileResource.h"
+#include "ResourceSystem/FileResource.h"
 #include "EverydayTools/Observable.h"
 
 class Application;

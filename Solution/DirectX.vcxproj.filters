@@ -8,13 +8,8 @@
     <ClInclude Include="..\Code\DirectX\MainWindow.h" />
     <ClInclude Include="..\Code\DirectX\GraphicsSystem.h" />
     <ClInclude Include="..\Code\DirectX\WindowSystem.h" />
-    <ClInclude Include="..\Code\DirectX\BaseApplication.h" />
     <ClInclude Include="..\Code\DirectX\Application.h" />
-    <ClInclude Include="..\Code\DirectX\ISystem.h" />
     <ClInclude Include="..\Code\DirectX\IApplication.h" />
-    <ClInclude Include="..\Code\DirectX\RefCounter.h" />
-    <ClInclude Include="..\Code\DirectX\ResourceSystem.h" />
-    <ClInclude Include="..\Code\DirectX\FileResource.h" />
     <ClInclude Include="..\Code\DirectX\Rendering\Renderer.h">
       <Filter>Rendering</Filter>
     </ClInclude>

@@ -2,11 +2,11 @@
 
 #include <thread>
 
-#include "BaseApplication.h"
+#include "SystemsApp/BaseApplication.h"
 #include "WindowSystem.h"
 #include "GraphicsSystem.h"
-#include "ResourceSystem.h"
-#include "WinWrappers\WinWrappers.h"
+#include "ResourceSystem/ResourceSystem.h"
+#include "WinWrappers/WinWrappers.h"
 
 class Application :
     public BaseApplication

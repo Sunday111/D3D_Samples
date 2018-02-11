@@ -24,13 +24,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Code\DirectX\Application.h" />
-    <ClInclude Include="..\Code\DirectX\BaseApplication.h" />
-    <ClInclude Include="..\Code\DirectX\FileResource.h" />
     <ClInclude Include="..\Code\DirectX\GraphicsSystem.h" />
     <ClInclude Include="..\Code\DirectX\IApplication.h" />
     <ClInclude Include="..\Code\DirectX\MainWindow.h" />
-    <ClInclude Include="..\Code\DirectX\RefCounter.h" />
-    <ClInclude Include="..\Code\DirectX\ISystem.h" />
     <ClInclude Include="..\Code\DirectX\Rendering\D3D_Tools\Device.h" />
     <ClInclude Include="..\Code\DirectX\Rendering\D3D_Tools\Shader.h" />
     <ClInclude Include="..\Code\DirectX\Rendering\D3D_Tools\SwapChain.h" />
@@ -38,7 +34,6 @@
     <ClInclude Include="..\Code\DirectX\Rendering\Renderer.h" />
     <ClInclude Include="..\Code\DirectX\Rendering\Shader.h" />
     <ClInclude Include="..\Code\DirectX\Rendering\Texture.h" />
-    <ClInclude Include="..\Code\DirectX\ResourceSystem.h" />
     <ClInclude Include="..\Code\DirectX\WindowSystem.h" />
   </ItemGroup>
   <ItemGroup>
@@ -88,6 +83,8 @@
     <Import Project="..\Submodules\VisualStudioProps\cpp.props" />
     <Import Project="..\Submodules\VisualStudioProps\EverydayTools.props" />
     <Import Project="..\Submodules\VisualStudioProps\WinWrappers.props" />
+    <Import Project="..\Submodules\VisualStudioProps\SystemsApp.props" />
+    <Import Project="..\Submodules\VisualStudioProps\SystemsApp-ResourceSystem.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -95,6 +92,8 @@
     <Import Project="..\Submodules\VisualStudioProps\cpp.props" />
     <Import Project="..\Submodules\VisualStudioProps\EverydayTools.props" />
     <Import Project="..\Submodules\VisualStudioProps\WinWrappers.props" />
+    <Import Project="..\Submodules\VisualStudioProps\SystemsApp.props" />
+    <Import Project="..\Submodules\VisualStudioProps\SystemsApp-ResourceSystem.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -102,6 +101,8 @@
     <Import Project="..\Submodules\VisualStudioProps\cpp.props" />
     <Import Project="..\Submodules\VisualStudioProps\EverydayTools.props" />
     <Import Project="..\Submodules\VisualStudioProps\WinWrappers.props" />
+    <Import Project="..\Submodules\VisualStudioProps\SystemsApp.props" />
+    <Import Project="..\Submodules\VisualStudioProps\SystemsApp-ResourceSystem.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -109,6 +110,8 @@
     <Import Project="..\Submodules\VisualStudioProps\cpp.props" />
     <Import Project="..\Submodules\VisualStudioProps\EverydayTools.props" />
     <Import Project="..\Submodules\VisualStudioProps\WinWrappers.props" />
+    <Import Project="..\Submodules\VisualStudioProps\SystemsApp.props" />
+    <Import Project="..\Submodules\VisualStudioProps\SystemsApp-ResourceSystem.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
