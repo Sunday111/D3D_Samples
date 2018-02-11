@@ -25,7 +25,6 @@
   <ItemGroup>
     <ClInclude Include="..\Code\DirectX\Application.h" />
     <ClInclude Include="..\Code\DirectX\GraphicsSystem.h" />
-    <ClInclude Include="..\Code\DirectX\Rendering\Renderer.h" />
     <ClInclude Include="..\Code\DirectX\Rendering\Shader.h" />
     <ClInclude Include="..\Code\DirectX\Rendering\Texture.h" />
   </ItemGroup>

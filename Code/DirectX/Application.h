@@ -1,7 +1,5 @@
 #pragma once
 
-#include <thread>
-
 #include "SystemsApp/BaseApplication.h"
 #include "WindowSystem/WindowSystem.h"
 #include "GraphicsSystem.h"

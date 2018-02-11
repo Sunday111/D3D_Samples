@@ -1,12 +1,61 @@
 #pragma once
 
 #include "SystemsApp/ISystem.h"
-#include "Rendering/Renderer.h"
 #include "WindowSystem/MainWindow.h"
 #include "ResourceSystem/FileResource.h"
 #include "EverydayTools/Observable.h"
 
+#include "Rendering/Shader.h"
+#include "Rendering/Texture.h"
+
+#include "D3D_Tools/Device.h"
+#include "D3D_Tools/SwapChain.h"
+#include "D3D_Tools/Texture.h"
+#include "D3D_Tools/Shader.h"
+#include "D3D_Tools/BufferMapper.h"
+
 class Application;
+
+class IDevice : public IRefCountObject {
+public:
+    virtual void* GetNativeDevice() const = 0;
+    virtual void* GetNativeContext() const = 0;
+    virtual ~IDevice() = default;
+};
+
+class ISwapChain : public IRefCountObject {
+public:
+    virtual void* GetNativeInterface() const = 0;
+    virtual ~ISwapChain() = default;
+};
+
+class Device :
+    public RefCountImpl<IDevice>,
+    public d3d_tools::Device
+{
+public:
+    using d3d_tools::Device::Device;
+
+    void* GetNativeDevice() const override {
+        return GetDevice();
+    }
+
+    void* GetNativeContext() const override {
+        return GetContext();
+    }
+};
+
+class SwapChain :
+    public RefCountImpl<ISwapChain>,
+    public d3d_tools::SwapChain
+{
+public:
+    using d3d_tools::SwapChain::SwapChain;
+
+    void* GetNativeInterface() const {
+        return GetInterface();
+    }
+};
 
 class IGraphicsListener {
 public:
@@ -21,28 +70,31 @@ class GraphicsSystem :
     public Observable<GraphicsSystem, IGraphicsListener>
 {
 public:
-    using CreateParams = Renderer::CreateParams;
-    GraphicsSystem(Application* app, Renderer::CreateParams& params);
+    struct CreateParams {
+        HWND hWnd = nullptr;
+        bool debugDevice = false;
+        bool noDeviceMultithreading = false;
+        int Width = 1280;
+        int Height = 720;
+    };
+
+    GraphicsSystem(Application* app, CreateParams& params);
     bool Update(IApplication* app) override;
     void OnWindowResize(int w, int h) override;
+
+    void Initialize(CreateParams params);
 
     template<ShaderType shaderType>
     decltype(auto) CreateShaderFromFile(const char* fileName, const char* entryPoint, ShaderVersion shaderVersion) {
         return CallAndRethrowM + [&]{
             auto resourceSystem = m_app->GetResourceSystem();
             auto fileResource = resourceSystem->GetResource<FileResource>(fileName);
-            auto device = m_renderer.GetDevice();
-            return device->CreateShader<shaderType>(fileResource->GetDataView(), entryPoint, shaderVersion);
+            return m_device->CreateShader<shaderType>(fileResource->GetDataView(), entryPoint, shaderVersion);
         };
-    }
-
-    Renderer& GetRenderer() {
-        return m_renderer;
     }
 
 private:
     Application* m_app = nullptr;
-    Renderer m_renderer;
 
     struct BufferInfo {
         void Activate(Device* device, uint32_t offset = 0) {
@@ -101,4 +153,10 @@ private:
     ShaderInfo m_drawShader;
     ShaderInfo m_uiShader;
     ComPtr<ID3D11SamplerState> m_sampler;
+
+
+    bool m_fullscreen = false;
+    IntrusivePtr<Device> m_device;
+    IntrusivePtr<SwapChain> m_swapchain;
+    IntrusivePtr<TextureView<ResourceViewType::RenderTarget>> m_renderTargetView;
 };

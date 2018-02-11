@@ -7,9 +7,6 @@
   <ItemGroup>
     <ClInclude Include="..\Code\DirectX\GraphicsSystem.h" />
     <ClInclude Include="..\Code\DirectX\Application.h" />
-    <ClInclude Include="..\Code\DirectX\Rendering\Renderer.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\Code\DirectX\Rendering\Shader.h">
       <Filter>Rendering</Filter>
     </ClInclude>
