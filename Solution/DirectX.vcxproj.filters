@@ -9,7 +9,6 @@
     <ClInclude Include="..\Code\DirectX\GraphicsSystem.h" />
     <ClInclude Include="..\Code\DirectX\WindowSystem.h" />
     <ClInclude Include="..\Code\DirectX\Application.h" />
-    <ClInclude Include="..\Code\DirectX\IApplication.h" />
     <ClInclude Include="..\Code\DirectX\Rendering\Renderer.h">
       <Filter>Rendering</Filter>
     </ClInclude>
@@ -19,18 +18,6 @@
     <ClInclude Include="..\Code\DirectX\Rendering\Texture.h">
       <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\Code\DirectX\Rendering\D3D_Tools\Device.h">
-      <Filter>Rendering\D3D_Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Code\DirectX\Rendering\D3D_Tools\Texture.h">
-      <Filter>Rendering\D3D_Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Code\DirectX\Rendering\D3D_Tools\SwapChain.h">
-      <Filter>Rendering\D3D_Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Code\DirectX\Rendering\D3D_Tools\Shader.h">
-      <Filter>Rendering\D3D_Tools</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\Submodules\EverydayTools\Utility\VisualStudio\ArrayView.natvis" />
@@ -38,9 +25,6 @@
   <ItemGroup>
     <Filter Include="Rendering">
       <UniqueIdentifier>{be0cabf7-b7c1-4200-9b72-294e6e0da5ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Rendering\D3D_Tools">
-      <UniqueIdentifier>{03e87038-1062-4c08-b8b8-591392db8721}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

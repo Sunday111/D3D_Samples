@@ -13,3 +13,6 @@
 [submodule "Submodules/ResourceSystem"]
 	path = Submodules/ResourceSystem
 	url = https://github.com/Sunday111/SystemsApp-ResourceSystem
+[submodule "Submodules/D3D_Tools"]
+	path = Submodules/D3D_Tools
+	url = https://github.com/Sunday111/D3D_Tools

@@ -1,6 +1,5 @@
 #include "Application.h"
 #include "GraphicsSystem.h"
-#include "IApplication.h"
 #include <algorithm>
 
 namespace {
