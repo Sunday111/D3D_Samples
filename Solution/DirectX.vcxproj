@@ -21,7 +21,6 @@
   <ItemGroup>
     <ClCompile Include="..\Code\DirectX\GraphicsSystem.cpp" />
     <ClCompile Include="..\Code\DirectX\main.cpp" />
-    <ClCompile Include="..\Code\DirectX\Rendering\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Code\DirectX\Application.h" />
@@ -32,6 +31,10 @@
     <ClInclude Include="..\Code\DirectX\MainWindow.h" />
     <ClInclude Include="..\Code\DirectX\RefCounter.h" />
     <ClInclude Include="..\Code\DirectX\ISystem.h" />
+    <ClInclude Include="..\Code\DirectX\Rendering\D3D_Tools\Device.h" />
+    <ClInclude Include="..\Code\DirectX\Rendering\D3D_Tools\Shader.h" />
+    <ClInclude Include="..\Code\DirectX\Rendering\D3D_Tools\SwapChain.h" />
+    <ClInclude Include="..\Code\DirectX\Rendering\D3D_Tools\Texture.h" />
     <ClInclude Include="..\Code\DirectX\Rendering\Renderer.h" />
     <ClInclude Include="..\Code\DirectX\Rendering\Shader.h" />
     <ClInclude Include="..\Code\DirectX\Rendering\Texture.h" />

@@ -86,7 +86,7 @@ private:
     
     struct RT {
         void Activate(Device* device) {
-            device->SetRenderTarget(rt_rtv.Get(), ds_dsv.Get());
+            device->SetRenderTarget(*rt_rtv, ds_dsv.Get());
         }
 
         std::unique_ptr<Texture> rt;

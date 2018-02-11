@@ -67,8 +67,7 @@ private:
         };
     }
 
-    std::vector<std::unique_ptr<ISystem>> m_systems;
-
     bool m_vSync = true;
     TFrameRateCounter m_fpsCounter;
+    std::vector<std::unique_ptr<ISystem>> m_systems;
 };

@@ -6,8 +6,11 @@
 #include "EverydayTools\Array\ArrayView.h"
 #include "Shader.h"
 #include "Texture.h"
-#include "WinWrappers\WinWrappers.h"
-#include "WinWrappers\ComPtr.h"
+#include "WinWrappers/WinWrappers.h"
+#include "WinWrappers/ComPtr.h"
+
+#include "D3D_Tools/Device.h"
+#include "D3D_Tools/SwapChain.h"
 
 class IDevice : public IRefCountObject {
 public:
@@ -22,161 +25,32 @@ public:
     virtual ~ISwapChain() = default;
 };
 
-class Device : public RefCountImpl<IDevice>
+class Device :
+    public RefCountImpl<IDevice>,
+    public d3d_tools::Device
 {
 public:
-    struct CreateParams {
-        bool debugDevice;
-        bool noDeviceMultithreading = false;
-    };
-
-    Device(CreateParams params) {
-        CallAndRethrowM + [&] {
-            unsigned flags = 0;
-            if (params.debugDevice) {
-                flags |= D3D11_CREATE_DEVICE_DEBUG;
-            }
-
-            if (params.noDeviceMultithreading) {
-                flags |= D3D11_CREATE_DEVICE_SINGLETHREADED;
-                flags |= D3D11_CREATE_DEVICE_PREVENT_INTERNAL_THREADING_OPTIMIZATIONS;
-            }
-
-            WinAPI<char>::ThrowIfError(D3D11CreateDevice(
-                nullptr,
-                D3D_DRIVER_TYPE_HARDWARE,
-                nullptr,
-                flags,
-                nullptr,
-                0,
-                D3D11_SDK_VERSION,
-                m_device.Receive(),
-                nullptr,
-                m_deviceContext.Receive()));
-        };
-    }
+    using d3d_tools::Device::Device;
 
     void* GetNativeDevice() const override {
-        return m_device.Get();
-    }
-
-    ID3D11Device* GetDevice() const {
-        return m_device.Get();
+        return GetDevice();
     }
 
     void* GetNativeContext() const override {
-        return m_deviceContext.Get();
+        return GetContext();
     }
-
-    ID3D11DeviceContext* GetContext() const {
-        return m_deviceContext.Get();
-    }
-
-    template<ShaderType shaderType>
-    decltype(auto) CreateShader(const char* code, const char* entryPoint, ShaderVersion shaderVersion) {
-        return CallAndRethrowM + [&] {
-            Shader<shaderType> result;
-            result.Compile(code, entryPoint, shaderVersion);
-            result.Create(m_device.Get());
-            return result;
-        };
-    }
-
-    template<ShaderType shaderType>
-    decltype(auto) CreateShader(edt::DenseArrayView<const uint8_t> code, const char* entryPoint, ShaderVersion shaderVersion) {
-        return CreateShader<shaderType>((const char*)code.GetData(), entryPoint, shaderVersion);
-    }
-
-    template<ShaderType shaderType>
-    decltype(auto) CreateShader(std::istream& code, const char* entryPoint, ShaderVersion shaderVersion) {
-        return CallAndRethrowM + [&] {
-            auto startpos = code.tellg();
-            code.seekg(0, std::ios::end);
-            auto endpos = code.tellg();
-            auto size = endpos - startpos;
-            code.seekg(startpos);
-            std::string readcode;
-            readcode.resize(size);
-            code.read(&readcode[0], size);
-            return CreateShader<shaderType>(readcode.data(), entryPoint, shaderVersion);
-        };
-    }
-
-    template<ShaderType shaderType>
-    void SetShader(Shader<shaderType>& shader) {
-        CallAndRethrowM + [&] {
-            using Traits = shader_details::ShaderTraits<shaderType>;
-            Traits::Set(
-                m_deviceContext.Get(),
-                shader.shader.Get(),
-                nullptr,
-                0);
-        };
-    }
-
-    void SetRenderTarget(TextureView<ResourceViewType::RenderTarget>* rtv, TextureView<ResourceViewType::DepthStencil>* dsv = nullptr) {
-        auto pRTV = rtv->GetView();
-        ID3D11DepthStencilView* pDSV = nullptr;
-        if (dsv) {
-            pDSV = dsv->GetView();
-        }
-        m_deviceContext->OMSetRenderTargets(1, &pRTV, pDSV);
-    }
-
-private:
-    ComPtr<ID3D11Device> m_device;
-    ComPtr<ID3D11DeviceContext> m_deviceContext;
 };
 
-class SwapChain : public RefCountImpl<ISwapChain>
+class SwapChain :
+    public RefCountImpl<ISwapChain>,
+    public d3d_tools::SwapChain
 {
 public:
-    SwapChain(IntrusivePtr<IDevice> device, uint32_t w, uint32_t h, HWND hWnd) :
-        m_device(device)
-    {
-        CallAndRethrowM + [&] {
-            ComPtr<IDXGIFactory> factory;
-            WinAPI<char>::ThrowIfError(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(factory.Receive())));
-
-            DXGI_SWAP_CHAIN_DESC scd{};
-            scd.BufferCount = 1;                                    // one back buffer
-            scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;     // use 32-bit color
-            scd.BufferDesc.Width = w;
-            scd.BufferDesc.Height = h;
-            scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;      // how swap chain is to be used
-            scd.OutputWindow = hWnd;                                // the window to be used
-            scd.SampleDesc.Count = 1;                               // how many multisamples
-            scd.Windowed = TRUE;                                    // windowed/full-screen mode
-            scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-            auto pDevice = static_cast<ID3D11Device*>(device->GetNativeDevice());
-            WinAPI<char>::ThrowIfError(factory->CreateSwapChain(pDevice, &scd, m_swapchain.Receive()));
-        };
-    }
+    using d3d_tools::SwapChain::SwapChain;
 
     void* GetNativeInterface() const {
-        return m_swapchain.Get();
+        return GetInterface();
     }
-
-    IDXGISwapChain* GetInterface() const {
-        return m_swapchain.Get();
-    }
-
-    ComPtr<ID3D11RenderTargetView> MakeRenderTargetView() {
-        return CallAndRethrowM + [&] {
-            ComPtr<ID3D11Texture2D> backBuffer;
-            // get the address of the back buffer
-            WinAPI<char>::ThrowIfError(m_swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)backBuffer.Receive()));
-            // use the back buffer address to create the render target
-            auto device = static_cast<ID3D11Device*>(m_device->GetNativeDevice());
-            ComPtr<ID3D11RenderTargetView> result;
-            WinAPI<char>::ThrowIfError(device->CreateRenderTargetView(backBuffer.Get(), nullptr, result.Receive()));
-            return result;
-        };
-    }
-
-private:
-    IntrusivePtr<IDevice> m_device;
-    ComPtr<IDXGISwapChain> m_swapchain;
 };
 
 template<typename Element>
@@ -332,14 +206,17 @@ protected:
             deviceParams.debugDevice = params.debugDevice;
             deviceParams.noDeviceMultithreading = params.noDeviceMultithreading;
             m_device = IntrusivePtr<Device>::MakeInstance(deviceParams);
-            m_swapchain = IntrusivePtr<SwapChain>::MakeInstance(m_device, params.Width, params.Height, params.hWnd);
+            m_swapchain = IntrusivePtr<SwapChain>::MakeInstance(m_device->GetDevice(), params.Width, params.Height, params.hWnd);
         };
     }
 
     void InitializeRenderTarget(CreateParams& params) {
         CallAndRethrowM + [&] {
             UnusedVar(params);
-            m_renderTargetView = IntrusivePtr<TextureView<ResourceViewType::RenderTarget>>::MakeInstance(m_swapchain->MakeRenderTargetView());
+            auto backbuffer = m_swapchain->GetBackBuffer();
+            m_renderTargetView = IntrusivePtr<TextureView<ResourceViewType::RenderTarget>>::MakeInstance(
+                m_device->GetDevice(),
+                backbuffer.GetTexture());
         };
     }
 

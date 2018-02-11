@@ -78,7 +78,7 @@ public:
             {
                 auto loaded = Find(filename);
                 if (loaded != nullptr) {
-                    return edt::DynamicPointerCast<T>(loaded);
+                    return std::dynamic_pointer_cast<T>(loaded);
                 }
             }
 
