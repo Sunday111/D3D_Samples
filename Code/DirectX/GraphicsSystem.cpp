@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "GraphicsSystem.h"
+#include "D3D_Tools/Annotation.h"
 #include <algorithm>
 
 namespace {
@@ -135,91 +136,98 @@ GraphicsSystem::GraphicsSystem(Application* app, CreateParams& params) :
 }
 
 bool GraphicsSystem::Update(IApplication* iapp) {
-    UnusedVar(iapp);
-    float clearColor[4] {
-        0.0f, 0.2f, 0.4f, 1.0f
+    return CallAndRethrowM + [&] {
+        return d3d_tools::Annotate(m_device.Get(), L"Frame", [&]() {
+            UnusedVar(iapp);
+
+            float clearColor[4]{
+                0.0f, 0.2f, 0.4f, 1.0f
+            };
+
+            static float angle = 0.f;
+            constexpr float delta_angle = 0.001f;
+            angle += delta_angle;
+
+            d3d_tools::Annotate(m_device.Get(), L"Move triangles", [&]() {
+                d3d_tools::Annotate(m_device.Get(), L"Move Triangle 0", [&]() {
+                    d3d_tools::BufferMapper<Vertex> mapper(m_buffers[0].buffer, m_device->GetContext(), D3D11_MAP_WRITE_DISCARD);
+                    auto view = m_buffers[0].MakeViewCPU<Vertex>();
+                    for (size_t i = 0; i < view.GetSize(); ++i) {
+                        view[i].pos.x += 0.003f * std::sin(angle);
+                        mapper.At(i) = view[i];
+                    }
+                });
+
+                d3d_tools::Annotate(m_device.Get(), L"Move Triangle 1", [&]() {
+                    d3d_tools::BufferMapper<Vertex> mapper(m_buffers[1].buffer, m_device->GetContext(), D3D11_MAP_WRITE_DISCARD);
+                    auto view = m_buffers[1].MakeViewCPU<Vertex>();
+                    for (size_t i = 0; i < view.GetSize(); ++i) {
+                        view[i].pos.x += 0.003f * std::sin(angle + 3.14159f);
+                        mapper.At(i) = view[i];
+                    }
+                });
+            });
+
+            d3d_tools::Annotate(m_device.Get(), L"Draw triangles", [&]() {
+                for (int i = 0; i < 2; ++i) {
+                    m_device->GetContext()->ClearRenderTargetView(m_renderTargets[i].rt_rtv->GetView(), clearColor);
+                    m_device->GetContext()->ClearDepthStencilView(m_renderTargets[i].ds_dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+                    m_renderTargets[i].Activate(m_device.Get());
+                    m_drawShader.Activate(m_device.Get());
+                    m_buffers[i].Activate(m_device.Get());
+                    m_device->Draw(3);
+                }
+            });
+
+            d3d_tools::Annotate(m_device.Get(), L"Blend triangles", [&]() {
+                m_device->GetContext()->ClearRenderTargetView(m_renderTargets[2].rt_rtv->GetView(), clearColor);
+                m_device->GetContext()->ClearDepthStencilView(m_renderTargets[2].ds_dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+                m_renderTargets[2].Activate(m_device.Get());
+
+                ID3D11ShaderResourceView* textures[]{
+                    m_renderTargets[0].rt_srv->GetView(),
+                    m_renderTargets[1].rt_srv->GetView(),
+                    m_renderTargets[0].ds_srv->GetView(),
+                    m_renderTargets[1].ds_srv->GetView(),
+                };
+                m_device->GetContext()->PSSetShaderResources(0, 4, textures);
+
+                auto sampler = m_sampler.Get();
+                m_device->GetContext()->PSSetSamplers(0, 1, &sampler);
+                m_uiShader.Activate(m_device.Get());
+                m_buffers[2].Activate(m_device.Get());
+                m_device->Draw(4);
+
+                // Unset texture
+                ZeroMemory(textures, sizeof(textures));
+                m_device->GetContext()->PSSetShaderResources(0, 4, textures);
+
+                // Unset sampler
+                sampler = nullptr;
+                m_device->GetContext()->PSSetSamplers(0, 1, &sampler);
+            });
+
+            {// Select render target to present
+                int iRT = 0;
+                if (HIWORD(GetKeyState(VK_F2))) {
+                    iRT = 1;
+                }
+                else if (HIWORD(GetKeyState(VK_F3))) {
+                    iRT = 2;
+                }
+
+                ID3D11Resource* finalRT;
+                auto finalRenderTarget = m_renderTargetView;
+                finalRenderTarget->GetView()->GetResource(&finalRT);
+                auto renderTargetToShow = static_cast<ID3D11Texture2D*>(m_renderTargets[iRT].rt->GetNativeInterface());
+                m_device->GetContext()->CopyResource(finalRT, renderTargetToShow);
+            }
+
+            m_swapchain->Present();
+
+            return true;
+        });
     };
-
-    static float angle = 0.f;
-    constexpr float delta_angle = 0.001f;
-    angle += delta_angle;
-
-    {// This code moves vertices
-        {
-            d3d_tools::BufferMapper<Vertex> mapper(m_buffers[0].buffer, m_device->GetContext(), D3D11_MAP_WRITE_DISCARD);
-            auto view = m_buffers[0].MakeViewCPU<Vertex>();
-            for (size_t i = 0; i < view.GetSize(); ++i) {
-                view[i].pos.x += 0.003f * std::sin(angle);
-                mapper.At(i) = view[i];
-            }
-        }
-
-        {
-            d3d_tools::BufferMapper<Vertex> mapper(m_buffers[1].buffer, m_device->GetContext(), D3D11_MAP_WRITE_DISCARD);
-            auto view = m_buffers[1].MakeViewCPU<Vertex>();
-            for (size_t i = 0; i < view.GetSize(); ++i) {
-                view[i].pos.x += 0.003f * std::sin(angle + 3.14159f);
-                mapper.At(i) = view[i];
-            }
-        }
-    }
-
-    for(int i = 0; i < 2; ++i) {
-        m_device->GetContext()->ClearRenderTargetView(m_renderTargets[i].rt_rtv->GetView(), clearColor);
-        m_device->GetContext()->ClearDepthStencilView(m_renderTargets[i].ds_dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
-        m_renderTargets[i].Activate(m_device.Get());
-        m_drawShader.Activate(m_device.Get());
-        m_buffers[i].Activate(m_device.Get());
-        m_device->Draw(3);
-    }
-
-    {
-        m_device->GetContext()->ClearRenderTargetView(m_renderTargets[2].rt_rtv->GetView(), clearColor);
-        m_device->GetContext()->ClearDepthStencilView(m_renderTargets[2].ds_dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
-        m_renderTargets[2].Activate(m_device.Get());
-
-        ID3D11ShaderResourceView* textures[] {
-            m_renderTargets[0].rt_srv->GetView(),
-            m_renderTargets[1].rt_srv->GetView(),
-            m_renderTargets[0].ds_srv->GetView(),
-            m_renderTargets[1].ds_srv->GetView(),
-        };
-        m_device->GetContext()->PSSetShaderResources(0, 4, textures);
-
-        auto sampler = m_sampler.Get();
-        m_device->GetContext()->PSSetSamplers(0, 1, &sampler);
-        m_uiShader.Activate(m_device.Get());
-        m_buffers[2].Activate(m_device.Get());
-        m_device->Draw(4);
-
-        // Unset texture
-        ZeroMemory(textures, sizeof(textures));
-        m_device->GetContext()->PSSetShaderResources(0, 4, textures);
-
-        // Unset sampler
-        sampler = nullptr;
-        m_device->GetContext()->PSSetSamplers(0, 1, &sampler);
-    }
-
-    {// Select render target to present
-        int iRT = 0;
-        if (HIWORD(GetKeyState(VK_F2))) {
-            iRT = 1;
-        }
-        else if (HIWORD(GetKeyState(VK_F3))) {
-            iRT = 2;
-        }
-
-        ID3D11Resource* finalRT;
-        auto finalRenderTarget = m_renderTargetView;
-        finalRenderTarget->GetView()->GetResource(&finalRT);
-        auto renderTargetToShow = static_cast<ID3D11Texture2D*>(m_renderTargets[iRT].rt->GetNativeInterface());
-        m_device->GetContext()->CopyResource(finalRT, renderTargetToShow);
-    }
-
-    m_swapchain->Present();
-
-    return true;
 }
 
 void GraphicsSystem::OnWindowResize(int w, int h) {
