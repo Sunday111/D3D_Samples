@@ -28,6 +28,7 @@ def get_submodules():
 def for_each_submodule(commands):
     working_dir = os.getcwd()
     for submodule_dir in get_submodules() :
+        print(submodule_dir.name, ':')
         for command in commands:
             submodule_abs_path = os.path.join(working_dir, submodule_dir.name)
             run_git_command(command, repo=submodule_abs_path)
