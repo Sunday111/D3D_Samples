@@ -1,2 +1,4 @@
 Solution/Bin/*
 Solution/.vs/*
+*.pyc
+*.vscode
