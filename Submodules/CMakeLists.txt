@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.5.1)
+
+file(GLOB submodules "${CMAKE_CURRENT_SOURCE_DIR}/*")
+foreach(submodule ${submodules})
+    if(IS_DIRECTORY ${submodule})
+        set(module_header_file "${submodule}/CMakeLists.txt")
+        if(EXISTS ${module_header_file})
+            add_subdirectory(${submodule})
+        endif()
+    endif()
+endforeach()
