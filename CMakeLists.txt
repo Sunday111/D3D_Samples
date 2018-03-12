@@ -45,8 +45,4 @@ if(MSVC)
 endif()
 
 set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT TestSample)
-set(debug_directory "${CMAKE_BINARY_DIR}/bin/$<CONFIG>")
-
-foreach(config ${CMAKE_CONFIGURATION_TYPES})
-	set_target_properties(TestSample PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
-endforeach()
+set_target_properties(TestSample PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
