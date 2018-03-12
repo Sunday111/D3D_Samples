@@ -3,13 +3,15 @@ project(D3D_Samples)
 set(root_dir "${CMAKE_CURRENT_SOURCE_DIR}")
 set(submodules_dir "${root_dir}/submodules")
 set(code_dir "${root_dir}/Code")
+set(assets_dir "${CMAKE_SOURCE_DIR}/Assets")
+set(bin_dir ${CMAKE_BINARY_DIR}/bin)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/lib/Debug)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/lib/Debug)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin/Debug)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${bin_dir}/Debug)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/lib/Release)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/lib/Release)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin/Release)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${bin_dir}/Release)
 
 set(test_sample_sources_dir ${code_dir}/TestSample/)
 set(test_sample_sources_exts "h" "cpp")
@@ -28,21 +30,13 @@ target_link_libraries(TestSample SystemsApp)
 target_link_libraries(TestSample WindowSystem)
 target_link_libraries(TestSample WinWrappers)
 
-file(GLOB_RECURSE asset_files "${CMAKE_SOURCE_DIR}/Assets/*")
-
-add_custom_target(
-	CopyAssets
-	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Assets "${CMAKE_BINARY_DIR}/bin/$<CONFIG>/Assets"
-	DEPENDS ${asset_files}
-	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-	COMMENT "Copying assets to output directory"
-)
-
-add_dependencies(TestSample CopyAssets)
-
-if(MSVC)
-    target_compile_options(TestSample PUBLIC "/std:c++latest")
+if(${CopyAssets})
+	add_dependencies(TestSample CopyAssets)
 endif()
 
-set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT TestSample)
-set_target_properties(TestSample PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
+if(MSVC)
+	target_compile_options(TestSample PUBLIC "/std:c++latest")
+	set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT TestSample)
+	set_target_properties(TestSample PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
+endif()
+
