@@ -32,7 +32,7 @@ file(GLOB_RECURSE asset_files "${CMAKE_SOURCE_DIR}/Assets/*")
 
 add_custom_target(
 	CopyAssets
-	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Assets "$<TARGET_PROPERTY:TestSample,$<CONFIG>_OUTPUT_NAME>/Assets"
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Assets "${CMAKE_BINARY_DIR}/bin/$<CONFIG>/Assets"
 	DEPENDS ${asset_files}
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	COMMENT "Copying assets to output directory"
@@ -45,3 +45,8 @@ if(MSVC)
 endif()
 
 set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT TestSample)
+set(debug_directory "${CMAKE_BINARY_DIR}/bin/$<CONFIG>")
+
+foreach(config ${CMAKE_CONFIGURATION_TYPES})
+	set_target_properties(TestSample PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
+endforeach()
