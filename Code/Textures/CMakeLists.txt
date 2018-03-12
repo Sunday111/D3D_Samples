@@ -7,13 +7,13 @@ if(NOT ${PROJECT_Textures})
 endif()
 
 set(target_name Textures)
-set(sources_dir ${CMAKE_SOURCE_DIR})
+set(sources_dir ${CMAKE_CURRENT_SOURCE_DIR})
 set(sources_exts "h" "cpp")
 set(target_sources)
 
 foreach(entry ${sources_exts})
-	file(GLOB_RECURSE test_sample_sources_ext "${sources_dir}/*.${entry}")
-	list(APPEND target_sources ${test_sample_sources_ext})
+	file(GLOB_RECURSE sources_by_ext "${sources_dir}/*.${entry}")
+	list(APPEND target_sources ${sources_by_ext})
 endforeach()
 
 add_executable(${target_name} WIN32 ${target_sources})
