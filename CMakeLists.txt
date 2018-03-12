@@ -11,33 +11,37 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/lib/Release)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/lib/Release)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin/Release)
 
-add_executable(Test_Sample WIN32
-    ${code_dir}/DirectX/Application.h
-    ${code_dir}/DirectX/GraphicsSystem.cpp
-    ${code_dir}/DirectX/GraphicsSystem.h
-    ${code_dir}/DirectX/main.cpp)
+set(test_sample_sources_dir ${code_dir}/TestSample/)
+set(test_sample_sources_exts "h" "cpp")
+set(test_sample_sources)
+foreach(entry ${test_sample_sources_exts})
+	file(GLOB_RECURSE test_sample_sources_ext "${test_sample_sources_dir}/*.${entry}")
+	list(APPEND test_sample_sources ${test_sample_sources_ext})
+endforeach()
+add_executable(TestSample WIN32 ${test_sample_sources})
 add_subdirectory(${submodules_dir})
 
-target_link_libraries(Test_Sample D3D_Tools)
-target_link_libraries(Test_Sample EverydayTools)
-target_link_libraries(Test_Sample ResourceSystem)
-target_link_libraries(Test_Sample SystemsApp)
-target_link_libraries(Test_Sample WindowSystem)
-target_link_libraries(Test_Sample WinWrappers)
+target_link_libraries(TestSample D3D_Tools)
+target_link_libraries(TestSample EverydayTools)
+target_link_libraries(TestSample ResourceSystem)
+target_link_libraries(TestSample SystemsApp)
+target_link_libraries(TestSample WindowSystem)
+target_link_libraries(TestSample WinWrappers)
 
 file(GLOB_RECURSE asset_files "${CMAKE_SOURCE_DIR}/Assets/*")
 
 add_custom_target(
 	CopyAssets
-	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Assets "$<TARGET_PROPERTY:Test_Sample,$<CONFIG>_OUTPUT_NAME>/Assets"
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Assets "$<TARGET_PROPERTY:TestSample,$<CONFIG>_OUTPUT_NAME>/Assets"
 	DEPENDS ${asset_files}
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-	COMMENT "Copy assets to output directory"
-	#SOURCES ${asset_files}
+	COMMENT "Copying assets to output directory"
 )
 
-add_dependencies(Test_Sample CopyAssets)
+add_dependencies(TestSample CopyAssets)
 
 if(MSVC)
-    target_compile_options(Test_Sample PUBLIC "/std:c++latest")
+    target_compile_options(TestSample PUBLIC "/std:c++latest")
 endif()
+
+set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT TestSample)
