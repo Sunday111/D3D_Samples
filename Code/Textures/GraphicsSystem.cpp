@@ -60,7 +60,10 @@ GraphicsSystem::GraphicsSystem(Application* app, CreateParams& params) :
                 { -0.95f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f }
             };
 
-            m_buffer = std::make_unique<GpuBuffer<Vertex>>(m_device, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, edt::MakeArrayView(vertices));
+            m_buffer = std::make_unique<d3d_tools::CrossDeviceBuffer<Vertex>>(
+                m_device.Get(),
+                D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
+                edt::MakeArrayView(vertices));
         }
 
         // Create textures
@@ -98,13 +101,14 @@ bool GraphicsSystem::Update(IApplication* iapp) {
             angle += delta_angle;
 
 			d3d_tools::Annotate(m_device.Get(), L"Move triangle", [&]() {
-				auto castedBuffer = static_cast<GpuBuffer<Vertex>*>(m_buffer.get());
-				auto mapper = castedBuffer->MakeBufferMapper(m_device, D3D11_MAP_WRITE_DISCARD);
-				auto view = castedBuffer->MakeViewCPU();
-				for (size_t i = 0; i < view.GetSize(); ++i) {
-					view[i].pos.x += 0.003f * std::sin(angle);
-					mapper.At(i) = view[i];
-				}
+				auto castedBuffer = static_cast<d3d_tools::CrossDeviceBuffer<Vertex>*>(m_buffer.get());
+                castedBuffer->BeginUpdate();
+                auto bufferView = castedBuffer->MakeView();
+                for (size_t i = 0; i < bufferView.GetSize(); ++i) {
+                    bufferView[i].pos.x += 0.003f * std::sin(angle);
+                }
+                castedBuffer->EndUpdate();
+                castedBuffer->Sync(m_device.Get());
             });
 
 			d3d_tools::Annotate(m_device.Get(), L"Draw triangle", [&]() {
@@ -112,7 +116,7 @@ bool GraphicsSystem::Update(IApplication* iapp) {
 				m_device->GetContext()->ClearDepthStencilView(m_renderTarget.ds_dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 				m_renderTarget.Activate(m_device.Get());
 				m_drawShader.Activate(m_device.Get());
-				m_buffer->Activate(m_device.Get());
+				m_buffer->GetGpuBuffer()->Activate(m_device.Get());
 				m_device->Draw(3);
             });
 

@@ -31,6 +31,7 @@ endif()
 
 if(MSVC)
 	target_compile_options(${target_name} PUBLIC "/std:c++latest")
+	target_compile_definitions(${target_name} PRIVATE "-D_SCL_SECURE_NO_WARNINGS")
 	set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${target_name})
 	set_target_properties(${target_name} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
 endif()

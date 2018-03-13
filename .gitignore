@@ -1,6 +1,4 @@
-Solution/Bin/*
-Solution/.vs/*
-Build
 *.pyc
 *.vscode
 *.user
+*.vs
