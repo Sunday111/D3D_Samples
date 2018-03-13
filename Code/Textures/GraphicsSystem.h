@@ -64,6 +64,67 @@ public:
     virtual ~IGraphicsListener() = default;
 };
 
+class IGpuBuffer
+{
+public:
+    virtual ~IGpuBuffer() = default;
+    virtual void Activate(Device* device, uint32_t offset = 0) = 0;
+};
+
+template<typename ElementType>
+class GpuBuffer : public IGpuBuffer
+{
+public:
+    GpuBuffer(
+        IntrusivePtr<Device> device,
+        D3D_PRIMITIVE_TOPOLOGY topology,
+        edt::DenseArrayView<const ElementType> elements) :
+        m_topology(topology)
+    {
+        auto count = elements.GetSize();
+        if (count == 0) {
+            return;
+        }
+
+        m_cpuMirror.reserve(count);
+        for (auto& element : elements) {
+            m_cpuMirror.push_back(element);
+        }
+
+        D3D11_BUFFER_DESC desc{};
+        desc.Usage = D3D11_USAGE_DYNAMIC;
+        desc.ByteWidth = static_cast<UINT>(sizeof(ElementType) * count);
+        desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        m_buffer = device->CreateBuffer(desc, elements.GetData());
+    }
+
+    virtual void Activate(Device* device, uint32_t offset = 0) override {
+        CallAndRethrowM + [&] {
+            auto pBuffer = m_buffer.Get();
+            auto pContext = device->GetContext();
+            UINT stride = sizeof(ElementType);
+            pContext->IASetVertexBuffers(0, 1, &pBuffer, &stride, &offset);
+            pContext->IASetPrimitiveTopology(m_topology);
+        };
+    }
+
+    edt::DenseArrayView<ElementType> MakeViewCPU() {
+        return CallAndRethrowM + [&] {
+            return edt::DenseArrayView<ElementType>(&m_cpuMirror[0], m_cpuMirror.size());
+        };
+    }
+
+    d3d_tools::BufferMapper<ElementType> MakeBufferMapper(IntrusivePtr<Device> device, D3D11_MAP map) {
+        return d3d_tools::BufferMapper<ElementType>(m_buffer, device->GetContext(), map);
+    }
+
+private:
+    ComPtr<ID3D11Buffer> m_buffer;
+    D3D_PRIMITIVE_TOPOLOGY m_topology;
+    std::vector<ElementType> m_cpuMirror;
+};
+
 class GraphicsSystem :
     public ISystem,
     public IMainWindowListener,
@@ -95,32 +156,8 @@ public:
 
 private:
     Application* m_app = nullptr;
-
-    struct BufferInfo {
-        void Activate(Device* device, uint32_t offset = 0) {
-            CallAndRethrowM + [&] {
-                auto pBuffer = buffer.Get();
-                auto pContext = device->GetContext();
-                pContext->IASetVertexBuffers(0, 1, &pBuffer, &stride, &offset);
-                pContext->IASetPrimitiveTopology(topo);
-            };
-        }
-
-        template<typename T>
-        edt::DenseArrayView<T> MakeViewCPU() {
-            return CallAndRethrowM + [&] {
-                if (cpuData.size() % sizeof(T) != 0) {
-                    throw std::runtime_error("Trying to map to invalid type!");
-                }
-                return edt::DenseArrayView<T>((T*)&cpuData[0], cpuData.size() / sizeof(T));
-            };
-        }
-
-        uint32_t stride;
-        ComPtr<ID3D11Buffer> buffer;
-        D3D_PRIMITIVE_TOPOLOGY topo;
-        std::vector<uint8_t> cpuData;
-    } m_buffers[3];
+    
+    std::unique_ptr<IGpuBuffer> m_buffers[3];
 
     struct ShaderInfo {
         void Activate(Device* device) {
@@ -153,7 +190,6 @@ private:
     ShaderInfo m_drawShader;
     ShaderInfo m_uiShader;
     ComPtr<ID3D11SamplerState> m_sampler;
-
 
     bool m_fullscreen = false;
     IntrusivePtr<Device> m_device;

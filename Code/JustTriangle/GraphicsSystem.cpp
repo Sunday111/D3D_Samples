@@ -64,16 +64,7 @@ GraphicsSystem::GraphicsSystem(Application* app, CreateParams& params) :
                 { -0.95f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f }
             };
 
-            D3D11_BUFFER_DESC desc{};
-            desc.Usage = D3D11_USAGE_DYNAMIC;
-            desc.ByteWidth = sizeof(vertices);
-            desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-            desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-            m_buffers[0].buffer = m_device->CreateBuffer(desc, vertices);
-            m_buffers[0].stride = sizeof(Vertex);
-            m_buffers[0].topo = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
-            m_buffers[0].cpuData.resize(desc.ByteWidth);
-            memcpy(m_buffers[0].cpuData.data(), vertices, desc.ByteWidth);
+            m_buffers[0] = std::make_unique<GpuBuffer<Vertex>>(m_device, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, edt::MakeArrayView(vertices));
         }
 
         {// Create vertex buffer
@@ -83,16 +74,7 @@ GraphicsSystem::GraphicsSystem(Application* app, CreateParams& params) :
                 {  0.05f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f }
             };
 
-            D3D11_BUFFER_DESC desc{};
-            desc.Usage = D3D11_USAGE_DYNAMIC;
-            desc.ByteWidth = sizeof(vertices);
-            desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-            desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-            m_buffers[1].buffer = m_device->CreateBuffer(desc, vertices);
-            m_buffers[1].stride = sizeof(Vertex);
-            m_buffers[1].topo = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
-            m_buffers[1].cpuData.resize(desc.ByteWidth);
-            memcpy(m_buffers[1].cpuData.data(), vertices, desc.ByteWidth);
+            m_buffers[1] = std::make_unique<GpuBuffer<Vertex>>(m_device, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, edt::MakeArrayView(vertices));
         }
 
         {
@@ -103,16 +85,7 @@ GraphicsSystem::GraphicsSystem(Application* app, CreateParams& params) :
                 {  1.0f,  1.0f, 1.0f, 0.0f },
             };
 
-            D3D11_BUFFER_DESC desc{};
-            desc.Usage = D3D11_USAGE_DYNAMIC;
-            desc.ByteWidth = sizeof(vertices);
-            desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-            desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-            m_buffers[2].buffer = m_device->CreateBuffer(desc, vertices);
-            m_buffers[2].stride = sizeof(VertexUi);
-            m_buffers[2].topo = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
-            m_buffers[2].cpuData.resize(desc.ByteWidth);
-            memcpy(m_buffers[2].cpuData.data(), vertices, desc.ByteWidth);
+            m_buffers[2] = std::make_unique<GpuBuffer<VertexUi>>(m_device, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, edt::MakeArrayView(vertices));
         }
 
         // Create textures
@@ -150,8 +123,10 @@ bool GraphicsSystem::Update(IApplication* iapp) {
 
             d3d_tools::Annotate(m_device.Get(), L"Move triangles", [&]() {
                 d3d_tools::Annotate(m_device.Get(), L"Move Triangle 0", [&]() {
-                    d3d_tools::BufferMapper<Vertex> mapper(m_buffers[0].buffer, m_device->GetContext(), D3D11_MAP_WRITE_DISCARD);
-                    auto view = m_buffers[0].MakeViewCPU<Vertex>();
+                    auto castedBuffer = static_cast<GpuBuffer<Vertex>*>(m_buffers[0].get());
+                    auto mapper = castedBuffer->MakeBufferMapper(m_device, D3D11_MAP_WRITE_DISCARD);
+                    auto view = castedBuffer->MakeViewCPU();
+
                     for (size_t i = 0; i < view.GetSize(); ++i) {
                         view[i].pos.x += 0.003f * std::sin(angle);
                         mapper.At(i) = view[i];
@@ -159,8 +134,10 @@ bool GraphicsSystem::Update(IApplication* iapp) {
                 });
 
                 d3d_tools::Annotate(m_device.Get(), L"Move Triangle 1", [&]() {
-                    d3d_tools::BufferMapper<Vertex> mapper(m_buffers[1].buffer, m_device->GetContext(), D3D11_MAP_WRITE_DISCARD);
-                    auto view = m_buffers[1].MakeViewCPU<Vertex>();
+                    auto castedBuffer = static_cast<GpuBuffer<Vertex>*>(m_buffers[1].get());
+                    auto mapper = castedBuffer->MakeBufferMapper(m_device, D3D11_MAP_WRITE_DISCARD);
+                    auto view = castedBuffer->MakeViewCPU();
+
                     for (size_t i = 0; i < view.GetSize(); ++i) {
                         view[i].pos.x += 0.003f * std::sin(angle + 3.14159f);
                         mapper.At(i) = view[i];
@@ -174,7 +151,7 @@ bool GraphicsSystem::Update(IApplication* iapp) {
                     m_device->GetContext()->ClearDepthStencilView(m_renderTargets[i].ds_dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
                     m_renderTargets[i].Activate(m_device.Get());
                     m_drawShader.Activate(m_device.Get());
-                    m_buffers[i].Activate(m_device.Get());
+                    m_buffers[i]->Activate(m_device.Get());
                     m_device->Draw(3);
                 }
             });
@@ -195,7 +172,7 @@ bool GraphicsSystem::Update(IApplication* iapp) {
                 auto sampler = m_sampler.Get();
                 m_device->GetContext()->PSSetSamplers(0, 1, &sampler);
                 m_uiShader.Activate(m_device.Get());
-                m_buffers[2].Activate(m_device.Get());
+                m_buffers[2]->Activate(m_device.Get());
                 m_device->Draw(4);
 
                 // Unset texture

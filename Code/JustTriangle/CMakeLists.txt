@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.5.1)
 
-set(PROJECT_JustTriangle true CACHE BOOL "Renders single triangle")
+set(PROJECT_Textures true CACHE BOOL "Work with textures")
 
-if(NOT ${PROJECT_JustTriangle})
+if(NOT ${PROJECT_Textures})
     return()
 endif()
 
-set(target_name JustTriangle)
+set(target_name Textures)
 set(sources_dir ${CMAKE_CURRENT_SOURCE_DIR})
 set(sources_exts "h" "cpp")
 set(target_sources)
