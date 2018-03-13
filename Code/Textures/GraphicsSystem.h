@@ -157,7 +157,7 @@ public:
 private:
     Application* m_app = nullptr;
     
-    std::unique_ptr<IGpuBuffer> m_buffers[3];
+    std::unique_ptr<IGpuBuffer> m_buffer;
 
     struct ShaderInfo {
         void Activate(Device* device) {
@@ -185,7 +185,7 @@ private:
         std::unique_ptr<Texture> ds;
         IntrusivePtr<TextureView<ResourceViewType::DepthStencil>> ds_dsv;
         IntrusivePtr<TextureView<ResourceViewType::ShaderResource>> ds_srv;
-    } m_renderTargets[3];
+    } m_renderTarget;
 
     ShaderInfo m_drawShader;
     ShaderInfo m_uiShader;
