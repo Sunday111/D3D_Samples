@@ -31,26 +31,17 @@ GraphicsSystem::GraphicsSystem(Application* app, CreateParams& params) :
         Initialize(params);
 
         app->GetWindowSystem()->GetWindow()->Subscribe(this);
+        auto resourceSystem = app->GetResourceSystem();
+
+        resourceSystem->RegisterResourceFabric(IntrusivePtr<ShaderTemplateResourceFabric>::MakeInstance(m_device));
 
         {// Read and compile shaders
-            { // Draw shader
                 D3D11_INPUT_ELEMENT_DESC elementDesc[]{
                     { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
                     { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
                 };
-                m_drawShader.vs = CreateShaderFromFile<ShaderType::Vertex>("Assets/Shaders/Shader.hlsl", "VShader", ShaderVersion::_5_0);
-                m_drawShader.ps = CreateShaderFromFile<ShaderType::Pixel>("Assets/Shaders/Shader.hlsl", "PShader", ShaderVersion::_5_0);
-                m_drawShader.layout = m_device->CreateInputLayout(elementDesc, 2, m_drawShader.vs.bytecode.Get());
-            }
-            { // Ui shader
-                D3D11_INPUT_ELEMENT_DESC elementDesc[]{
-                    { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,    0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0,  8, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-                };
-                m_uiShader.vs = CreateShaderFromFile<ShaderType::Vertex>("Assets/Shaders/Ui.hlsl", "VShader", ShaderVersion::_5_0);
-                m_uiShader.ps = CreateShaderFromFile<ShaderType::Pixel>("Assets/Shaders/Ui.hlsl", "PShader", ShaderVersion::_5_0);
-                m_uiShader.layout = m_device->CreateInputLayout(elementDesc, 2, m_uiShader.vs.bytecode.Get());
-            }
+                m_drawShader.shaderTemplate = std::dynamic_pointer_cast<ShaderTemplate>(resourceSystem->GetResource("Assets/Shaders/Templates/Shader.xml"));
+                m_drawShader.layout = m_device->CreateInputLayout(elementDesc, 2, m_drawShader.shaderTemplate->vertexShader->m_impl.bytecode.Get());
         }
 
         {// Create vertex buffer

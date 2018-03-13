@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.5.1)
 
-set(PROJECT_JustTriangle true CACHE BOOL "Work with textures")
+set(PROJECT_JustTriange true CACHE BOOL "Work with textures")
 
-if(NOT ${PROJECT_JustTriangle})
+if(NOT ${PROJECT_JustTriange})
     return()
 endif()
 
@@ -24,6 +24,7 @@ target_link_libraries(${target_name} PRIVATE ResourceSystem)
 target_link_libraries(${target_name} PRIVATE SystemsApp)
 target_link_libraries(${target_name} PRIVATE WindowSystem)
 target_link_libraries(${target_name} PRIVATE WinWrappers)
+target_link_libraries(${target_name} PRIVATE RapidXML)
 
 if(${CopyAssets})
 	add_dependencies(${target_name} CopyAssets)
@@ -31,6 +32,8 @@ endif()
 
 if(MSVC)
 	target_compile_options(${target_name} PUBLIC "/std:c++latest")
+	target_compile_definitions(${target_name} PRIVATE "-D_SCL_SECURE_NO_WARNINGS")
+	target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 	set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${target_name})
 	set_target_properties(${target_name} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
 endif()

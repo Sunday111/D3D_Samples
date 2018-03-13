@@ -1,6 +1,3 @@
-[submodule "Submodules/VisualStudioProps"]
-	path = Submodules/VisualStudioProps
-	url = https://github.com/Sunday111/VisualStudioProps
 [submodule "Submodules/WinWrappers"]
 	path = Submodules/WinWrappers
 	url = https://github.com/Sunday111/WinWrappers-WinWrappers

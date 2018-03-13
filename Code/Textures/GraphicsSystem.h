@@ -2,7 +2,6 @@
 
 #include "SystemsApp/ISystem.h"
 #include "WindowSystem/MainWindow.h"
-#include "ResourceSystem/FileResource.h"
 #include "EverydayTools/Observable.h"
 
 #include "Rendering/Shader.h"
@@ -102,15 +101,14 @@ private:
     struct ShaderInfo {
         void Activate(Device* device) {
             CallAndRethrowM + [&] {
-                device->SetShader(vs);
-                device->SetShader(ps);
+                device->SetShader(shaderTemplate->vertexShader->m_impl);
+                device->SetShader(shaderTemplate->fragmentShader->m_impl);
                 device->GetContext()->IASetInputLayout(layout.Get());
             };
         }
 
         ComPtr<ID3D11InputLayout> layout;
-        Shader<ShaderType::Vertex> vs;
-        Shader<ShaderType::Pixel> ps;
+        IntrusivePtr<ShaderTemplate> shaderTemplate;
     };
     
     struct RT {
@@ -128,7 +126,6 @@ private:
     } m_renderTarget;
 
     ShaderInfo m_drawShader;
-    ShaderInfo m_uiShader;
     ComPtr<ID3D11SamplerState> m_sampler;
 
     bool m_fullscreen = false;

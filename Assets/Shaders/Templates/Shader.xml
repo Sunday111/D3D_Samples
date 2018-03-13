@@ -1,0 +1,11 @@
+<resource>
+    <type>ShaderTemplate</type>
+    <vertex_shader>
+        <file>Assets/Shaders/VertexShader.hlsl</file>
+        <entry_point>VShader</entry_point>
+    </vertex_shader>
+    <fragment_shader>
+        <file>Assets/Shaders/FragmentShader.hlsl</file>
+        <entry_point>PShader</entry_point>
+    </fragment_shader>
+</resource>

@@ -1,0 +1,4 @@
+<resource>
+    <type>Shader</type>
+    <template>Assets/Shaders/Templates/Shader.xml</template>
+</resource>

@@ -1,0 +1,9 @@
+cmake_minimum_required(VERSION 3.5.1)
+
+set(module_name RapidXML)
+set(RapidXML true CACHE BOOL "XML parser")
+if(NOT ${RapidXML})
+    return()
+endif()
+add_library(${module_name} INTERFACE)
+target_include_directories(${module_name} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
