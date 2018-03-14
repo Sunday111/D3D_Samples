@@ -33,15 +33,17 @@ GraphicsSystem::GraphicsSystem(Application* app, CreateParams& params) :
         app->GetWindowSystem()->GetWindow()->Subscribe(this);
         auto resourceSystem = app->GetResourceSystem();
 
-        resourceSystem->RegisterResourceFabric(IntrusivePtr<ShaderTemplateResourceFabric>::MakeInstance(m_device));
+		resourceSystem->RegisterResourceFabric(IntrusivePtr<ShaderTemplateFabric>::MakeInstance());
+		resourceSystem->RegisterResourceFabric(IntrusivePtr<ShaderFabric>::MakeInstance(m_device));
+		resourceSystem->RegisterResourceFabric(IntrusivePtr<EffectFabric>::MakeInstance());
 
         {// Read and compile shaders
                 D3D11_INPUT_ELEMENT_DESC elementDesc[]{
                     { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
                     { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
                 };
-                m_drawShader.shaderTemplate = std::dynamic_pointer_cast<ShaderTemplate>(resourceSystem->GetResource("Assets/Shaders/Templates/Shader.xml"));
-                m_drawShader.layout = m_device->CreateInputLayout(elementDesc, 2, m_drawShader.shaderTemplate->vertexShader->m_impl.bytecode.Get());
+				m_drawShader.effect = std::dynamic_pointer_cast<Effect>(resourceSystem->GetResource("Assets/Effects/DefaultEffect.xml"));
+                m_drawShader.layout = m_device->CreateInputLayout(elementDesc, 2, m_drawShader.effect->vs->m_impl.bytecode.Get());
         }
 
         {// Create vertex buffer
@@ -159,4 +161,13 @@ void GraphicsSystem::Initialize(CreateParams params) {
             m_device->SetViewports(edt::MakeArrayView(viewport));
         }
     };
+}
+
+void GraphicsSystem::ShaderInfo::Activate(Device* device)
+{
+	CallAndRethrowM + [&] {
+		device->SetShader(effect->vs->m_impl);
+		device->SetShader(effect->fs->m_impl);
+		device->GetContext()->IASetInputLayout(layout.Get());
+	};
 }

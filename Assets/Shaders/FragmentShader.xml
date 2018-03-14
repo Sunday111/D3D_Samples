@@ -1,0 +1,8 @@
+<resource>
+    <type>Shader</type>
+    <shader>
+        <!-- Here I can add some shader compile time options -->
+        <template>Assets/Shaders/FragmentShaderTemplate.xml</template>
+        <entry_point>PShader</entry_point>
+    </shader>
+</resource>

@@ -8,38 +8,59 @@ class Device;
 using ShaderType = d3d_tools::ShaderType;
 using ShaderVersion = d3d_tools::ShaderVersion;
 
-class IShader :
-    public IRefCountObject
-{
-public:
-    virtual ~IShader() = default;
-};
-
-template<ShaderType st>
-class Shader :
-    public RefCountImpl<IShader>
-{
-public:
-    d3d_tools::Shader<st> m_impl;
-};
-
 class ShaderTemplate :
-    public RefCountImpl<IResource>
+	public RefCountImpl<IResource>
 {
 public:
-    IntrusivePtr<Shader<ShaderType::Vertex>> vertexShader;
-    IntrusivePtr<Shader<ShaderType::Pixel>> fragmentShader;
+	ShaderType type;
+	std::string code;
 };
 
-class ShaderTemplateResourceFabric :
+template<ShaderType shaderType>
+class Shader :
+	public RefCountImpl<IResource>
+{
+public:
+	d3d_tools::Shader<shaderType> m_impl;
+};
+
+class Effect :
+	public RefCountImpl<IResource>
+{
+public:
+	IntrusivePtr<Shader<ShaderType::Vertex>> vs;
+	IntrusivePtr<Shader<ShaderType::Pixel>> fs;
+};
+
+class ShaderTemplateFabric :
     public RefCountImpl<IResourceFabric>
 {
 public:
-    ShaderTemplateResourceFabric(IntrusivePtr<Device> device);
-
+	virtual std::string_view GetNodeName() const override;
     virtual std::string_view GetResourceType() const override;
-    virtual IntrusivePtr<IResource> LoadResource(IntrusivePtr<IXmlNode> document) const override;
+    virtual IntrusivePtr<IResource> LoadResource(IResourceSystem*, IntrusivePtr<IXmlNode> document) const override;
+};
+
+class ShaderFabric :
+	public RefCountImpl<IResourceFabric>
+{
+public:
+	ShaderFabric(IntrusivePtr<Device>);
+
+	virtual std::string_view GetNodeName() const override;
+	virtual std::string_view GetResourceType() const override;
+	virtual IntrusivePtr<IResource> LoadResource(IResourceSystem*, IntrusivePtr<IXmlNode> document) const override;
 
 private:
-    IntrusivePtr<Device> m_device;
+	IntrusivePtr<Device> m_device;
 };
+
+class EffectFabric :
+	public RefCountImpl<IResourceFabric>
+{
+public:
+	virtual std::string_view GetNodeName() const override;
+	virtual std::string_view GetResourceType() const override;
+	virtual IntrusivePtr<IResource> LoadResource(IResourceSystem*, IntrusivePtr<IXmlNode> document) const override;
+};
+

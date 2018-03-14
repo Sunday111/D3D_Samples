@@ -1,0 +1,7 @@
+<resource>
+    <type>ShaderTemplate</type>
+    <shader_template>
+        <type>Vertex</type>
+        <file>Assets/Shaders/VertexShader.hlsl</file>
+    </shader_template>
+</resource>

@@ -1,0 +1,7 @@
+<resource>
+    <type>ShaderTemplate</type>
+    <shader_template>
+        <type>Fragment</type>
+        <file>Assets/Shaders/FragmentShader.hlsl</file>
+    </shader_template>
+</resource>

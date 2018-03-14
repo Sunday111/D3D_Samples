@@ -99,16 +99,10 @@ private:
     std::unique_ptr<d3d_tools::ICrossDeviceBuffer> m_buffer;
 
     struct ShaderInfo {
-        void Activate(Device* device) {
-            CallAndRethrowM + [&] {
-                device->SetShader(shaderTemplate->vertexShader->m_impl);
-                device->SetShader(shaderTemplate->fragmentShader->m_impl);
-                device->GetContext()->IASetInputLayout(layout.Get());
-            };
-        }
+		void Activate(Device* device);
 
         ComPtr<ID3D11InputLayout> layout;
-        IntrusivePtr<ShaderTemplate> shaderTemplate;
+        IntrusivePtr<Effect> effect;
     };
     
     struct RT {
