@@ -4,7 +4,6 @@
 #include "WindowSystem/MainWindow.h"
 #include "EverydayTools/Observable.h"
 
-#include "Rendering/Shader.h"
 #include "Rendering/Texture.h"
 
 #include "D3D_Tools/Device.h"
@@ -15,6 +14,7 @@
 #include "D3D_Tools/CrossDeviceBuffer.h"
 
 class Application;
+class Effect;
 
 class IDevice : public IRefCountObject {
 public:
@@ -83,15 +83,6 @@ public:
     void OnWindowResize(int w, int h) override;
 
     void Initialize(CreateParams params);
-
-    template<ShaderType shaderType>
-    decltype(auto) CreateShaderFromFile(const char* fileName, const char* entryPoint, ShaderVersion shaderVersion) {
-        return CallAndRethrowM + [&]{
-            auto resourceSystem = m_app->GetResourceSystem();
-            auto fileResource = resourceSystem->GetResource<FileResource>(fileName);
-            return m_device->CreateShader<shaderType>(fileResource->GetDataView(), entryPoint, shaderVersion);
-        };
-    }
 
 private:
     Application* m_app = nullptr;

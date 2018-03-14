@@ -2,58 +2,8 @@
 #include "GraphicsSystem.h"
 #include <fstream>
 
-template<typename Parent>
-IntrusivePtr<IXmlNode> GetMandatoryNode(Parent& parent, std::string_view name) {
-	return CallAndRethrowM + [&] {
-		auto node = parent->FindFirstNode(name);
-		if (node == nullptr) {
-			throw std::runtime_error("Could not find node");
-		}
-		return node;
-	};
-}
-
-static ShaderType ParseShaderType(std::string_view str) {
-	return CallAndRethrowM + [&] {
-		if (str == "Vertex") return ShaderType::Vertex;
-		if (str == "Pixel") return ShaderType::Pixel;
-		if (str == "Fragment") return ShaderType::Pixel;
-		throw std::runtime_error("Failed to parse shader type");
-	};
-}
-
-std::string_view ShaderTemplateFabric::GetNodeName() const {
-	return "shader_template";
-}
-
-std::string_view ShaderTemplateFabric::GetResourceType() const {
-	return "ShaderTemplate";
-}
-
-IntrusivePtr<IResource> ShaderTemplateFabric::LoadResource(IResourceSystem*, IntrusivePtr<IXmlNode> node) const {
-	return CallAndRethrowM + [&] {
-		auto typeNode = GetMandatoryNode(node, "type");
-		auto fileNode = GetMandatoryNode(node, "file");
-
-		auto shaderType = ParseShaderType(typeNode->GetValue());
-
-		std::ifstream shaderFile;
-		shaderFile.open(fileNode->GetValue().data());
-		if (!shaderFile.is_open()) {
-			throw std::runtime_error("File not found");
-		}
-
-		auto content = std::string(
-			(std::istreambuf_iterator<char>(shaderFile)),
-			(std::istreambuf_iterator<char>()));
-
-		auto shaderTemplate = IntrusivePtr<ShaderTemplate>::MakeInstance();
-		shaderTemplate->type = shaderType;
-		shaderTemplate->code = std::move(content);
-
-		return shaderTemplate;
-    };
-}
+#include "ShaderTemplate.h"
+#include "Effect.h"
 
 ShaderFabric::ShaderFabric(IntrusivePtr<Device> device) :
 	m_device(device)
@@ -79,8 +29,8 @@ IntrusivePtr<Shader<st>> LoadShader(IntrusivePtr<ShaderTemplate> shaderTemplate,
 
 IntrusivePtr<IResource> ShaderFabric::LoadResource(IResourceSystem* resourceSystem, IntrusivePtr<IXmlNode> node) const {
 	return CallAndRethrowM + [&] () -> IntrusivePtr<IResource> {
-		auto templateNode = GetMandatoryNode(node, "template");
-		auto entryNode = GetMandatoryNode(node, "entry_point");
+        auto templateNode = node->GetFirstNode("template");
+        auto entryNode = node->GetFirstNode("entry_point");
 		auto shaderTemplate = std::dynamic_pointer_cast<ShaderTemplate>(resourceSystem->GetResource(templateNode->GetValue()));
 		auto entryPoint = entryNode->GetValue();
 
@@ -95,45 +45,6 @@ IntrusivePtr<IResource> ShaderFabric::LoadResource(IResourceSystem* resourceSyst
 		default:
 			throw std::runtime_error("Not implemented for this shader type here");
 		}
-	};
-}
-
-std::string_view EffectFabric::GetNodeName() const {
-	return "effect";
-}
-
-std::string_view EffectFabric::GetResourceType() const {
-	return "Effect";
-}
-
-IntrusivePtr<IResource> EffectFabric::LoadResource(IResourceSystem* resourceSystem, IntrusivePtr<IXmlNode> node) const {
-	return CallAndRethrowM + [&] {
-		bool anyShader = false;
-		auto result = IntrusivePtr<Effect>::MakeInstance();
-
-		// TODO: check legal shader types combinations?
-
-		{
-			auto vsNode = GetMandatoryNode(node, "vertex_shader");
-			if (vsNode != nullptr) {
-				result->vs = std::dynamic_pointer_cast<Shader<ShaderType::Vertex>>(resourceSystem->GetResource(vsNode->GetValue()));
-				anyShader = true;
-			}
-		}
-
-		{
-			auto vsNode = GetMandatoryNode(node, "fragment_shader");
-			if (vsNode != nullptr) {
-				result->fs = std::dynamic_pointer_cast<Shader<ShaderType::Pixel>>(resourceSystem->GetResource(vsNode->GetValue()));
-				anyShader = true;
-			}
-		}
-
-		if (!anyShader) {
-			throw std::runtime_error("Invalid effect file (0 shaders)");
-		}
-
-		return result;
 	};
 }
 

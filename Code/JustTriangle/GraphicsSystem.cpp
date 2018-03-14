@@ -3,6 +3,10 @@
 #include "D3D_Tools/Annotation.h"
 #include <algorithm>
 
+#include "Rendering/Effect.h"
+#include "Rendering/Shader.h"
+#include "Rendering/ShaderTemplate.h"
+
 namespace {
     struct vec3 {
         union {
