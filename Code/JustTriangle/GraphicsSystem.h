@@ -117,4 +117,6 @@ private:
     IntrusivePtr<Device> m_device;
     IntrusivePtr<SwapChain> m_swapchain;
     IntrusivePtr<TextureView<ResourceViewType::RenderTarget>> m_renderTargetView;
+	IntrusivePtr<Texture> m_texture;
+	IntrusivePtr<TextureView<ResourceViewType::ShaderResource>> m_textureView;
 };

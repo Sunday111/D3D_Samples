@@ -6,25 +6,15 @@
 #include "Rendering/Effect.h"
 #include "Rendering/Shader.h"
 #include "Rendering/ShaderTemplate.h"
+#include "Rendering/Texture.h"
+
+#include "EverydayTools/Geom/Vector.h"
 
 namespace {
-    struct vec3 {
-        union {
-            float arr[3];
-            float x, y, z;
-        };
-    };
-
-    struct rgba {
-        union {
-            float arr[4];
-            float r, g, b, a;
-        };
-    };
-
     struct Vertex {
-        vec3 pos;
-        rgba col;
+		edt::geom::Vector<float, 3> pos;
+		edt::geom::Vector<float, 4> col;
+		edt::geom::Vector<float, 2> tex;
     };
 }
 
@@ -40,22 +30,44 @@ GraphicsSystem::GraphicsSystem(Application* app, CreateParams& params) :
 		resourceSystem->RegisterResourceFabric(IntrusivePtr<ShaderTemplateFabric>::MakeInstance());
 		resourceSystem->RegisterResourceFabric(IntrusivePtr<ShaderFabric>::MakeInstance(m_device));
 		resourceSystem->RegisterResourceFabric(IntrusivePtr<EffectFabric>::MakeInstance());
+		resourceSystem->RegisterResourceFabric(IntrusivePtr<TextureFabric>::MakeInstance(m_device));
+
+		m_texture = std::dynamic_pointer_cast<Texture>(resourceSystem->GetResource("Assets/Textures/container.xml"));
+		m_textureView = m_texture->GetView<ResourceViewType::ShaderResource>(m_device->GetDevice(), TextureFormat::R8_G8_B8_A8_UNORM);
 
         {// Read and compile shaders
                 D3D11_INPUT_ELEMENT_DESC elementDesc[]{
-                    { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-                    { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+                    { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                    { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+                    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
                 };
 				m_drawShader.effect = std::dynamic_pointer_cast<Effect>(resourceSystem->GetResource("Assets/Effects/DefaultEffect.xml"));
-                m_drawShader.layout = m_device->CreateInputLayout(elementDesc, 2, m_drawShader.effect->vs->m_impl.bytecode.Get());
+                m_drawShader.layout = m_device->CreateInputLayout(elementDesc, 3, m_drawShader.effect->vs->m_impl.bytecode.Get());
         }
 
         {// Create vertex buffer
-            Vertex vertices[] = {
-                { -0.50f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f },
-                { -0.05f, -0.5,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f },
-                { -0.95f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f }
-            };
+			Vertex vertices[4];
+
+			//      POSITION               ////         COLOR                ////         TEXTURE COORDS     
+			vertices[0].pos.rx() = -0.50f; /**/ vertices[0].col.rx() = 0.0f; /**/ vertices[0].tex.rx() = 0.0f; 
+			vertices[0].pos.ry() = -0.50f; /**/ vertices[0].col.ry() = 0.0f; /**/ vertices[0].tex.ry() = 0.0f; 
+			vertices[0].pos.rz() =  0.00f; /**/ vertices[0].col.rz() = 1.0f; /**/
+			                               /**/ vertices[0].col.rw() = 1.0f; /**/
+			                               /**/                              /**/
+			vertices[1].pos.rx() = -0.50f; /**/ vertices[1].col.rx() = 1.0f; /**/ vertices[1].tex.rx() = 0.0f; 
+			vertices[1].pos.ry() =  0.50f; /**/ vertices[1].col.ry() = 0.0f; /**/ vertices[1].tex.ry() = 1.0f; 
+			vertices[1].pos.rz() =  0.00f; /**/ vertices[1].col.rz() = 0.0f; /**/
+			                               /**/ vertices[1].col.rw() = 1.0f; /**/
+			                               /**/                              /**/
+			vertices[2].pos.rx() =  0.50f; /**/ vertices[2].col.rx() = 0.0f; /**/ vertices[2].tex.rx() = 1.0f; 
+			vertices[2].pos.ry() = -0.50f; /**/ vertices[2].col.ry() = 1.0f; /**/ vertices[2].tex.ry() = 0.0f; 
+			vertices[2].pos.rz() =  0.00f; /**/ vertices[2].col.rz() = 0.0f; /**/
+			                               /**/ vertices[2].col.rw() = 1.0f; /**/
+			                               /**/                              /**/
+			vertices[3].pos.rx() =  0.50f; /**/ vertices[3].col.rx() = 0.0f; /**/ vertices[3].tex.rx() = 1.0f; 
+			vertices[3].pos.ry() =  0.50f; /**/ vertices[3].col.ry() = 1.0f; /**/ vertices[3].tex.ry() = 1.0f; 
+			vertices[3].pos.rz() =  0.00f; /**/ vertices[3].col.rz() = 0.0f; /**/
+			                               /**/ vertices[3].col.rw() = 1.0f; /**/
 
             m_buffer = std::make_unique<d3d_tools::CrossDeviceBuffer<Vertex>>(
                 m_device.Get(),
@@ -102,7 +114,7 @@ bool GraphicsSystem::Update(IApplication* iapp) {
                 castedBuffer->BeginUpdate();
                 auto bufferView = castedBuffer->MakeView();
                 for (size_t i = 0; i < bufferView.GetSize(); ++i) {
-                    bufferView[i].pos.x += 0.003f * std::sin(angle);
+                    bufferView[i].pos.rx() += 0.00f * std::sin(angle);
                 }
                 castedBuffer->EndUpdate();
                 castedBuffer->Sync(m_device.Get());
@@ -114,7 +126,9 @@ bool GraphicsSystem::Update(IApplication* iapp) {
 				m_renderTarget.Activate(m_device.Get());
 				m_drawShader.Activate(m_device.Get());
 				m_buffer->GetGpuBuffer()->Activate(m_device.Get());
-				m_device->Draw(3);
+				m_device->SetSampler(0, m_sampler.Get(), ShaderType::Pixel);
+				m_device->SetShaderResource(0, ShaderType::Pixel, m_textureView->GetView());
+				m_device->Draw(4);
             });
 
 			d3d_tools::Annotate(m_device.Get(), L"Copy texture to swap chain texture", [&]() {
