@@ -1,0 +1,14 @@
+<resource>
+    <type>Shader</type>
+    <shader>
+        <!-- Here I can add some shader compile time options -->
+        <template>Assets/Shaders/VertexShaderTemplate.xml</template>
+        <entry_point>VShader</entry_point>
+        <definitions>
+            <definition>
+                <name>USE_COLOR</name>
+                <value></value>
+            </definition>
+        <definitions>
+    </shader>
+</resource>

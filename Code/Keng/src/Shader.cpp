@@ -6,6 +6,49 @@
 
 namespace keng
 {
+	struct ShaderCompiler
+	{
+		template<typename TVector>
+		decltype(auto) MakeVectorView(TVector& vector) {
+			using Result = edt::DenseArrayView<typename TVector::value_type>;
+			if (vector.empty()) {
+				return Result();
+			}
+			return Result(&vector[0], vector.size());
+		}
+
+		IntrusivePtr<Device> device;
+		IntrusivePtr<ShaderTemplate> shaderTemplate;
+		std::string_view entryPoint;
+		std::vector<d3d_tools::ShaderMacro> definitions;
+
+		IntrusivePtr<IResource> Compile() {
+			switch (shaderTemplate->type)
+			{
+			case ShaderType::Vertex:
+				return Compile<ShaderType::Vertex>();
+
+			case ShaderType::Pixel:
+				return Compile<ShaderType::Pixel>();
+
+			default:
+				throw std::runtime_error("Not implemented for this shader type here");
+			}
+		}
+
+		template<ShaderType st>
+		IntrusivePtr<Shader<st>> Compile() {
+			auto result = IntrusivePtr<Shader<st>>::MakeInstance();
+			auto view = 
+			result->m_impl = device->CreateShader<st>(
+				shaderTemplate->code.c_str(),
+				entryPoint.data(),
+				d3d_tools::ShaderVersion::_5_0,
+				MakeVectorView(definitions));
+			return result;
+		}
+	};
+
 	ShaderFabric::ShaderFabric(IntrusivePtr<Device> device) :
 		m_device(device)
 	{}
@@ -18,34 +61,23 @@ namespace keng
 		return "Shader";
 	}
 
-	template<ShaderType st>
-	IntrusivePtr<Shader<st>> LoadShader(IntrusivePtr<ShaderTemplate> shaderTemplate, std::string_view entryPoint, IntrusivePtr<Device> device) {
-		auto result = IntrusivePtr<Shader<st>>::MakeInstance();
-		result->m_impl = device->CreateShader<st>(
-			shaderTemplate->code.c_str(),
-			entryPoint.data(),
-			d3d_tools::ShaderVersion::_5_0);
-		return result;
-	}
-
 	IntrusivePtr<IResource> ShaderFabric::LoadResource(IResourceSystem* resourceSystem, IntrusivePtr<IXmlNode> node) const {
 		return CallAndRethrowM + [&]() -> IntrusivePtr<IResource> {
+			ShaderCompiler shaderCompiler;
+			shaderCompiler.device = m_device;
+
+			// Template
 			auto templateNode = node->GetFirstNode("template");
+			shaderCompiler.shaderTemplate = std::dynamic_pointer_cast<ShaderTemplate>(resourceSystem->GetResource(templateNode->GetValue()));
+
 			auto entryNode = node->GetFirstNode("entry_point");
-			auto shaderTemplate = std::dynamic_pointer_cast<ShaderTemplate>(resourceSystem->GetResource(templateNode->GetValue()));
-			auto entryPoint = entryNode->GetValue();
+			shaderCompiler.entryPoint = entryNode->GetValue();
 
-			switch (shaderTemplate->type)
-			{
-			case ShaderType::Vertex:
-				return LoadShader<ShaderType::Vertex>(shaderTemplate, entryPoint, m_device);
+			//if (auto definitionsNode = node->FindFirstNode("deinitions")) {
+			//	definitionsNode->FindFirstNode
+			//}
 
-			case ShaderType::Pixel:
-				return LoadShader<ShaderType::Pixel>(shaderTemplate, entryPoint, m_device);
-
-			default:
-				throw std::runtime_error("Not implemented for this shader type here");
-			}
+			return shaderCompiler.Compile();
 		};
 	}
 }
