@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.5.1)
 
-set(PROJECT_JustTriange true CACHE BOOL "Work with textures")
+set(PROJECT_SimpleQuad true CACHE BOOL "Render quad")
 
-if(NOT ${PROJECT_JustTriange})
+if(NOT ${PROJECT_SimpleQuad})
     return()
 endif()
 
-set(target_name JustTriangle)
+set(target_name SimpleQuad)
 set(sources_dir ${CMAKE_CURRENT_SOURCE_DIR})
 set(sources_exts "h" "cpp")
 set(target_sources)
@@ -25,6 +25,7 @@ target_link_libraries(${target_name} PRIVATE SystemsApp)
 target_link_libraries(${target_name} PRIVATE WindowSystem)
 target_link_libraries(${target_name} PRIVATE WinWrappers)
 target_link_libraries(${target_name} PRIVATE RapidXML)
+target_link_libraries(${target_name} PRIVATE Keng)
 
 if(${CopyAssets})
 	add_dependencies(${target_name} CopyAssets)
