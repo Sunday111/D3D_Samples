@@ -61,7 +61,6 @@ namespace keng
 
 		virtual void* GetNativeInterface() const override;
 		virtual TextureFormat GetFormat() const override;
-		virtual float GetDeleteDelayMs() const override;
 
 		template<ResourceViewType type>
 		IntrusivePtr<TextureView<type>> GetView(ID3D11Device* device, TextureFormat format) {

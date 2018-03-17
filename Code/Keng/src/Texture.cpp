@@ -15,10 +15,6 @@ namespace keng
 		return GetTextureFormat();
 	}
 
-	float Texture::GetDeleteDelayMs() const {
-		return 1000.0f;
-	}
-
 	TextureFabric::TextureFabric(IntrusivePtr<Device> device) :
 		m_device(device)
 	{

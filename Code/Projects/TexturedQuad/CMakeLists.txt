@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.5.1)
 
-set(PROJECT_SimpleQuad true CACHE BOOL "Render quad")
+set(PROJECT_TexturedQuad true CACHE BOOL "Quad with texture")
 
-if(NOT ${PROJECT_SimpleQuad})
+if(NOT ${PROJECT_JustTriange})
     return()
 endif()
 
-set(target_name SimpleQuad)
+set(target_name TexturedQuad)
 set(sources_dir ${CMAKE_CURRENT_SOURCE_DIR})
 set(sources_exts "h" "cpp")
 set(target_sources)
@@ -16,7 +16,7 @@ foreach(entry ${sources_exts})
 	list(APPEND target_sources ${sources_by_ext})
 endforeach()
 
-add_executable(${target_name} WIN32 ${target_sources})
+add_library(${target_name} MODULE ${target_sources})
 
 target_link_libraries(${target_name} PRIVATE D3D_Tools)
 target_link_libraries(${target_name} PRIVATE EverydayTools)
@@ -35,6 +35,4 @@ if(MSVC)
 	target_compile_options(${target_name} PUBLIC "/std:c++latest")
 	target_compile_definitions(${target_name} PRIVATE "-D_SCL_SECURE_NO_WARNINGS")
 	target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-	set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${target_name})
-	set_target_properties(${target_name} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
 endif()

@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.5.1)
 
-set(PROJECT_TexturedQuad true CACHE BOOL "Quad with texture")
+set(PROJECT_Launcher true CACHE BOOL "Launcher")
 
-if(NOT ${PROJECT_JustTriange})
+if(NOT ${PROJECT_Launcher})
     return()
 endif()
 
-set(target_name TexturedQuad)
+set(target_name Launcher)
 set(sources_dir ${CMAKE_CURRENT_SOURCE_DIR})
 set(sources_exts "h" "cpp")
 set(target_sources)
@@ -17,19 +17,8 @@ foreach(entry ${sources_exts})
 endforeach()
 
 add_executable(${target_name} WIN32 ${target_sources})
-
-target_link_libraries(${target_name} PRIVATE D3D_Tools)
 target_link_libraries(${target_name} PRIVATE EverydayTools)
-target_link_libraries(${target_name} PRIVATE ResourceSystem)
-target_link_libraries(${target_name} PRIVATE SystemsApp)
-target_link_libraries(${target_name} PRIVATE WindowSystem)
 target_link_libraries(${target_name} PRIVATE WinWrappers)
-target_link_libraries(${target_name} PRIVATE RapidXML)
-target_link_libraries(${target_name} PRIVATE Keng)
-
-if(${CopyAssets})
-	add_dependencies(${target_name} CopyAssets)
-endif()
 
 if(MSVC)
 	target_compile_options(${target_name} PUBLIC "/std:c++latest")
