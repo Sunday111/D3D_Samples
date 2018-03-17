@@ -1,17 +1,41 @@
-struct VOut
+struct VertexShaderInput
 {
-    float4 position : SV_POSITION;
-    float4 color : COLOR;
-    float2 texCoord : TEXCOORD0;
+    float4 pos : SV_POSITION;
+
+    #ifdef USE_TEXTURE
+    float2 tex : TEXCOORD0;
+    #endif //USE_TEXTURE
+
+    #ifdef USE_COLOR
+    float4 col : COLOR;
+    #endif //USE_COLOR
 };
 
-VOut VShader(float4 position : POSITION, float4 color : COLOR, float2 texCoord : TEXCOORD0)
+struct VertexShaderOuput
 {
-    VOut output;
+    float4 pos : SV_POSITION;
 
-    output.position = position;
-    output.color = color;
-    output.texCoord = texCoord;
+    #ifdef USE_TEXTURE
+    float2 tex : TEXCOORD0;
+    #endif //USE_TEXTURE
+
+    #ifdef USE_COLOR
+    float4 col : COLOR;
+    #endif //USE_COLOR
+};
+
+VertexShaderOuput VShader(VertexShaderInput input)
+{
+    VertexShaderOuput output;
+    output.pos = input.pos;
+
+    #ifdef USE_TEXTURE
+    output.tex = input.tex;
+    #endif //USE_TEXTURE
+
+    #ifdef USE_COLOR
+    output.col = input.col;
+    #endif //USE_COLOR
 
     return output;
 }

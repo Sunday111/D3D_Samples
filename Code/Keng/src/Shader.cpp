@@ -2,21 +2,13 @@
 #include "Keng/Rendering/ShaderTemplate.h"
 #include "Keng/Rendering/Effect.h"
 #include "Keng/GraphicsSystem.h"
+#include "EverydayTools/Array/ArrayViewVector.h"
 #include <fstream>
 
 namespace keng
 {
 	struct ShaderCompiler
 	{
-		template<typename TVector>
-		decltype(auto) MakeVectorView(TVector& vector) {
-			using Result = edt::DenseArrayView<typename TVector::value_type>;
-			if (vector.empty()) {
-				return Result();
-			}
-			return Result(&vector[0], vector.size());
-		}
-
 		IntrusivePtr<Device> device;
 		IntrusivePtr<ShaderTemplate> shaderTemplate;
 		std::string_view entryPoint;
@@ -44,7 +36,7 @@ namespace keng
 				shaderTemplate->code.c_str(),
 				entryPoint.data(),
 				d3d_tools::ShaderVersion::_5_0,
-				MakeVectorView(definitions));
+				edt::MakeArrayView(definitions));
 			return result;
 		}
 	};
@@ -73,9 +65,24 @@ namespace keng
 			auto entryNode = node->GetFirstNode("entry_point");
 			shaderCompiler.entryPoint = entryNode->GetValue();
 
-			//if (auto definitionsNode = node->FindFirstNode("deinitions")) {
-			//	definitionsNode->FindFirstNode
-			//}
+			if (auto definitionsNode = node->FindFirstNode("definitions")) {
+                for (
+                    auto definitionNode = definitionsNode->FindFirstNode("definition");
+                    definitionNode != nullptr;
+                    definitionNode = definitionsNode->NextSibling())
+                {
+                    d3d_tools::ShaderMacro macro;
+
+                    auto definitionName = definitionNode->GetFirstNode("name");
+                    macro.name = definitionName->GetValue();
+
+                    if (auto definitionValue = definitionNode->FindFirstNode("value")) {
+                        macro.value = definitionValue->GetValue();
+                    }
+
+                    shaderCompiler.definitions.push_back(macro);
+                }
+			}
 
 			return shaderCompiler.Compile();
 		};

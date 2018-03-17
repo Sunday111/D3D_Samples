@@ -2,8 +2,8 @@
     <type>Shader</type>
     <shader>
         <!-- Here I can add some shader compile time options -->
-        <template>Assets/Shaders/VertexShaderTemplate.xml</template>
-        <entry_point>VShader</entry_point>
+        <template>Assets/Shaders/FragmentShaderTemplate.xml</template>
+        <entry_point>PShader</entry_point>
         <definitions>
             <definition>
                 <name>USE_TEXTURE</name>

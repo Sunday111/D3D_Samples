@@ -1,0 +1,7 @@
+<resource>
+    <type>Effect</type>
+    <effect>
+        <vertex_shader>Assets/Shaders/TextureVS.xml</vertex_shader>
+        <fragment_shader>Assets/Shaders/TextureFS.xml</fragment_shader>
+    </effect>
+</resource>
