@@ -66,10 +66,10 @@ namespace textured_quad_sample
 		};
 	}
 
-	void GraphicsSystem::Initialize(const CreateParams& params)
+    void GraphicsSystem::Initialize(keng::IApplication* app)
 	{
 		CallAndRethrowM + [&] {
-			Base::Initialize(params);
+			Base::Initialize(app);
 			
 			using namespace keng;
 			auto resourceSystem = m_app->GetSystem<ResourceSystem>();

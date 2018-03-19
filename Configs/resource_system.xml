@@ -1,0 +1,5 @@
+<resource_system>
+    <resource>
+        <release_delay>1000</release_delay>
+    </resource>
+</resource_system>

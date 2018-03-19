@@ -74,7 +74,7 @@ namespace keng
 	public:
 		GraphicsSystem();
 
-		struct CreateParams {
+		struct SystemParams {
 			bool debugDevice = false;
 			bool noDeviceMultithreading = false;
 		};
@@ -84,10 +84,10 @@ namespace keng
 		void OnWindowResize(int w, int h) override;
 
 		virtual void Initialize(IApplication* app) override;
-		virtual void Initialize(const CreateParams& params);
 
 	protected:
 		Application* m_app = nullptr;
+        SystemParams ReadDefaultParams();
 
 		struct ShaderInfo {
 			void Activate(Device* device);

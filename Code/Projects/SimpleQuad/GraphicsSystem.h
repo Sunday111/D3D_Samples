@@ -8,10 +8,8 @@ namespace simple_quad_sample
 	{
 	public:
 		using Base = keng::GraphicsSystem;
-		using CreateParams = keng::GraphicsSystem::CreateParams;
-
-		virtual void Initialize(const CreateParams& params) override;
-		virtual bool Update() override;
+        virtual void Initialize(keng::IApplication* app) override;
+        virtual bool Update() override;
 
 	protected:
 		Base::ShaderInfo m_drawShader;

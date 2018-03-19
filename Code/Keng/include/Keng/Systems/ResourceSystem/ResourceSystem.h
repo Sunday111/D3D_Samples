@@ -154,10 +154,15 @@ namespace keng
 		public System<ResourceSystem>
 	{
 	public:
-		class CreateParams
-		{
-		public:
-		};
+        struct ResourceParameters
+        {
+            float releaseDelay = 0.0f;
+        };
+
+        struct SystemParams
+        {
+            ResourceParameters defaultResourceParams;
+        };
 	
 	protected:
 	private:
@@ -177,7 +182,7 @@ namespace keng
 	                    // Start countdown before dying
 	                    lastTouchMs = timeNow;
 	                } else {
-	                    if (releaseDelay + lastTouchMs < timeNow) {
+	                    if (params.releaseDelay + lastTouchMs < timeNow) {
 	                        return true;
 	                    }
 	                }
@@ -186,97 +191,26 @@ namespace keng
 	            return false;
 	        }
 	
+            ResourceParameters params;
 	        IntrusivePtr<IResource> resource;
-	        float releaseDelay = 0.f;
 	        float lastTouchMs = -1.f;
 	    };
 	
 	public:
-		static const char* GetGUID() {
-			return "8BA11029-9DE9-473C-925A-5FD0D7B36141";
-		}
+        static const char* GetGUID();
+        virtual void Initialize(IApplication* app) override;	
+        virtual bool Update() override;	
+        virtual IntrusivePtr<IResource> GetResource(std::string_view filename) override;	
+        void RegisterResourceFabric(IntrusivePtr<IResourceFabric> fabric);
+        void UnregisterFabric(IntrusivePtr<IResourceFabric> fabric);
 
-		virtual void Initialize(IApplication* app) override
-		{
-			UnusedVar(app);
-			CreateParams params {};
-			Initialize(params);
-		}
-	
-		void Initialize(const CreateParams& params)
-		{
-			UnusedVar(params);
-		}
-	
-	    virtual bool Update() override {
-	        return CallAndRethrowM + [&] {
-	            using namespace std::chrono;
-	            using namespace std::chrono_literals;
-	            high_resolution_clock::time_point zero(0ms);
-	            auto dt = high_resolution_clock::now() - zero;
-	            auto now = duration_cast<milliseconds>(dt).count();
-	            float nowMs = static_cast<float>(now);
-	
-	            auto iResourceInfo = m_resources.begin();
-	            while (iResourceInfo != m_resources.end()) {
-	                if (iResourceInfo->second.ShouldBeReleased(nowMs)) {
-	                    iResourceInfo = m_resources.erase(iResourceInfo);
-	                } else {
-	                    ++iResourceInfo;
-	                }
-	            }
-	
-	            return true;
-	        };
-	    }
-	
-	    virtual IntrusivePtr<IResource> GetResource(std::string_view filename) override {
-	        return CallAndRethrowM + [&] {
-	            std::string filename_copy(filename);
-	            auto resource_it = m_resources.find(filename_copy);
-	            if (resource_it != m_resources.end()) {
-	                return resource_it->second.resource;
-	            }
-	
-	            auto doc = IntrusivePtr<XmlDocument>::MakeInstance(filename);
-	            auto resource_node = doc->GetFirstNode("resource");
-	            auto typeNode = resource_node->GetFirstNode("type");
-	            auto resourceTypeName = std::string(typeNode->GetValue());
-	            auto fabric_it = m_fabrics.find(resourceTypeName);
-	
-	            edt::ThrowIfFailed(
-	                fabric_it != m_fabrics.end(),
-	                "Fabric for resource \"", resourceTypeName, "\" is not registered");
-	
-	            auto exactNode = resource_node->GetFirstNode(fabric_it->second->GetNodeName());
-	            auto result = fabric_it->second->LoadResource(this, exactNode);
-	
-	            ResourceInfo info;
-	            info.resource = result;
-	            m_resources.insert(std::make_pair(std::move(filename_copy), std::move(info)));
-	            return result;
-	        };
-	    }
-	
-	    void RegisterResourceFabric(IntrusivePtr<IResourceFabric> fabric) {
-	        CallAndRethrowM + [&] {
-	            auto resourceTypeName = fabric->GetResourceType();
-	            auto res = m_fabrics.insert(std::make_pair(std::string(resourceTypeName), fabric));
-	            edt::ThrowIfFailed(res.second, "Fabric \"", resourceTypeName, "\" already registered");
-	        };
-	    }
-	
-	    void UnregisterFabric(IntrusivePtr<IResourceFabric> fabric) {
-	        CallAndRethrowM + [&] {
-	            auto resourceTypeName = fabric->GetResourceType();
-	            auto eraseCount = m_fabrics.erase(std::string(resourceTypeName));
-	            edt::ThrowIfFailed(eraseCount < 1, "Fabric \"", resourceTypeName, "\" not found");
-	        };
-	    }
+    protected:
+        SystemParams ReadDefaultParams();
 	
 	public:
 	protected:
 	private:
+        SystemParams m_parameters;
 	    std::unordered_map<std::string, ResourceInfo> m_resources;
 	    std::unordered_map<std::string, IntrusivePtr<IResourceFabric>> m_fabrics;
 	};

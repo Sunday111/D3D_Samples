@@ -1,0 +1,4 @@
+<graphics_system>
+    <device_multithreading>1</device_multithreading>
+    <debug_device>0</debug_device>
+</graphics_system>

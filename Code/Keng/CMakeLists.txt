@@ -28,4 +28,8 @@ if(${CopyAssets})
 	add_dependencies(${target_name} CopyAssets)
 endif()
 
+if(${CopyConfigs})
+	add_dependencies(${target_name} CopyConfigs)
+endif()
+
 set_target_properties(Keng PROPERTIES FOLDER Keng)

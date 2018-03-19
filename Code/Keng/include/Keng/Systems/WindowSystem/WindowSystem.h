@@ -1,5 +1,6 @@
-#pragma once
+﻿#pragma once
 
+#include <string>
 #include "MainWindow.h"
 #include "WinWrappers/WinWrappers.h"
 #include "Keng/Systems/System.h"
@@ -12,56 +13,19 @@ namespace keng
 	    using TChar = char;
 	    using WA = WinAPI<TChar>;
 	
-	    struct CreateParams {
+	    struct SystemParams {
 	        HINSTANCE hInstance = nullptr;
-	        const char* WindowTitle = nullptr;
-	        int nCmdShow = 0;
+	        std::string WindowTitle;
+	        int nCmdShow = SW_SHOW;
 	        unsigned Width = 1280;
 	        unsigned Height = 720;
 	    };
 
 		static const char* GetGUID();
-
-		virtual void Initialize(IApplication* app) override
-		{
-			UnusedVar(app);
-			CreateParams params {};
-			params.Height = 720;
-			params.Width = 1280;
-			params.hInstance = GetModuleHandle(NULL);
-			params.nCmdShow = SW_SHOW;
-			params.WindowTitle = "Simple Quad";
-			Initialize(params);
-		}
-	
-		void Initialize(const CreateParams& params) {
-			CallAndRethrowM + [&] {
-				m_windowClass = std::make_unique<MainWindowClass<TChar>>(params.hInstance);
-				m_window = m_windowClass->MakeWindow(params.WindowTitle);
-				m_window->Show(params.nCmdShow);
-				m_window->SetWindowClientSize(params.Width, params.Height);
-				m_window->Update();
-			};
-		}
-	
-	    bool Update() override {
-	        return CallAndRethrowM + [&] {
-	            MSG msg;
-	            if (WA::PeekMessage_(&msg, nullptr, 0, 0, PM_REMOVE)) {
-	                // Handle windows messages
-	                TranslateMessage(&msg);
-	                WA::DispatchMessage_(&msg);
-	                if (msg.message == WM_QUIT) {
-	                    return false;
-	                }
-	            }
-	            return true;
-	        };
-	    }
-	
-	    MainWindow<TChar>* GetWindow() const {
-	        return m_window.get();
-	    }
+        virtual void Initialize(IApplication* app) override;
+        bool Update() override;
+        MainWindow<TChar>* GetWindow() const;
+        static SystemParams ReadDefaultParams();
 	
 	private:
 	    std::unique_ptr<MainWindowClass<TChar>> m_windowClass;

@@ -21,6 +21,37 @@ namespace keng
 		};
 	}
 
+    GraphicsSystem::SystemParams GraphicsSystem::ReadDefaultParams() {
+        return CallAndRethrowM + [&] {
+            SystemParams params;
+
+#ifdef _DEBUG
+            params.noDeviceMultithreading = true;
+            params.debugDevice = true;
+#endif
+
+            try {
+                XmlDocument configDoc("Configs/graphics_system.xml");
+                auto systemNode = configDoc.GetFirstNode("graphics_system");
+
+                if (auto node = systemNode->FindFirstNode("device_multithreading")) {
+                    auto node_text = node->GetValue();
+                    params.noDeviceMultithreading = !static_cast<bool>(std::stoi(node_text.data()));
+                }
+
+                if (auto node = systemNode->FindFirstNode("debug_device")) {
+                    auto node_text = node->GetValue();
+                    params.debugDevice = static_cast<bool>(std::stoi(node_text.data()));
+                }
+            }
+            catch (...)
+            {
+            }
+
+            return params;
+        };
+    }
+
 	void GraphicsSystem::RT::Activate(Device* device) {
 		device->SetRenderTarget(*rt_rtv, ds_dsv.Get());
 	}
@@ -41,8 +72,12 @@ namespace keng
 		OutputDebugStringA("Resize\n");
 	}
 
-	void GraphicsSystem::Initialize(const CreateParams& params) {
+    void GraphicsSystem::Initialize(IApplication* app) {
 		CallAndRethrowM + [&] {
+            m_app = dynamic_cast<Application*>(app);
+            edt::ThrowIfFailed(m_app != nullptr, "Failed to cast IApplication to keng::Application");
+            auto params = ReadDefaultParams();
+
 			{// Initialize device
 				Device::CreateParams deviceParams;
 				deviceParams.debugDevice = params.debugDevice;
@@ -94,22 +129,6 @@ namespace keng
 				rt.ds_srv = rt.ds->GetView<ResourceViewType::ShaderResource>(device, TextureFormat::R24_UNORM_X8_TYPELESS);
 			}
 		};
-	}
-
-	void GraphicsSystem::Initialize(IApplication* app)
-	{
-		m_app = dynamic_cast<Application*>(app);
-		edt::ThrowIfFailed(m_app != nullptr, "Failed to cast IApplication to keng::Application");
-
-		
-		CreateParams params{};
-		
-#ifdef _DEBUG
-		params.noDeviceMultithreading = true;
-		params.debugDevice = true;
-#endif
-		
-		Initialize(params);
 	}
 
 	void GraphicsSystem::ShaderInfo::Activate(Device* device)
