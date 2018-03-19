@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keng/GraphicsSystem.h"
+#include "Keng/Systems/GraphicsSystem/GraphicsSystem.h"
 
 namespace textured_quad_sample
 {
@@ -10,7 +10,7 @@ namespace textured_quad_sample
 		using Base = keng::GraphicsSystem;
 		using CreateParams = keng::GraphicsSystem::CreateParams;
 
-		virtual void Initialize(const CreateParams& params, IApplication* app) override;
+		virtual void Initialize(const CreateParams& params) override;
 		virtual bool Update() override;
 
 	protected:

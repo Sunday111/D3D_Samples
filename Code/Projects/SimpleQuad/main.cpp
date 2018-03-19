@@ -1,8 +1,8 @@
+#include "Keng/Application.h"
+#include "Keng/Systems/WindowSystem/WindowSystem.h"
+#include "Keng/Systems/GraphicsSystem/GraphicsSystem.h"
+#include "Keng/Systems/ResourceSystem/ResourceSystem.h"
 #include "GraphicsSystem.h"
-#include "WindowSystem/WindowSystem.h"
-#include "SystemsApp/BaseApplication.h"
-#include "Keng/GraphicsSystem.h"
-#include "ResourceSystem/ResourceSystem.h"
 
 #include <stdexcept>
 #include <sstream>
@@ -12,46 +12,13 @@
 namespace simple_quad_sample {
     int RunApplicationImpl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int nCmdShow) {
 		return CallAndRethrowM + [&] {
-			UnusedVar(hPrevInstance, cmdLine);
-
-			using Application = BaseApplication;
-            auto app = std::make_unique<Application>();
-
-            {
-                ResourceSystem::CreateParams params{};
-                auto sys = std::make_unique<ResourceSystem>();
-                sys->Initialize(params, app.get());
-                app->AddSystem(std::move(sys));
-            }
-
-            {
-                WindowSystem::CreateParams params{};
-                params.Height = 720;
-                params.Width = 1280;
-                params.hInstance = hInstance;
-                params.nCmdShow = nCmdShow;
-                params.WindowTitle = "Simple Quad";
-
-                auto sys = std::make_unique<WindowSystem>();
-                sys->Initialize(params, app.get());
-                app->AddSystem(std::move(sys));
-            }
-
-            {
-                GraphicsSystem::CreateParams params{};
-
-                #ifdef _DEBUG
-                params.noDeviceMultithreading = true;
-                params.debugDevice = true;
-                #endif
-
-                auto sys = std::make_unique<GraphicsSystem>();
-                sys->Initialize(params, app.get());
-                app->AddSystem(std::move(sys));
-            }
-
+			UnusedVar(hInstance, hPrevInstance, cmdLine, nCmdShow);
+			auto app = std::make_unique<keng::Application>();
+			app->AddSystem(std::make_unique<GraphicsSystem>());
+			app->AddSystem(std::make_unique<keng::WindowSystem>());
+			app->AddSystem(std::make_unique<keng::ResourceSystem>());
+            app->Initialize();
             app->Run();
-
             return 0;
         };
     }

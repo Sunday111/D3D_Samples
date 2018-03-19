@@ -1,11 +1,11 @@
 #pragma once
 
-#include "SystemsApp/ISystem.h"
-#include "WindowSystem/MainWindow.h"
+#include "Keng/Systems/System.h"
+#include "Keng/Systems/WindowSystem/MainWindow.h"
 #include "EverydayTools/Observable.h"
 
-#include "Rendering/Texture.h"
-#include "Rendering/Effect.h"
+#include "Keng/Rendering/Texture.h"
+#include "Keng/Rendering/Effect.h"
 
 #include "D3D_Tools/Device.h"
 #include "D3D_Tools/SwapChain.h"
@@ -14,10 +14,10 @@
 #include "D3D_Tools/BufferMapper.h"
 #include "D3D_Tools/CrossDeviceBuffer.h"
 
-class BaseApplication;
-
 namespace keng
 {
+	class Application;
+
 	class IDevice : public IRefCountObject {
 	public:
 		virtual void* GetNativeDevice() const = 0;
@@ -67,23 +67,27 @@ namespace keng
 	};
 
 	class GraphicsSystem :
-		public ISystem,
+		public System<GraphicsSystem>,
 		public IMainWindowListener,
 		public Observable<GraphicsSystem, IGraphicsListener>
 	{
 	public:
+		GraphicsSystem();
+
 		struct CreateParams {
 			bool debugDevice = false;
 			bool noDeviceMultithreading = false;
 		};
 
+		static const char* GetGUID();
+
 		void OnWindowResize(int w, int h) override;
 
 		virtual void Initialize(IApplication* app) override;
-		virtual void Initialize(const CreateParams& params, IApplication* app);
+		virtual void Initialize(const CreateParams& params);
 
 	protected:
-		BaseApplication* m_app = nullptr;
+		Application* m_app = nullptr;
 
 		struct ShaderInfo {
 			void Activate(Device* device);

@@ -1,6 +1,6 @@
-#include "Keng/GraphicsSystem.h"
+#include "Keng/Systems/GraphicsSystem/GraphicsSystem.h"
 #include "D3D_Tools/Annotation.h"
-#include "WindowSystem/WindowSystem.h"
+#include "Keng/Systems/WindowSystem/WindowSystem.h"
 #include <algorithm>
 
 #include "Keng/Rendering/Effect.h"
@@ -9,7 +9,7 @@
 #include "Keng/Rendering/Texture.h"
 
 #include "EverydayTools/Geom/Vector.h"
-#include "SystemsApp/BaseApplication.h"
+#include "Keng/Application.h"
 
 namespace keng
 {
@@ -25,15 +25,24 @@ namespace keng
 		device->SetRenderTarget(*rt_rtv, ds_dsv.Get());
 	}
 
+	GraphicsSystem::GraphicsSystem()
+	{
+		m_dependencies.push_back(ResourceSystem::GetGUID());
+		m_dependencies.push_back(WindowSystem::GetGUID());
+	}
+
+	const char* GraphicsSystem::GetGUID()
+	{
+		return "E6080ACE-E91E-4693-AFA5-5B6A0BB29A41";
+	}
+
 	void GraphicsSystem::OnWindowResize(int w, int h) {
 		UnusedVar(w, h);
 		OutputDebugStringA("Resize\n");
 	}
 
-	void GraphicsSystem::Initialize(const CreateParams& params, IApplication* app) {
+	void GraphicsSystem::Initialize(const CreateParams& params) {
 		CallAndRethrowM + [&] {
-			Initialize(app);
-
 			{// Initialize device
 				Device::CreateParams deviceParams;
 				deviceParams.debugDevice = params.debugDevice;
@@ -89,7 +98,18 @@ namespace keng
 
 	void GraphicsSystem::Initialize(IApplication* app)
 	{
-		m_app = dynamic_cast<BaseApplication*>(app);
+		m_app = dynamic_cast<Application*>(app);
+		edt::ThrowIfFailed(m_app != nullptr, "Failed to cast IApplication to keng::Application");
+
+		
+		CreateParams params{};
+		
+#ifdef _DEBUG
+		params.noDeviceMultithreading = true;
+		params.debugDevice = true;
+#endif
+		
+		Initialize(params);
 	}
 
 	void GraphicsSystem::ShaderInfo::Activate(Device* device)

@@ -21,9 +21,6 @@ target_include_directories(${target_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/inc
 target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(${target_name} PUBLIC D3D_Tools)
 target_link_libraries(${target_name} PUBLIC EverydayTools)
-target_link_libraries(${target_name} PUBLIC ResourceSystem)
-target_link_libraries(${target_name} PUBLIC SystemsApp)
-target_link_libraries(${target_name} PUBLIC WindowSystem)
 target_link_libraries(${target_name} PUBLIC WinWrappers)
 target_link_libraries(${target_name} PUBLIC RapidXML)
 

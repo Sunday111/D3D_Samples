@@ -18,13 +18,6 @@ endforeach()
 
 add_library(${target_name} MODULE ${target_sources})
 
-target_link_libraries(${target_name} PRIVATE D3D_Tools)
-target_link_libraries(${target_name} PRIVATE EverydayTools)
-target_link_libraries(${target_name} PRIVATE ResourceSystem)
-target_link_libraries(${target_name} PRIVATE SystemsApp)
-target_link_libraries(${target_name} PRIVATE WindowSystem)
-target_link_libraries(${target_name} PRIVATE WinWrappers)
-target_link_libraries(${target_name} PRIVATE RapidXML)
 target_link_libraries(${target_name} PRIVATE Keng)
 
 if(${CopyAssets})

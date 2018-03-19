@@ -4,8 +4,8 @@
 #include "Keng/Rendering/Shader.h"
 #include "Keng/Rendering/Effect.h"
 #include "Keng/Rendering/Texture.h"
-#include "ResourceSystem/ResourceSystem.h"
-#include "SystemsApp/BaseApplication.h"
+#include "Keng/Systems/ResourceSystem/ResourceSystem.h"
+#include "Keng/Application.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 
 namespace simple_quad_sample
@@ -64,10 +64,10 @@ namespace simple_quad_sample
 		};
 	}
 
-	void GraphicsSystem::Initialize(const CreateParams& params, IApplication* app)
+	void GraphicsSystem::Initialize(const CreateParams& params)
 	{
 		CallAndRethrowM + [&] {
-			Base::Initialize(params, app);
+			Base::Initialize(params);
 			
 			using namespace keng;
 			auto resourceSystem = m_app->GetSystem<ResourceSystem>();

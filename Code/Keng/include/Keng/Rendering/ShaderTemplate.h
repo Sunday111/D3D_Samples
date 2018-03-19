@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Shader.h"
+#include "Keng/Rendering/Shader.h"
 
 namespace keng
 {
