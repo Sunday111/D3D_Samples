@@ -11,6 +11,7 @@
 
 namespace textured_quad_sample {
     int RunApplicationImpl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int nCmdShow) {
+		UnusedVar(hPrevInstance, cmdLine);
         using Application = BaseApplication;
         return CallAndRethrowM + [&] {
             auto app = std::make_unique<Application>();

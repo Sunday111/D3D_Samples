@@ -11,8 +11,10 @@
 
 namespace simple_quad_sample {
     int RunApplicationImpl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int nCmdShow) {
-        using Application = BaseApplication;
-        return CallAndRethrowM + [&] {
+		return CallAndRethrowM + [&] {
+			UnusedVar(hPrevInstance, cmdLine);
+
+			using Application = BaseApplication;
             auto app = std::make_unique<Application>();
 
             {
