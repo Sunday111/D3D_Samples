@@ -17,7 +17,8 @@ foreach(entry ${sources_exts})
 endforeach()
 
 add_library(${target_name} STATIC ${target_sources})
-
+target_include_directories(${target_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(${target_name} PUBLIC D3D_Tools)
 target_link_libraries(${target_name} PUBLIC EverydayTools)
 target_link_libraries(${target_name} PUBLIC ResourceSystem)
@@ -28,9 +29,4 @@ target_link_libraries(${target_name} PUBLIC RapidXML)
 
 if(${CopyAssets})
 	add_dependencies(${target_name} CopyAssets)
-endif()
-
-if(MSVC)
-	target_include_directories(${target_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-	target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 endif()

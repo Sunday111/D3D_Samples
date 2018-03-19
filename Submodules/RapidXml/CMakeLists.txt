@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.5.1)
-
 set(module_name RapidXML)
 set(RapidXML true CACHE BOOL "XML parser")
 if(NOT ${RapidXML})

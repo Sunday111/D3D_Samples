@@ -17,11 +17,11 @@ foreach(entry ${sources_exts})
 endforeach()
 
 add_executable(${target_name} WIN32 ${target_sources})
+target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${target_name} PRIVATE EverydayTools)
 target_link_libraries(${target_name} PRIVATE WinWrappers)
 
 if(MSVC)
-	target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 	set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${target_name})
 	set_target_properties(${target_name} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
 endif()
