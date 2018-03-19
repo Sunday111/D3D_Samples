@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.5.1)
+include(generate_vs_filters)
 
 set(PROJECT_SimpleQuad true CACHE BOOL "Render quad")
 
@@ -17,11 +18,16 @@ foreach(entry ${sources_exts})
 endforeach()
 
 add_library(${target_name} MODULE ${target_sources})
+generate_vs_filters(${target_sources})
 
 target_link_libraries(${target_name} PRIVATE Keng)
 
 if(${CopyAssets})
 	add_dependencies(${target_name} CopyAssets)
+endif()
+
+if(${CopyConfigs})
+	add_dependencies(${target_name} CopyConfigs)
 endif()
 
 target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
