@@ -25,3 +25,4 @@ if(${CopyAssets})
 endif()
 
 target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+set(added_target_name ${target_name} PARENT_SCOPE)

@@ -27,3 +27,5 @@ target_link_libraries(${target_name} PUBLIC RapidXML)
 if(${CopyAssets})
 	add_dependencies(${target_name} CopyAssets)
 endif()
+
+set_target_properties(Keng PROPERTIES FOLDER Keng)
