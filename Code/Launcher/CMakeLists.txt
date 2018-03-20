@@ -25,3 +25,20 @@ if(MSVC)
 	set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${target_name})
 	set_target_properties(${target_name} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
 endif()
+
+set(make_sym_link_script "${root_dir}/BuildTools/Python/make_sym_link.py")
+
+macro(symlink_to_dir dir)
+	add_custom_command(
+	    TARGET  Launcher
+	    POST_BUILD
+	    COMMAND "py" "${make_sym_link_script}" "${root_dir}/${dir}" "${bin_dir}/$<CONFIG>/${dir}"
+	    COMMENT "Make symlink to '${dir}' folder")
+endmacro()
+
+symlink_to_dir(Assets)
+symlink_to_dir(Configs)
+
+foreach(project ${found_projects})
+    add_dependencies(Launcher ${project})
+endforeach()

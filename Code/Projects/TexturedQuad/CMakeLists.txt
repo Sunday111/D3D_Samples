@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.5.1)
 include(generate_vs_filters)
 
-set(PROJECT_TexturedQuad true CACHE BOOL "Quad with texture")
-
-if(NOT ${PROJECT_JustTriange})
+set(target_name TexturedQuad)
+set(target_desc "Quad with texture")
+set(PROJECT_${target_name} true CACHE BOOL ${target_desc})
+if(NOT ${PROJECT_${target_name}})
     return()
 endif()
 
-set(target_name TexturedQuad)
 set(sources_dir ${CMAKE_CURRENT_SOURCE_DIR})
 set(sources_exts "h" "cpp")
 set(target_sources)
@@ -19,16 +19,6 @@ endforeach()
 
 add_library(${target_name} MODULE ${target_sources})
 generate_vs_filters(${target_sources})
-
 target_link_libraries(${target_name} PRIVATE Keng)
-
-if(${CopyAssets})
-	add_dependencies(${target_name} CopyAssets)
-endif()
-
-if(${CopyConfigs})
-	add_dependencies(${target_name} CopyConfigs)
-endif()
-
 target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 set(added_target_name ${target_name} PARENT_SCOPE)
