@@ -4,7 +4,7 @@
 #include "Keng/Graphics/Shader.h"
 #include "Keng/Graphics/Effect.h"
 #include "Keng/Graphics/Texture.h"
-#include "Keng/Core/Systems/ResourceSystem/ResourceSystem.h"
+#include "Keng/Resource/ResourceSystem.h"
 #include "Keng/Core/Application.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 
