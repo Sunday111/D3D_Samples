@@ -1,4 +1,4 @@
-#include "Keng/Core/Rendering/Effect.h"
+#include "Keng/Graphics/Effect.h"
 
 namespace keng
 {

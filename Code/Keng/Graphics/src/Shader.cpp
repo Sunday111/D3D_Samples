@@ -1,7 +1,7 @@
-#include "Keng/Core/Rendering/Shader.h"
-#include "Keng/Core/Rendering/ShaderTemplate.h"
-#include "Keng/Core/Rendering/Effect.h"
-#include "Keng/Core/Systems/GraphicsSystem/GraphicsSystem.h"
+#include "Keng/Graphics/Shader.h"
+#include "Keng/Graphics/ShaderTemplate.h"
+#include "Keng/Graphics/Effect.h"
+#include "Keng/Graphics/GraphicsSystem.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include <fstream>
 

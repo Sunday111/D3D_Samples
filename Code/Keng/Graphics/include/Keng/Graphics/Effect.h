@@ -1,18 +1,18 @@
 #pragma once
 
-#include "Keng/Core/Rendering/Shader.h"
+#include "Keng/Graphics/Shader.h"
 
 namespace keng
 {
-	class ShaderTemplate :
+	class Effect :
 		public SimpleResourceBase
 	{
 	public:
-		ShaderType type;
-		std::string code;
+		IntrusivePtr<Shader<ShaderType::Vertex>> vs;
+		IntrusivePtr<Shader<ShaderType::Pixel>> fs;
 	};
 
-	class ShaderTemplateFabric :
+	class EffectFabric :
 		public RefCountImpl<IResourceFabric>
 	{
 	public:

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 file(GLOB keng_modules "${CMAKE_CURRENT_SOURCE_DIR}/*")
 set(added_subdirectories "")
+set(dependencies_info "")
 foreach(module ${keng_modules})
     if(IS_DIRECTORY ${module})
         set(project_header_file "${module}/CMakeLists.txt")

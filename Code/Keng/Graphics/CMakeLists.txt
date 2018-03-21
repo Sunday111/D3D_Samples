@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.5.1)
 include(generate_vs_filters)
 
-set(keng_module_name KengCore)
-set(KENG_${keng_module_name} true CACHE BOOL "Core")
+set(keng_module_name KengGraphics)
+set(KENG_${keng_module_name} true CACHE BOOL "Graphics")
 if(NOT ${KENG_${keng_module_name}})
     return()
 endif()
@@ -24,5 +24,6 @@ target_link_libraries(${keng_module_name} PUBLIC D3D_Tools)
 target_link_libraries(${keng_module_name} PUBLIC EverydayTools)
 target_link_libraries(${keng_module_name} PUBLIC WinWrappers)
 target_link_libraries(${keng_module_name} PUBLIC RapidXML)
+target_link_libraries(${keng_module_name} PUBLIC KengCore)
 
 set(added_target_name ${keng_module_name} PARENT_SCOPE)

@@ -4,8 +4,8 @@
 #include "Keng/Core/Systems/WindowSystem/MainWindow.h"
 #include "EverydayTools/Observable.h"
 
-#include "Keng/Core/Rendering/Texture.h"
-#include "Keng/Core/Rendering/Effect.h"
+#include "Keng/Graphics/Texture.h"
+#include "Keng/Graphics/Effect.h"
 
 #include "D3D_Tools/Device.h"
 #include "D3D_Tools/SwapChain.h"

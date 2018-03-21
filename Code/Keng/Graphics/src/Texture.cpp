@@ -1,5 +1,5 @@
-#include "Keng/Core/Rendering/Texture.h"
-#include "Keng/Core/Systems/GraphicsSystem/GraphicsSystem.h"
+#include "Keng/Graphics/Texture.h"
+#include "Keng/Graphics/GraphicsSystem.h"
 #include "stb_image.h"
 
 #define STB_IMAGE_IMPLEMENTATION

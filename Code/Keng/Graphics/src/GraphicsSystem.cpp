@@ -1,12 +1,12 @@
-#include "Keng/Core/Systems/GraphicsSystem/GraphicsSystem.h"
+#include "Keng/Graphics/GraphicsSystem.h"
 #include "D3D_Tools/Annotation.h"
 #include "Keng/Core/Systems/WindowSystem/WindowSystem.h"
 #include <algorithm>
 
-#include "Keng/Core/Rendering/Effect.h"
-#include "Keng/Core/Rendering/Shader.h"
-#include "Keng/Core/Rendering/ShaderTemplate.h"
-#include "Keng/Core/Rendering/Texture.h"
+#include "Keng/Graphics/Effect.h"
+#include "Keng/Graphics/Shader.h"
+#include "Keng/Graphics/ShaderTemplate.h"
+#include "Keng/Graphics/Texture.h"
 
 #include "EverydayTools/Geom/Vector.h"
 #include "Keng/Core/Application.h"

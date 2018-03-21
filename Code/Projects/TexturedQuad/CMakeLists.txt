@@ -19,6 +19,6 @@ endforeach()
 
 add_library(${target_name} MODULE ${target_sources})
 generate_vs_filters(${target_sources})
-target_link_libraries(${target_name} PRIVATE KengCore)
+target_link_libraries(${target_name} PRIVATE KengCore KengGraphics)
 target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 set(added_target_name ${target_name} PARENT_SCOPE)
