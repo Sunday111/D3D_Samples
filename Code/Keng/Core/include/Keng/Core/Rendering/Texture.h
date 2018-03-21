@@ -5,7 +5,7 @@
 #include "EverydayTools\Exception\CallAndRethrow.h"
 #include "WinWrappers/ComPtr.h"
 #include "D3D_Tools/Texture.h"
-#include "Keng/Systems/ResourceSystem/ResourceSystem.h"
+#include "Keng/Core/Systems/ResourceSystem/ResourceSystem.h"
 
 namespace keng
 {

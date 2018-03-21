@@ -1,4 +1,4 @@
-#include "Keng/Rendering/ShaderTemplate.h"
+#include "Keng/Core/Rendering/ShaderTemplate.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 
 namespace keng

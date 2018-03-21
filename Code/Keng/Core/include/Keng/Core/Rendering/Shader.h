@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keng/Systems/ResourceSystem/ResourceSystem.h"
+#include "Keng/Core/Systems/ResourceSystem/ResourceSystem.h"
 #include "D3D_Tools/Shader.h"
 
 namespace keng

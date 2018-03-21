@@ -1,5 +1,5 @@
-#include "Keng/Systems/WindowSystem/WindowSystem.h"
-#include "Keng/Systems/ResourceSystem/ResourceSystem.h"
+#include "Keng/Core/Systems/WindowSystem/WindowSystem.h"
+#include "Keng/Core/Systems/ResourceSystem/ResourceSystem.h"
 
 namespace keng
 {

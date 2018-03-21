@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keng/Systems/GraphicsSystem/GraphicsSystem.h"
+#include "Keng/Core/Systems/GraphicsSystem/GraphicsSystem.h"
 
 namespace textured_quad_sample
 {

@@ -3,7 +3,7 @@
 #include <string>
 #include "MainWindow.h"
 #include "WinWrappers/WinWrappers.h"
-#include "Keng/Systems/System.h"
+#include "Keng/Core/Systems/System.h"
 
 namespace keng
 {

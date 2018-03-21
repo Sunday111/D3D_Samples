@@ -3,8 +3,8 @@
 #include <vector>
 #include <memory>
 
-#include "Keng/Systems/ISystem.h"
-#include "Keng/IApplication.h"
+#include "Keng/Core/Systems/ISystem.h"
+#include "Keng/Core/IApplication.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/FrameRateCounter.h"
 #include "WinWrappers/WinWrappers.h"

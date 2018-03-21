@@ -1,11 +1,11 @@
 #include "GraphicsSystem.h"
 #include "EverydayTools/Geom/Vector.h"
 #include "D3D_Tools/Annotation.h"
-#include "Keng/Rendering/Shader.h"
-#include "Keng/Rendering/Effect.h"
-#include "Keng/Rendering/Texture.h"
-#include "Keng/Systems/ResourceSystem/ResourceSystem.h"
-#include "Keng/Application.h"
+#include "Keng/Core/Rendering/Shader.h"
+#include "Keng/Core/Rendering/Effect.h"
+#include "Keng/Core/Rendering/Texture.h"
+#include "Keng/Core/Systems/ResourceSystem/ResourceSystem.h"
+#include "Keng/Core/Application.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 
 namespace textured_quad_sample

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Keng/Systems/System.h"
-#include "Keng/Systems/WindowSystem/MainWindow.h"
+#include "Keng/Core/Systems/System.h"
+#include "Keng/Core/Systems/WindowSystem/MainWindow.h"
 #include "EverydayTools/Observable.h"
 
-#include "Keng/Rendering/Texture.h"
-#include "Keng/Rendering/Effect.h"
+#include "Keng/Core/Rendering/Texture.h"
+#include "Keng/Core/Rendering/Effect.h"
 
 #include "D3D_Tools/Device.h"
 #include "D3D_Tools/SwapChain.h"

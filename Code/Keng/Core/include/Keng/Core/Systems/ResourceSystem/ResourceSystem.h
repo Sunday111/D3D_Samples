@@ -8,8 +8,8 @@
 #include <string_view>
 #include <unordered_map>
 
-#include "Keng/Systems/System.h"
-#include "Keng/RefCounter.h"
+#include "Keng/Core/Systems/System.h"
+#include "Keng/Core/RefCounter.h"
 
 #include "EverydayTools/UnusedVar.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"

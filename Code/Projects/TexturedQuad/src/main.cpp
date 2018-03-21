@@ -1,13 +1,13 @@
-#include "Keng/Application.h"
-#include "Keng/Systems/WindowSystem/WindowSystem.h"
-#include "Keng/Systems/GraphicsSystem/GraphicsSystem.h"
-#include "Keng/Systems/ResourceSystem/ResourceSystem.h"
+#include "Keng/Core/Application.h"
+#include "Keng/Core/Systems/WindowSystem/WindowSystem.h"
+#include "Keng/Core/Systems/GraphicsSystem/GraphicsSystem.h"
+#include "Keng/Core/Systems/ResourceSystem/ResourceSystem.h"
 #include "GraphicsSystem.h"
 
 #include <stdexcept>
 #include <sstream>
 
-#include "Keng/ImplementLauncherInterface.h"
+#include "Keng/Core/ImplementLauncherInterface.h"
 
 namespace textured_quad_sample {
     int RunApplicationImpl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int nCmdShow) {

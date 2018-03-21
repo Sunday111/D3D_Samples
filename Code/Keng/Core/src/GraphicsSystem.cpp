@@ -1,15 +1,15 @@
-#include "Keng/Systems/GraphicsSystem/GraphicsSystem.h"
+#include "Keng/Core/Systems/GraphicsSystem/GraphicsSystem.h"
 #include "D3D_Tools/Annotation.h"
-#include "Keng/Systems/WindowSystem/WindowSystem.h"
+#include "Keng/Core/Systems/WindowSystem/WindowSystem.h"
 #include <algorithm>
 
-#include "Keng/Rendering/Effect.h"
-#include "Keng/Rendering/Shader.h"
-#include "Keng/Rendering/ShaderTemplate.h"
-#include "Keng/Rendering/Texture.h"
+#include "Keng/Core/Rendering/Effect.h"
+#include "Keng/Core/Rendering/Shader.h"
+#include "Keng/Core/Rendering/ShaderTemplate.h"
+#include "Keng/Core/Rendering/Texture.h"
 
 #include "EverydayTools/Geom/Vector.h"
-#include "Keng/Application.h"
+#include "Keng/Core/Application.h"
 
 namespace keng
 {
