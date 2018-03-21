@@ -3,7 +3,7 @@
 #include "Keng/Core/Application.h"
 #include <algorithm>
 
-namespace keng
+namespace keng::core
 {
 
 	void Application::SetVSync(bool value)

@@ -2,7 +2,7 @@
 
 #include <memory>
 
-namespace keng
+namespace keng::core
 {
 	class ISystem;
 

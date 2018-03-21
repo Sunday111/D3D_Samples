@@ -5,7 +5,7 @@
 #include "WinWrappers/WinWrappers.h"
 #include "Keng/Core/Systems/ISystem.h"
 
-namespace keng
+namespace keng::core
 {
 	class WindowSystem :
         public ISystem

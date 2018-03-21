@@ -2,10 +2,10 @@
 
 #include "Keng/Graphics/Shader.h"
 
-namespace keng
+namespace keng::graphics
 {
 	class Effect :
-        public IResource
+        public resource::IResource
 	{
 	public:
 		std::shared_ptr<Shader<ShaderType::Vertex>> vs;
@@ -13,11 +13,11 @@ namespace keng
 	};
 
 	class EffectFabric :
-		public IResourceFabric
+		public resource::IResourceFabric
 	{
 	public:
 		virtual std::string_view GetNodeName() const override;
 		virtual std::string_view GetResourceType() const override;
-		virtual std::shared_ptr<IResource> LoadResource(IResourceSystem*, std::shared_ptr<IXmlNode> document) const override;
+		virtual std::shared_ptr<resource::IResource> LoadResource(resource::IResourceSystem*, std::shared_ptr<IXmlNode> document) const override;
 	};
 }

@@ -64,17 +64,17 @@ namespace simple_quad_sample
 		};
 	}
 
-	void GraphicsSystem::Initialize(keng::IApplication* app)
+	void GraphicsSystem::Initialize(keng::core::IApplication* app)
 	{
 		CallAndRethrowM + [&] {
 			Base::Initialize(app);
 			
 			using namespace keng;
-			auto resourceSystem = m_app->GetSystem<IResourceSystem>();
+			auto resourceSystem = m_app->GetSystem<resource::IResourceSystem>();
 
 			{// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/FlatColor.xml";
-				m_drawShader.effect = std::dynamic_pointer_cast<Effect>(resourceSystem->GetResource(effectName));
+				m_drawShader.effect = std::dynamic_pointer_cast<graphics::Effect>(resourceSystem->GetResource(effectName));
                 std::vector<D3D11_INPUT_ELEMENT_DESC> layouts;
                 m_drawShader.effect->vs->m_impl.ReflectInputLayout(layouts);
 				m_drawShader.layout = m_device->CreateInputLayout(edt::MakeArrayView(layouts), m_drawShader.effect->vs->m_impl.bytecode.Get());

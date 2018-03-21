@@ -1,6 +1,6 @@
 #include "Keng/Graphics/Effect.h"
 
-namespace keng
+namespace keng::graphics
 {
 	std::string_view EffectFabric::GetNodeName() const {
 		return "effect";
@@ -10,7 +10,7 @@ namespace keng
 		return "Effect";
 	}
 
-	std::shared_ptr<IResource> EffectFabric::LoadResource(IResourceSystem* resourceSystem, std::shared_ptr<IXmlNode> node) const {
+	std::shared_ptr<resource::IResource> EffectFabric::LoadResource(resource::IResourceSystem* resourceSystem, std::shared_ptr<IXmlNode> node) const {
 		return CallAndRethrowM + [&] {
 			bool anyShader = false;
 			auto result = std::make_shared<Effect>();

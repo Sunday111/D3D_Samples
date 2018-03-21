@@ -1,7 +1,7 @@
 #include "Keng/Core/Systems/WindowSystem/WindowSystem.h"
 #include "Xml.h"
 
-namespace keng
+namespace keng::core
 {
 	const char* WindowSystem::GetGUID() {
 		return "4CD74D12-0159-44EC-B79D-9D1422221A5C";

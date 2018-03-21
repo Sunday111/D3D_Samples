@@ -1,6 +1,6 @@
 #pragma once
 
-namespace keng
+namespace keng::resource
 {
     class IResource
     {

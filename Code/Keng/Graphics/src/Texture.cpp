@@ -5,7 +5,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-namespace keng
+namespace keng::graphics
 {
 	void* Texture::GetNativeInterface() const {
 		return GetTexture();
@@ -29,7 +29,7 @@ namespace keng
 		return "Texture";
 	}
 
-	std::shared_ptr<IResource> TextureFabric::LoadResource(IResourceSystem*, std::shared_ptr<IXmlNode> node) const
+	std::shared_ptr<resource::IResource> TextureFabric::LoadResource(resource::IResourceSystem*, std::shared_ptr<IXmlNode> node) const
 	{
 		return CallAndRethrowM + [&] {
 			auto fileNode = node->GetFirstNode("file");

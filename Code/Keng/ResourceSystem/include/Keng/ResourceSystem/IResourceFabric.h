@@ -6,6 +6,10 @@
 namespace keng
 {
     class IXmlNode;
+}
+
+namespace keng::resource
+{
     class IResource;
     class IResourceSystem;
 

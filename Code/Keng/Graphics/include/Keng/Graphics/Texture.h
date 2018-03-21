@@ -8,7 +8,7 @@
 #include "Keng/ResourceSystem/IResource.h"
 #include "Keng/ResourceSystem/IResourceFabric.h"
 
-namespace keng
+namespace keng::graphics
 {
 	using d3d_tools::ResourceViewType;
 	using d3d_tools::TextureFormat;
@@ -16,7 +16,7 @@ namespace keng
 
 	class Device;
 
-	class ITexture : public IResource {
+	class ITexture : public resource::IResource {
 	public:
 		virtual void* GetNativeInterface() const = 0;
 		virtual TextureFormat GetFormat() const = 0;
@@ -71,13 +71,13 @@ namespace keng
 	};
 
 	class TextureFabric :
-		public IResourceFabric
+		public resource::IResourceFabric
 	{
 	public:
 		TextureFabric(std::shared_ptr<Device>);
 		virtual std::string_view GetNodeName() const override;
 		virtual std::string_view GetResourceType() const override;
-		virtual std::shared_ptr<IResource> LoadResource(IResourceSystem*, std::shared_ptr<IXmlNode> node) const override;
+		virtual std::shared_ptr<resource::IResource> LoadResource(resource::IResourceSystem*, std::shared_ptr<IXmlNode> node) const override;
 	private:
 		std::shared_ptr<Device> m_device;
 	};

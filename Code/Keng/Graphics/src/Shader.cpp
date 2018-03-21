@@ -5,7 +5,7 @@
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include <fstream>
 
-namespace keng
+namespace keng::graphics
 {
 	struct ShaderCompiler
 	{
@@ -14,7 +14,7 @@ namespace keng
 		std::string_view entryPoint;
 		std::vector<d3d_tools::ShaderMacro> definitions;
 
-		std::shared_ptr<IResource> Compile() {
+		std::shared_ptr<resource::IResource> Compile() {
 			switch (shaderTemplate->type)
 			{
 			case ShaderType::Vertex:
@@ -53,8 +53,8 @@ namespace keng
 		return "Shader";
 	}
 
-	std::shared_ptr<IResource> ShaderFabric::LoadResource(IResourceSystem* resourceSystem, std::shared_ptr<IXmlNode> node) const {
-		return CallAndRethrowM + [&]() -> std::shared_ptr<IResource> {
+	std::shared_ptr<resource::IResource> ShaderFabric::LoadResource(resource::IResourceSystem* resourceSystem, std::shared_ptr<IXmlNode> node) const {
+		return CallAndRethrowM + [&]() -> std::shared_ptr<resource::IResource> {
 			ShaderCompiler shaderCompiler;
 			shaderCompiler.device = m_device;
 

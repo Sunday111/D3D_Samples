@@ -14,10 +14,13 @@
 #include "D3D_Tools/BufferMapper.h"
 #include "D3D_Tools/CrossDeviceBuffer.h"
 
-namespace keng
+namespace keng::core
 {
-	class Application;
+    class Application;
+}
 
+namespace keng::graphics
+{
 	class IDevice
     {
 	public:
@@ -69,8 +72,8 @@ namespace keng
 	};
 
 	class GraphicsSystem :
-		public ISystem,
-		public IMainWindowListener,
+        public core::ISystem,
+        public core::IMainWindowListener,
 		public Observable<GraphicsSystem, IGraphicsListener>
 	{
 	public:
@@ -88,11 +91,11 @@ namespace keng
         // ISystem
         virtual bool ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) override;
         virtual const char* GetSystemGUID() override;
-		virtual void Initialize(IApplication* app) override;
+		virtual void Initialize(core::IApplication* app) override;
 
 	protected:
         std::vector<std::string> m_dependencies;
-		Application* m_app = nullptr;
+		core::Application* m_app = nullptr;
         SystemParams ReadDefaultParams();
 
 		struct ShaderInfo {

@@ -14,7 +14,7 @@
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 
-namespace keng
+namespace keng::resource
 {
 	class ResourceSystem :
 		public IResourceSystem
@@ -47,7 +47,7 @@ namespace keng
         // ISystem
         virtual bool ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) override;
         virtual const char* GetSystemGUID() override;
-        virtual void Initialize(IApplication* app) override;
+        virtual void Initialize(core::IApplication* app) override;
         virtual bool Update() override;
 
         // IResource system

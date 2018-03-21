@@ -14,10 +14,10 @@ namespace textured_quad_sample {
 		UnusedVar(hPrevInstance, cmdLine);
 		return CallAndRethrowM + [&] {
 			UnusedVar(hInstance, hPrevInstance, cmdLine, nCmdShow);
-			auto app = std::make_unique<keng::Application>();
+			auto app = std::make_unique<keng::core::Application>();
             app->AddSystem(new GraphicsSystem());
-            app->AddSystem(new keng::WindowSystem());
-            app->AddSystem(keng::CreateResourceSystem());
+            app->AddSystem(new keng::core::WindowSystem());
+            app->AddSystem(keng::resource::CreateResourceSystem());
 			app->Initialize();
 			app->Run();
 			return 0;

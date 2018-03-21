@@ -5,13 +5,13 @@
 
 #include <string_view>
 
-namespace keng
+namespace keng::resource
 {
     class IResource;
     class IResourceFabric;
 
     class IResourceSystem :
-        public ISystem
+        public core::ISystem
     {
     public:
         static const char* GetGUID() { return "8BA11029-9DE9-473C-925A-5FD0D7B36141"; }

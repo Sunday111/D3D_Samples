@@ -19,6 +19,7 @@ namespace textured_quad_sample
 
 	bool GraphicsSystem::Update() {
 		using namespace keng;
+        using namespace graphics;
 
 		return CallAndRethrowM + [&] {
 			return d3d_tools::Annotate(m_device.get(), L"Frame", [&]() {
@@ -66,12 +67,13 @@ namespace textured_quad_sample
 		};
 	}
 
-    void GraphicsSystem::Initialize(keng::IApplication* app)
+    void GraphicsSystem::Initialize(keng::core::IApplication* app)
 	{
 		CallAndRethrowM + [&] {
 			Base::Initialize(app);
-			
 			using namespace keng;
+            using namespace keng::resource;
+            using namespace keng::graphics;
 			auto resourceSystem = m_app->GetSystem<IResourceSystem>();
 			m_texture = std::dynamic_pointer_cast<Texture>(resourceSystem->GetResource("Assets/Textures/container.xml"));
 			m_textureView = m_texture->GetView<ResourceViewType::ShaderResource>(m_device->GetDevice(), TextureFormat::R8_G8_B8_A8_UNORM);

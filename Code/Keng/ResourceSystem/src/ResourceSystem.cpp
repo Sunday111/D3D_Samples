@@ -2,7 +2,7 @@
 #include "Keng/ResourceSystem/IResource.h"
 #include "Keng/ResourceSystem/IResourceFabric.h"
 
-namespace keng
+namespace keng::resource
 {
 
     bool ResourceSystem::ResourceInfo::IsSingleReference() const {
@@ -29,7 +29,7 @@ namespace keng
         return false;
     }
 
-    void ResourceSystem::Initialize(IApplication* app)
+    void ResourceSystem::Initialize(core::IApplication* app)
     {
         UnusedVar(app);
         m_parameters = ReadDefaultParams();

@@ -4,7 +4,8 @@
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/PrintException.h"
 
-namespace keng {
+namespace keng::core
+{
     using LauncherSignature = int(__cdecl*)(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int nCmdShow);
 
     template<LauncherSignature pfn>
@@ -29,6 +30,6 @@ namespace keng {
 #define MAKE_LAUNCHER_ENTRY_POINT($function)                                                                                                \
     extern "C" {                                                                                                                            \
         int __declspec(dllexport) __cdecl RunApplication(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int nCmdShow) {       \
-            return keng::WrapLauncerCall<$function>(hInstance, hPrevInstance, cmdLine, nCmdShow);                                           \
+            return keng::core::WrapLauncerCall<$function>(hInstance, hPrevInstance, cmdLine, nCmdShow);                                     \
         }                                                                                                                                   \
     }

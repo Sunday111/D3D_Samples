@@ -11,7 +11,7 @@
 #include "EverydayTools/Geom/Vector.h"
 #include "Keng/Core/Application.h"
 
-namespace keng
+namespace keng::graphics
 {
 	namespace {
 		struct Vertex {
@@ -58,8 +58,8 @@ namespace keng
 
 	GraphicsSystem::GraphicsSystem()
 	{
-		m_dependencies.push_back(IResourceSystem::GetGUID());
-		m_dependencies.push_back(WindowSystem::GetGUID());
+		m_dependencies.push_back(resource::IResourceSystem::GetGUID());
+		m_dependencies.push_back(core::WindowSystem::GetGUID());
 	}
 
 	const char* GraphicsSystem::GetGUID()
@@ -72,9 +72,9 @@ namespace keng
 		OutputDebugStringA("Resize\n");
 	}
 
-    void GraphicsSystem::Initialize(IApplication* app) {
+    void GraphicsSystem::Initialize(core::IApplication* app) {
 		CallAndRethrowM + [&] {
-            m_app = dynamic_cast<Application*>(app);
+            m_app = dynamic_cast<core::Application*>(app);
             edt::ThrowIfFailed(m_app != nullptr, "Failed to cast IApplication to keng::Application");
             auto params = ReadDefaultParams();
 
@@ -85,7 +85,7 @@ namespace keng
 				m_device = std::make_shared<Device>(deviceParams);
 			}
 
-			auto wndSystem = m_app->GetSystem<WindowSystem>();
+			auto wndSystem = m_app->GetSystem<core::WindowSystem>();
 			auto window = wndSystem->GetWindow();
 			uint32_t w, h;
 			window->GetWindowClientSize(&w, &h);
@@ -110,8 +110,8 @@ namespace keng
 				m_device->SetViewports(edt::MakeArrayView(viewport));
 			}
 
-			m_app->GetSystem<WindowSystem>()->GetWindow()->Subscribe(this);;
-			auto resourceSystem = m_app->GetSystem<IResourceSystem>();
+			m_app->GetSystem<core::WindowSystem>()->GetWindow()->Subscribe(this);;
+			auto resourceSystem = m_app->GetSystem<resource::IResourceSystem>();
 			resourceSystem->RegisterResourceFabric(std::make_shared<ShaderTemplateFabric>());
 			resourceSystem->RegisterResourceFabric(std::make_shared<ShaderFabric>(m_device));
 			resourceSystem->RegisterResourceFabric(std::make_shared<EffectFabric>());

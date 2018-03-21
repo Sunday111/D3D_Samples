@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <vector>
 
-namespace keng
+namespace keng::core
 {
 	class IMainWindowListener {
 	public:
@@ -17,13 +17,13 @@ namespace keng
 
 	template<typename TChar>
 	class MainWindow :
-		public Window<TChar, ::keng::MainWindow>,
+		public Window<TChar, ::keng::core::MainWindow>,
 		public Observable<MainWindow<TChar>, IMainWindowListener>
 	{
 	public:
 
 		MainWindow(HWND handle = nullptr) :
-			Window<TChar, keng::MainWindow>(handle) {
+			Window<TChar, keng::core::MainWindow>(handle) {
 		}
 
 		void Initialize(HINSTANCE hInstance) {
@@ -47,13 +47,13 @@ namespace keng
 
 	template<typename TChar>
 	class MainWindowClass :
-		public WindowClass<TChar, keng::MainWindowClass> {
+        public WindowClass<TChar, keng::core::MainWindowClass> {
 	public:
 		using Window = MainWindow<TChar>;
 		static inline const TChar* GetName();
 
 		MainWindowClass(HINSTANCE module_) :
-			WindowClass<TChar, keng::MainWindowClass>(module_, 0)
+			WindowClass<TChar, keng::core::MainWindowClass>(module_, 0)
 		{
 
 		}

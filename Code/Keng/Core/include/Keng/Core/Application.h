@@ -9,7 +9,7 @@
 #include "EverydayTools/FrameRateCounter.h"
 #include "WinWrappers/WinWrappers.h"
 
-namespace keng {
+namespace keng::core {
 	class Application :
 		public IApplication
 	{

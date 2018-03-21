@@ -4,11 +4,11 @@
 
 namespace simple_quad_sample
 {
-	class GraphicsSystem : public keng::GraphicsSystem
+	class GraphicsSystem : public keng::graphics::GraphicsSystem
 	{
 	public:
-		using Base = keng::GraphicsSystem;
-        virtual void Initialize(keng::IApplication* app) override;
+		using Base = keng::graphics::GraphicsSystem;
+        virtual void Initialize(keng::core::IApplication* app) override;
         virtual bool Update() override;
 
 	protected:
