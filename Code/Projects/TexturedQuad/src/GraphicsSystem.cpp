@@ -72,7 +72,7 @@ namespace textured_quad_sample
 			Base::Initialize(app);
 			
 			using namespace keng;
-			auto resourceSystem = m_app->GetSystem<ResourceSystem>();
+			auto resourceSystem = m_app->GetSystem<IResourceSystem>();
 			m_texture = std::dynamic_pointer_cast<Texture>(resourceSystem->GetResource("Assets/Textures/container.xml"));
 			m_textureView = m_texture->GetView<ResourceViewType::ShaderResource>(m_device->GetDevice(), TextureFormat::R8_G8_B8_A8_UNORM);
 

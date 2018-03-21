@@ -27,32 +27,6 @@ namespace keng
 	    virtual ~IXmlDocument() = default;
 	};
 	
-	class IResource :
-	    public IRefCountObject
-	{
-	public:
-	    virtual ~IResource() = default;
-	};
-	
-	class IResourceSystem;
-	
-	class IResourceFabric :
-	    public IRefCountObject
-	{
-	public:
-	    virtual std::string_view GetResourceType() const = 0;
-		virtual std::string_view GetNodeName() const = 0;
-	    virtual IntrusivePtr<IResource> LoadResource(IResourceSystem*, IntrusivePtr<IXmlNode> document) const = 0;
-	    virtual ~IResourceFabric() = default;
-	};
-	
-	class IResourceSystem
-	{
-	public:
-	    virtual IntrusivePtr<IResource> GetResource(std::string_view filename) = 0;
-	    virtual ~IResourceSystem() = default;
-	};
-	
 	template<typename Derived>
 	class IXmlNodeImpl :
 		public RefCountImpl<IXmlNode>

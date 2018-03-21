@@ -5,7 +5,7 @@
 namespace keng
 {
 	class ShaderTemplate :
-		public SimpleResourceBase
+        public RefCountImpl<IResource>
 	{
 	public:
 		ShaderType type;

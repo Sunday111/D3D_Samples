@@ -11,7 +11,7 @@ namespace keng
 
 	template<ShaderType shaderType>
 	class Shader :
-		public SimpleResourceBase
+        public RefCountImpl<IResource>
 	{
 	public:
 		d3d_tools::Shader<shaderType> m_impl;

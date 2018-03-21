@@ -1,11 +1,7 @@
-#include "Keng/Resource/ResourceSystem.h"
+#include "ResourceSystem.h"
 
 namespace keng
 {
-    const char* ResourceSystem::GetGUID() {
-        return "8BA11029-9DE9-473C-925A-5FD0D7B36141";
-    }
-
     void ResourceSystem::Initialize(IApplication* app)
     {
         UnusedVar(app);
@@ -98,5 +94,26 @@ namespace keng
 
             return result;
         };
+    }
+
+    IResourceSystem* CreateResourceSystem()
+    {
+        return new ResourceSystem();
+    }
+
+    bool ResourceSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {
+        return CallAndRethrowM + [&]() -> bool {
+            for (auto& guid : m_dependencies) {
+                if (pfn(guid.data(), context)) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+    }
+
+    const char* ResourceSystem::GetSystemGUID() {
+        return GetGUID();
     }
 }

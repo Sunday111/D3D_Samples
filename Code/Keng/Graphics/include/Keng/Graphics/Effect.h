@@ -5,7 +5,7 @@
 namespace keng
 {
 	class Effect :
-		public SimpleResourceBase
+        public RefCountImpl<IResource>
 	{
 	public:
 		IntrusivePtr<Shader<ShaderType::Vertex>> vs;

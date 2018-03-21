@@ -51,7 +51,9 @@ namespace keng
 		}
 	}
 
-	ISystem* Application::AddSystem(std::unique_ptr<ISystem> system) {
+	ISystem* Application::AddSystem(ISystem* pSystem) {
+        std::unique_ptr<ISystem> system;
+        system.reset(pSystem);
 		m_systems.push_back(std::move(system));
 		return m_systems.back().get();
 	}

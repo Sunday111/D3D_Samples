@@ -70,4 +70,20 @@ namespace keng
             return params;
         };
     }
+
+    bool WindowSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {
+        return CallAndRethrowM + [&]() -> bool {
+            for (auto& guid : m_dependencies) {
+                if (pfn(guid.data(), context)) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+    }
+
+    const char* WindowSystem::GetSystemGUID() {
+        return GetGUID();
+    }
 }

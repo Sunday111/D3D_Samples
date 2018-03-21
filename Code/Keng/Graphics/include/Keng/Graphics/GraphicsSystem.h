@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keng/Core/Systems/System.h"
+#include "Keng/Core/Systems/ISystem.h"
 #include "Keng/Core/Systems/WindowSystem/MainWindow.h"
 #include "EverydayTools/Observable.h"
 
@@ -67,7 +67,7 @@ namespace keng
 	};
 
 	class GraphicsSystem :
-		public System<GraphicsSystem>,
+		public ISystem,
 		public IMainWindowListener,
 		public Observable<GraphicsSystem, IGraphicsListener>
 	{
@@ -83,9 +83,13 @@ namespace keng
 
 		void OnWindowResize(int w, int h) override;
 
+        // ISystem
+        virtual bool ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) override;
+        virtual const char* GetSystemGUID() override;
 		virtual void Initialize(IApplication* app) override;
 
 	protected:
+        std::vector<std::string> m_dependencies;
 		Application* m_app = nullptr;
         SystemParams ReadDefaultParams();
 

@@ -3,12 +3,13 @@
 #include <string>
 #include "MainWindow.h"
 #include "WinWrappers/WinWrappers.h"
-#include "Keng/Core/Systems/System.h"
+#include "Keng/Core/Systems/ISystem.h"
 
 namespace keng
 {
 	class WindowSystem :
-		public System<WindowSystem> {
+        public ISystem
+    {
 	public:
 	    using TChar = char;
 	    using WA = WinAPI<TChar>;
@@ -22,10 +23,17 @@ namespace keng
 	    };
 
 		static const char* GetGUID();
-        virtual void Initialize(IApplication* app) override;
-        bool Update() override;
         MainWindow<TChar>* GetWindow() const;
         static SystemParams ReadDefaultParams();
+
+        // ISystem
+        virtual bool ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) override;
+        virtual const char* GetSystemGUID() override;
+        virtual void Initialize(IApplication* app) override;
+        virtual bool Update() override;
+
+    protected:
+        std::vector<std::string> m_dependencies;
 	
 	private:
 	    std::unique_ptr<MainWindowClass<TChar>> m_windowClass;

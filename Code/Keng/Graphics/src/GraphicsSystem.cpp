@@ -58,7 +58,7 @@ namespace keng
 
 	GraphicsSystem::GraphicsSystem()
 	{
-		m_dependencies.push_back(ResourceSystem::GetGUID());
+		m_dependencies.push_back(IResourceSystem::GetGUID());
 		m_dependencies.push_back(WindowSystem::GetGUID());
 	}
 
@@ -111,7 +111,7 @@ namespace keng
 			}
 
 			m_app->GetSystem<WindowSystem>()->GetWindow()->Subscribe(this);;
-			auto resourceSystem = m_app->GetSystem<ResourceSystem>();
+			auto resourceSystem = m_app->GetSystem<IResourceSystem>();
 			resourceSystem->RegisterResourceFabric(IntrusivePtr<ShaderTemplateFabric>::MakeInstance());
 			resourceSystem->RegisterResourceFabric(IntrusivePtr<ShaderFabric>::MakeInstance(m_device));
 			resourceSystem->RegisterResourceFabric(IntrusivePtr<EffectFabric>::MakeInstance());
@@ -139,4 +139,20 @@ namespace keng
 			device->GetContext()->IASetInputLayout(layout.Get());
 		};
 	}
+
+    bool GraphicsSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {
+        return CallAndRethrowM + [&]() -> bool {
+            for (auto& guid : m_dependencies) {
+                if (pfn(guid.data(), context)) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+    }
+
+    const char* GraphicsSystem::GetSystemGUID() {
+        return GetGUID();
+    }
 }

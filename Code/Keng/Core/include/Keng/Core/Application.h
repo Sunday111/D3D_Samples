@@ -20,7 +20,7 @@ namespace keng {
 		using TFrameRateCounter = FrameRateCounter<Period, FpsSamplesCount>;
 
 		virtual bool Update() override;
-		virtual ISystem* AddSystem(std::unique_ptr<ISystem> system) override;
+		virtual ISystem* AddSystem(ISystem* system) override;
 		virtual void Initialize() override;
 
 		void Run();

@@ -70,7 +70,7 @@ namespace simple_quad_sample
 			Base::Initialize(app);
 			
 			using namespace keng;
-			auto resourceSystem = m_app->GetSystem<ResourceSystem>();
+			auto resourceSystem = m_app->GetSystem<IResourceSystem>();
 
 			{// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/FlatColor.xml";

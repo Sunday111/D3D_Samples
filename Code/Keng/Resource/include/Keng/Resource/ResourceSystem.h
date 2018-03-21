@@ -1,90 +1,43 @@
 #pragma once
 
+#include "Keng/Core/RefCounter.h"
+#include "Keng/Core/Systems/ISystem.h"
 #include "Xml.h"
 
-#include <chrono>
-#include <fstream>
-#include <string>
 #include <string_view>
-#include <unordered_map>
-
-#include "Keng/Core/Systems/System.h"
-#include "Keng/Core/RefCounter.h"
-
-#include "EverydayTools/UnusedVar.h"
-#include "EverydayTools/Exception/CallAndRethrow.h"
-#include "EverydayTools/Exception/ThrowIfFailed.h"
 
 namespace keng
 {
-	class ResourceSystem :
-		public IResourceSystem,
-		public System<ResourceSystem>
-	{
-	public:
-        struct ResourceParameters
-        {
-            float releaseDelay = 0.0f;
-        };
+    class IResource :
+        public IRefCountObject
+    {
+    public:
+        virtual ~IResource() = default;
+    };
 
-        struct SystemParams
-        {
-            ResourceParameters defaultResourceParams;
-        };
-	
-	protected:
-	private:
-	    struct ResourceInfo
-	    {
-	        bool IsSingleReference() const {
-	            return RefCounter::GetReferencesCount(resource.Get()) < 2;
-	        }
-	
-	        bool IsExpired() const {
-	            return false;
-	        }
-	
-	        bool ShouldBeReleased(float timeNow) {
-	            if (IsSingleReference()) {
-	                if (lastTouchMs < 0.f) {
-	                    // Start countdown before dying
-	                    lastTouchMs = timeNow;
-	                } else {
-	                    if (params.releaseDelay + lastTouchMs < timeNow) {
-	                        return true;
-	                    }
-	                }
-	            }
-	
-	            return false;
-	        }
-	
-            ResourceParameters params;
-	        IntrusivePtr<IResource> resource;
-	        float lastTouchMs = -1.f;
-	    };
-	
-	public:
-        static const char* GetGUID();
-        virtual void Initialize(IApplication* app) override;	
-        virtual bool Update() override;	
-        virtual IntrusivePtr<IResource> GetResource(std::string_view filename) override;	
-        void RegisterResourceFabric(IntrusivePtr<IResourceFabric> fabric);
-        void UnregisterFabric(IntrusivePtr<IResourceFabric> fabric);
+    class IResourceSystem;
 
-    protected:
-        SystemParams ReadDefaultParams();
-	
-	public:
-	protected:
-	private:
-        SystemParams m_parameters;
-	    std::unordered_map<std::string, ResourceInfo> m_resources;
-	    std::unordered_map<std::string, IntrusivePtr<IResourceFabric>> m_fabrics;
-	};
-	
-	class SimpleResourceBase :
-	    public RefCountImpl<IResource>
-	{
-	};
+    class IResourceFabric :
+        public IRefCountObject
+    {
+    public:
+        virtual std::string_view GetResourceType() const = 0;
+        virtual std::string_view GetNodeName() const = 0;
+        virtual IntrusivePtr<IResource> LoadResource(IResourceSystem*, IntrusivePtr<IXmlNode> document) const = 0;
+        virtual ~IResourceFabric() = default;
+    };
+
+    class IResourceSystem :
+        public ISystem
+    {
+    public:
+        static const char* GetGUID() { return "8BA11029-9DE9-473C-925A-5FD0D7B36141"; }
+
+        virtual IntrusivePtr<IResource> GetResource(std::string_view filename) = 0;
+        virtual void RegisterResourceFabric(IntrusivePtr<IResourceFabric> fabric) = 0;
+        virtual void UnregisterFabric(IntrusivePtr<IResourceFabric> fabric) = 0;
+        virtual ~IResourceSystem() = default;
+    };
+
+    IResourceSystem* CreateResourceSystem();
 }
