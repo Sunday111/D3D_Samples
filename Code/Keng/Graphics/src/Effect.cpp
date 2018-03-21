@@ -10,10 +10,10 @@ namespace keng
 		return "Effect";
 	}
 
-	IntrusivePtr<IResource> EffectFabric::LoadResource(IResourceSystem* resourceSystem, IntrusivePtr<IXmlNode> node) const {
+	std::shared_ptr<IResource> EffectFabric::LoadResource(IResourceSystem* resourceSystem, std::shared_ptr<IXmlNode> node) const {
 		return CallAndRethrowM + [&] {
 			bool anyShader = false;
-			auto result = IntrusivePtr<Effect>::MakeInstance();
+			auto result = std::make_shared<Effect>();
 
 			// TODO: check legal shader types combinations?
 

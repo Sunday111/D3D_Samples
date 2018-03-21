@@ -1,6 +1,6 @@
 #include "Keng/Core/Application.h"
 #include "Keng/Core/Systems/WindowSystem/WindowSystem.h"
-#include "Keng/Resource/ResourceSystem.h"
+#include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/Graphics/GraphicsSystem.h"
 #include "GraphicsSystem.h"
 

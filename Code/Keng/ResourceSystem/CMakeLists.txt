@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 include(generate_vs_filters)
 
-set(keng_module_name KengResource)
+set(keng_module_name KengResourceSystem)
 set(KENG_${keng_module_name} true CACHE BOOL "Resource system")
 if(NOT ${KENG_${keng_module_name}})
     return()
@@ -16,7 +16,7 @@ foreach(entry ${sources_exts})
 	list(APPEND target_sources ${sources_by_ext})
 endforeach()
 
-add_library(${keng_module_name} STATIC "${target_sources}")
+add_library(${keng_module_name} SHARED "${target_sources}")
 generate_vs_filters(${target_sources})
 target_include_directories(${keng_module_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${keng_module_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)

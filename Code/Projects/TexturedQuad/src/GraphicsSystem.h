@@ -15,7 +15,7 @@ namespace textured_quad_sample
 		Base::ShaderInfo m_drawShader;
 		ComPtr<ID3D11SamplerState> m_sampler;
 		std::unique_ptr<d3d_tools::ICrossDeviceBuffer> m_buffer;
-		IntrusivePtr<keng::Texture> m_texture;
-		IntrusivePtr<keng::TextureView<keng::ResourceViewType::ShaderResource>> m_textureView;
+		std::shared_ptr<keng::Texture> m_texture;
+		std::shared_ptr<keng::TextureView<keng::ResourceViewType::ShaderResource>> m_textureView;
 	};
 }

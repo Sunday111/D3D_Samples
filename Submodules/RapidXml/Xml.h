@@ -3,19 +3,18 @@
 #include "rapidxml.hpp"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
-#include "Keng/Core/RefCounter.h"
 #include <fstream>
 #include <string_view>
+#include <memory>
 
 namespace keng
 {
-	class IXmlNode :
-	    public IRefCountObject
+	class IXmlNode
 	{
 	public:
-	    virtual IntrusivePtr<IXmlNode> FindFirstNode(std::string_view name) = 0;
-		virtual IntrusivePtr<IXmlNode> NextSibling(std::string_view name = "") = 0;
-	    virtual IntrusivePtr<IXmlNode> GetFirstNode(std::string_view name) = 0;
+	    virtual std::shared_ptr<IXmlNode> FindFirstNode(std::string_view name) = 0;
+		virtual std::shared_ptr<IXmlNode> NextSibling(std::string_view name = "") = 0;
+	    virtual std::shared_ptr<IXmlNode> GetFirstNode(std::string_view name) = 0;
 	    virtual std::string_view GetValue() const = 0;
 	    virtual ~IXmlNode() = default;
 	};
@@ -29,30 +28,30 @@ namespace keng
 	
 	template<typename Derived>
 	class IXmlNodeImpl :
-		public RefCountImpl<IXmlNode>
+        public IXmlNode
 	{
 	public:
-		virtual IntrusivePtr<IXmlNode> FindFirstNode(std::string_view name) override {
-			return CallAndRethrowM + [&]() -> IntrusivePtr<IXmlNode> {
+		virtual std::shared_ptr<IXmlNode> FindFirstNode(std::string_view name) override {
+			return CallAndRethrowM + [&]() -> std::shared_ptr<IXmlNode> {
 				auto impl = GetRepresentationPtr();
 				auto node = impl->first_node(name.data());
 				if (!node) {
 					return nullptr;
 				}
-				return IntrusivePtr<XmlNode>::MakeInstance(node);
+				return std::make_shared<XmlNode>(node);
 			};
 		}
 	
-		virtual IntrusivePtr<IXmlNode> GetFirstNode(std::string_view name) override {
+		virtual std::shared_ptr<IXmlNode> GetFirstNode(std::string_view name) override {
 			auto result = FindFirstNode(name);
 			edt::ThrowIfFailed(result != nullptr, "Node \"", name, "\" not found");
 			return result;
 		}
 	
-		virtual IntrusivePtr<IXmlNode> NextSibling(std::string_view name) override {
+		virtual std::shared_ptr<IXmlNode> NextSibling(std::string_view name) override {
 			auto impl = GetRepresentationPtr();
 			if (auto node = impl->next_sibling(name.data(), name.size())) {
-				return IntrusivePtr<XmlNode>::MakeInstance(node);
+				return std::make_shared<XmlNode>(node);
 			}
 			return nullptr;
 		}

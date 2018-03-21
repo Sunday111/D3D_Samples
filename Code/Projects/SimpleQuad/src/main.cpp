@@ -1,7 +1,7 @@
 #include "Keng/Core/Application.h"
 #include "Keng/Core/Systems/WindowSystem/WindowSystem.h"
 #include "Keng/Graphics/GraphicsSystem.h"
-#include "Keng/Resource/ResourceSystem.h"
+#include "Keng/ResourceSystem/IResourceSystem.h"
 #include "GraphicsSystem.h"
 
 #include <stdexcept>

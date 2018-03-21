@@ -5,7 +5,8 @@
 #include "EverydayTools\Exception\CallAndRethrow.h"
 #include "WinWrappers/ComPtr.h"
 #include "D3D_Tools/Texture.h"
-#include "Keng/Resource/ResourceSystem.h"
+#include "Keng/ResourceSystem/IResource.h"
+#include "Keng/ResourceSystem/IResourceFabric.h"
 
 namespace keng
 {
@@ -22,7 +23,8 @@ namespace keng
 		virtual ~ITexture() = default;
 	};
 
-	class ITextureView : public IRefCountObject {
+	class ITextureView
+    {
 	public:
 		virtual void* GetNativeInterface() const = 0;
 		virtual TextureFormat GetFormat() const = 0;
@@ -32,7 +34,7 @@ namespace keng
 
 	template<ResourceViewType type>
 	class TextureView :
-		public RefCountImpl<ITextureView>,
+		public ITextureView,
 		public d3d_tools::TextureView<type>
 	{
 	public:
@@ -52,7 +54,7 @@ namespace keng
 	};
 
 	class Texture :
-		public RefCountImpl<ITexture>,
+		public ITexture,
 		public d3d_tools::Texture
 	{
 	public:
@@ -62,21 +64,21 @@ namespace keng
 		virtual TextureFormat GetFormat() const override;
 
 		template<ResourceViewType type>
-		IntrusivePtr<TextureView<type>> GetView(ID3D11Device* device, TextureFormat format) {
-			return IntrusivePtr<TextureView<type>>::MakeInstance(device, GetTexture(), format);
+		std::shared_ptr<TextureView<type>> GetView(ID3D11Device* device, TextureFormat format) {
+			return std::make_shared<TextureView<type>>(device, GetTexture(), format);
 		}
 
 	};
 
 	class TextureFabric :
-		public RefCountImpl<IResourceFabric>
+		public IResourceFabric
 	{
 	public:
-		TextureFabric(IntrusivePtr<Device>);
+		TextureFabric(std::shared_ptr<Device>);
 		virtual std::string_view GetNodeName() const override;
 		virtual std::string_view GetResourceType() const override;
-		virtual IntrusivePtr<IResource> LoadResource(IResourceSystem*, IntrusivePtr<IXmlNode> node) const override;
+		virtual std::shared_ptr<IResource> LoadResource(IResourceSystem*, std::shared_ptr<IXmlNode> node) const override;
 	private:
-		IntrusivePtr<Device> m_device;
+		std::shared_ptr<Device> m_device;
 	};
 }

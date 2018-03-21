@@ -5,7 +5,7 @@
 namespace keng
 {
 	class ShaderTemplate :
-        public RefCountImpl<IResource>
+        public IResource
 	{
 	public:
 		ShaderType type;
@@ -13,11 +13,11 @@ namespace keng
 	};
 
 	class ShaderTemplateFabric :
-		public RefCountImpl<IResourceFabric>
+		public IResourceFabric
 	{
 	public:
 		virtual std::string_view GetNodeName() const override;
 		virtual std::string_view GetResourceType() const override;
-		virtual IntrusivePtr<IResource> LoadResource(IResourceSystem*, IntrusivePtr<IXmlNode> document) const override;
+		virtual std::shared_ptr<IResource> LoadResource(IResourceSystem*, std::shared_ptr<IXmlNode> document) const override;
 	};
 }

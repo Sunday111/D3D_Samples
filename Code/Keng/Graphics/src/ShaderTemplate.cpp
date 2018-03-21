@@ -20,7 +20,7 @@ namespace keng
 		return "ShaderTemplate";
 	}
 
-	IntrusivePtr<IResource> ShaderTemplateFabric::LoadResource(IResourceSystem*, IntrusivePtr<IXmlNode> node) const {
+	std::shared_ptr<IResource> ShaderTemplateFabric::LoadResource(IResourceSystem*, std::shared_ptr<IXmlNode> node) const {
 		return CallAndRethrowM + [&] {
 			auto typeNode = node->GetFirstNode("type");
 			auto fileNode = node->GetFirstNode("file");
@@ -36,7 +36,7 @@ namespace keng
 				(std::istreambuf_iterator<char>(shaderFile)),
 				(std::istreambuf_iterator<char>()));
 
-			auto shaderTemplate = IntrusivePtr<ShaderTemplate>::MakeInstance();
+			auto shaderTemplate = std::make_shared<ShaderTemplate>();
 			shaderTemplate->type = shaderType;
 			shaderTemplate->code = std::move(content);
 

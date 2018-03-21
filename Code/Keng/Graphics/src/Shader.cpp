@@ -9,12 +9,12 @@ namespace keng
 {
 	struct ShaderCompiler
 	{
-		IntrusivePtr<Device> device;
-		IntrusivePtr<ShaderTemplate> shaderTemplate;
+		std::shared_ptr<Device> device;
+		std::shared_ptr<ShaderTemplate> shaderTemplate;
 		std::string_view entryPoint;
 		std::vector<d3d_tools::ShaderMacro> definitions;
 
-		IntrusivePtr<IResource> Compile() {
+		std::shared_ptr<IResource> Compile() {
 			switch (shaderTemplate->type)
 			{
 			case ShaderType::Vertex:
@@ -29,8 +29,8 @@ namespace keng
 		}
 
 		template<ShaderType st>
-		IntrusivePtr<Shader<st>> Compile() {
-			auto result = IntrusivePtr<Shader<st>>::MakeInstance();
+		std::shared_ptr<Shader<st>> Compile() {
+			auto result = std::make_shared<Shader<st>>();
 			auto view = 
 			result->m_impl = device->CreateShader<st>(
 				shaderTemplate->code.c_str(),
@@ -41,7 +41,7 @@ namespace keng
 		}
 	};
 
-	ShaderFabric::ShaderFabric(IntrusivePtr<Device> device) :
+	ShaderFabric::ShaderFabric(std::shared_ptr<Device> device) :
 		m_device(device)
 	{}
 
@@ -53,8 +53,8 @@ namespace keng
 		return "Shader";
 	}
 
-	IntrusivePtr<IResource> ShaderFabric::LoadResource(IResourceSystem* resourceSystem, IntrusivePtr<IXmlNode> node) const {
-		return CallAndRethrowM + [&]() -> IntrusivePtr<IResource> {
+	std::shared_ptr<IResource> ShaderFabric::LoadResource(IResourceSystem* resourceSystem, std::shared_ptr<IXmlNode> node) const {
+		return CallAndRethrowM + [&]() -> std::shared_ptr<IResource> {
 			ShaderCompiler shaderCompiler;
 			shaderCompiler.device = m_device;
 

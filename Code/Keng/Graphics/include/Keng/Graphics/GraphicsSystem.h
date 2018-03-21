@@ -18,21 +18,23 @@ namespace keng
 {
 	class Application;
 
-	class IDevice : public IRefCountObject {
+	class IDevice
+    {
 	public:
 		virtual void* GetNativeDevice() const = 0;
 		virtual void* GetNativeContext() const = 0;
 		virtual ~IDevice() = default;
 	};
 
-	class ISwapChain : public IRefCountObject {
+	class ISwapChain
+    {
 	public:
 		virtual void* GetNativeInterface() const = 0;
 		virtual ~ISwapChain() = default;
 	};
 
 	class Device :
-		public RefCountImpl<IDevice>,
+		public IDevice,
 		public d3d_tools::Device
 	{
 	public:
@@ -48,7 +50,7 @@ namespace keng
 	};
 
 	class SwapChain :
-		public RefCountImpl<ISwapChain>,
+		public ISwapChain,
 		public d3d_tools::SwapChain
 	{
 	public:
@@ -97,25 +99,25 @@ namespace keng
 			void Activate(Device* device);
 
 			ComPtr<ID3D11InputLayout> layout;
-			IntrusivePtr<Effect> effect;
+			std::shared_ptr<Effect> effect;
 		};
 
 		struct RT {
 			void Activate(Device* device);
 
 			std::unique_ptr<Texture> rt;
-			IntrusivePtr<TextureView<ResourceViewType::RenderTarget>> rt_rtv;
-			IntrusivePtr<TextureView<ResourceViewType::ShaderResource>> rt_srv;
+			std::shared_ptr<TextureView<ResourceViewType::RenderTarget>> rt_rtv;
+			std::shared_ptr<TextureView<ResourceViewType::ShaderResource>> rt_srv;
 
 			std::unique_ptr<Texture> ds;
-			IntrusivePtr<TextureView<ResourceViewType::DepthStencil>> ds_dsv;
-			IntrusivePtr<TextureView<ResourceViewType::ShaderResource>> ds_srv;
+			std::shared_ptr<TextureView<ResourceViewType::DepthStencil>> ds_dsv;
+			std::shared_ptr<TextureView<ResourceViewType::ShaderResource>> ds_srv;
 		} m_renderTarget;
 
 
 		bool m_fullscreen = false;
-		IntrusivePtr<Device> m_device;
-		IntrusivePtr<SwapChain> m_swapchain;
-		IntrusivePtr<TextureView<ResourceViewType::RenderTarget>> m_renderTargetView;
+		std::shared_ptr<Device> m_device;
+		std::shared_ptr<SwapChain> m_swapchain;
+		std::shared_ptr<TextureView<ResourceViewType::RenderTarget>> m_renderTargetView;
 	};
 }

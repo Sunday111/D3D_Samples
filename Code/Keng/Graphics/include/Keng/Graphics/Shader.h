@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Keng/Resource/ResourceSystem.h"
+#include "Keng/ResourceSystem/IResourceFabric.h"
+#include "Keng/ResourceSystem/IResourceSystem.h"
+#include "Keng/ResourceSystem/IResource.h"
 #include "D3D_Tools/Shader.h"
 
 namespace keng
@@ -11,23 +13,23 @@ namespace keng
 
 	template<ShaderType shaderType>
 	class Shader :
-        public RefCountImpl<IResource>
+        public IResource
 	{
 	public:
 		d3d_tools::Shader<shaderType> m_impl;
 	};
 
 	class ShaderFabric :
-		public RefCountImpl<IResourceFabric>
+		public IResourceFabric
 	{
 	public:
-		ShaderFabric(IntrusivePtr<Device>);
+		ShaderFabric(std::shared_ptr<Device>);
 
 		virtual std::string_view GetNodeName() const override;
 		virtual std::string_view GetResourceType() const override;
-		virtual IntrusivePtr<IResource> LoadResource(IResourceSystem*, IntrusivePtr<IXmlNode> document) const override;
+		virtual std::shared_ptr<IResource> LoadResource(IResourceSystem*, std::shared_ptr<IXmlNode> document) const override;
 
 	private:
-		IntrusivePtr<Device> m_device;
+        std::shared_ptr<Device> m_device;
 	};
 }

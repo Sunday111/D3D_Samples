@@ -53,7 +53,7 @@ namespace keng
     }
 
 	void GraphicsSystem::RT::Activate(Device* device) {
-		device->SetRenderTarget(*rt_rtv, ds_dsv.Get());
+		device->SetRenderTarget(*rt_rtv, ds_dsv.get());
 	}
 
 	GraphicsSystem::GraphicsSystem()
@@ -82,7 +82,7 @@ namespace keng
 				Device::CreateParams deviceParams;
 				deviceParams.debugDevice = params.debugDevice;
 				deviceParams.noDeviceMultithreading = params.noDeviceMultithreading;
-				m_device = IntrusivePtr<Device>::MakeInstance(deviceParams);
+				m_device = std::make_shared<Device>(deviceParams);
 			}
 
 			auto wndSystem = m_app->GetSystem<WindowSystem>();
@@ -91,12 +91,12 @@ namespace keng
 			window->GetWindowClientSize(&w, &h);
 
 			{// Initialize swapchain
-				m_swapchain = IntrusivePtr<SwapChain>::MakeInstance(m_device->GetDevice(), w, h, window->GetHandle());
+				m_swapchain = std::make_shared<SwapChain>(m_device->GetDevice(), w, h, window->GetHandle());
 			}
 
 			{// Create render target view to swapchain backbuffer
 				auto backbuffer = m_swapchain->GetBackBuffer();
-				m_renderTargetView = IntrusivePtr<TextureView<ResourceViewType::RenderTarget>>::MakeInstance(
+				m_renderTargetView = std::make_shared<TextureView<ResourceViewType::RenderTarget>>(
 					m_device->GetDevice(),
 					backbuffer.GetTexture());
 			}
@@ -112,10 +112,10 @@ namespace keng
 
 			m_app->GetSystem<WindowSystem>()->GetWindow()->Subscribe(this);;
 			auto resourceSystem = m_app->GetSystem<IResourceSystem>();
-			resourceSystem->RegisterResourceFabric(IntrusivePtr<ShaderTemplateFabric>::MakeInstance());
-			resourceSystem->RegisterResourceFabric(IntrusivePtr<ShaderFabric>::MakeInstance(m_device));
-			resourceSystem->RegisterResourceFabric(IntrusivePtr<EffectFabric>::MakeInstance());
-			resourceSystem->RegisterResourceFabric(IntrusivePtr<TextureFabric>::MakeInstance(m_device));
+			resourceSystem->RegisterResourceFabric(std::make_shared<ShaderTemplateFabric>());
+			resourceSystem->RegisterResourceFabric(std::make_shared<ShaderFabric>(m_device));
+			resourceSystem->RegisterResourceFabric(std::make_shared<EffectFabric>());
+			resourceSystem->RegisterResourceFabric(std::make_shared<TextureFabric>(m_device));
 
 			// Create render target
 			{

@@ -15,7 +15,7 @@ namespace keng
 		return GetTextureFormat();
 	}
 
-	TextureFabric::TextureFabric(IntrusivePtr<Device> device) :
+	TextureFabric::TextureFabric(std::shared_ptr<Device> device) :
 		m_device(device)
 	{
 	}
@@ -29,7 +29,7 @@ namespace keng
 		return "Texture";
 	}
 
-	IntrusivePtr<IResource> TextureFabric::LoadResource(IResourceSystem*, IntrusivePtr<IXmlNode> node) const
+	std::shared_ptr<IResource> TextureFabric::LoadResource(IResourceSystem*, std::shared_ptr<IXmlNode> node) const
 	{
 		return CallAndRethrowM + [&] {
 			auto fileNode = node->GetFirstNode("file");
@@ -54,7 +54,7 @@ namespace keng
 			img_data.reset(stbi_load(textureFilename.data(), &w, &h, &n, 4));
 			auto ptr = img_data.get();
 
-			return IntrusivePtr<Texture>::MakeInstance(m_device->GetDevice(), w, h, TextureFormat::R8_G8_B8_A8_UNORM, TextureFlags::ShaderResource, ptr);
+			return std::make_shared<Texture>(m_device->GetDevice(), w, h, TextureFormat::R8_G8_B8_A8_UNORM, TextureFlags::ShaderResource, ptr);
 		};
 	}
 }

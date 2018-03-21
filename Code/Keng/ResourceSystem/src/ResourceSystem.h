@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keng/Resource/ResourceSystem.h"
+#include "Keng/ResourceSystem/IResourceSystem.h"
 
 #include "Xml.h"
 
@@ -34,31 +34,12 @@ namespace keng
 	private:
 	    struct ResourceInfo
 	    {
-	        bool IsSingleReference() const {
-	            return RefCounter::GetReferencesCount(resource.Get()) < 2;
-	        }
-	
-	        bool IsExpired() const {
-	            return false;
-	        }
-	
-	        bool ShouldBeReleased(float timeNow) {
-	            if (IsSingleReference()) {
-	                if (lastTouchMs < 0.f) {
-	                    // Start countdown before dying
-	                    lastTouchMs = timeNow;
-	                } else {
-	                    if (params.releaseDelay + lastTouchMs < timeNow) {
-	                        return true;
-	                    }
-	                }
-	            }
-	
-	            return false;
-	        }
+            bool IsSingleReference() const;
+            bool IsExpired() const;
+            bool ShouldBeReleased(float timeNow);
 	
             ResourceParameters params;
-	        IntrusivePtr<IResource> resource;
+            std::shared_ptr<IResource> resource;
 	        float lastTouchMs = -1.f;
 	    };
 	
@@ -70,9 +51,9 @@ namespace keng
         virtual bool Update() override;
 
         // IResource system
-        virtual IntrusivePtr<IResource> GetResource(std::string_view filename) override;
-        virtual void RegisterResourceFabric(IntrusivePtr<IResourceFabric> fabric) override;
-        virtual void UnregisterFabric(IntrusivePtr<IResourceFabric> fabric) override;
+        virtual std::shared_ptr<IResource> GetResource(std::string_view filename) override;
+        virtual void RegisterResourceFabric(std::shared_ptr<IResourceFabric> fabric) override;
+        virtual void UnregisterFabric(std::shared_ptr<IResourceFabric> fabric) override;
 
     protected:
         SystemParams ReadDefaultParams();
@@ -84,6 +65,6 @@ namespace keng
 	private:
         SystemParams m_parameters;
 	    std::unordered_map<std::string, ResourceInfo> m_resources;
-	    std::unordered_map<std::string, IntrusivePtr<IResourceFabric>> m_fabrics;
+	    std::unordered_map<std::string, std::shared_ptr<IResourceFabric>> m_fabrics;
 	};
 }

@@ -1,7 +1,34 @@
 #include "ResourceSystem.h"
+#include "Keng/ResourceSystem/IResource.h"
+#include "Keng/ResourceSystem/IResourceFabric.h"
 
 namespace keng
 {
+
+    bool ResourceSystem::ResourceInfo::IsSingleReference() const {
+        return resource.use_count() < 2;
+    }
+
+    bool ResourceSystem::ResourceInfo::IsExpired() const {
+        return false;
+    }
+
+    bool ResourceSystem::ResourceInfo::ShouldBeReleased(float timeNow) {
+        if (IsSingleReference()) {
+            if (lastTouchMs < 0.f) {
+                // Start countdown before dying
+                lastTouchMs = timeNow;
+            }
+            else {
+                if (params.releaseDelay + lastTouchMs < timeNow) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     void ResourceSystem::Initialize(IApplication* app)
     {
         UnusedVar(app);
@@ -31,7 +58,7 @@ namespace keng
         };
     }
 
-    IntrusivePtr<IResource> ResourceSystem::GetResource(std::string_view filename) {
+    std::shared_ptr<IResource> ResourceSystem::GetResource(std::string_view filename) {
         return CallAndRethrowM + [&] {
             std::string filename_copy(filename);
             auto resource_it = m_resources.find(filename_copy);
@@ -39,7 +66,7 @@ namespace keng
                 return resource_it->second.resource;
             }
 
-            auto doc = IntrusivePtr<XmlDocument>::MakeInstance(filename);
+            auto doc = std::make_shared<XmlDocument>(filename);
             auto resource_node = doc->GetFirstNode("resource");
             auto typeNode = resource_node->GetFirstNode("type");
             auto resourceTypeName = std::string(typeNode->GetValue());
@@ -59,7 +86,7 @@ namespace keng
         };
     }
 
-    void ResourceSystem::RegisterResourceFabric(IntrusivePtr<IResourceFabric> fabric) {
+    void ResourceSystem::RegisterResourceFabric(std::shared_ptr<IResourceFabric> fabric) {
         CallAndRethrowM + [&] {
             auto resourceTypeName = fabric->GetResourceType();
             auto res = m_fabrics.insert(std::make_pair(std::string(resourceTypeName), fabric));
@@ -67,7 +94,7 @@ namespace keng
         };
     }
 
-    void ResourceSystem::UnregisterFabric(IntrusivePtr<IResourceFabric> fabric) {
+    void ResourceSystem::UnregisterFabric(std::shared_ptr<IResourceFabric> fabric) {
         CallAndRethrowM + [&] {
             auto resourceTypeName = fabric->GetResourceType();
             auto eraseCount = m_fabrics.erase(std::string(resourceTypeName));

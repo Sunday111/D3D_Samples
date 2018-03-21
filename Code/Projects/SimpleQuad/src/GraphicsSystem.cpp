@@ -4,7 +4,7 @@
 #include "Keng/Graphics/Shader.h"
 #include "Keng/Graphics/Effect.h"
 #include "Keng/Graphics/Texture.h"
-#include "Keng/Resource/ResourceSystem.h"
+#include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/Core/Application.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 
@@ -21,7 +21,7 @@ namespace simple_quad_sample
 		using namespace keng;
 
 		return CallAndRethrowM + [&] {
-			return d3d_tools::Annotate(m_device.Get(), L"Frame", [&]() {
+			return d3d_tools::Annotate(m_device.get(), L"Frame", [&]() {
 				float clearColor[4] {
 					0.0f, 0.2f, 0.4f, 1.0f
 				};
@@ -30,7 +30,7 @@ namespace simple_quad_sample
 				constexpr float delta_angle = 0.001f;
 				angle += delta_angle;
 
-				d3d_tools::Annotate(m_device.Get(), L"Move triangle", [&]() {
+				d3d_tools::Annotate(m_device.get(), L"Move triangle", [&]() {
 					auto castedBuffer = static_cast<d3d_tools::CrossDeviceBuffer<Vertex>*>(m_buffer.get());
 					castedBuffer->BeginUpdate();
 					auto bufferView = castedBuffer->MakeView();
@@ -38,19 +38,19 @@ namespace simple_quad_sample
 						bufferView[i].pos.rx() += 0.00f * std::sin(angle);
 					}
 					castedBuffer->EndUpdate();
-					castedBuffer->Sync(m_device.Get());
+					castedBuffer->Sync(m_device.get());
 				});
 
-				d3d_tools::Annotate(m_device.Get(), L"Draw triangle", [&]() {
+				d3d_tools::Annotate(m_device.get(), L"Draw triangle", [&]() {
 					m_device->GetContext()->ClearRenderTargetView(m_renderTarget.rt_rtv->GetView(), clearColor);
 					m_device->GetContext()->ClearDepthStencilView(m_renderTarget.ds_dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
-					m_renderTarget.Activate(m_device.Get());
-					m_drawShader.Activate(m_device.Get());
-					m_buffer->GetGpuBuffer()->Activate(m_device.Get());
+					m_renderTarget.Activate(m_device.get());
+					m_drawShader.Activate(m_device.get());
+					m_buffer->GetGpuBuffer()->Activate(m_device.get());
 					m_device->Draw(4);
 				});
 
-				d3d_tools::Annotate(m_device.Get(), L"Copy texture to swap chain texture", [&]() {
+				d3d_tools::Annotate(m_device.get(), L"Copy texture to swap chain texture", [&]() {
 					ID3D11Resource* finalRT;
 					m_renderTargetView->GetView()->GetResource(&finalRT);
 					auto nativeTexture = static_cast<ID3D11Texture2D*>(m_renderTarget.rt->GetNativeInterface());
@@ -107,7 +107,7 @@ namespace simple_quad_sample
                 /////////////////////////////////////////////////////////////////////
 
 				m_buffer = std::make_unique<d3d_tools::CrossDeviceBuffer<Vertex>>(
-					m_device.Get(),
+					m_device.get(),
 					D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
 					edt::MakeArrayView(vertices));
 			}
