@@ -8,6 +8,8 @@
 #include "Keng/ResourceSystem/IResource.h"
 #include "Keng/ResourceSystem/IResourceFabric.h"
 
+#include <vector>
+
 namespace keng::graphics
 {
 	using d3d_tools::ResourceViewType;
@@ -65,9 +67,35 @@ namespace keng::graphics
 
 		template<ResourceViewType type>
 		std::shared_ptr<TextureView<type>> GetView(ID3D11Device* device, TextureFormat format) {
-			return std::make_shared<TextureView<type>>(device, GetTexture(), format);
+            return CallAndRethrowM + [&]() {
+                auto& views = GetTypedViews<type>();
+                auto it = std::lower_bound(views.begin(), views.end(), format,
+                    [](auto& view, TextureFormat format) {
+                        return (int)format < (int)view->GetViewFormat();
+                    });
+                if (it != views.end() && (*it)->GetViewFormat() == format) {
+                    return *it;
+                }
+                auto result = std::make_shared<TextureView<type>>(device, GetTexture(), format);
+                views.insert(it, result);
+                return result;
+            };
 		}
 
+    private:
+        template<ResourceViewType viewType>
+        using TypedViews = std::vector<std::shared_ptr<TextureView<viewType>>>;
+
+        template<ResourceViewType vt> TypedViews<vt>& GetTypedViews();
+        template<> TypedViews<ResourceViewType::RenderTarget>& GetTypedViews() { return m_rtv; }
+        template<> TypedViews<ResourceViewType::DepthStencil>& GetTypedViews() { return m_dsv; }
+        template<> TypedViews<ResourceViewType::ShaderResource>& GetTypedViews() { return m_srv; }
+        template<> TypedViews<ResourceViewType::RandomAccess>& GetTypedViews() { return m_rav; }
+
+        TypedViews<ResourceViewType::RenderTarget>   m_rtv;
+        TypedViews<ResourceViewType::DepthStencil>   m_dsv;
+        TypedViews<ResourceViewType::ShaderResource> m_srv;
+        TypedViews<ResourceViewType::RandomAccess>   m_rav;
 	};
 
 	class TextureFabric :
