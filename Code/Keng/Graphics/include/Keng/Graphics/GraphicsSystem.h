@@ -5,8 +5,8 @@
 #include "Keng/WindowSystem/IWindowListener.h"
 #include "EverydayTools/Observable.h"
 
-#include "Keng/Graphics/Texture.h"
-#include "Keng/Graphics/IEffect.h"
+#include "Keng/Graphics/Resource/Texture.h"
+#include "Keng/Graphics/Resource/IEffect.h"
 
 #include "D3D_Tools/Device.h"
 #include "D3D_Tools/SwapChain.h"

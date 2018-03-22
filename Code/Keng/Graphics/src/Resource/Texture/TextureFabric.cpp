@@ -1,7 +1,7 @@
 #include "TextureFabric.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "stb_image.h"
-#include "Keng/Graphics/Texture.h"
+#include "Keng/Graphics/Resource/Texture.h"
 #include "Keng/Graphics/GraphicsSystem.h"
 #include "Xml.h"
 

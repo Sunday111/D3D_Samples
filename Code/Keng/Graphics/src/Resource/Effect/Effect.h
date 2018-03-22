@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keng/Graphics/IEffect.h"
+#include "Keng/Graphics/Resource/IEffect.h"
 #include "Resource/Shader/Shader.h"
 
 namespace keng::graphics

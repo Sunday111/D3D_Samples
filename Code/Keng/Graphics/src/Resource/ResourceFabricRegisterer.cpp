@@ -3,10 +3,10 @@
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/Graphics/GraphicsSystem.h"
 
-#include "Resource/Shader/Shader.h"
+#include "Resource/Shader/ShaderFabric.h"
 #include "Resource/Effect/EffectFabric.h"
-#include "Resource/ShaderTemplate/ShaderTemplate.h"
 #include "Resource/Texture/TextureFabric.h"
+#include "Resource/ShaderTemplate/ShaderTemplateFabric.h"
 
 namespace keng::graphics
 {

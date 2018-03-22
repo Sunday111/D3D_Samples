@@ -1,18 +1,19 @@
 #include "Keng/Graphics/GraphicsSystem.h"
-#include "D3D_Tools/Annotation.h"
-#include "Keng/WindowSystem/IWindowSystem.h"
-#include <algorithm>
 
+#include "D3D_Tools/Annotation.h"
+
+#include "Keng/Core/Application.h"
+#include "Keng/ResourceSystem/IResourceSystem.h"
+#include "Keng/WindowSystem/IWindowSystem.h"
+
+#include "Keng/Graphics/Resource/IEffect.h"
+#include "Keng/Graphics/Resource/Texture.h"
 #include "Resource/Effect/Effect.h"
 #include "Resource/ResourceFabricRegisterer.h"
-#include "Keng/Graphics/IEffect.h"
-
-#include "Keng/Graphics/Texture.h"
-#include "Keng/ResourceSystem/IResourceSystem.h"
 
 #include "EverydayTools/Geom/Vector.h"
-#include "Keng/Core/Application.h"
 
+#include <algorithm>
 #include "Xml.h"
 
 namespace keng::graphics

@@ -18,18 +18,4 @@ namespace keng::graphics
 	public:
 		d3d_tools::Shader<shaderType> m_impl;
 	};
-
-	class ShaderFabric :
-        public resource::IResourceFabric
-	{
-	public:
-		ShaderFabric(std::shared_ptr<Device>);
-
-		virtual std::string_view GetNodeName() const override;
-		virtual std::string_view GetResourceType() const override;
-		virtual std::shared_ptr<resource::IResource> LoadResource(resource::IResourceSystem*, std::shared_ptr<IXmlNode> document) const override;
-
-	private:
-        std::shared_ptr<Device> m_device;
-	};
 }
