@@ -5,11 +5,12 @@
 #include "Keng/WindowSystem/IWindowListener.h"
 #include "EverydayTools/Observable.h"
 
+#include "Keng/Graphics/Device.h"
+#include "Keng/Graphics/SwapChain.h"
 #include "Keng/Graphics/Resource/Texture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
+#include "IGraphicsListener.h"
 
-#include "D3D_Tools/Device.h"
-#include "D3D_Tools/SwapChain.h"
 #include "D3D_Tools/Texture.h"
 #include "D3D_Tools/Shader.h"
 #include "D3D_Tools/BufferMapper.h"
@@ -22,56 +23,6 @@ namespace keng::core
 
 namespace keng::graphics
 {
-	class IDevice
-    {
-	public:
-		virtual void* GetNativeDevice() const = 0;
-		virtual void* GetNativeContext() const = 0;
-		virtual ~IDevice() = default;
-	};
-
-	class ISwapChain
-    {
-	public:
-		virtual void* GetNativeInterface() const = 0;
-		virtual ~ISwapChain() = default;
-	};
-
-	class Device :
-		public IDevice,
-		public d3d_tools::Device
-	{
-	public:
-		using d3d_tools::Device::Device;
-
-		void* GetNativeDevice() const override {
-			return GetDevice();
-		}
-
-		void* GetNativeContext() const override {
-			return GetContext();
-		}
-	};
-
-	class SwapChain :
-		public ISwapChain,
-		public d3d_tools::SwapChain
-	{
-	public:
-		using d3d_tools::SwapChain::SwapChain;
-
-		void* GetNativeInterface() const {
-			return GetInterface();
-		}
-	};
-
-	class IGraphicsListener {
-	public:
-		virtual void BeforeRendering() = 0;
-		virtual void AfterRendering() = 0;
-		virtual ~IGraphicsListener() = default;
-	};
-
 	class GraphicsSystem :
         public core::ISystem,
         public window_system::IWindowListener,
