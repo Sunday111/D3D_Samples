@@ -1,7 +1,6 @@
 #include "GraphicsSystem.h"
 #include "EverydayTools/Geom/Vector.h"
 #include "D3D_Tools/Annotation.h"
-#include "Keng/Graphics/Shader.h"
 
 #include "Keng/Graphics/IEffect.h"
 
@@ -50,8 +49,8 @@ namespace textured_quad_sample
 					m_renderTarget.Activate(m_device.get());
 					m_effect->Use(m_device.get());
 					m_buffer->GetGpuBuffer()->Activate(m_device.get());
-					m_device->SetSampler(0, m_sampler.Get(), ShaderType::Pixel);
-					m_device->SetShaderResource(0, ShaderType::Pixel, m_textureView->GetView());
+					m_device->SetSampler(0, m_sampler.Get(), d3d_tools::ShaderType::Pixel);
+					m_device->SetShaderResource(0, d3d_tools::ShaderType::Pixel, m_textureView->GetView());
 					m_device->Draw(4);
 				});
 

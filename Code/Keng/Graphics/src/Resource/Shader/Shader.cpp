@@ -1,5 +1,5 @@
-#include "Keng/Graphics/Shader.h"
-#include "Keng/Graphics/ShaderTemplate.h"
+#include "Resource/Shader/Shader.h"
+#include "Resource/ShaderTemplate/ShaderTemplate.h"
 #include "Keng/Graphics/IEffect.h"
 #include "Keng/Graphics/GraphicsSystem.h"
 #include "EverydayTools/Array/ArrayViewVector.h"

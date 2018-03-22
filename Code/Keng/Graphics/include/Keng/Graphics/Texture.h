@@ -97,16 +97,4 @@ namespace keng::graphics
         TypedViews<ResourceViewType::ShaderResource> m_srv;
         TypedViews<ResourceViewType::RandomAccess>   m_rav;
 	};
-
-	class TextureFabric :
-		public resource::IResourceFabric
-	{
-	public:
-		TextureFabric(std::shared_ptr<Device>);
-		virtual std::string_view GetNodeName() const override;
-		virtual std::string_view GetResourceType() const override;
-		virtual std::shared_ptr<resource::IResource> LoadResource(resource::IResourceSystem*, std::shared_ptr<IXmlNode> node) const override;
-	private:
-		std::shared_ptr<Device> m_device;
-	};
 }

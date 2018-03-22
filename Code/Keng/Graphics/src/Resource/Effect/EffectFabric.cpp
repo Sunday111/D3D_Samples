@@ -1,5 +1,5 @@
-#include "Effect/EffectFabric.h"
-#include "Effect/Effect.h"
+#include "Resource/Effect/EffectFabric.h"
+#include "Resource/Effect/Effect.h"
 
 namespace keng::graphics
 {

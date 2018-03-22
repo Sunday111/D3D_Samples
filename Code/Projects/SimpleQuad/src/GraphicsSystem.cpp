@@ -1,7 +1,6 @@
 #include "GraphicsSystem.h"
 #include "EverydayTools/Geom/Vector.h"
 #include "D3D_Tools/Annotation.h"
-#include "Keng/Graphics/Shader.h"
 #include "Keng/Graphics/IEffect.h"
 #include "Keng/Graphics/Texture.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"

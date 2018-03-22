@@ -94,6 +94,8 @@ namespace keng::graphics
         virtual const char* GetSystemGUID() override;
 		virtual void Initialize(core::IApplication* app) override;
 
+        std::shared_ptr<Device> GetDevice() { return m_device; }
+
 	protected:
         std::vector<std::string> m_dependencies;
 		core::Application* m_app = nullptr;

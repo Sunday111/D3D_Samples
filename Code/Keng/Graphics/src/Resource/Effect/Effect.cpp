@@ -1,4 +1,4 @@
-#include "Effect/Effect.h"
+#include "Resource/Effect/Effect.h"
 #include "Keng/Graphics/GraphicsSystem.h"
 #include "EverydayTools/Array/ArrayView.h"
 #include "EverydayTools/Array/ArrayViewVector.h"

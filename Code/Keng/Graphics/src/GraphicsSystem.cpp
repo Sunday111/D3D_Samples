@@ -3,16 +3,17 @@
 #include "Keng/WindowSystem/IWindowSystem.h"
 #include <algorithm>
 
-#include "Effect/Effect.h"
-#include "Effect/EffectFabric.h"
+#include "Resource/Effect/Effect.h"
+#include "Resource/ResourceFabricRegisterer.h"
 #include "Keng/Graphics/IEffect.h"
 
-#include "Keng/Graphics/Shader.h"
-#include "Keng/Graphics/ShaderTemplate.h"
 #include "Keng/Graphics/Texture.h"
+#include "Keng/ResourceSystem/IResourceSystem.h"
 
 #include "EverydayTools/Geom/Vector.h"
 #include "Keng/Core/Application.h"
+
+#include "Xml.h"
 
 namespace keng::graphics
 {
@@ -115,10 +116,11 @@ namespace keng::graphics
 
 			m_app->GetSystem<window_system::IWindowSystem>()->GetWindow()->Subscribe(this);;
 			auto resourceSystem = m_app->GetSystem<resource::IResourceSystem>();
-			resourceSystem->RegisterResourceFabric(std::make_shared<ShaderTemplateFabric>());
-			resourceSystem->RegisterResourceFabric(std::make_shared<ShaderFabric>(m_device));
-			resourceSystem->RegisterResourceFabric(std::make_shared<EffectFabric>());
-			resourceSystem->RegisterResourceFabric(std::make_shared<TextureFabric>(m_device));
+
+            {
+                ResourceFabricRegisterer fabricRegisterer(this);
+                fabricRegisterer.Register(resourceSystem);
+            }
 
 			// Create render target
 			{
