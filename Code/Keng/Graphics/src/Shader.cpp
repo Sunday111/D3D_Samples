@@ -1,6 +1,6 @@
 #include "Keng/Graphics/Shader.h"
 #include "Keng/Graphics/ShaderTemplate.h"
-#include "Keng/Graphics/Effect.h"
+#include "Keng/Graphics/IEffect.h"
 #include "Keng/Graphics/GraphicsSystem.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include <fstream>

@@ -2,7 +2,7 @@
 #include "EverydayTools/Geom/Vector.h"
 #include "D3D_Tools/Annotation.h"
 #include "Keng/Graphics/Shader.h"
-#include "Keng/Graphics/Effect.h"
+#include "Keng/Graphics/IEffect.h"
 #include "Keng/Graphics/Texture.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/Core/Application.h"
@@ -45,7 +45,7 @@ namespace simple_quad_sample
 					m_device->GetContext()->ClearRenderTargetView(m_renderTarget.rt_rtv->GetView(), clearColor);
 					m_device->GetContext()->ClearDepthStencilView(m_renderTarget.ds_dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 					m_renderTarget.Activate(m_device.get());
-					m_drawShader.Activate(m_device.get());
+					m_effect->Use(m_device.get());
 					m_buffer->GetGpuBuffer()->Activate(m_device.get());
 					m_device->Draw(4);
 				});
@@ -74,10 +74,8 @@ namespace simple_quad_sample
 
 			{// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/FlatColor.xml";
-				m_drawShader.effect = std::dynamic_pointer_cast<graphics::Effect>(resourceSystem->GetResource(effectName));
-                std::vector<D3D11_INPUT_ELEMENT_DESC> layouts;
-                m_drawShader.effect->vs->m_impl.ReflectInputLayout(layouts);
-				m_drawShader.layout = m_device->CreateInputLayout(edt::MakeArrayView(layouts), m_drawShader.effect->vs->m_impl.bytecode.Get());
+				m_effect = std::dynamic_pointer_cast<graphics::IEffect>(resourceSystem->GetResource(effectName));
+                m_effect->InitDefaultInputLayout(m_device.get());
 			}
 
 			{// Create vertex buffer

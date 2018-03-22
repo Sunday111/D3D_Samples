@@ -6,7 +6,7 @@
 #include "EverydayTools/Observable.h"
 
 #include "Keng/Graphics/Texture.h"
-#include "Keng/Graphics/Effect.h"
+#include "Keng/Graphics/IEffect.h"
 
 #include "D3D_Tools/Device.h"
 #include "D3D_Tools/SwapChain.h"
@@ -99,13 +99,6 @@ namespace keng::graphics
 		core::Application* m_app = nullptr;
         SystemParams ReadDefaultParams();
 
-		struct ShaderInfo {
-			void Activate(Device* device);
-
-			ComPtr<ID3D11InputLayout> layout;
-			std::shared_ptr<Effect> effect;
-		};
-
 		struct RT {
 			void Activate(Device* device);
 
@@ -118,7 +111,8 @@ namespace keng::graphics
 			std::shared_ptr<TextureView<ResourceViewType::ShaderResource>> ds_srv;
 		} m_renderTarget;
 
-
+        
+			std::shared_ptr<IEffect> effect;
 		bool m_fullscreen = false;
 		std::shared_ptr<Device> m_device;
 		std::shared_ptr<SwapChain> m_swapchain;

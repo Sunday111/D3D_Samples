@@ -3,7 +3,10 @@
 #include "Keng/WindowSystem/IWindowSystem.h"
 #include <algorithm>
 
-#include "Keng/Graphics/Effect.h"
+#include "Effect/Effect.h"
+#include "Effect/EffectFabric.h"
+#include "Keng/Graphics/IEffect.h"
+
 #include "Keng/Graphics/Shader.h"
 #include "Keng/Graphics/ShaderTemplate.h"
 #include "Keng/Graphics/Texture.h"
@@ -128,15 +131,6 @@ namespace keng::graphics
 				rt.ds_dsv = rt.ds->GetView<ResourceViewType::DepthStencil>(device, TextureFormat::D24_UNORM_S8_UINT);
 				rt.ds_srv = rt.ds->GetView<ResourceViewType::ShaderResource>(device, TextureFormat::R24_UNORM_X8_TYPELESS);
 			}
-		};
-	}
-
-	void GraphicsSystem::ShaderInfo::Activate(Device* device)
-	{
-		CallAndRethrowM + [&] {
-			device->SetShader(effect->vs->m_impl);
-			device->SetShader(effect->fs->m_impl);
-			device->GetContext()->IASetInputLayout(layout.Get());
 		};
 	}
 
