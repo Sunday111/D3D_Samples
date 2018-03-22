@@ -1,9 +1,7 @@
 #pragma once
 
 #include "Keng/Core/ISystem.h"
-#include "Keng/WindowSystem/IWindow.h"
 #include "Keng/WindowSystem/IWindowListener.h"
-#include "EverydayTools/Observable.h"
 
 #include "Keng/Graphics/Device.h"
 #include "Keng/Graphics/SwapChain.h"
@@ -15,6 +13,8 @@
 #include "D3D_Tools/Shader.h"
 #include "D3D_Tools/BufferMapper.h"
 #include "D3D_Tools/CrossDeviceBuffer.h"
+
+#include "EverydayTools/Observable.h"
 
 namespace keng::core
 {
@@ -31,11 +31,6 @@ namespace keng::graphics
 	public:
 		GraphicsSystem();
 
-		struct SystemParams {
-			bool debugDevice = false;
-			bool noDeviceMultithreading = false;
-		};
-
 		static const char* GetGUID();
 
 		void OnWindowResize(int w, int h) override;
@@ -50,7 +45,6 @@ namespace keng::graphics
 	protected:
         std::vector<std::string> m_dependencies;
 		core::Application* m_app = nullptr;
-        SystemParams ReadDefaultParams();
 
 		struct RT {
 			void Activate(Device* device);

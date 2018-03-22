@@ -1,19 +1,13 @@
 #pragma once
 
-#include "d3d11.h"
-#include "EverydayTools\EnumFlag.h"
 #include "EverydayTools\Exception\CallAndRethrow.h"
-#include "WinWrappers/ComPtr.h"
-#include "D3D_Tools/Texture.h"
+#include "Keng/Graphics/Resource/TextureView.h"
 #include "Keng/ResourceSystem/IResource.h"
-#include "Keng/ResourceSystem/IResourceFabric.h"
 
 #include <vector>
 
 namespace keng::graphics
 {
-	using d3d_tools::ResourceViewType;
-	using d3d_tools::TextureFormat;
 	using d3d_tools::TextureFlags;
 
 	class Device;
@@ -23,36 +17,6 @@ namespace keng::graphics
 		virtual void* GetNativeInterface() const = 0;
 		virtual TextureFormat GetFormat() const = 0;
 		virtual ~ITexture() = default;
-	};
-
-	class ITextureView
-    {
-	public:
-		virtual void* GetNativeInterface() const = 0;
-		virtual TextureFormat GetFormat() const = 0;
-		virtual ResourceViewType GetViewType() const = 0;
-		virtual ~ITextureView() = default;
-	};
-
-	template<ResourceViewType type>
-	class TextureView :
-		public ITextureView,
-		public d3d_tools::TextureView<type>
-	{
-	public:
-		using d3d_tools::TextureView<type>::TextureView;
-
-		ResourceViewType GetViewType() const override {
-			return type;
-		}
-
-		void* GetNativeInterface() const override {
-			return this->GetView();
-		}
-
-		TextureFormat GetFormat() const override {
-			return this->GetViewFormat();
-		}
 	};
 
 	class Texture :

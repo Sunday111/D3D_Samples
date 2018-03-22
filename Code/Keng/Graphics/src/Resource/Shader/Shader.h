@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Keng/ResourceSystem/IResourceFabric.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/ResourceSystem/IResource.h"
 #include "D3D_Tools/Shader.h"

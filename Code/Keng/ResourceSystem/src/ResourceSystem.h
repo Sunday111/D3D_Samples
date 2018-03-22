@@ -4,13 +4,10 @@
 
 #include "Xml.h"
 
-#include <chrono>
-#include <fstream>
 #include <string>
 #include <string_view>
 #include <unordered_map>
 
-#include "EverydayTools/UnusedVar.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 

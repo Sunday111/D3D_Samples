@@ -2,6 +2,9 @@
 #include "Keng/ResourceSystem/IResource.h"
 #include "Keng/ResourceSystem/IResourceFabric.h"
 
+#include <chrono>
+#include <fstream>
+
 namespace keng::resource
 {
 

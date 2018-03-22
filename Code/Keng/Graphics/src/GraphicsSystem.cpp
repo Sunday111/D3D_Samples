@@ -4,6 +4,7 @@
 
 #include "Keng/Core/Application.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
+#include "Keng/WindowSystem/IWindow.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 
 #include "Keng/Graphics/Resource/IEffect.h"
@@ -24,38 +25,43 @@ namespace keng::graphics
 			edt::geom::Vector<float, 4> col;
 			edt::geom::Vector<float, 2> tex;
 		};
-	}
 
-    GraphicsSystem::SystemParams GraphicsSystem::ReadDefaultParams() {
-        return CallAndRethrowM + [&] {
-            SystemParams params;
-
-#ifdef _DEBUG
-            params.noDeviceMultithreading = true;
-            params.debugDevice = true;
-#endif
-
-            try {
-                XmlDocument configDoc("Configs/graphics_system.xml");
-                auto systemNode = configDoc.GetFirstNode("graphics_system");
-
-                if (auto node = systemNode->FindFirstNode("device_multithreading")) {
-                    auto node_text = node->GetValue();
-                    params.noDeviceMultithreading = !static_cast<bool>(std::stoi(node_text.data()));
-                }
-
-                if (auto node = systemNode->FindFirstNode("debug_device")) {
-                    auto node_text = node->GetValue();
-                    params.debugDevice = static_cast<bool>(std::stoi(node_text.data()));
-                }
-            }
-            catch (...)
-            {
-            }
-
-            return params;
+        struct SystemParams {
+            bool debugDevice = false;
+            bool noDeviceMultithreading = false;
         };
-    }
+
+        SystemParams ReadDefaultParams() {
+            return CallAndRethrowM + [&] {
+                SystemParams params;
+
+                #ifdef _DEBUG
+                params.noDeviceMultithreading = true;
+                params.debugDevice = true;
+                #endif
+
+                try {
+                    XmlDocument configDoc("Configs/graphics_system.xml");
+                    auto systemNode = configDoc.GetFirstNode("graphics_system");
+
+                    if (auto node = systemNode->FindFirstNode("device_multithreading")) {
+                        auto node_text = node->GetValue();
+                        params.noDeviceMultithreading = !static_cast<bool>(std::stoi(node_text.data()));
+                    }
+
+                    if (auto node = systemNode->FindFirstNode("debug_device")) {
+                        auto node_text = node->GetValue();
+                        params.debugDevice = static_cast<bool>(std::stoi(node_text.data()));
+                    }
+                }
+                catch (...)
+                {
+                }
+
+                return params;
+            };
+        }
+	}
 
 	void GraphicsSystem::RT::Activate(Device* device) {
 		device->SetRenderTarget(*rt_rtv, ds_dsv.get());

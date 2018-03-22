@@ -3,6 +3,8 @@
 #include "Keng/Core/ISystem.h"
 #include "Xml.h"
 
+#include "EverydayTools/UnusedVar.h"
+
 #include <string_view>
 
 namespace keng::resource
