@@ -1,19 +1,24 @@
 #pragma once
 
+#include "Keng/Core/Common.h"
+#include "Keng/Core/ISystem.h"
+#include "Keng/Core/IApplication.h"
+
+#include "EverydayTools/Exception/CallAndRethrow.h"
+#include "EverydayTools/FrameRateCounter.h"
+
+#include <chrono>
 #include <vector>
 #include <memory>
 
-#include "Keng/Core/ISystem.h"
-#include "Keng/Core/IApplication.h"
-#include "EverydayTools/Exception/CallAndRethrow.h"
-#include "EverydayTools/FrameRateCounter.h"
-#include "WinWrappers/WinWrappers.h"
-
 namespace keng::core {
-	class Application :
+	class KENG_CORE_API Application :
 		public IApplication
 	{
 	public:
+        Application() = default;
+        Application(const Application&) = delete;
+
 		using Period = std::chrono::nanoseconds;
 		static constexpr auto FpsSamplesCount = 100;
 		static constexpr auto DesiredFPS = 60;

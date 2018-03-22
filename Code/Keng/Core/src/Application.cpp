@@ -1,6 +1,7 @@
+#include "Keng/Core/Application.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
-#include "Keng/Core/Application.h"
+#include "WinWrappers/WinWrappers.h"
 #include <algorithm>
 
 namespace keng::core

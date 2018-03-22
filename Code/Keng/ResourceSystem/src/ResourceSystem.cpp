@@ -123,11 +123,6 @@ namespace keng::resource
         };
     }
 
-    IResourceSystem* CreateResourceSystem()
-    {
-        return new ResourceSystem();
-    }
-
     bool ResourceSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {
         return CallAndRethrowM + [&]() -> bool {
             for (auto& guid : m_dependencies) {

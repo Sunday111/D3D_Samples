@@ -42,6 +42,4 @@ namespace keng::window_system
 	    std::unique_ptr<MainWindowClass<TChar>> m_windowClass;
 	    std::unique_ptr<MainWindow<TChar>> m_window;
 	};
-
-    __declspec(dllexport) WindowSystem* CreateWindowSystem();
 }

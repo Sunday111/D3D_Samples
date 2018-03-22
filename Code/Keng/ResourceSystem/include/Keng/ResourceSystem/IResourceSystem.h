@@ -21,6 +21,4 @@ namespace keng::resource
         virtual void UnregisterFabric(std::shared_ptr<IResourceFabric> fabric) = 0;
         virtual ~IResourceSystem() = default;
     };
-
-    __declspec(dllexport) IResourceSystem* CreateResourceSystem();
 }

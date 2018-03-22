@@ -1,5 +1,7 @@
 #pragma once
 
+#include "EverydayTools/Exception/CallAndRethrow.h"
+
 namespace keng::core
 {
 	class IApplication;

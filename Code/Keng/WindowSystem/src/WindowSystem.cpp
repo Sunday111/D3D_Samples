@@ -83,10 +83,6 @@ namespace keng::window_system
         return GetGUID();
     }
 
-    WindowSystem* CreateWindowSystem() {
-        return new WindowSystem();
-    }
-
     IWindow* WindowSystem::GetWindow()
     {
         return m_window.get();

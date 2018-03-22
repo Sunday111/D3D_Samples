@@ -13,7 +13,7 @@ set(target_sources)
 
 foreach(entry ${sources_exts})
 	file(GLOB_RECURSE sources_by_ext "${sources_dir}/*.${entry}")
-	list(APPEND target_sources ${sources_by_ext})
+	list(APPEND target_sources "${sources_by_ext}")
 endforeach()
 
 add_library(${keng_module_name} STATIC "${target_sources}")
