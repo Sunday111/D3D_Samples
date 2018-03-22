@@ -1,6 +1,6 @@
 #include "Keng/Graphics/GraphicsSystem.h"
 #include "D3D_Tools/Annotation.h"
-#include "Keng/Core/Systems/WindowSystem/WindowSystem.h"
+#include "Keng/WindowSystem/IWindowSystem.h"
 #include <algorithm>
 
 #include "Keng/Graphics/Effect.h"
@@ -59,7 +59,7 @@ namespace keng::graphics
 	GraphicsSystem::GraphicsSystem()
 	{
 		m_dependencies.push_back(resource::IResourceSystem::GetGUID());
-		m_dependencies.push_back(core::WindowSystem::GetGUID());
+		m_dependencies.push_back(window_system::IWindowSystem::GetGUID());
 	}
 
 	const char* GraphicsSystem::GetGUID()
@@ -85,13 +85,13 @@ namespace keng::graphics
 				m_device = std::make_shared<Device>(deviceParams);
 			}
 
-			auto wndSystem = m_app->GetSystem<core::WindowSystem>();
+			auto wndSystem = m_app->GetSystem<window_system::IWindowSystem>();
 			auto window = wndSystem->GetWindow();
 			uint32_t w, h;
-			window->GetWindowClientSize(&w, &h);
+			window->GetClientSize(&w, &h);
 
 			{// Initialize swapchain
-				m_swapchain = std::make_shared<SwapChain>(m_device->GetDevice(), w, h, window->GetHandle());
+				m_swapchain = std::make_shared<SwapChain>(m_device->GetDevice(), w, h, (HWND)window->GetNativeHandle());
 			}
 
 			{// Create render target view to swapchain backbuffer
@@ -110,7 +110,7 @@ namespace keng::graphics
 				m_device->SetViewports(edt::MakeArrayView(viewport));
 			}
 
-			m_app->GetSystem<core::WindowSystem>()->GetWindow()->Subscribe(this);;
+			m_app->GetSystem<window_system::IWindowSystem>()->GetWindow()->Subscribe(this);;
 			auto resourceSystem = m_app->GetSystem<resource::IResourceSystem>();
 			resourceSystem->RegisterResourceFabric(std::make_shared<ShaderTemplateFabric>());
 			resourceSystem->RegisterResourceFabric(std::make_shared<ShaderFabric>(m_device));

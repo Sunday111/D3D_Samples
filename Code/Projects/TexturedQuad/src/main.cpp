@@ -1,5 +1,5 @@
 #include "Keng/Core/Application.h"
-#include "Keng/Core/Systems/WindowSystem/WindowSystem.h"
+#include "Keng/WindowSystem/WindowSystem.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/Graphics/GraphicsSystem.h"
 #include "GraphicsSystem.h"
@@ -16,7 +16,7 @@ namespace textured_quad_sample {
 			UnusedVar(hInstance, hPrevInstance, cmdLine, nCmdShow);
 			auto app = std::make_unique<keng::core::Application>();
             app->AddSystem(new GraphicsSystem());
-            app->AddSystem(new keng::core::WindowSystem());
+            app->AddSystem(keng::window_system::CreateWindowSystem());
             app->AddSystem(keng::resource::CreateResourceSystem());
 			app->Initialize();
 			app->Run();

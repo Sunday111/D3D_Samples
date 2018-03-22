@@ -1,14 +1,15 @@
 ﻿#pragma once
 
+#include "Keng/WindowSystem/IWindowSystem.h"
 #include <string>
 #include "MainWindow.h"
 #include "WinWrappers/WinWrappers.h"
-#include "Keng/Core/Systems/ISystem.h"
+#include "Keng/Core/ISystem.h"
 
-namespace keng::core
+namespace keng::window_system
 {
 	class WindowSystem :
-        public ISystem
+        public window_system::IWindowSystem
     {
 	public:
 	    using TChar = char;
@@ -22,14 +23,16 @@ namespace keng::core
 	        unsigned Height = 720;
 	    };
 
-		static const char* GetGUID();
         MainWindow<TChar>* GetWindow() const;
         static SystemParams ReadDefaultParams();
+
+        // IWindowSystem
+        virtual IWindow* GetWindow() override;
 
         // ISystem
         virtual bool ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) override;
         virtual const char* GetSystemGUID() override;
-        virtual void Initialize(IApplication* app) override;
+        virtual void Initialize(core::IApplication* app) override;
         virtual bool Update() override;
 
     protected:
@@ -39,4 +42,6 @@ namespace keng::core
 	    std::unique_ptr<MainWindowClass<TChar>> m_windowClass;
 	    std::unique_ptr<MainWindow<TChar>> m_window;
 	};
+
+    __declspec(dllexport) WindowSystem* CreateWindowSystem();
 }

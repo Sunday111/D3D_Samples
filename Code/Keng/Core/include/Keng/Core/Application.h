@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 
-#include "Keng/Core/Systems/ISystem.h"
+#include "Keng/Core/ISystem.h"
 #include "Keng/Core/IApplication.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/FrameRateCounter.h"

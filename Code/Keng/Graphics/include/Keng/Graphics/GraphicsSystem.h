@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Keng/Core/Systems/ISystem.h"
-#include "Keng/Core/Systems/WindowSystem/MainWindow.h"
+#include "Keng/Core/ISystem.h"
+#include "Keng/WindowSystem/IWindow.h"
+#include "Keng/WindowSystem/IWindowListener.h"
 #include "EverydayTools/Observable.h"
 
 #include "Keng/Graphics/Texture.h"
@@ -73,7 +74,7 @@ namespace keng::graphics
 
 	class GraphicsSystem :
         public core::ISystem,
-        public core::IMainWindowListener,
+        public window_system::IWindowListener,
 		public Observable<GraphicsSystem, IGraphicsListener>
 	{
 	public:

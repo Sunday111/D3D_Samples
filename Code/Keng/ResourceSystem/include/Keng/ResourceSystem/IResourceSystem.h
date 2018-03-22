@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keng/Core/Systems/ISystem.h"
+#include "Keng/Core/ISystem.h"
 #include "Xml.h"
 
 #include <string_view>
