@@ -24,10 +24,14 @@ struct VertexShaderOuput
     #endif //USE_COLOR
 };
 
+cbuffer Constants : register(b0) {
+    float4x4 WorldMatrix;
+}; 
+
 VertexShaderOuput VShader(VertexShaderInput input)
 {
     VertexShaderOuput output;
-    output.pos = input.pos;
+    output.pos = mul(WorldMatrix, input.pos);
 
     #ifdef USE_TEXTURE
     output.tex = input.tex;

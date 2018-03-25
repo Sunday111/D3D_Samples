@@ -18,6 +18,7 @@ namespace keng::graphics
         virtual edt::DenseArrayView<uint8_t> Map() override;
         virtual void Unmap() override;
         virtual void MakeMapper(DeviceBufferMapper& mapper) override;
+        virtual void* GetNativeBuffer() const override;
 
     protected:
         void CheckSizeCompatibility(size_t size) const;

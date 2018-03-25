@@ -1,6 +1,7 @@
 #include "GraphicsSystem.h"
 
 #include "Keng/Core/Application.h"
+#include "Keng/Graphics/DeviceBufferMapper.h"
 #include "Keng/Graphics/Resource/Texture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
@@ -17,6 +18,31 @@ namespace textured_quad_sample
 			edt::geom::Vector<float, 4> pos;
 			edt::geom::Vector<float, 2> tex;
 		};
+
+        struct CB {
+            edt::geom::Matrix<float, 4, 4> transform;
+        };
+
+        template<typename T>
+        edt::geom::Matrix<T, 4, 4> MakeIdentityMatrix() {
+            edt::geom::Matrix<T, 4, 4> m{};
+            m.At(0, 0) = T(1);
+            m.At(1, 1) = T(1);
+            m.At(2, 2) = T(1);
+            m.At(3, 3) = T(1);
+            return m;
+        }
+
+        template<typename T>
+        edt::geom::Matrix<T, 4, 4> MakeTranslationMatrix(edt::geom::Vector<T, 3> vec) {
+            auto m = MakeIdentityMatrix<T>();
+
+            m.At(3, 0) = vec.Elem(0);
+            m.At(3, 1) = vec.Elem(1);
+            m.At(3, 2) = vec.Elem(2);
+
+            return m;
+        }
 	}
 
 	bool GraphicsSystem::Update() {
@@ -34,14 +60,14 @@ namespace textured_quad_sample
 				angle += delta_angle;
 
 				d3d_tools::Annotate(m_device.get(), L"Move triangle", [&]() {
-					auto castedBuffer = static_cast<d3d_tools::CrossDeviceBuffer<Vertex>*>(m_buffer.get());
-					castedBuffer->BeginUpdate();
-					auto bufferView = castedBuffer->MakeView();
-					for (size_t i = 0; i < bufferView.GetSize(); ++i) {
-						bufferView[i].pos.rx() += 0.00f * std::sin(angle);
-					}
-					castedBuffer->EndUpdate();
-					castedBuffer->Sync(m_device.get());
+                    graphics::DeviceBufferMapper mapper;
+                    m_constantBuffer->MakeMapper(mapper);
+                    auto cbView = mapper.GetTypedView<CB>();
+                    edt::geom::Vector<float, 3> t;
+                    t.rx() = std::sin(angle);
+                    t.ry() = 0.f;
+                    t.rz() = 0.f;
+                    cbView[0].transform = MakeTranslationMatrix(t);
 				});
 
 				d3d_tools::Annotate(m_device.get(), L"Draw triangle", [&]() {
@@ -49,7 +75,9 @@ namespace textured_quad_sample
 					m_device->GetContext()->ClearDepthStencilView(m_renderTarget.ds_dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 					m_renderTarget.Activate(m_device.get());
 					m_effect->Use(m_device.get());
-					m_buffer->GetGpuBuffer()->Activate(m_device.get());
+                    m_device->SetVertexBuffer(m_vertexBuffer, sizeof(Vertex), 0);
+                    m_device->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+                    m_device->SetConstantBuffer(m_constantBuffer, d3d_tools::ShaderType::Vertex);
 					m_device->SetSampler(0, m_sampler.Get(), d3d_tools::ShaderType::Pixel);
 					m_device->SetShaderResource(0, d3d_tools::ShaderType::Pixel, m_textureView->GetView());
 					m_device->Draw(4);
@@ -112,20 +140,29 @@ namespace textured_quad_sample
                 vertices[3].pos.rw() =  1.00f; /**/                              /**/
 				/////////////////////////////////////////////////////////////////////
 
-				m_buffer = std::make_unique<d3d_tools::CrossDeviceBuffer<Vertex>>(
-					m_device.get(),
-					D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
-					edt::MakeArrayView(vertices));
-
                 graphics::DeviceBufferParams params;
                 params.size = sizeof(vertices);
                 params.usage = graphics::DeviceBufferUsage::Dynamic;
                 params.bindFlags = graphics::DeviceBufferBindFlags::VertexBuffer;
                 params.accessFlags = graphics::DeviceAccessFlags::Write;
-                auto testBuffer = CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
-
-                testBuffer->SetBufferData(edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
+                m_vertexBuffer = CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
 			}
+
+            {
+                CB constantBufferInitData;
+                edt::geom::Vector<float, 3> t;
+                t.rx() = 0.f;
+                t.ry() = 0.2f;
+                t.rz() = 0.f;
+                constantBufferInitData.transform = MakeTranslationMatrix(t);
+
+                graphics::DeviceBufferParams params;
+                params.size = sizeof(constantBufferInitData);
+                params.usage = graphics::DeviceBufferUsage::Dynamic;
+                params.bindFlags = graphics::DeviceBufferBindFlags::ConstantBuffer;
+                params.accessFlags = graphics::DeviceAccessFlags::Write;
+                m_constantBuffer = CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
+            }
 
 			{// Create sampler
  				CD3D11_SAMPLER_DESC samplerDesc(D3D11_DEFAULT);

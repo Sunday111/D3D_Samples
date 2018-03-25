@@ -136,4 +136,8 @@ namespace keng::graphics
     void DeviceBuffer::MakeMapper(DeviceBufferMapper& mapper) {
         mapper = DeviceBufferMapper(core::Ptr<DeviceBuffer>(this));
     }
+
+    void* DeviceBuffer::GetNativeBuffer() const {
+        return m_buffer.Get();
+    }
 }

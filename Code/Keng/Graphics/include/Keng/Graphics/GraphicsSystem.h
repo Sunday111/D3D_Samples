@@ -11,8 +11,6 @@
 
 #include "D3D_Tools/Texture.h"
 #include "D3D_Tools/Shader.h"
-#include "D3D_Tools/BufferMapper.h"
-#include "D3D_Tools/CrossDeviceBuffer.h"
 
 #include "EverydayTools/Observable.h"
 

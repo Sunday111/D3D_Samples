@@ -62,6 +62,9 @@ namespace keng::graphics
         virtual void Unmap() = 0;
         virtual void MakeMapper(DeviceBufferMapper& mapper) = 0;
 
+        //Temporary!!!
+        virtual void* GetNativeBuffer() const = 0;
+
         ~IDeviceBuffer() = default;
     };
 }

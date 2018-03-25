@@ -13,6 +13,7 @@ namespace simple_quad_sample
 
 	protected:
         keng::core::Ptr<keng::graphics::IEffect> m_effect;
-		std::unique_ptr<d3d_tools::ICrossDeviceBuffer> m_buffer;
+        keng::core::Ptr<keng::graphics::IDeviceBuffer> m_constantBuffer;
+        keng::core::Ptr<keng::graphics::IDeviceBuffer> m_vertexBuffer;
 	};
 }

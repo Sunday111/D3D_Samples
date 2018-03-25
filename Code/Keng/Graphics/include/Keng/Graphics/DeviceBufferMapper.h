@@ -40,10 +40,11 @@ namespace keng::graphics
             return CallAndRethrowM + [&] {
                 auto byteView = GetView();
                 auto bytesCount = byteView.GetSize();
+                auto typeSize = sizeof(T);
                 edt::ThrowIfFailed(
-                    (bytesCount % sizeof(T) != 0),
+                    (bytesCount % typeSize) == 0,
                     "Looks like type mismatch!");
-                return edt::DenseArrayView<T>(byteView.GetData(), bytesCount / sizeof(T));
+                return edt::DenseArrayView<T>((T*)byteView.GetData(), bytesCount / sizeof(T));
             };
         }
 
