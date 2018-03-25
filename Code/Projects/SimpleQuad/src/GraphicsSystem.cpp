@@ -67,8 +67,7 @@ namespace simple_quad_sample
 				});
 
 				d3d_tools::Annotate(m_device.get(), L"Draw triangle", [&]() {
-					m_device->GetContext()->ClearRenderTargetView(m_renderTarget.rt_rtv->GetView(), clearColor);
-					m_device->GetContext()->ClearDepthStencilView(m_renderTarget.ds_dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+                    m_renderTarget.Clear(m_device.get(), clearColor);
 					m_renderTarget.Activate(m_device.get());
 					m_effect->Use(m_device.get());
                     m_device->SetVertexBuffer(m_vertexBuffer, sizeof(Vertex), 0);
@@ -97,7 +96,7 @@ namespace simple_quad_sample
 			Base::Initialize(app);
 			
 			using namespace keng;
-			auto resourceSystem = m_app->GetSystem<resource::IResourceSystem>();
+            auto resourceSystem = dynamic_cast<core::Application*>(app)->GetSystem<resource::IResourceSystem>();
 
 			{// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/FlatColor.xml";

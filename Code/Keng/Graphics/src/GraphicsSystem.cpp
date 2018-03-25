@@ -65,8 +65,19 @@ namespace keng::graphics
 	}
 
 	void GraphicsSystem::RT::Activate(Device* device) {
-		device->SetRenderTarget(*rt_rtv, ds_dsv.Get());
+        auto deviceImpl = device->GetDevice();
+        auto rtv = rt->GetView<ResourceViewType::RenderTarget>(deviceImpl, rt->GetFormat());
+        auto dsv = ds->GetView<ResourceViewType::DepthStencil>(deviceImpl, TextureFormat::D24_UNORM_S8_UINT).Get();
+        device->SetRenderTarget(*rtv, dsv);
 	}
+
+    void GraphicsSystem::RT::Clear(Device* device, const float(&color)[4]) {
+        auto deviceImpl = device->GetDevice();
+        auto rtv = rt->GetView<ResourceViewType::RenderTarget>(deviceImpl, rt->GetFormat());
+        auto dsv = ds->GetView<ResourceViewType::DepthStencil>(deviceImpl, TextureFormat::D24_UNORM_S8_UINT).Get();
+        device->GetContext()->ClearRenderTargetView(rtv->GetView(), color);
+        device->GetContext()->ClearDepthStencilView(dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+    }
 
 	GraphicsSystem::GraphicsSystem()
 	{
@@ -135,11 +146,7 @@ namespace keng::graphics
 				auto& rt = m_renderTarget;
 				auto device = m_device->GetDevice();
 				rt.rt = core::Ptr<Texture>::MakeInstance(device, w, h, TextureFormat::R8_G8_B8_A8_UNORM, TextureFlags::RenderTarget | TextureFlags::ShaderResource);
-				rt.rt_rtv = rt.rt->GetView<ResourceViewType::RenderTarget>(device, rt.rt->GetFormat());
-				rt.rt_srv = rt.rt->GetView<ResourceViewType::ShaderResource>(device, rt.rt->GetFormat());
 				rt.ds = core::Ptr<Texture>::MakeInstance(device, w, h, TextureFormat::R24_G8_TYPELESS, TextureFlags::DepthStencil | TextureFlags::ShaderResource);
-				rt.ds_dsv = rt.ds->GetView<ResourceViewType::DepthStencil>(device, TextureFormat::D24_UNORM_S8_UINT);
-				rt.ds_srv = rt.ds->GetView<ResourceViewType::ShaderResource>(device, TextureFormat::R24_UNORM_X8_TYPELESS);
 			}
 		};
 	}

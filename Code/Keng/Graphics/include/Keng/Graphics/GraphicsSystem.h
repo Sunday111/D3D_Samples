@@ -46,26 +46,23 @@ namespace keng::graphics
         core::Ptr<IDeviceBuffer> CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
 
 	protected:
-        std::vector<std::string> m_dependencies;
-		core::Application* m_app = nullptr;
 
 		struct RT {
 			void Activate(Device* device);
+            void Clear(Device* device, const float(&color)[4]);
 
 			core::Ptr<Texture> rt;
-			core::Ptr<TextureView<ResourceViewType::RenderTarget>> rt_rtv;
-			core::Ptr<TextureView<ResourceViewType::ShaderResource>> rt_srv;
-
 			core::Ptr<Texture> ds;
-			core::Ptr<TextureView<ResourceViewType::DepthStencil>> ds_dsv;
-			core::Ptr<TextureView<ResourceViewType::ShaderResource>> ds_srv;
 		} m_renderTarget;
 
         
-			std::shared_ptr<IEffect> effect;
-		bool m_fullscreen = false;
 		std::shared_ptr<Device> m_device;
 		std::shared_ptr<SwapChain> m_swapchain;
 		core::Ptr<TextureView<ResourceViewType::RenderTarget>> m_renderTargetView;
+
+    private:
+        bool m_fullscreen = false;
+        core::Application* m_app = nullptr;
+        std::vector<std::string> m_dependencies;
 	};
 }
