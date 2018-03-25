@@ -78,12 +78,13 @@ namespace simple_quad_sample
 
 				d3d_tools::Annotate(m_device.get(), L"Copy texture to swap chain texture", [&]() {
 					ID3D11Resource* finalRT;
-					m_renderTargetView->GetView()->GetResource(&finalRT);
+                    auto rtv = GetSwapChain()->GetBackBufferView(m_device.get());
+                    ((ID3D11RenderTargetView*)rtv->GetNativeInterface())->GetResource(&finalRT);
 					auto nativeTexture = static_cast<ID3D11Texture2D*>(m_renderTarget.rt->GetNativeInterface());
 					m_device->GetContext()->CopyResource(finalRT, nativeTexture);
 				});
 
-				m_swapchain->Present();
+                GetSwapChain()->Present();
 
 				return true;
 			});

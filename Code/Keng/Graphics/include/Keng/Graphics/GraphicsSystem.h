@@ -4,7 +4,7 @@
 #include "Keng/WindowSystem/IWindowListener.h"
 
 #include "Keng/Graphics/Device.h"
-#include "Keng/Graphics/SwapChain.h"
+#include "Keng/Graphics/ISwapChain.h"
 #include "Keng/Graphics/Resource/Texture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "IGraphicsListener.h"
@@ -44,6 +44,7 @@ namespace keng::graphics
         std::shared_ptr<Device> GetDevice() { return m_device; }
 
         core::Ptr<IDeviceBuffer> CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
+        std::shared_ptr<ISwapChain> GetSwapChain() const;
 
 	protected:
 
@@ -57,12 +58,11 @@ namespace keng::graphics
 
         
 		std::shared_ptr<Device> m_device;
-		std::shared_ptr<SwapChain> m_swapchain;
-		core::Ptr<TextureView<ResourceViewType::RenderTarget>> m_renderTargetView;
 
     private:
         bool m_fullscreen = false;
         core::Application* m_app = nullptr;
         std::vector<std::string> m_dependencies;
+        std::shared_ptr<ISwapChain> m_swapchain;
 	};
 }

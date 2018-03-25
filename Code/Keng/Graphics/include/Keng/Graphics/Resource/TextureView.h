@@ -1,4 +1,4 @@
-#pragma
+#pragma once
 
 #include "D3D_Tools/Texture.h"
 #include "Keng/Core/IRefCountObject.h"

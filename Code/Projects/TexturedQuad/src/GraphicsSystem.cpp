@@ -78,18 +78,20 @@ namespace textured_quad_sample
                     m_device->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
                     m_device->SetConstantBuffer(m_constantBuffer, d3d_tools::ShaderType::Vertex);
 					m_device->SetSampler(0, m_sampler.Get(), d3d_tools::ShaderType::Pixel);
-					m_device->SetShaderResource(0, d3d_tools::ShaderType::Pixel, m_textureView->GetView());
+                    auto textureView = m_texture->GetView<ResourceViewType::ShaderResource>(m_device->GetDevice(), TextureFormat::R8_G8_B8_A8_UNORM);
+					m_device->SetShaderResource(0, d3d_tools::ShaderType::Pixel, textureView->GetView());
 					m_device->Draw(4);
 				});
 
-				d3d_tools::Annotate(m_device.get(), L"Copy texture to swap chain texture", [&]() {
-					ID3D11Resource* finalRT;
-					m_renderTargetView->GetView()->GetResource(&finalRT);
-					auto nativeTexture = static_cast<ID3D11Texture2D*>(m_renderTarget.rt->GetNativeInterface());
-					m_device->GetContext()->CopyResource(finalRT, nativeTexture);
-				});
+                d3d_tools::Annotate(m_device.get(), L"Copy texture to swap chain texture", [&]() {
+                    ID3D11Resource* finalRT;
+                    auto rtv = GetSwapChain()->GetBackBufferView(m_device.get());
+                    ((ID3D11RenderTargetView*)rtv->GetNativeInterface())->GetResource(&finalRT);
+                    auto nativeTexture = static_cast<ID3D11Texture2D*>(m_renderTarget.rt->GetNativeInterface());
+                    m_device->GetContext()->CopyResource(finalRT, nativeTexture);
+                });
 
-				m_swapchain->Present();
+                GetSwapChain()->Present();
 
 				return true;
 			});
@@ -105,7 +107,6 @@ namespace textured_quad_sample
             using namespace keng::graphics;
 			auto resourceSystem = dynamic_cast<core::Application*>(app)->GetSystem<IResourceSystem>();
 			m_texture = std::static_pointer_cast<Texture>(resourceSystem->GetResource("Assets/Textures/container.xml"));
-			m_textureView = m_texture->GetView<ResourceViewType::ShaderResource>(m_device->GetDevice(), TextureFormat::R8_G8_B8_A8_UNORM);
 
 			{// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Textured.xml";

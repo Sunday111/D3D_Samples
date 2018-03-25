@@ -14,6 +14,7 @@
 
 #include "EverydayTools/Geom/Vector.h"
 #include "DeviceBuffer.h"
+#include "SwapChain.h"
 
 #include <algorithm>
 #include "Xml.h"
@@ -117,13 +118,6 @@ namespace keng::graphics
 				m_swapchain = std::make_shared<SwapChain>(m_device->GetDevice(), w, h, (HWND)window->GetNativeHandle());
 			}
 
-			{// Create render target view to swapchain backbuffer
-				auto backbuffer = m_swapchain->GetBackBuffer();
-				m_renderTargetView = core::Ptr<TextureView<ResourceViewType::RenderTarget>>::MakeInstance(
-					m_device->GetDevice(),
-					backbuffer.GetTexture());
-			}
-
 			{// Initialize viewport
 				D3D11_VIEWPORT viewport[1] {};
 				viewport[0].TopLeftX = 0;
@@ -155,6 +149,11 @@ namespace keng::graphics
         return CallAndRethrowM + [&] {
             return core::Ptr<DeviceBuffer>::MakeInstance(*m_device, params, data);
         };
+    }
+
+    std::shared_ptr<ISwapChain> GraphicsSystem::GetSwapChain() const
+    {
+        return m_swapchain;
     }
 
     bool GraphicsSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {

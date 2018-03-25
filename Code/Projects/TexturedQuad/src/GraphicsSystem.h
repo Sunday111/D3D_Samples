@@ -21,6 +21,5 @@ namespace textured_quad_sample
         keng::core::Ptr<keng::graphics::IDeviceBuffer> m_constantBuffer;
         keng::core::Ptr<keng::graphics::IDeviceBuffer> m_vertexBuffer;
         keng::core::Ptr<keng::graphics::Texture> m_texture;
-        keng::core::Ptr<keng::graphics::TextureView<keng::graphics::ResourceViewType::ShaderResource>> m_textureView;
 	};
 }
