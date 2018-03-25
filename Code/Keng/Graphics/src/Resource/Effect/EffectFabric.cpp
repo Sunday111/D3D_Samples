@@ -11,10 +11,10 @@ namespace keng::graphics
         return "Effect";
     }
 
-    std::shared_ptr<resource::IResource> EffectFabric::LoadResource(resource::IResourceSystem* resourceSystem, std::shared_ptr<IXmlNode> node) const {
+    core::Ptr<resource::IResource> EffectFabric::LoadResource(resource::IResourceSystem* resourceSystem, std::shared_ptr<IXmlNode> node) const {
         return CallAndRethrowM + [&] {
             bool anyShader = false;
-            auto result = std::make_shared<Effect>();
+            auto result = core::Ptr<Effect>::MakeInstance();
 
             // TODO: check legal shader types combinations?
 

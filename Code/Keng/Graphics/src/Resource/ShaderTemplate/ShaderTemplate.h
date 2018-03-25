@@ -7,6 +7,7 @@ namespace keng::graphics
 	class ShaderTemplate :
         public resource::IResource
 	{
+        IMPLEMENT_IREFCOUNT
 	public:
         ShaderTemplate();
 

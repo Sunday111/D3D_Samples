@@ -1,5 +1,6 @@
 #include "Resource/Effect/Effect.h"
 #include "Keng/Graphics/GraphicsSystem.h"
+#include "Resource/Shader/Shader.h"
 #include "EverydayTools/Array/ArrayView.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"

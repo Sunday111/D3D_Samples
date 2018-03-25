@@ -2,14 +2,25 @@
 #include "Keng/ResourceSystem/IResource.h"
 #include "Keng/ResourceSystem/IResourceFabric.h"
 
+#include "EverydayTools/Exception/CallAndRethrow.h"
+#include "EverydayTools/Exception/ThrowIfFailed.h"
+
+#include "Xml.h"
+
 #include <chrono>
 #include <fstream>
 
 namespace keng::resource
 {
+    ResourceSystem::ResourceInfo::ResourceInfo() = default;
+    ResourceSystem::ResourceInfo::~ResourceInfo() = default;
+
+    ResourceSystem::ResourceSystem() = default;
+
+    ResourceSystem::~ResourceSystem() = default;
 
     bool ResourceSystem::ResourceInfo::IsSingleReference() const {
-        return resource.use_count() < 2;
+        return resource->GetReferencesCount() < 2;
     }
 
     bool ResourceSystem::ResourceInfo::IsExpired() const {
@@ -61,7 +72,7 @@ namespace keng::resource
         };
     }
 
-    std::shared_ptr<IResource> ResourceSystem::GetResource(std::string_view filename) {
+    core::Ptr<IResource> ResourceSystem::GetResource(std::string_view filename) {
         return CallAndRethrowM + [&] {
             std::string filename_copy(filename);
             auto resource_it = m_resources.find(filename_copy);
@@ -89,7 +100,7 @@ namespace keng::resource
         };
     }
 
-    void ResourceSystem::RegisterResourceFabric(std::shared_ptr<IResourceFabric> fabric) {
+    void ResourceSystem::RegisterResourceFabric(core::Ptr<IResourceFabric> fabric) {
         CallAndRethrowM + [&] {
             auto resourceTypeName = fabric->GetResourceType();
             auto res = m_fabrics.insert(std::make_pair(std::string(resourceTypeName), fabric));
@@ -97,7 +108,7 @@ namespace keng::resource
         };
     }
 
-    void ResourceSystem::UnregisterFabric(std::shared_ptr<IResourceFabric> fabric) {
+    void ResourceSystem::UnregisterFabric(core::Ptr<IResourceFabric> fabric) {
         CallAndRethrowM + [&] {
             auto resourceTypeName = fabric->GetResourceType();
             auto eraseCount = m_fabrics.erase(std::string(resourceTypeName));

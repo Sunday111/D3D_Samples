@@ -64,7 +64,7 @@ namespace keng::graphics
 	}
 
 	void GraphicsSystem::RT::Activate(Device* device) {
-		device->SetRenderTarget(*rt_rtv, ds_dsv.get());
+		device->SetRenderTarget(*rt_rtv, ds_dsv.Get());
 	}
 
 	GraphicsSystem::GraphicsSystem()
@@ -107,7 +107,7 @@ namespace keng::graphics
 
 			{// Create render target view to swapchain backbuffer
 				auto backbuffer = m_swapchain->GetBackBuffer();
-				m_renderTargetView = std::make_shared<TextureView<ResourceViewType::RenderTarget>>(
+				m_renderTargetView = core::Ptr<TextureView<ResourceViewType::RenderTarget>>::MakeInstance(
 					m_device->GetDevice(),
 					backbuffer.GetTexture());
 			}
@@ -133,10 +133,10 @@ namespace keng::graphics
 			{
 				auto& rt = m_renderTarget;
 				auto device = m_device->GetDevice();
-				rt.rt = std::make_unique<Texture>(device, w, h, TextureFormat::R8_G8_B8_A8_UNORM, TextureFlags::RenderTarget | TextureFlags::ShaderResource);
+				rt.rt = core::Ptr<Texture>::MakeInstance(device, w, h, TextureFormat::R8_G8_B8_A8_UNORM, TextureFlags::RenderTarget | TextureFlags::ShaderResource);
 				rt.rt_rtv = rt.rt->GetView<ResourceViewType::RenderTarget>(device, rt.rt->GetFormat());
 				rt.rt_srv = rt.rt->GetView<ResourceViewType::ShaderResource>(device, rt.rt->GetFormat());
-				rt.ds = std::make_unique<Texture>(device, w, h, TextureFormat::R24_G8_TYPELESS, TextureFlags::DepthStencil | TextureFlags::ShaderResource);
+				rt.ds = core::Ptr<Texture>::MakeInstance(device, w, h, TextureFormat::R24_G8_TYPELESS, TextureFlags::DepthStencil | TextureFlags::ShaderResource);
 				rt.ds_dsv = rt.ds->GetView<ResourceViewType::DepthStencil>(device, TextureFormat::D24_UNORM_S8_UINT);
 				rt.ds_srv = rt.ds->GetView<ResourceViewType::ShaderResource>(device, TextureFormat::R24_UNORM_X8_TYPELESS);
 			}

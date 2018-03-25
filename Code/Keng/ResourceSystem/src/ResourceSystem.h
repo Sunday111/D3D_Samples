@@ -1,15 +1,9 @@
 #pragma once
 
-#include "Keng/ResourceSystem/IResourceSystem.h"
-
-#include "Xml.h"
-
 #include <string>
 #include <string_view>
 #include <unordered_map>
-
-#include "EverydayTools/Exception/CallAndRethrow.h"
-#include "EverydayTools/Exception/ThrowIfFailed.h"
+#include "Keng/ResourceSystem/IResourceSystem.h"
 
 namespace keng::resource
 {
@@ -31,16 +25,22 @@ namespace keng::resource
 	private:
 	    struct ResourceInfo
 	    {
+            ResourceInfo();
+            ~ResourceInfo();
+
             bool IsSingleReference() const;
             bool IsExpired() const;
             bool ShouldBeReleased(float timeNow);
 	
             ResourceParameters params;
-            std::shared_ptr<IResource> resource;
+            core::Ptr<IResource> resource;
 	        float lastTouchMs = -1.f;
 	    };
 	
 	public:
+        ResourceSystem();
+        ~ResourceSystem();
+
         // ISystem
         virtual bool ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) override;
         virtual const char* GetSystemGUID() override;
@@ -48,9 +48,9 @@ namespace keng::resource
         virtual bool Update() override;
 
         // IResource system
-        virtual std::shared_ptr<IResource> GetResource(std::string_view filename) override;
-        virtual void RegisterResourceFabric(std::shared_ptr<IResourceFabric> fabric) override;
-        virtual void UnregisterFabric(std::shared_ptr<IResourceFabric> fabric) override;
+        virtual core::Ptr<IResource> GetResource(std::string_view filename) override;
+        virtual void RegisterResourceFabric(core::Ptr<IResourceFabric> fabric) override;
+        virtual void UnregisterFabric(core::Ptr<IResourceFabric> fabric) override;
 
     protected:
         SystemParams ReadDefaultParams();
@@ -62,6 +62,6 @@ namespace keng::resource
 	private:
         SystemParams m_parameters;
 	    std::unordered_map<std::string, ResourceInfo> m_resources;
-	    std::unordered_map<std::string, std::shared_ptr<IResourceFabric>> m_fabrics;
+	    std::unordered_map<std::string, core::Ptr<IResourceFabric>> m_fabrics;
 	};
 }

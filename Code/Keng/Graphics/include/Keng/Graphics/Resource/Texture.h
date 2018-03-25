@@ -3,6 +3,7 @@
 #include "EverydayTools\Exception\CallAndRethrow.h"
 #include "Keng/Graphics/Resource/TextureView.h"
 #include "Keng/ResourceSystem/IResource.h"
+#include "Keng/Core/Ptr.h"
 
 #include <vector>
 
@@ -23,6 +24,7 @@ namespace keng::graphics
 		public ITexture,
 		public d3d_tools::Texture
 	{
+        IMPLEMENT_IREFCOUNT
 	public:
 		using d3d_tools::Texture::Texture;
 
@@ -30,7 +32,7 @@ namespace keng::graphics
 		virtual TextureFormat GetFormat() const override;
 
 		template<ResourceViewType type>
-		std::shared_ptr<TextureView<type>> GetView(ID3D11Device* device, TextureFormat format) {
+		core::Ptr<TextureView<type>> GetView(ID3D11Device* device, TextureFormat format) {
             return CallAndRethrowM + [&]() {
                 auto& views = GetTypedViews<type>();
                 auto it = std::lower_bound(views.begin(), views.end(), format,
@@ -40,7 +42,8 @@ namespace keng::graphics
                 if (it != views.end() && (*it)->GetViewFormat() == format) {
                     return *it;
                 }
-                auto result = std::make_shared<TextureView<type>>(device, GetTexture(), format);
+                
+                auto result = core::Ptr<TextureView<type>>::MakeInstance(device, GetTexture(), format);
                 views.insert(it, result);
                 return result;
             };
@@ -48,7 +51,7 @@ namespace keng::graphics
 
     private:
         template<ResourceViewType viewType>
-        using TypedViews = std::vector<std::shared_ptr<TextureView<viewType>>>;
+        using TypedViews = std::vector<core::Ptr<TextureView<viewType>>>;
 
         template<ResourceViewType vt> TypedViews<vt>& GetTypedViews();
         template<> TypedViews<ResourceViewType::RenderTarget>& GetTypedViews() { return m_rtv; }

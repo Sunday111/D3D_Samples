@@ -24,7 +24,7 @@ namespace keng::graphics
         return "Texture";
     }
 
-    std::shared_ptr<resource::IResource> TextureFabric::LoadResource(resource::IResourceSystem*, std::shared_ptr<IXmlNode> node) const
+    core::Ptr<resource::IResource> TextureFabric::LoadResource(resource::IResourceSystem*, std::shared_ptr<IXmlNode> node) const
     {
         return CallAndRethrowM + [&] {
             auto fileNode = node->GetFirstNode("file");
@@ -49,7 +49,7 @@ namespace keng::graphics
             img_data.reset(stbi_load(textureFilename.data(), &w, &h, &n, 4));
             auto ptr = img_data.get();
 
-            return std::make_shared<Texture>(m_device->GetDevice(), w, h, TextureFormat::R8_G8_B8_A8_UNORM, TextureFlags::ShaderResource, ptr);
+            return core::Ptr<Texture>::MakeInstance(m_device->GetDevice(), w, h, TextureFormat::R8_G8_B8_A8_UNORM, TextureFlags::ShaderResource, ptr);
         };
     }
 }

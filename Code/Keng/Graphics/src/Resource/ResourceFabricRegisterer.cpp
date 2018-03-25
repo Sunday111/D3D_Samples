@@ -19,10 +19,10 @@ namespace keng::graphics
     void ResourceFabricRegisterer::Register(resource::IResourceSystem* resourceSystem) {
         CallAndRethrowM + [&] {
             auto device = m_graphicsSystem->GetDevice();
-            resourceSystem->RegisterResourceFabric(std::make_shared<EffectFabric>());
-            resourceSystem->RegisterResourceFabric(std::make_shared<ShaderFabric>(device));
-            resourceSystem->RegisterResourceFabric(std::make_shared<ShaderTemplateFabric>());
-            resourceSystem->RegisterResourceFabric(std::make_shared<TextureFabric>(device));
+            resourceSystem->RegisterResourceFabric(core::Ptr<EffectFabric>::MakeInstance());
+            resourceSystem->RegisterResourceFabric(core::Ptr<ShaderFabric>::MakeInstance(device));
+            resourceSystem->RegisterResourceFabric(core::Ptr<ShaderTemplateFabric>::MakeInstance());
+            resourceSystem->RegisterResourceFabric(core::Ptr<TextureFabric>::MakeInstance(device));
         };
     }
 }

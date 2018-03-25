@@ -12,7 +12,7 @@ namespace simple_quad_sample
         virtual bool Update() override;
 
 	protected:
-        std::shared_ptr<keng::graphics::IEffect> m_effect;
+        keng::core::Ptr<keng::graphics::IEffect> m_effect;
 		std::unique_ptr<d3d_tools::ICrossDeviceBuffer> m_buffer;
 	};
 }

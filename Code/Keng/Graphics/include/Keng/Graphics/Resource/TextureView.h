@@ -1,13 +1,14 @@
 #pragma
 
 #include "D3D_Tools/Texture.h"
+#include "Keng/Core/IRefCountObject.h"
 
 namespace keng::graphics
 {
     using d3d_tools::ResourceViewType;
     using d3d_tools::TextureFormat;
 
-    class ITextureView
+    class ITextureView : public core::IRefCountObject
     {
     public:
         virtual void* GetNativeInterface() const = 0;
@@ -21,6 +22,7 @@ namespace keng::graphics
         public ITextureView,
         public d3d_tools::TextureView<type>
     {
+        IMPLEMENT_IREFCOUNT
     public:
         using d3d_tools::TextureView<type>::TextureView;
 

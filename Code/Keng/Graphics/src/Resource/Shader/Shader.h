@@ -14,6 +14,7 @@ namespace keng::graphics
 	class Shader :
         public resource::IResource
 	{
+        IMPLEMENT_IREFCOUNT
 	public:
 		d3d_tools::Shader<shaderType> m_impl;
 	};

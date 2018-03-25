@@ -49,13 +49,13 @@ namespace keng::graphics
 		struct RT {
 			void Activate(Device* device);
 
-			std::unique_ptr<Texture> rt;
-			std::shared_ptr<TextureView<ResourceViewType::RenderTarget>> rt_rtv;
-			std::shared_ptr<TextureView<ResourceViewType::ShaderResource>> rt_srv;
+			core::Ptr<Texture> rt;
+			core::Ptr<TextureView<ResourceViewType::RenderTarget>> rt_rtv;
+			core::Ptr<TextureView<ResourceViewType::ShaderResource>> rt_srv;
 
-			std::unique_ptr<Texture> ds;
-			std::shared_ptr<TextureView<ResourceViewType::DepthStencil>> ds_dsv;
-			std::shared_ptr<TextureView<ResourceViewType::ShaderResource>> ds_srv;
+			core::Ptr<Texture> ds;
+			core::Ptr<TextureView<ResourceViewType::DepthStencil>> ds_dsv;
+			core::Ptr<TextureView<ResourceViewType::ShaderResource>> ds_srv;
 		} m_renderTarget;
 
         
@@ -63,6 +63,6 @@ namespace keng::graphics
 		bool m_fullscreen = false;
 		std::shared_ptr<Device> m_device;
 		std::shared_ptr<SwapChain> m_swapchain;
-		std::shared_ptr<TextureView<ResourceViewType::RenderTarget>> m_renderTargetView;
+		core::Ptr<TextureView<ResourceViewType::RenderTarget>> m_renderTargetView;
 	};
 }

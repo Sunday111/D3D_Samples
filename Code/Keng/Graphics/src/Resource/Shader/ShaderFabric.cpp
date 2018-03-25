@@ -10,11 +10,11 @@ namespace keng::graphics
     struct ShaderCompiler
     {
         std::shared_ptr<Device> device;
-        std::shared_ptr<ShaderTemplate> shaderTemplate;
+        core::Ptr<ShaderTemplate> shaderTemplate;
         std::string_view entryPoint;
         std::vector<d3d_tools::ShaderMacro> definitions;
 
-        std::shared_ptr<resource::IResource> Compile() {
+        core::Ptr<resource::IResource> Compile() {
             switch (shaderTemplate->type)
             {
             case ShaderType::Vertex:
@@ -29,8 +29,8 @@ namespace keng::graphics
         }
 
         template<ShaderType st>
-        std::shared_ptr<Shader<st>> Compile() {
-            auto result = std::make_shared<Shader<st>>();
+        core::Ptr<Shader<st>> Compile() {
+            auto result = core::Ptr<Shader<st>>::MakeInstance();
             auto view =
                 result->m_impl = device->CreateShader<st>(
                     shaderTemplate->code.c_str(),
@@ -53,14 +53,14 @@ namespace keng::graphics
         return "Shader";
     }
 
-    std::shared_ptr<resource::IResource> ShaderFabric::LoadResource(resource::IResourceSystem* resourceSystem, std::shared_ptr<IXmlNode> node) const {
-        return CallAndRethrowM + [&]() -> std::shared_ptr<resource::IResource> {
+    core::Ptr<resource::IResource> ShaderFabric::LoadResource(resource::IResourceSystem* resourceSystem, std::shared_ptr<IXmlNode> node) const {
+        return CallAndRethrowM + [&] {
             ShaderCompiler shaderCompiler;
             shaderCompiler.device = m_device;
 
             // Template
             auto templateNode = node->GetFirstNode("template");
-            shaderCompiler.shaderTemplate = std::dynamic_pointer_cast<ShaderTemplate>(resourceSystem->GetResource(templateNode->GetValue()));
+            shaderCompiler.shaderTemplate = std::static_pointer_cast<ShaderTemplate>(resourceSystem->GetResource(templateNode->GetValue()));
 
             auto entryNode = node->GetFirstNode("entry_point");
             shaderCompiler.entryPoint = entryNode->GetValue();

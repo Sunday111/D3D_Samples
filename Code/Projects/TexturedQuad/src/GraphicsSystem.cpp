@@ -76,12 +76,12 @@ namespace textured_quad_sample
             using namespace keng::resource;
             using namespace keng::graphics;
 			auto resourceSystem = m_app->GetSystem<IResourceSystem>();
-			m_texture = std::dynamic_pointer_cast<Texture>(resourceSystem->GetResource("Assets/Textures/container.xml"));
+			m_texture = std::static_pointer_cast<Texture>(resourceSystem->GetResource("Assets/Textures/container.xml"));
 			m_textureView = m_texture->GetView<ResourceViewType::ShaderResource>(m_device->GetDevice(), TextureFormat::R8_G8_B8_A8_UNORM);
 
 			{// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Textured.xml";
-				m_effect = std::dynamic_pointer_cast<IEffect>(resourceSystem->GetResource(effectName));
+				m_effect = std::static_pointer_cast<IEffect>(resourceSystem->GetResource(effectName));
                 m_effect->InitDefaultInputLayout(m_device.get());
 			}
 
