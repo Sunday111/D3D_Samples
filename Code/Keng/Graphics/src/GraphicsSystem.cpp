@@ -13,6 +13,7 @@
 #include "Resource/ResourceFabricRegisterer.h"
 
 #include "EverydayTools/Geom/Vector.h"
+#include "DeviceBuffer.h"
 
 #include <algorithm>
 #include "Xml.h"
@@ -142,6 +143,12 @@ namespace keng::graphics
 			}
 		};
 	}
+
+    core::Ptr<IDeviceBuffer> GraphicsSystem::CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data) {
+        return CallAndRethrowM + [&] {
+            return core::Ptr<DeviceBuffer>::MakeInstance(*m_device, params, data);
+        };
+    }
 
     bool GraphicsSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {
         return CallAndRethrowM + [&]() -> bool {

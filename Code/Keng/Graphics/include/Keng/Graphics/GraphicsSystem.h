@@ -23,6 +23,9 @@ namespace keng::core
 
 namespace keng::graphics
 {
+    class IDeviceBuffer;
+    class DeviceBufferParams;
+
 	class GraphicsSystem :
         public core::ISystem,
         public window_system::IWindowListener,
@@ -41,6 +44,8 @@ namespace keng::graphics
 		virtual void Initialize(core::IApplication* app) override;
 
         std::shared_ptr<Device> GetDevice() { return m_device; }
+
+        core::Ptr<IDeviceBuffer> CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
 
 	protected:
         std::vector<std::string> m_dependencies;

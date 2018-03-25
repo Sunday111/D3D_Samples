@@ -23,7 +23,7 @@ namespace keng::graphics
         }
 
         void* GetNativeContext() const override {
-            return GetContext();
+            return GetContext().Get();
         }
     };
 }

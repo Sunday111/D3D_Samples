@@ -8,6 +8,7 @@
 #include "D3D_Tools/Annotation.h"
 #include "EverydayTools/Geom/Vector.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
+#include "Keng/Graphics/IDeviceBuffer.h"
 
 namespace textured_quad_sample
 {
@@ -115,10 +116,19 @@ namespace textured_quad_sample
 					m_device.get(),
 					D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
 					edt::MakeArrayView(vertices));
+
+                graphics::DeviceBufferParams params;
+                params.size = sizeof(vertices);
+                params.usage = graphics::DeviceBufferUsage::Dynamic;
+                params.bindFlags = graphics::DeviceBufferBindFlags::VertexBuffer;
+                params.accessFlags = graphics::DeviceAccessFlags::Write;
+                auto testBuffer = CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
+
+                testBuffer->SetBufferData(edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
 			}
 
 			{// Create sampler
-				CD3D11_SAMPLER_DESC samplerDesc(D3D11_DEFAULT);
+ 				CD3D11_SAMPLER_DESC samplerDesc(D3D11_DEFAULT);
 				samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
 				samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
 				m_device->GetDevice()->CreateSamplerState(&samplerDesc, m_sampler.Receive());

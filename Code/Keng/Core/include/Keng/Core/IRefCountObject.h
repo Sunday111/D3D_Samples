@@ -18,7 +18,10 @@ namespace keng::core
             return ++m_referencesCount;                     \
         }                                                   \
         virtual int RemoveReference() const override {      \
-            return --m_referencesCount;                     \
+            --m_referencesCount;                            \
+            if(m_referencesCount < 1)                       \
+                delete this;                                \
+            return m_referencesCount;                       \
         }                                                   \
         virtual int GetReferencesCount() const override {   \
             return m_referencesCount;                       \
