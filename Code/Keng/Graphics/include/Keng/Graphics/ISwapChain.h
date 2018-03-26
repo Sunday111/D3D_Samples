@@ -10,7 +10,6 @@ namespace keng::graphics
     {
     public:
         virtual core::Ptr<ITextureView> GetBackBufferView(IDevice* device) = 0;
-        virtual void* GetNativeInterface() const = 0;
         virtual void Present() = 0;
         virtual ~ISwapChain() = default;
     };

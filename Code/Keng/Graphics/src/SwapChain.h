@@ -1,38 +1,24 @@
 #pragma once
 
-#include "D3D_Tools/SwapChain.h"
+#include "d3d11.h"
+#include "D3D_Tools/Texture.h"
 #include "Keng/Graphics/ISwapChain.h"
 #include "Keng/Graphics/Device.h"
 
 namespace keng::graphics
 {
-
-    class SwapChain :
-        public ISwapChain,
-        public d3d_tools::SwapChain
+    class SwapChain : public ISwapChain
     {
     public:
-        using d3d_tools::SwapChain::SwapChain;
+        SwapChain(ID3D11Device* device, uint32_t w, uint32_t h, HWND hWnd, DXGI_FORMAT format);
+        ~SwapChain();
 
-        virtual core::Ptr<ITextureView> GetBackBufferView(IDevice* device) override {
-            if (!m_renderTargetView) {
-                auto backbuffer = GetBackBuffer();
-                m_renderTargetView = core::Ptr<TextureView<ResourceViewType::RenderTarget>>::MakeInstance(
-                    (ID3D11Device*)device->GetNativeDevice(),
-                    backbuffer.GetTexture());
-            }
-            return m_renderTargetView;
-        }
-        
-        void* GetNativeInterface() const {
-            return GetInterface();
-        }
-
-        virtual void Present() override {
-            d3d_tools::SwapChain::Present();
-        }
+        virtual core::Ptr<ITextureView> GetBackBufferView(IDevice* device) override;
+        virtual void Present() override;
+        d3d_tools::Texture GetBackBuffer(uint32_t index = 0);
 
     private:
+        ComPtr<IDXGISwapChain> m_swapchain;
         core::Ptr<TextureView<ResourceViewType::RenderTarget>> m_renderTargetView;
     };
 }
