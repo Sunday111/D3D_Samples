@@ -19,18 +19,33 @@ namespace keng::core
     class Application;
 }
 
+namespace keng::window_system
+{
+    class IWindow;
+}
+
 namespace keng::graphics
 {
     class IDeviceBuffer;
     class DeviceBufferParams;
+    class IWindowRenderTarget;
+    class WindowRenderTargetParameters;
+
+    class IGraphicsSystem :
+        public core::ISystem
+    {
+    public:
+        virtual core::Ptr<IWindowRenderTarget> CreateWindowRenderTarget(const WindowRenderTargetParameters& params) = 0;
+    };
 
 	class GraphicsSystem :
-        public core::ISystem,
+        public IGraphicsSystem,
         public window_system::IWindowListener,
 		public Observable<GraphicsSystem, IGraphicsListener>
 	{
 	public:
 		GraphicsSystem();
+        ~GraphicsSystem();
 
 		static const char* GetGUID();
 
@@ -41,10 +56,13 @@ namespace keng::graphics
         virtual const char* GetSystemGUID() override;
 		virtual void Initialize(core::IApplication* app) override;
 
-        std::shared_ptr<Device> GetDevice() { return m_device; }
+        // IGraphicsSystem
+        virtual core::Ptr<IWindowRenderTarget> CreateWindowRenderTarget(const WindowRenderTargetParameters& params) override;
+
+        core::Ptr<Device> GetDevice() { return m_device; }
+        core::Ptr<IWindowRenderTarget> GetWindowRenderTarget();
 
         core::Ptr<IDeviceBuffer> CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
-        std::shared_ptr<ISwapChain> GetSwapChain() const;
 
 	protected:
 
@@ -57,12 +75,12 @@ namespace keng::graphics
 		} m_renderTarget;
 
         
-		std::shared_ptr<Device> m_device;
+		core::Ptr<Device> m_device;
 
     private:
         bool m_fullscreen = false;
         core::Application* m_app = nullptr;
         std::vector<std::string> m_dependencies;
-        std::shared_ptr<ISwapChain> m_swapchain;
+        core::Ptr<IWindowRenderTarget> m_windowRT;
 	};
 }

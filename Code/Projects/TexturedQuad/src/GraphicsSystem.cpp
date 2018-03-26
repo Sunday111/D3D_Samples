@@ -2,6 +2,7 @@
 
 #include "Keng/Core/Application.h"
 #include "Keng/Graphics/DeviceBufferMapper.h"
+#include "Keng/Graphics/RenderTarget/IWindowRenderTarget.h"
 #include "Keng/Graphics/Resource/Texture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
@@ -50,7 +51,7 @@ namespace textured_quad_sample
         using namespace graphics;
 
 		return CallAndRethrowM + [&] {
-			return d3d_tools::Annotate(m_device.get(), L"Frame", [&]() {
+			return d3d_tools::Annotate(m_device.Get(), L"Frame", [&]() {
 				float clearColor[4] {
 					0.0f, 0.2f, 0.4f, 1.0f
 				};
@@ -59,7 +60,7 @@ namespace textured_quad_sample
 				constexpr float delta_angle = 0.001f;
 				angle += delta_angle;
 
-				d3d_tools::Annotate(m_device.get(), L"Move triangle", [&]() {
+				d3d_tools::Annotate(m_device.Get(), L"Move triangle", [&]() {
                     graphics::DeviceBufferMapper mapper;
                     m_constantBuffer->MakeMapper(mapper);
                     auto cbView = mapper.GetTypedView<CB>();
@@ -70,10 +71,10 @@ namespace textured_quad_sample
                     cbView[0].transform = MakeTranslationMatrix(t);
 				});
 
-				d3d_tools::Annotate(m_device.get(), L"Draw triangle", [&]() {
-                    m_renderTarget.Clear(m_device.get(), clearColor);
-					m_renderTarget.Activate(m_device.get());
-					m_effect->Use(m_device.get());
+				d3d_tools::Annotate(m_device.Get(), L"Draw triangle", [&]() {
+                    m_renderTarget.Clear(m_device.Get(), clearColor);
+					m_renderTarget.Activate(m_device.Get());
+					m_effect->Use(m_device.Get());
                     m_device->SetVertexBuffer(m_vertexBuffer, sizeof(Vertex), 0);
                     m_device->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
                     m_device->SetConstantBuffer(m_constantBuffer, d3d_tools::ShaderType::Vertex);
@@ -83,15 +84,15 @@ namespace textured_quad_sample
 					m_device->Draw(4);
 				});
 
-                d3d_tools::Annotate(m_device.get(), L"Copy texture to swap chain texture", [&]() {
+                d3d_tools::Annotate(m_device.Get(), L"Copy texture to swap chain texture", [&]() {
                     ID3D11Resource* finalRT;
-                    auto rtv = GetSwapChain()->GetBackBufferView(m_device.get());
+                    auto rtv = GetWindowRenderTarget()->GetRenderTargetView();
                     ((ID3D11RenderTargetView*)rtv->GetNativeInterface())->GetResource(&finalRT);
                     auto nativeTexture = static_cast<ID3D11Texture2D*>(m_renderTarget.rt->GetNativeInterface());
                     m_device->GetContext()->CopyResource(finalRT, nativeTexture);
                 });
 
-                GetSwapChain()->Present();
+                GetWindowRenderTarget()->Present();
 
 				return true;
 			});
@@ -111,7 +112,7 @@ namespace textured_quad_sample
 			{// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Textured.xml";
 				m_effect = std::static_pointer_cast<IEffect>(resourceSystem->GetResource(effectName));
-                m_effect->InitDefaultInputLayout(m_device.get());
+                m_effect->InitDefaultInputLayout(m_device.Get());
 			}
 
 			{// Create vertex buffer

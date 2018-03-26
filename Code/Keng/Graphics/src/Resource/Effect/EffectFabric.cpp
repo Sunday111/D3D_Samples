@@ -11,7 +11,7 @@ namespace keng::graphics
         return "Effect";
     }
 
-    core::Ptr<resource::IResource> EffectFabric::LoadResource(resource::IResourceSystem* resourceSystem, std::shared_ptr<IXmlNode> node) const {
+    core::Ptr<resource::IResource> EffectFabric::LoadResource(resource::IResourceSystem* resourceSystem, core::Ptr<IXmlNode> node) const {
         return CallAndRethrowM + [&] {
             bool anyShader = false;
             auto result = core::Ptr<Effect>::MakeInstance();

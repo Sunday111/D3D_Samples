@@ -9,7 +9,7 @@ namespace keng::graphics
 {
     struct ShaderCompiler
     {
-        std::shared_ptr<Device> device;
+        core::Ptr<Device> device;
         core::Ptr<ShaderTemplate> shaderTemplate;
         std::string_view entryPoint;
         std::vector<d3d_tools::ShaderMacro> definitions;
@@ -41,7 +41,7 @@ namespace keng::graphics
         }
     };
 
-    ShaderFabric::ShaderFabric(std::shared_ptr<Device> device) :
+    ShaderFabric::ShaderFabric(core::Ptr<Device> device) :
         m_device(device)
     {}
 
@@ -53,7 +53,7 @@ namespace keng::graphics
         return "Shader";
     }
 
-    core::Ptr<resource::IResource> ShaderFabric::LoadResource(resource::IResourceSystem* resourceSystem, std::shared_ptr<IXmlNode> node) const {
+    core::Ptr<resource::IResource> ShaderFabric::LoadResource(resource::IResourceSystem* resourceSystem, core::Ptr<IXmlNode> node) const {
         return CallAndRethrowM + [&] {
             ShaderCompiler shaderCompiler;
             shaderCompiler.device = m_device;

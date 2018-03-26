@@ -10,7 +10,7 @@
 
 namespace keng::graphics
 {
-    TextureFabric::TextureFabric(std::shared_ptr<Device> device) :
+    TextureFabric::TextureFabric(core::Ptr<Device> device) :
         m_device(device)
     {
     }
@@ -24,7 +24,7 @@ namespace keng::graphics
         return "Texture";
     }
 
-    core::Ptr<resource::IResource> TextureFabric::LoadResource(resource::IResourceSystem*, std::shared_ptr<IXmlNode> node) const
+    core::Ptr<resource::IResource> TextureFabric::LoadResource(resource::IResourceSystem*, core::Ptr<IXmlNode> node) const
     {
         return CallAndRethrowM + [&] {
             auto fileNode = node->GetFirstNode("file");

@@ -9,8 +9,10 @@
 
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "Keng/Graphics/Resource/Texture.h"
+#include "RenderTarget/WindowRenderTarget.h"
 #include "Resource/Effect/Effect.h"
 #include "Resource/ResourceFabricRegisterer.h"
+#include "RenderTarget/WindowRenderTarget.h"
 
 #include "EverydayTools/Geom/Vector.h"
 #include "DeviceBuffer.h"
@@ -86,6 +88,8 @@ namespace keng::graphics
 		m_dependencies.push_back(window_system::IWindowSystem::GetGUID());
 	}
 
+    GraphicsSystem::~GraphicsSystem() = default;
+
 	const char* GraphicsSystem::GetGUID()
 	{
 		return "E6080ACE-E91E-4693-AFA5-5B6A0BB29A41";
@@ -106,16 +110,18 @@ namespace keng::graphics
 				Device::CreateParams deviceParams;
 				deviceParams.debugDevice = params.debugDevice;
 				deviceParams.noDeviceMultithreading = params.noDeviceMultithreading;
-				m_device = std::make_shared<Device>(deviceParams);
+				m_device = core::Ptr<Device>::MakeInstance(deviceParams);
 			}
-
-			auto wndSystem = m_app->GetSystem<window_system::IWindowSystem>();
-			auto window = wndSystem->GetWindow();
+            auto wndSystem = m_app->GetSystem<window_system::IWindowSystem>();
+            auto window = wndSystem->GetWindow();
 			uint32_t w, h;
 			window->GetClientSize(&w, &h);
 
 			{// Initialize swapchain
-				m_swapchain = std::make_shared<SwapChain>(m_device->GetDevice(), w, h, (HWND)window->GetNativeHandle());
+                WindowRenderTargetParameters window_rt_params;
+                window_rt_params.format = d3d_tools::TextureFormat::R8_G8_B8_A8_UNORM;
+                window_rt_params.window = window;
+                m_windowRT = CreateWindowRenderTarget(window_rt_params);
 			}
 
 			{// Initialize viewport
@@ -145,15 +151,18 @@ namespace keng::graphics
 		};
 	}
 
+    core::Ptr<IWindowRenderTarget> GraphicsSystem::CreateWindowRenderTarget(const WindowRenderTargetParameters& params) {
+        return core::Ptr<WindowRenderTarget>::MakeInstance(*m_device, params);
+    }
+
+    core::Ptr<IWindowRenderTarget> GraphicsSystem::GetWindowRenderTarget() {
+        return m_windowRT;
+    }
+
     core::Ptr<IDeviceBuffer> GraphicsSystem::CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data) {
         return CallAndRethrowM + [&] {
             return core::Ptr<DeviceBuffer>::MakeInstance(*m_device, params, data);
         };
-    }
-
-    std::shared_ptr<ISwapChain> GraphicsSystem::GetSwapChain() const
-    {
-        return m_swapchain;
     }
 
     bool GraphicsSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {

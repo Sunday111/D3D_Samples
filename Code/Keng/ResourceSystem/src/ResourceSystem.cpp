@@ -4,6 +4,7 @@
 
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
+#include "EverydayTools/UnusedVar.h"
 
 #include "Xml.h"
 
@@ -81,8 +82,8 @@ namespace keng::resource
             }
 
             auto doc = std::make_shared<XmlDocument>(filename);
-            auto resource_node = doc->GetFirstNode("resource");
-            auto typeNode = resource_node->GetFirstNode("type");
+            auto resource_node = doc->GetFirstNode(ResourceNodeName);
+            auto typeNode = resource_node->GetFirstNode(ResourceTypeNodeName);
             auto resourceTypeName = std::string(typeNode->GetValue());
             auto fabric_it = m_fabrics.find(resourceTypeName);
 
@@ -95,8 +96,7 @@ namespace keng::resource
 
             ResourceInfo info;
             info.resource = result;
-            m_resources.insert(std::make_pair(std::move(filename_copy), std::move(info)));
-            return result;
+            return InsertResource(std::move(filename_copy), std::move(info));
         };
     }
 
@@ -131,10 +131,23 @@ namespace keng::resource
                 }
             }
             catch (...)
-            { }
+            {
+            }
 
             return result;
         };
+    }
+
+    core::Ptr<IResource> ResourceSystem::InsertResource(std::string&& name, ResourceInfo&& info) {
+        auto resource = info.resource;
+        m_resources.insert(std::make_pair(std::move(name), std::move(info)));
+        return resource;
+    }
+
+    std::string ResourceSystem::GenerateRuntimeResourceName() {
+        std::stringstream stream;
+        stream << "runtime://" << m_nextRuntimeResourceIndex++;
+        return stream.str();
     }
 
     bool ResourceSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {
@@ -151,5 +164,25 @@ namespace keng::resource
 
     const char* ResourceSystem::GetSystemGUID() {
         return GetGUID();
+    }
+
+    core::Ptr<IResource> ResourceSystem::MakeRuntimeResource(core::Ptr<IXmlDocument> doc) {
+        return CallAndRethrowM + [&] {
+            auto resource_node = doc->GetFirstNode(ResourceNodeName);
+            auto typeNode = resource_node->GetFirstNode(ResourceTypeNodeName);
+            auto resourceTypeName = std::string(typeNode->GetValue());
+            auto fabric_it = m_fabrics.find(resourceTypeName);
+
+            edt::ThrowIfFailed(
+                fabric_it != m_fabrics.end(),
+                "Fabric for resource \"", resourceTypeName, "\" is not registered");
+
+            auto exactNode = resource_node->GetFirstNode(fabric_it->second->GetNodeName());
+            auto result = fabric_it->second->LoadResource(this, exactNode);
+
+            ResourceInfo info;
+            info.resource = result;
+            return InsertResource(GenerateRuntimeResourceName(), std::move(info));
+        };
     }
 }

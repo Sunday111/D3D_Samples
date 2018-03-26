@@ -2,13 +2,14 @@
 
 #include "D3D_Tools/Device.h"
 #include "Keng/Core/Ptr.h"
+#include "Keng/Core/IRefCountObject.h"
 #include "Keng/Graphics/IDeviceBuffer.h"
 
 namespace keng::graphics
 {
     class IDeviceBuffer;
 
-    class IDevice
+    class IDevice : public core::IRefCountObject
     {
     public:
         virtual void* GetNativeDevice() const = 0;
@@ -21,6 +22,7 @@ namespace keng::graphics
         public IDevice,
         public d3d_tools::Device
     {
+        IMPLEMENT_IREFCOUNT
     public:
         using d3d_tools::Device::Device;
 

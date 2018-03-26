@@ -21,7 +21,7 @@ namespace keng::resource
     public:
         virtual std::string_view GetResourceType() const = 0;
         virtual std::string_view GetNodeName() const = 0;
-        virtual core::Ptr<IResource> LoadResource(IResourceSystem*, std::shared_ptr<IXmlNode> document) const = 0;
+        virtual core::Ptr<IResource> LoadResource(IResourceSystem*, core::Ptr<IXmlNode> document) const = 0;
         virtual ~IResourceFabric() = default;
     };
 }

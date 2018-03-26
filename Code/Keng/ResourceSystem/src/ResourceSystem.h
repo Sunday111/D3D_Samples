@@ -7,10 +7,10 @@
 
 namespace keng::resource
 {
-	class ResourceSystem :
-		public IResourceSystem
-	{
-	public:
+    class ResourceSystem :
+        public IResourceSystem
+    {
+    public:
         struct ResourceParameters
         {
             float releaseDelay = 0.0f;
@@ -20,24 +20,24 @@ namespace keng::resource
         {
             ResourceParameters defaultResourceParams;
         };
-	
-	protected:
-	private:
-	    struct ResourceInfo
-	    {
+
+    protected:
+    private:
+        struct ResourceInfo
+        {
             ResourceInfo();
             ~ResourceInfo();
 
             bool IsSingleReference() const;
             bool IsExpired() const;
             bool ShouldBeReleased(float timeNow);
-	
+
             ResourceParameters params;
             core::Ptr<IResource> resource;
-	        float lastTouchMs = -1.f;
-	    };
-	
-	public:
+            float lastTouchMs = -1.f;
+        };
+
+    public:
         ResourceSystem();
         ~ResourceSystem();
 
@@ -49,19 +49,24 @@ namespace keng::resource
 
         // IResource system
         virtual core::Ptr<IResource> GetResource(std::string_view filename) override;
+        virtual core::Ptr<IResource> MakeRuntimeResource(core::Ptr<IXmlDocument> description) override;
         virtual void RegisterResourceFabric(core::Ptr<IResourceFabric> fabric) override;
         virtual void UnregisterFabric(core::Ptr<IResourceFabric> fabric) override;
 
     protected:
         SystemParams ReadDefaultParams();
-	
-	public:
-	protected:
+        core::Ptr<IResource> InsertResource(std::string&& name, ResourceInfo&& info);
+        std::string GenerateRuntimeResourceName();
+
+    protected:
         std::vector<std::string> m_dependencies;
 
-	private:
+    private:
+        size_t m_nextRuntimeResourceIndex = 0;
+        static constexpr auto ResourceNodeName = "resource";
+        static constexpr auto ResourceTypeNodeName = "type";
         SystemParams m_parameters;
-	    std::unordered_map<std::string, ResourceInfo> m_resources;
-	    std::unordered_map<std::string, core::Ptr<IResourceFabric>> m_fabrics;
-	};
+        std::unordered_map<std::string, ResourceInfo> m_resources;
+        std::unordered_map<std::string, core::Ptr<IResourceFabric>> m_fabrics;
+    };
 }

@@ -7,20 +7,22 @@
 #include <string_view>
 #include <memory>
 
+#include "Keng/Core/IRefCountObject.h"
+#include "Keng/Core/Ptr.h"
+
 namespace keng
 {
-	class IXmlNode
+	class IXmlNode : public core::IRefCountObject
 	{
 	public:
-	    virtual std::shared_ptr<IXmlNode> FindFirstNode(std::string_view name) = 0;
-		virtual std::shared_ptr<IXmlNode> NextSibling(std::string_view name = "") = 0;
-	    virtual std::shared_ptr<IXmlNode> GetFirstNode(std::string_view name) = 0;
+	    virtual core::Ptr<IXmlNode> FindFirstNode(std::string_view name) = 0;
+		virtual core::Ptr<IXmlNode> NextSibling(std::string_view name = "") = 0;
+	    virtual core::Ptr<IXmlNode> GetFirstNode(std::string_view name) = 0;
 	    virtual std::string_view GetValue() const = 0;
 	    virtual ~IXmlNode() = default;
 	};
 	
-	class IXmlDocument :
-	    public IXmlNode
+	class IXmlDocument : public IXmlNode
 	{
 	public:
 	    virtual ~IXmlDocument() = default;
@@ -31,29 +33,29 @@ namespace keng
         public IXmlNode
 	{
 	public:
-		virtual std::shared_ptr<IXmlNode> FindFirstNode(std::string_view name) override {
-			return CallAndRethrowM + [&]() -> std::shared_ptr<IXmlNode> {
+		virtual core::Ptr<IXmlNode> FindFirstNode(std::string_view name) override {
+			return CallAndRethrowM + [&]() -> core::Ptr<IXmlNode> {
 				auto impl = GetRepresentationPtr();
 				auto node = impl->first_node(name.data());
 				if (!node) {
 					return nullptr;
 				}
-				return std::make_shared<XmlNode>(node);
+				return core::Ptr<XmlNode>::MakeInstance(node);
 			};
 		}
+
+        virtual core::Ptr<IXmlNode> NextSibling(std::string_view name) override {
+            auto impl = GetRepresentationPtr();
+            if (auto node = impl->next_sibling(name.data(), name.size())) {
+                return core::Ptr<XmlNode>::MakeInstance(node);
+            }
+            return nullptr;
+        }
 	
-		virtual std::shared_ptr<IXmlNode> GetFirstNode(std::string_view name) override {
+		virtual core::Ptr<IXmlNode> GetFirstNode(std::string_view name) override {
 			auto result = FindFirstNode(name);
 			edt::ThrowIfFailed(result != nullptr, "Node \"", name, "\" not found");
 			return result;
-		}
-	
-		virtual std::shared_ptr<IXmlNode> NextSibling(std::string_view name) override {
-			auto impl = GetRepresentationPtr();
-			if (auto node = impl->next_sibling(name.data(), name.size())) {
-				return std::make_shared<XmlNode>(node);
-			}
-			return nullptr;
 		}
 	
 		virtual std::string_view GetValue() const override {
@@ -77,6 +79,7 @@ namespace keng
 	class XmlNode :
 	    public IXmlNodeImpl<XmlNode>
 	{
+        IMPLEMENT_IREFCOUNT
 	public:
 	    XmlNode(rapidxml::xml_node<char>* node) :
 	        m_impl(node)
@@ -93,6 +96,7 @@ namespace keng
 	class XmlDocument :
 	    public IXmlNodeImpl<XmlDocument>
 	{
+        IMPLEMENT_IREFCOUNT
 	public:
         XmlDocument(std::string_view filename) {
             CallAndRethrowM + [&] {

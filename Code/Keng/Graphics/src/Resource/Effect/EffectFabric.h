@@ -10,7 +10,7 @@ namespace keng::graphics
     public:
         virtual std::string_view GetNodeName() const override;
         virtual std::string_view GetResourceType() const override;
-        virtual core::Ptr<resource::IResource> LoadResource(resource::IResourceSystem*, std::shared_ptr<IXmlNode> document) const override;
+        virtual core::Ptr<resource::IResource> LoadResource(resource::IResourceSystem*, core::Ptr<IXmlNode> document) const override;
     };
 }
 
