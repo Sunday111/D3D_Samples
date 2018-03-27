@@ -74,7 +74,7 @@ namespace textured_quad_sample
 				d3d_tools::Annotate(m_device.Get(), L"Draw triangle", [&]() {
                     m_renderTarget.Clear(m_device.Get(), clearColor);
 					m_renderTarget.Activate(m_device.Get());
-					m_effect->Use(m_device.Get());
+					m_effect->Use();
                     m_device->SetVertexBuffer(m_vertexBuffer, sizeof(Vertex), 0);
                     m_device->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
                     m_device->SetConstantBuffer(m_constantBuffer, d3d_tools::ShaderType::Vertex);
@@ -112,7 +112,7 @@ namespace textured_quad_sample
 			{// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Textured.xml";
 				m_effect = std::static_pointer_cast<IEffect>(resourceSystem->GetResource(effectName));
-                m_effect->InitDefaultInputLayout(m_device.Get());
+                m_effect->InitDefaultInputLayout();
 			}
 
 			{// Create vertex buffer

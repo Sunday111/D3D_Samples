@@ -28,14 +28,20 @@ namespace keng::graphics
 {
     class IDeviceBuffer;
     class DeviceBufferParams;
-    class IWindowRenderTarget;
     class WindowRenderTargetParameters;
+    class IWindowRenderTarget;
+    class TextureRenderTargetParameters;
+    class ITextureRenderTarget;
+    class DepthStencilParameters;
+    class IDepthStencil;
 
     class IGraphicsSystem :
         public core::ISystem
     {
     public:
         virtual core::Ptr<IWindowRenderTarget> CreateWindowRenderTarget(const WindowRenderTargetParameters& params) = 0;
+        virtual core::Ptr<ITextureRenderTarget> CreateTextureRenderTarget(const TextureRenderTargetParameters& params) = 0;
+        virtual core::Ptr<IDepthStencil> CreateDepthStencil(const DepthStencilParameters& params) = 0;
     };
 
 	class GraphicsSystem :
@@ -58,12 +64,14 @@ namespace keng::graphics
 
         // IGraphicsSystem
         virtual core::Ptr<IWindowRenderTarget> CreateWindowRenderTarget(const WindowRenderTargetParameters& params) override;
+        virtual core::Ptr<ITextureRenderTarget> CreateTextureRenderTarget(const TextureRenderTargetParameters& params) override;
+        virtual core::Ptr<IDepthStencil> CreateDepthStencil(const DepthStencilParameters& params) override;
 
         core::Ptr<Device> GetDevice() { return m_device; }
         core::Ptr<IWindowRenderTarget> GetWindowRenderTarget();
 
         core::Ptr<IDeviceBuffer> CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
-
+        core::Ptr<ISwapChain> CreateSwapChain(const SwapChainParameters& params);
 	protected:
 
 		struct RT {

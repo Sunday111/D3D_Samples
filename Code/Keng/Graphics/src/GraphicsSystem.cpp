@@ -10,13 +10,19 @@
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "Keng/Graphics/Resource/Texture.h"
 #include "RenderTarget/WindowRenderTarget.h"
+#include "RenderTarget/TextureRenderTarget.h"
 #include "Resource/Effect/Effect.h"
 #include "Resource/ResourceFabricRegisterer.h"
 #include "RenderTarget/WindowRenderTarget.h"
 
+#include "Keng/Graphics/RenderTarget/TextureRenderTargetParameters.h"
+#include "Keng/Graphics/RenderTarget/WindowRenderTargetParameters.h"
+#include "Keng/Graphics/RenderTarget/DepthStencilParameters.h"
+
 #include "EverydayTools/Geom/Vector.h"
 #include "DeviceBuffer.h"
 #include "SwapChain.h"
+#include "RenderTarget/DepthStencil.h"
 
 #include <algorithm>
 #include "Xml.h"
@@ -155,6 +161,14 @@ namespace keng::graphics
         return core::Ptr<WindowRenderTarget>::MakeInstance(*m_device, params);
     }
 
+    core::Ptr<ITextureRenderTarget> GraphicsSystem::CreateTextureRenderTarget(const TextureRenderTargetParameters& params) {
+        return core::Ptr<TextureRenderTarget>::MakeInstance(*m_device, params);
+    }
+
+    core::Ptr<IDepthStencil> GraphicsSystem::CreateDepthStencil(const DepthStencilParameters& params) {
+        return core::Ptr<DepthStencil>::MakeInstance(*m_device, params);
+    }
+
     core::Ptr<IWindowRenderTarget> GraphicsSystem::GetWindowRenderTarget() {
         return m_windowRT;
     }
@@ -163,6 +177,10 @@ namespace keng::graphics
         return CallAndRethrowM + [&] {
             return core::Ptr<DeviceBuffer>::MakeInstance(*m_device, params, data);
         };
+    }
+
+    core::Ptr<ISwapChain> GraphicsSystem::CreateSwapChain(const SwapChainParameters& params) {
+        return core::Ptr<SwapChain>::MakeInstance(*m_device, params);
     }
 
     bool GraphicsSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {

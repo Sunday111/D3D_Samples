@@ -4,13 +4,11 @@
 
 namespace keng::graphics
 {
-    class IDevice;
-
     class IEffect : public resource::IResource
     {
     public:
-        virtual void Use(IDevice* device) = 0;
-        virtual void InitDefaultInputLayout(IDevice* device) = 0;
+        virtual void Use() = 0;
+        virtual void InitDefaultInputLayout() = 0;
         virtual ~IEffect() = default;
     };
 }

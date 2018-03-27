@@ -18,6 +18,7 @@ namespace keng::graphics
         virtual void SetConstantBuffer(core::Ptr<IDeviceBuffer> buffer, d3d_tools::ShaderType shader) = 0;
         virtual ~IDevice() = default;
     };
+
     class Device :
         public IDevice,
         public d3d_tools::Device

@@ -1,25 +1,25 @@
 #pragma once
 
-#include "Keng/Graphics/RenderTarget/IWindowRenderTarget.h"
+#include "Keng/Graphics/RenderTarget/ITextureRenderTarget.h"
 
 namespace keng::graphics
 {
+    class Texture;
     class Device;
-    class WindowRenderTargetParameters;
-    class SwapChain;
+    class TextureRenderTargetParameters;
 
-    class WindowRenderTarget : public IWindowRenderTarget
+    class TextureRenderTarget : public ITextureRenderTarget
     {
+    public:
         IMPLEMENT_IREFCOUNT
     public:
-        WindowRenderTarget(Device& device, const WindowRenderTargetParameters& params);
+        TextureRenderTarget(Device& device, const TextureRenderTargetParameters& params);
+        ~TextureRenderTarget();
         virtual void Activate(const core::Ptr<IDepthStencil>& depthStencil) override;
         virtual void ClearRenderTarget(const float(&flatColor)[4]) override;
         virtual core::Ptr<ITextureView> GetRenderTargetView() override;
-        virtual void Present() override;
-
     private:
         core::Ptr<Device> m_device;
-        core::Ptr<SwapChain> m_swapChain;
+        core::Ptr<Texture> m_texture;
     };
 }
