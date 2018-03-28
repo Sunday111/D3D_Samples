@@ -74,7 +74,7 @@ namespace keng::graphics
         };
     }
 
-    static ComPtr<ID3D11Buffer> MakeBuffer(ID3D11Device* device, const D3D11_BUFFER_DESC& desc, const uint8_t* initialData = nullptr) {
+    static ComPtr<ID3D11Buffer> MakeBuffer(const ComPtr<ID3D11Device>& device, const D3D11_BUFFER_DESC& desc, const uint8_t* initialData = nullptr) {
         return CallAndRethrowM + [&] {
             ComPtr<ID3D11Buffer> buffer;
             D3D11_SUBRESOURCE_DATA subresourceData;

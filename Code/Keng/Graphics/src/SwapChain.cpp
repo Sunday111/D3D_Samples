@@ -20,7 +20,7 @@ namespace keng::graphics
             scd.SampleDesc.Count = 1;                                                               // how many multisamples
             scd.Windowed = TRUE;                                                                    // windowed/full-screen mode
             scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-            WinAPI<char>::ThrowIfError(factory->CreateSwapChain(device.GetDevice(), &scd, m_swapchain.Receive()));
+            WinAPI<char>::ThrowIfError(factory->CreateSwapChain(device.GetDevice().Get(), &scd, m_swapchain.Receive()));
         };
     }
 
@@ -34,7 +34,7 @@ namespace keng::graphics
         if (!m_renderTargetView) {
             auto backbuffer = GetBackBuffer();
             m_renderTargetView = core::Ptr<TextureView<ResourceViewType::RenderTarget>>::MakeInstance(
-                m_device->GetDevice(), backbuffer.GetTexture());
+                m_device->GetDevice().Get(), backbuffer.GetTexture());
         }
         return m_renderTargetView;
     }

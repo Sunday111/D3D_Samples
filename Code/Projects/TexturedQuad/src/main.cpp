@@ -11,10 +11,36 @@
 
 #include "Keng/Core/ImplementLauncherInterface.h"
 
+template<typename T>
+struct Foo
+{
+public:
+    Foo() = default;
+
+    template<typename U, typename = std::is_convertible<T*, U*>>
+    Foo<T>& operator=(const Foo<U>& val) {
+        ptr = val.ptr;
+        return *this;
+    }
+
+    template<typename U, typename = std::is_convertible<T*, U*>>
+    Foo<T>& operator=(Foo<U>&& val) {
+        ptr = val.ptr;
+        val.ptr = nullptr;
+        return *this;
+    }
+
+private:
+    T* ptr = nullptr;
+};
+
 namespace textured_quad_sample
 {
     int RunApplicationImpl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int nCmdShow) {
         return CallAndRethrowM + [&] {
+            Foo<int> a, b;
+            a = b;
+
             UnusedVar(hInstance, hPrevInstance, cmdLine, nCmdShow);
             auto app = std::make_unique<keng::core::Application>();
             app->AddSystem(new GraphicsSystem());

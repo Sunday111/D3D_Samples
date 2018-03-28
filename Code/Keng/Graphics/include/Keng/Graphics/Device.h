@@ -28,7 +28,7 @@ namespace keng::graphics
         using d3d_tools::Device::Device;
 
         void* GetNativeDevice() const override {
-            return GetDevice();
+            return GetDevice().Get();
         }
 
         void* GetNativeContext() const override {
