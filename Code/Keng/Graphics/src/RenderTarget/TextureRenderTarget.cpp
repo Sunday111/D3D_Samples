@@ -1,5 +1,5 @@
 #include "keng/Graphics/Device.h"
-#include "Keng/Graphics/Resource/Texture.h"
+#include "Resource/Texture/Texture.h"
 #include "Keng/Graphics/Resource/TextureView.h"
 #include "DepthStencil.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"

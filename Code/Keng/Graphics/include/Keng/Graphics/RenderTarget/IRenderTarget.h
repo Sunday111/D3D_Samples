@@ -1,8 +1,8 @@
 #pragma once
 
+#include "EverydayTools/Array/ArrayView.h"
 #include "Keng/Core/IRefCountObject.h"
 #include "Keng/Core/Ptr.h"
-#include "EverydayTools/Array/ArrayView.h"
 
 namespace keng::graphics
 {

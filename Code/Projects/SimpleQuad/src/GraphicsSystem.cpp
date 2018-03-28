@@ -2,9 +2,11 @@
 #include "Keng/Graphics/DeviceBufferMapper.h"
 #include "EverydayTools/Geom/Vector.h"
 #include "D3D_Tools/Annotation.h"
-#include "Keng/Graphics/RenderTarget/IWindowRenderTarget.h"
+#include "Keng/Graphics/Resource/ITexture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
-#include "Keng/Graphics/Resource/Texture.h"
+#include "Keng/Graphics/RenderTarget/IWindowRenderTarget.h"
+#include "Keng/Graphics/RenderTarget/ITextureRenderTarget.h"
+#include "Keng/Graphics/RenderTarget/IDepthStencil.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/Core/Application.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
@@ -48,6 +50,7 @@ namespace simple_quad_sample
 
     bool GraphicsSystem::Update() {
         using namespace keng;
+        using namespace graphics;
 
         return CallAndRethrowM + [&] {
             return d3d_tools::Annotate(m_device.Get(), L"Frame", [&]() {
@@ -60,7 +63,7 @@ namespace simple_quad_sample
                 angle += delta_angle;
 
                 d3d_tools::Annotate(m_device.Get(), L"Move triangle", [&]() {
-                    graphics::DeviceBufferMapper mapper;
+                    DeviceBufferMapper mapper;
                     m_constantBuffer->MakeMapper(mapper);
                     auto cbView = mapper.GetTypedView<CB>();
                     edt::geom::Vector<float, 3> t;
@@ -71,8 +74,9 @@ namespace simple_quad_sample
                 });
 
                 d3d_tools::Annotate(m_device.Get(), L"Draw triangle", [&]() {
-                    m_renderTarget.Clear(m_device.Get(), clearColor);
-                    m_renderTarget.Activate(m_device.Get());
+                    m_textureRT->ClearRenderTarget(clearColor);
+                    m_depthStencil->Clear(DepthStencilClearFlags::ClearDepth | DepthStencilClearFlags::ClearStencil, 1.0f, 0);
+                    m_textureRT->Activate(m_depthStencil);
                     m_effect->Use();
                     m_device->SetVertexBuffer(m_vertexBuffer, sizeof(Vertex), 0);
                     m_device->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -82,10 +86,12 @@ namespace simple_quad_sample
 
                 d3d_tools::Annotate(m_device.Get(), L"Copy texture to swap chain texture", [&]() {
                     ID3D11Resource* finalRT;
-                    auto rtv = GetWindowRenderTarget()->GetRenderTargetView();
-                    ((ID3D11RenderTargetView*)rtv->GetNativeInterface())->GetResource(&finalRT);
-                    auto nativeTexture = static_cast<ID3D11Texture2D*>(m_renderTarget.rt->GetNativeInterface());
-                    m_device->GetContext()->CopyResource(finalRT, nativeTexture);
+                    auto finalRTV = GetWindowRenderTarget()->GetRenderTargetView();
+                    auto textureRTV = m_textureRT->GetRenderTargetView();
+                    ((ID3D11RenderTargetView*)finalRTV->GetNativeInterface())->GetResource(&finalRT);
+                    ID3D11Resource* textureResource;
+                    static_cast<ID3D11RenderTargetView*>(textureRTV->GetNativeInterface())->GetResource(&textureResource);
+                    m_device->GetContext()->CopyResource(finalRT, textureResource);
                 });
 
                 GetWindowRenderTarget()->Present();

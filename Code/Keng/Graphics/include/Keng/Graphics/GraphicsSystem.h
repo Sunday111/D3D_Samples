@@ -5,7 +5,6 @@
 
 #include "Keng/Graphics/Device.h"
 #include "Keng/Graphics/ISwapChain.h"
-#include "Keng/Graphics/Resource/Texture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "IGraphicsListener.h"
 
@@ -26,6 +25,8 @@ namespace keng::window_system
 
 namespace keng::graphics
 {
+    class ITexture;
+    class Texture;
     class IDeviceBuffer;
     class DeviceBufferParams;
     class WindowRenderTargetParameters;
@@ -72,21 +73,14 @@ namespace keng::graphics
 
         core::Ptr<IDeviceBuffer> CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
         core::Ptr<ISwapChain> CreateSwapChain(const SwapChainParameters& params);
+
     protected:
-
-        struct RT
-        {
-            void Activate(Device* device);
-            void Clear(Device* device, const float(&color)[4]);
-
-            core::Ptr<Texture> rt;
-            core::Ptr<Texture> ds;
-        } m_renderTarget;
-
-
         core::Ptr<Device> m_device;
+        core::Ptr<ITextureRenderTarget> m_textureRT;
+        core::Ptr<IDepthStencil> m_depthStencil;
 
     private:
+
         bool m_fullscreen = false;
         core::Application* m_app = nullptr;
         std::vector<std::string> m_dependencies;

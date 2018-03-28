@@ -12,6 +12,9 @@ namespace textured_quad_sample
     class GraphicsSystem : public keng::graphics::GraphicsSystem
     {
     public:
+        GraphicsSystem();
+        ~GraphicsSystem();
+
         using Base = keng::graphics::GraphicsSystem;
         virtual void Initialize(keng::core::IApplication* app) override;
         virtual bool Update() override;
@@ -21,6 +24,6 @@ namespace textured_quad_sample
         keng::core::Ptr<keng::graphics::IEffect> m_effect;
         keng::core::Ptr<keng::graphics::IDeviceBuffer> m_constantBuffer;
         keng::core::Ptr<keng::graphics::IDeviceBuffer> m_vertexBuffer;
-        keng::core::Ptr<keng::graphics::Texture> m_texture;
+        keng::core::Ptr<keng::graphics::ITexture> m_texture;
     };
 }

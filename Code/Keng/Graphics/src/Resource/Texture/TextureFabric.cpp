@@ -1,6 +1,6 @@
 #include "TextureFabric.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
-#include "Keng/Graphics/Resource/Texture.h"
+#include "Resource/Texture/Texture.h"
 #include "Keng/Graphics/GraphicsSystem.h"
 #include "Xml.h"
 
@@ -46,7 +46,7 @@ namespace keng::graphics
             img_data.reset(stbi_load(textureFilename.data(), &w, &h, &n, 4));
             auto ptr = img_data.get();
 
-            return core::Ptr<Texture>::MakeInstance(m_device->GetDevice(), w, h, TextureFormat::R8_G8_B8_A8_UNORM, TextureFlags::ShaderResource, ptr);
+            return core::Ptr<Texture>::MakeInstance(*m_device, w, h, TextureFormat::R8_G8_B8_A8_UNORM, TextureFlags::ShaderResource, ptr);
         };
     }
 }

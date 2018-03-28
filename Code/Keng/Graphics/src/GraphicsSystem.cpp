@@ -1,28 +1,25 @@
 #include "Keng/Graphics/GraphicsSystem.h"
 
-#include "D3D_Tools/Annotation.h"
-
 #include "Keng/Core/Application.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 
+#include "Resource/Texture/Texture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
-#include "Keng/Graphics/Resource/Texture.h"
-#include "RenderTarget/WindowRenderTarget.h"
-#include "RenderTarget/TextureRenderTarget.h"
 #include "Resource/Effect/Effect.h"
 #include "Resource/ResourceFabricRegisterer.h"
-#include "RenderTarget/WindowRenderTarget.h"
 
-#include "Keng/Graphics/RenderTarget/TextureRenderTargetParameters.h"
 #include "Keng/Graphics/RenderTarget/WindowRenderTargetParameters.h"
+#include "RenderTarget/WindowRenderTarget.h"
+#include "Keng/Graphics/RenderTarget/TextureRenderTargetParameters.h"
+#include "RenderTarget/TextureRenderTarget.h"
 #include "Keng/Graphics/RenderTarget/DepthStencilParameters.h"
+#include "RenderTarget/DepthStencil.h"
 
 #include "EverydayTools/Geom/Vector.h"
 #include "DeviceBuffer.h"
 #include "SwapChain.h"
-#include "RenderTarget/DepthStencil.h"
 
 #include <algorithm>
 #include "Xml.h"
@@ -72,21 +69,6 @@ namespace keng::graphics
                 return params;
             };
         }
-    }
-
-    void GraphicsSystem::RT::Activate(Device* device) {
-        auto deviceImpl = device->GetDevice();
-        auto rtv = rt->GetView<ResourceViewType::RenderTarget>(deviceImpl, rt->GetFormat());
-        auto dsv = ds->GetView<ResourceViewType::DepthStencil>(deviceImpl, TextureFormat::D24_UNORM_S8_UINT).Get();
-        device->SetRenderTarget(*rtv, dsv);
-    }
-
-    void GraphicsSystem::RT::Clear(Device* device, const float(&color)[4]) {
-        auto deviceImpl = device->GetDevice();
-        auto rtv = rt->GetView<ResourceViewType::RenderTarget>(deviceImpl, rt->GetFormat());
-        auto dsv = ds->GetView<ResourceViewType::DepthStencil>(deviceImpl, TextureFormat::D24_UNORM_S8_UINT).Get();
-        device->GetContext()->ClearRenderTargetView(rtv->GetView(), color);
-        device->GetContext()->ClearDepthStencilView(dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
     }
 
     GraphicsSystem::GraphicsSystem() {
@@ -141,17 +123,22 @@ namespace keng::graphics
             m_app->GetSystem<window_system::IWindowSystem>()->GetWindow()->Subscribe(this);;
             auto resourceSystem = m_app->GetSystem<resource::IResourceSystem>();
 
-            {
+            {// Register resource fabrics
                 ResourceFabricRegisterer fabricRegisterer(this);
                 fabricRegisterer.Register(resourceSystem);
             }
 
-            // Create render target
-            {
-                auto& rt = m_renderTarget;
-                auto device = m_device->GetDevice();
-                rt.rt = core::Ptr<Texture>::MakeInstance(device, w, h, TextureFormat::R8_G8_B8_A8_UNORM, TextureFlags::RenderTarget | TextureFlags::ShaderResource);
-                rt.ds = core::Ptr<Texture>::MakeInstance(device, w, h, TextureFormat::R24_G8_TYPELESS, TextureFlags::DepthStencil | TextureFlags::ShaderResource);
+            {// Create render target
+                TextureRenderTargetParameters texture_rt_params{};
+                texture_rt_params.renderTarget = core::Ptr<Texture>::MakeInstance(*m_device, w, h, TextureFormat::R8_G8_B8_A8_UNORM, TextureFlags::RenderTarget | TextureFlags::ShaderResource);
+                m_textureRT = core::Ptr<TextureRenderTarget>::MakeInstance(*m_device, texture_rt_params);
+            }
+            
+            {// Create depth stencil
+                DepthStencilParameters depthStencilParams{};
+                depthStencilParams.format = TextureFormat::D24_UNORM_S8_UINT;
+                depthStencilParams.texture = core::Ptr<Texture>::MakeInstance(*m_device, w, h, TextureFormat::R24_G8_TYPELESS, TextureFlags::DepthStencil | TextureFlags::ShaderResource);
+                m_depthStencil = core::Ptr<DepthStencil>::MakeInstance(*m_device, depthStencilParams);
             }
         };
     }

@@ -1,4 +1,4 @@
-#include "Keng/Graphics/Resource/Texture.h"
+#include "Keng/Graphics/Resource/ITexture.h"
 
 namespace keng::graphics
 {

@@ -2,9 +2,12 @@
 
 #include "Keng/Core/Application.h"
 #include "Keng/Graphics/DeviceBufferMapper.h"
-#include "Keng/Graphics/RenderTarget/IWindowRenderTarget.h"
-#include "Keng/Graphics/Resource/Texture.h"
+#include "Keng/Graphics/Resource/ITexture.h"
+#include "Keng/Graphics/Resource/TextureView.h"
 #include "Keng/Graphics/Resource/IEffect.h"
+#include "Keng/Graphics/RenderTarget/IWindowRenderTarget.h"
+#include "Keng/Graphics/RenderTarget/ITextureRenderTarget.h"
+#include "Keng/Graphics/RenderTarget/IDepthStencil.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 
 #include "D3D_Tools/Annotation.h"
@@ -49,6 +52,9 @@ namespace textured_quad_sample
         }
     }
 
+    GraphicsSystem::GraphicsSystem() = default;
+    GraphicsSystem::~GraphicsSystem() = default;
+
     bool GraphicsSystem::Update() {
         using namespace keng;
         using namespace graphics;
@@ -64,7 +70,7 @@ namespace textured_quad_sample
                 angle += delta_angle;
 
                 d3d_tools::Annotate(m_device.Get(), L"Move triangle", [&]() {
-                    graphics::DeviceBufferMapper mapper;
+                    DeviceBufferMapper mapper;
                     m_constantBuffer->MakeMapper(mapper);
                     auto cbView = mapper.GetTypedView<CB>();
                     edt::geom::Vector<float, 3> t;
@@ -75,24 +81,27 @@ namespace textured_quad_sample
                 });
 
                 d3d_tools::Annotate(m_device.Get(), L"Draw triangle", [&]() {
-                    m_renderTarget.Clear(m_device.Get(), clearColor);
-                    m_renderTarget.Activate(m_device.Get());
+                    m_textureRT->ClearRenderTarget(clearColor);
+                    m_depthStencil->Clear(DepthStencilClearFlags::ClearDepth | DepthStencilClearFlags::ClearStencil, 1.0f, 0);
+                    m_textureRT->Activate(m_depthStencil);
                     m_effect->Use();
                     m_device->SetVertexBuffer(m_vertexBuffer, sizeof(Vertex), 0);
                     m_device->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
                     m_device->SetConstantBuffer(m_constantBuffer, d3d_tools::ShaderType::Vertex);
                     m_device->SetSampler(0, m_sampler.Get(), d3d_tools::ShaderType::Pixel);
-                    auto textureView = m_texture->GetView<ResourceViewType::ShaderResource>(m_device->GetDevice(), TextureFormat::R8_G8_B8_A8_UNORM);
-                    m_device->SetShaderResource(0, d3d_tools::ShaderType::Pixel, textureView->GetView());
+                    auto textureView = m_texture->GetView(ResourceViewType::ShaderResource, TextureFormat::R8_G8_B8_A8_UNORM);
+                    m_device->SetShaderResource(0, d3d_tools::ShaderType::Pixel, (ID3D11ShaderResourceView*)textureView->GetNativeInterface());
                     m_device->Draw(4);
                 });
 
                 d3d_tools::Annotate(m_device.Get(), L"Copy texture to swap chain texture", [&]() {
                     ID3D11Resource* finalRT;
-                    auto rtv = GetWindowRenderTarget()->GetRenderTargetView();
-                    ((ID3D11RenderTargetView*)rtv->GetNativeInterface())->GetResource(&finalRT);
-                    auto nativeTexture = static_cast<ID3D11Texture2D*>(m_renderTarget.rt->GetNativeInterface());
-                    m_device->GetContext()->CopyResource(finalRT, nativeTexture);
+                    auto finalRTV = GetWindowRenderTarget()->GetRenderTargetView();
+                    auto textureRTV = m_textureRT->GetRenderTargetView();
+                    ((ID3D11RenderTargetView*)finalRTV->GetNativeInterface())->GetResource(&finalRT);
+                    ID3D11Resource* textureResource;
+                    static_cast<ID3D11RenderTargetView*>(textureRTV->GetNativeInterface())->GetResource(&textureResource);
+                    m_device->GetContext()->CopyResource(finalRT, textureResource);
                 });
 
                 GetWindowRenderTarget()->Present();
@@ -109,7 +118,7 @@ namespace textured_quad_sample
             using namespace keng::resource;
             using namespace keng::graphics;
             auto resourceSystem = dynamic_cast<core::Application*>(app)->GetSystem<IResourceSystem>();
-            m_texture = std::static_pointer_cast<Texture>(resourceSystem->GetResource("Assets/Textures/container.xml"));
+            m_texture = std::static_pointer_cast<ITexture>(resourceSystem->GetResource("Assets/Textures/container.xml"));
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Textured.xml";

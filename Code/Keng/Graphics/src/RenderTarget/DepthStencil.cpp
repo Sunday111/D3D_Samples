@@ -1,6 +1,7 @@
 #include "DepthStencil.h"
 #include "Keng/Graphics/Device.h"
 #include "Keng/Graphics/RenderTarget/DepthStencilParameters.h"
+#include "Resource/Texture/Texture.h"
 
 namespace keng::graphics
 {
