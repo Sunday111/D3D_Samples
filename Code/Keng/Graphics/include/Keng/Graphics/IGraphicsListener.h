@@ -2,7 +2,8 @@
 
 namespace keng::graphics
 {
-    class IGraphicsListener {
+    class IGraphicsListener
+    {
     public:
         virtual void BeforeRendering() = 0;
         virtual void AfterRendering() = 0;

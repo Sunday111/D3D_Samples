@@ -44,23 +44,23 @@ namespace keng::graphics
         virtual core::Ptr<IDepthStencil> CreateDepthStencil(const DepthStencilParameters& params) = 0;
     };
 
-	class GraphicsSystem :
+    class GraphicsSystem :
         public IGraphicsSystem,
         public window_system::IWindowListener,
-		public Observable<GraphicsSystem, IGraphicsListener>
-	{
-	public:
-		GraphicsSystem();
+        public Observable<GraphicsSystem, IGraphicsListener>
+    {
+    public:
+        GraphicsSystem();
         ~GraphicsSystem();
 
-		static const char* GetGUID();
+        static const char* GetGUID();
 
-		void OnWindowResize(int w, int h) override;
+        void OnWindowResize(int w, int h) override;
 
         // ISystem
         virtual bool ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) override;
         virtual const char* GetSystemGUID() override;
-		virtual void Initialize(core::IApplication* app) override;
+        virtual void Initialize(core::IApplication* app) override;
 
         // IGraphicsSystem
         virtual core::Ptr<IWindowRenderTarget> CreateWindowRenderTarget(const WindowRenderTargetParameters& params) override;
@@ -72,23 +72,24 @@ namespace keng::graphics
 
         core::Ptr<IDeviceBuffer> CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
         core::Ptr<ISwapChain> CreateSwapChain(const SwapChainParameters& params);
-	protected:
+    protected:
 
-		struct RT {
-			void Activate(Device* device);
+        struct RT
+        {
+            void Activate(Device* device);
             void Clear(Device* device, const float(&color)[4]);
 
-			core::Ptr<Texture> rt;
-			core::Ptr<Texture> ds;
-		} m_renderTarget;
+            core::Ptr<Texture> rt;
+            core::Ptr<Texture> ds;
+        } m_renderTarget;
 
-        
-		core::Ptr<Device> m_device;
+
+        core::Ptr<Device> m_device;
 
     private:
         bool m_fullscreen = false;
         core::Application* m_app = nullptr;
         std::vector<std::string> m_dependencies;
         core::Ptr<IWindowRenderTarget> m_windowRT;
-	};
+    };
 }

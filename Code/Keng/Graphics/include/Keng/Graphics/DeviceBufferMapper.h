@@ -11,8 +11,7 @@ namespace keng::graphics
         DeviceBufferMapper() = default;
 
         DeviceBufferMapper(core::Ptr<IDeviceBuffer> buffer) :
-            m_buffer(buffer)
-        {
+            m_buffer(buffer) {
             m_view = buffer->Map();
         }
 

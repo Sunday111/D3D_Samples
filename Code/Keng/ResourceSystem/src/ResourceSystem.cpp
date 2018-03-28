@@ -33,8 +33,7 @@ namespace keng::resource
             if (lastTouchMs < 0.f) {
                 // Start countdown before dying
                 lastTouchMs = timeNow;
-            }
-            else {
+            } else {
                 if (params.releaseDelay + lastTouchMs < timeNow) {
                     return true;
                 }
@@ -44,8 +43,7 @@ namespace keng::resource
         return false;
     }
 
-    void ResourceSystem::Initialize(core::IApplication* app)
-    {
+    void ResourceSystem::Initialize(core::IApplication* app) {
         UnusedVar(app);
         m_parameters = ReadDefaultParams();
     }
@@ -63,8 +61,7 @@ namespace keng::resource
             while (iResourceInfo != m_resources.end()) {
                 if (iResourceInfo->second.ShouldBeReleased(nowMs)) {
                     iResourceInfo = m_resources.erase(iResourceInfo);
-                }
-                else {
+                } else {
                     ++iResourceInfo;
                 }
             }
@@ -129,9 +126,7 @@ namespace keng::resource
                         result.defaultResourceParams.releaseDelay = std::stof(releaseDelayText.data());
                     }
                 }
-            }
-            catch (...)
-            {
+            } catch (...) {
             }
 
             return result;

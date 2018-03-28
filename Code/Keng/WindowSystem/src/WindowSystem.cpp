@@ -58,9 +58,7 @@ namespace keng::window_system
                         params.WindowTitle = titleNode->GetValue();
                     }
                 }
-            }
-            catch (...)
-            {
+            } catch (...) {
             }
 
             return params;
@@ -83,8 +81,7 @@ namespace keng::window_system
         return GetGUID();
     }
 
-    IWindow* WindowSystem::GetWindow()
-    {
+    IWindow* WindowSystem::GetWindow() {
         return m_window.get();
     }
 }

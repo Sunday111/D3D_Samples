@@ -8,7 +8,8 @@
 #include <sstream>
 
 template<typename T>
-struct LocalFreeDeleter {
+struct LocalFreeDeleter
+{
     void operator()(T* ptr) {
         if (ptr) {
             LocalFree(ptr);
@@ -66,14 +67,12 @@ INT WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nC
             edt::ThrowIfFailed(runFn, "Failed to get \"", runFunctionName, "\" function!");
             return runFn(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
         };
-    }
-    catch (const std::exception& ex) {
+    } catch (const std::exception& ex) {
         using WA = WinAPI<char>;
         std::stringstream sstream;
         PrintException(sstream, ex);
         WA::MessageBox_(nullptr, sstream.str().c_str(), "Error", MB_ICONERROR);
-    }
-    catch (...) {
+    } catch (...) {
         using WA = WinAPI<char>;
         WA::MessageBox_(nullptr, "Unexpected error!", "Error", MB_ICONERROR);
     }

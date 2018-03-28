@@ -4,14 +4,14 @@
 
 namespace keng::graphics
 {
-	class ShaderTemplate :
+    class ShaderTemplate :
         public resource::IResource
-	{
+    {
         IMPLEMENT_IREFCOUNT
-	public:
+    public:
         ShaderTemplate();
 
-		ShaderType type;
-		std::string code;
-	};
+        ShaderType type;
+        std::string code;
+    };
 }

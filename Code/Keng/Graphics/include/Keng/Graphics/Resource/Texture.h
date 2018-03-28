@@ -9,45 +9,46 @@
 
 namespace keng::graphics
 {
-	using d3d_tools::TextureFlags;
+    using d3d_tools::TextureFlags;
 
-	class Device;
+    class Device;
 
-	class ITexture : public resource::IResource {
-	public:
-		virtual void* GetNativeInterface() const = 0;
-		virtual TextureFormat GetFormat() const = 0;
-		virtual ~ITexture() = default;
-	};
+    class ITexture : public resource::IResource
+    {
+    public:
+        virtual void* GetNativeInterface() const = 0;
+        virtual TextureFormat GetFormat() const = 0;
+        virtual ~ITexture() = default;
+    };
 
-	class Texture :
-		public ITexture,
-		public d3d_tools::Texture
-	{
+    class Texture :
+        public ITexture,
+        public d3d_tools::Texture
+    {
         IMPLEMENT_IREFCOUNT
-	public:
-		using d3d_tools::Texture::Texture;
+    public:
+        using d3d_tools::Texture::Texture;
 
-		virtual void* GetNativeInterface() const override;
-		virtual TextureFormat GetFormat() const override;
+        virtual void* GetNativeInterface() const override;
+        virtual TextureFormat GetFormat() const override;
 
-		template<ResourceViewType type>
-		core::Ptr<TextureView<type>> GetView(ID3D11Device* device, TextureFormat format) {
+        template<ResourceViewType type>
+        core::Ptr<TextureView<type>> GetView(ID3D11Device* device, TextureFormat format) {
             return CallAndRethrowM + [&]() {
                 auto& views = GetTypedViews<type>();
                 auto it = std::lower_bound(views.begin(), views.end(), format,
                     [](auto& view, TextureFormat format) {
-                        return (int)format < (int)view->GetViewFormat();
-                    });
+                    return (int)format < (int)view->GetViewFormat();
+                });
                 if (it != views.end() && (*it)->GetViewFormat() == format) {
                     return *it;
                 }
-                
+
                 auto result = core::Ptr<TextureView<type>>::MakeInstance(device, GetTexture(), format);
                 views.insert(it, result);
                 return result;
             };
-		}
+        }
 
     private:
         template<ResourceViewType viewType>
@@ -63,5 +64,5 @@ namespace keng::graphics
         TypedViews<ResourceViewType::DepthStencil>   m_dsv;
         TypedViews<ResourceViewType::ShaderResource> m_srv;
         TypedViews<ResourceViewType::RandomAccess>   m_rav;
-	};
+    };
 }

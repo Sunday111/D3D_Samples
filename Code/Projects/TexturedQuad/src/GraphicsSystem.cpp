@@ -14,13 +14,16 @@
 
 namespace textured_quad_sample
 {
-	namespace {
-		struct Vertex {
-			edt::geom::Vector<float, 4> pos;
-			edt::geom::Vector<float, 2> tex;
-		};
+    namespace
+    {
+        struct Vertex
+        {
+            edt::geom::Vector<float, 4> pos;
+            edt::geom::Vector<float, 2> tex;
+        };
 
-        struct CB {
+        struct CB
+        {
             edt::geom::Matrix<float, 4, 4> transform;
         };
 
@@ -44,23 +47,23 @@ namespace textured_quad_sample
 
             return m;
         }
-	}
+    }
 
-	bool GraphicsSystem::Update() {
-		using namespace keng;
+    bool GraphicsSystem::Update() {
+        using namespace keng;
         using namespace graphics;
 
-		return CallAndRethrowM + [&] {
-			return d3d_tools::Annotate(m_device.Get(), L"Frame", [&]() {
-				float clearColor[4] {
-					0.0f, 0.2f, 0.4f, 1.0f
-				};
+        return CallAndRethrowM + [&] {
+            return d3d_tools::Annotate(m_device.Get(), L"Frame", [&]() {
+                float clearColor[4]{
+                    0.0f, 0.2f, 0.4f, 1.0f
+                };
 
-				static float angle = 0.f;
-				constexpr float delta_angle = 0.001f;
-				angle += delta_angle;
+                static float angle = 0.f;
+                constexpr float delta_angle = 0.001f;
+                angle += delta_angle;
 
-				d3d_tools::Annotate(m_device.Get(), L"Move triangle", [&]() {
+                d3d_tools::Annotate(m_device.Get(), L"Move triangle", [&]() {
                     graphics::DeviceBufferMapper mapper;
                     m_constantBuffer->MakeMapper(mapper);
                     auto cbView = mapper.GetTypedView<CB>();
@@ -69,20 +72,20 @@ namespace textured_quad_sample
                     t.ry() = 0.f;
                     t.rz() = 0.f;
                     cbView[0].transform = MakeTranslationMatrix(t);
-				});
+                });
 
-				d3d_tools::Annotate(m_device.Get(), L"Draw triangle", [&]() {
+                d3d_tools::Annotate(m_device.Get(), L"Draw triangle", [&]() {
                     m_renderTarget.Clear(m_device.Get(), clearColor);
-					m_renderTarget.Activate(m_device.Get());
-					m_effect->Use();
+                    m_renderTarget.Activate(m_device.Get());
+                    m_effect->Use();
                     m_device->SetVertexBuffer(m_vertexBuffer, sizeof(Vertex), 0);
                     m_device->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
                     m_device->SetConstantBuffer(m_constantBuffer, d3d_tools::ShaderType::Vertex);
-					m_device->SetSampler(0, m_sampler.Get(), d3d_tools::ShaderType::Pixel);
+                    m_device->SetSampler(0, m_sampler.Get(), d3d_tools::ShaderType::Pixel);
                     auto textureView = m_texture->GetView<ResourceViewType::ShaderResource>(m_device->GetDevice(), TextureFormat::R8_G8_B8_A8_UNORM);
-					m_device->SetShaderResource(0, d3d_tools::ShaderType::Pixel, textureView->GetView());
-					m_device->Draw(4);
-				});
+                    m_device->SetShaderResource(0, d3d_tools::ShaderType::Pixel, textureView->GetView());
+                    m_device->Draw(4);
+                });
 
                 d3d_tools::Annotate(m_device.Get(), L"Copy texture to swap chain texture", [&]() {
                     ID3D11Resource* finalRT;
@@ -94,52 +97,51 @@ namespace textured_quad_sample
 
                 GetWindowRenderTarget()->Present();
 
-				return true;
-			});
-		};
-	}
+                return true;
+            });
+        };
+    }
 
-    void GraphicsSystem::Initialize(keng::core::IApplication* app)
-	{
-		CallAndRethrowM + [&] {
-			Base::Initialize(app);
-			using namespace keng;
+    void GraphicsSystem::Initialize(keng::core::IApplication* app) {
+        CallAndRethrowM + [&] {
+            Base::Initialize(app);
+            using namespace keng;
             using namespace keng::resource;
             using namespace keng::graphics;
-			auto resourceSystem = dynamic_cast<core::Application*>(app)->GetSystem<IResourceSystem>();
-			m_texture = std::static_pointer_cast<Texture>(resourceSystem->GetResource("Assets/Textures/container.xml"));
+            auto resourceSystem = dynamic_cast<core::Application*>(app)->GetSystem<IResourceSystem>();
+            m_texture = std::static_pointer_cast<Texture>(resourceSystem->GetResource("Assets/Textures/container.xml"));
 
-			{// Read and compile shaders
+            {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Textured.xml";
-				m_effect = std::static_pointer_cast<IEffect>(resourceSystem->GetResource(effectName));
+                m_effect = std::static_pointer_cast<IEffect>(resourceSystem->GetResource(effectName));
                 m_effect->InitDefaultInputLayout();
-			}
+            }
 
-			{// Create vertex buffer
-				Vertex vertices[4];
+            {// Create vertex buffer
+                Vertex vertices[4];
 
-				//      POSITION               ////         TEXTURE COORDS       /**/
-				/////////////////////////////////////////////////////////////////////
-				vertices[0].pos.rx() = -0.50f; /**/ vertices[0].tex.rx() = 0.0f; /**/
-				vertices[0].pos.ry() = -0.50f; /**/ vertices[0].tex.ry() = 0.0f; /**/
-				vertices[0].pos.rz() =  0.00f; /**/                              /**/
-                vertices[0].pos.rw() =  1.00f; /**/                              /**/
-				/////////////////////////////////////////////////////////////////////
-				vertices[1].pos.rx() = -0.50f; /**/ vertices[1].tex.rx() = 0.0f; /**/
-				vertices[1].pos.ry() =  0.50f; /**/ vertices[1].tex.ry() = 1.0f; /**/
-				vertices[1].pos.rz() =  0.00f; /**/                              /**/
-                vertices[1].pos.rw() =  1.00f; /**/                              /**/
-				/////////////////////////////////////////////////////////////////////
-				vertices[2].pos.rx() =  0.50f; /**/ vertices[2].tex.rx() = 1.0f; /**/
-				vertices[2].pos.ry() = -0.50f; /**/ vertices[2].tex.ry() = 0.0f; /**/
-				vertices[2].pos.rz() =  0.00f; /**/                              /**/
-                vertices[2].pos.rw() =  1.00f; /**/                              /**/
-				/////////////////////////////////////////////////////////////////////
-				vertices[3].pos.rx() =  0.50f; /**/ vertices[3].tex.rx() = 1.0f; /**/
-				vertices[3].pos.ry() =  0.50f; /**/ vertices[3].tex.ry() = 1.0f; /**/
-				vertices[3].pos.rz() =  0.00f; /**/                              /**/
-                vertices[3].pos.rw() =  1.00f; /**/                              /**/
-				/////////////////////////////////////////////////////////////////////
+                //      POSITION               ////         TEXTURE COORDS       /**/
+                /////////////////////////////////////////////////////////////////////
+                vertices[0].pos.rx() = -0.50f; /**/ vertices[0].tex.rx() = 0.0f; /**/
+                vertices[0].pos.ry() = -0.50f; /**/ vertices[0].tex.ry() = 0.0f; /**/
+                vertices[0].pos.rz() = +0.00f; /**/                              /**/
+                vertices[0].pos.rw() = +1.00f; /**/                              /**/
+                /////////////////////////////////////////////////////////////////////
+                vertices[1].pos.rx() = -0.50f; /**/ vertices[1].tex.rx() = 0.0f; /**/
+                vertices[1].pos.ry() = +0.50f; /**/ vertices[1].tex.ry() = 1.0f; /**/
+                vertices[1].pos.rz() = +0.00f; /**/                              /**/
+                vertices[1].pos.rw() = +1.00f; /**/                              /**/
+                /////////////////////////////////////////////////////////////////////
+                vertices[2].pos.rx() = +0.50f; /**/ vertices[2].tex.rx() = 1.0f; /**/
+                vertices[2].pos.ry() = -0.50f; /**/ vertices[2].tex.ry() = 0.0f; /**/
+                vertices[2].pos.rz() = +0.00f; /**/                              /**/
+                vertices[2].pos.rw() = +1.00f; /**/                              /**/
+                /////////////////////////////////////////////////////////////////////
+                vertices[3].pos.rx() = +0.50f; /**/ vertices[3].tex.rx() = 1.0f; /**/
+                vertices[3].pos.ry() = +0.50f; /**/ vertices[3].tex.ry() = 1.0f; /**/
+                vertices[3].pos.rz() = +0.00f; /**/                              /**/
+                vertices[3].pos.rw() = +1.00f; /**/                              /**/
+                /////////////////////////////////////////////////////////////////////
 
                 graphics::DeviceBufferParams params;
                 params.size = sizeof(vertices);
@@ -147,7 +149,7 @@ namespace textured_quad_sample
                 params.bindFlags = graphics::DeviceBufferBindFlags::VertexBuffer;
                 params.accessFlags = graphics::DeviceAccessFlags::Write;
                 m_vertexBuffer = CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
-			}
+            }
 
             {
                 CB constantBufferInitData;
@@ -165,13 +167,13 @@ namespace textured_quad_sample
                 m_constantBuffer = CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
             }
 
-			{// Create sampler
- 				CD3D11_SAMPLER_DESC samplerDesc(D3D11_DEFAULT);
-				samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-				samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-				m_device->GetDevice()->CreateSamplerState(&samplerDesc, m_sampler.Receive());
-			}
-		};
-	}
+            {// Create sampler
+                CD3D11_SAMPLER_DESC samplerDesc(D3D11_DEFAULT);
+                samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+                samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+                m_device->GetDevice()->CreateSamplerState(&samplerDesc, m_sampler.Receive());
+            }
+        };
+    }
 
 }

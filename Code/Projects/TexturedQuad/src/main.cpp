@@ -11,7 +11,8 @@
 
 #include "Keng/Core/ImplementLauncherInterface.h"
 
-namespace textured_quad_sample {
+namespace textured_quad_sample
+{
     int RunApplicationImpl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int nCmdShow) {
         return CallAndRethrowM + [&] {
             UnusedVar(hInstance, hPrevInstance, cmdLine, nCmdShow);

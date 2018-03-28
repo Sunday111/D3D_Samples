@@ -8,20 +8,21 @@
 
 namespace keng::window_system
 {
-	class WindowSystem :
+    class WindowSystem :
         public window_system::IWindowSystem
     {
-	public:
-	    using TChar = char;
-	    using WA = WinAPI<TChar>;
-	
-	    struct SystemParams {
-	        HINSTANCE hInstance = nullptr;
-	        std::string WindowTitle;
-	        int nCmdShow = SW_SHOW;
-	        unsigned Width = 1280;
-	        unsigned Height = 720;
-	    };
+    public:
+        using TChar = char;
+        using WA = WinAPI<TChar>;
+
+        struct SystemParams
+        {
+            HINSTANCE hInstance = nullptr;
+            std::string WindowTitle;
+            int nCmdShow = SW_SHOW;
+            unsigned Width = 1280;
+            unsigned Height = 720;
+        };
 
         MainWindow<TChar>* GetWindow() const;
         static SystemParams ReadDefaultParams();
@@ -37,9 +38,9 @@ namespace keng::window_system
 
     protected:
         std::vector<std::string> m_dependencies;
-	
-	private:
-	    std::unique_ptr<MainWindowClass<TChar>> m_windowClass;
-	    std::unique_ptr<MainWindow<TChar>> m_window;
-	};
+
+    private:
+        std::unique_ptr<MainWindowClass<TChar>> m_windowClass;
+        std::unique_ptr<MainWindow<TChar>> m_window;
+    };
 }

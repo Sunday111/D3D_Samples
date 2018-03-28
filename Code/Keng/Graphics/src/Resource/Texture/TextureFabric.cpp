@@ -11,21 +11,18 @@
 namespace keng::graphics
 {
     TextureFabric::TextureFabric(core::Ptr<Device> device) :
-        m_device(device)
-    {
+        m_device(device) {
     }
 
     std::string_view TextureFabric::GetNodeName() const {
         return "texture";
     }
 
-    std::string_view TextureFabric::GetResourceType() const
-    {
+    std::string_view TextureFabric::GetResourceType() const {
         return "Texture";
     }
 
-    core::Ptr<resource::IResource> TextureFabric::LoadResource(resource::IResourceSystem*, core::Ptr<IXmlNode> node) const
-    {
+    core::Ptr<resource::IResource> TextureFabric::LoadResource(resource::IResourceSystem*, core::Ptr<IXmlNode> node) const {
         return CallAndRethrowM + [&] {
             auto fileNode = node->GetFirstNode("file");
             auto textureFilename = fileNode->GetValue();

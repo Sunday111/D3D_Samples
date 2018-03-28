@@ -8,8 +8,8 @@ namespace keng::graphics
     struct EnumFlagConverter
     {
         EnumFlagConverter(From from_) :
-            from(from_)
-        {}
+            from(from_) {
+        }
 
         bool HasFlag(From flag) const {
             return (from & flag) != From::None;
@@ -27,8 +27,7 @@ namespace keng::graphics
 
     static D3D11_USAGE ConvertD3D(DeviceBufferUsage usage) {
         return CallAndRethrowM + [&] {
-            switch (usage)
-            {
+            switch (usage) {
             case DeviceBufferUsage::Default: return D3D11_USAGE_DEFAULT;
             case DeviceBufferUsage::Immutable: return D3D11_USAGE_IMMUTABLE;
             case DeviceBufferUsage::Dynamic: return D3D11_USAGE_DYNAMIC;
@@ -42,12 +41,12 @@ namespace keng::graphics
     static UINT ConvertD3D(DeviceBufferBindFlags flags) {
         return CallAndRethrowM + [&] {
             EnumFlagConverter<DeviceBufferBindFlags, UINT> c(flags);
-            c.ConvertFlag(DeviceBufferBindFlags::VertexBuffer,    D3D11_BIND_VERTEX_BUFFER);
-            c.ConvertFlag(DeviceBufferBindFlags::IndexBuffer,     D3D11_BIND_INDEX_BUFFER);
-            c.ConvertFlag(DeviceBufferBindFlags::ConstantBuffer,  D3D11_BIND_CONSTANT_BUFFER);
-            c.ConvertFlag(DeviceBufferBindFlags::ShaderResource,  D3D11_BIND_SHADER_RESOURCE);
-            c.ConvertFlag(DeviceBufferBindFlags::RenderTarget,    D3D11_BIND_RENDER_TARGET);
-            c.ConvertFlag(DeviceBufferBindFlags::DepthStencil,    D3D11_BIND_DEPTH_STENCIL);
+            c.ConvertFlag(DeviceBufferBindFlags::VertexBuffer, D3D11_BIND_VERTEX_BUFFER);
+            c.ConvertFlag(DeviceBufferBindFlags::IndexBuffer, D3D11_BIND_INDEX_BUFFER);
+            c.ConvertFlag(DeviceBufferBindFlags::ConstantBuffer, D3D11_BIND_CONSTANT_BUFFER);
+            c.ConvertFlag(DeviceBufferBindFlags::ShaderResource, D3D11_BIND_SHADER_RESOURCE);
+            c.ConvertFlag(DeviceBufferBindFlags::RenderTarget, D3D11_BIND_RENDER_TARGET);
+            c.ConvertFlag(DeviceBufferBindFlags::DepthStencil, D3D11_BIND_DEPTH_STENCIL);
             c.ConvertFlag(DeviceBufferBindFlags::UnorderedAccess, D3D11_BIND_UNORDERED_ACCESS);
             static_assert((size_t)DeviceBufferBindFlags::Last == 129, "Changed enumeration? Fix here!");
             return c.to;
@@ -92,8 +91,7 @@ namespace keng::graphics
     }
 
     DeviceBuffer::DeviceBuffer(Device& device, const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data) :
-        m_params(params)
-    {
+        m_params(params) {
         CallAndRethrowM + [&] {
             if (data.GetSize() > 0) {
                 CheckSizeCompatibility(data.GetSize());

@@ -11,8 +11,7 @@
 namespace keng::graphics
 {
     ResourceFabricRegisterer::ResourceFabricRegisterer(GraphicsSystem* graphicsSystem) :
-        m_graphicsSystem(graphicsSystem)
-    {
+        m_graphicsSystem(graphicsSystem) {
         assert(m_graphicsSystem);
     }
 

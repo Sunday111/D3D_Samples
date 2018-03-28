@@ -4,8 +4,7 @@
 
 namespace keng::resource
 {
-    IResourceSystem* CreateSystem()
-    {
+    IResourceSystem* CreateSystem() {
         return new ResourceSystem();
     }
 }

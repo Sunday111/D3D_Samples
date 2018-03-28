@@ -15,8 +15,7 @@ namespace keng::graphics
         std::vector<d3d_tools::ShaderMacro> definitions;
 
         core::Ptr<resource::IResource> Compile() {
-            switch (shaderTemplate->type)
-            {
+            switch (shaderTemplate->type) {
             case ShaderType::Vertex:
                 return Compile<ShaderType::Vertex>();
 
@@ -42,8 +41,8 @@ namespace keng::graphics
     };
 
     ShaderFabric::ShaderFabric(core::Ptr<Device> device) :
-        m_device(device)
-    {}
+        m_device(device) {
+    }
 
     std::string_view ShaderFabric::GetNodeName() const {
         return "shader";
@@ -69,8 +68,7 @@ namespace keng::graphics
                 for (
                     auto definitionNode = definitionsNode->FindFirstNode("definition");
                     definitionNode != nullptr;
-                    definitionNode = definitionsNode->NextSibling())
-                {
+                    definitionNode = definitionsNode->NextSibling()) {
                     d3d_tools::ShaderMacro macro;
 
                     auto definitionName = definitionNode->GetFirstNode("name");

@@ -7,10 +7,10 @@ namespace keng::graphics
 {
     class Device;
 
-	class Effect : public IEffect
-	{
+    class Effect : public IEffect
+    {
         IMPLEMENT_IREFCOUNT
-	public:
+    public:
         Effect();
         ~Effect();
 
@@ -20,8 +20,8 @@ namespace keng::graphics
 
         core::Ptr<Device> device;
         ComPtr<ID3D11InputLayout> layout;
-		core::Ptr<Shader<ShaderType::Vertex>> vs;
-		core::Ptr<Shader<ShaderType::Pixel>> fs;
-	};
+        core::Ptr<Shader<ShaderType::Vertex>> vs;
+        core::Ptr<Shader<ShaderType::Pixel>> fs;
+    };
 
 }

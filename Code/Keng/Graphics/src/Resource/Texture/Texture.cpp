@@ -4,11 +4,11 @@
 
 namespace keng::graphics
 {
-	void* Texture::GetNativeInterface() const {
-		return GetTexture();
-	}
+    void* Texture::GetNativeInterface() const {
+        return GetTexture();
+    }
 
-	TextureFormat Texture::GetFormat() const {
-		return GetTextureFormat();
-	}
+    TextureFormat Texture::GetFormat() const {
+        return GetTextureFormat();
+    }
 }

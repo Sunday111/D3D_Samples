@@ -29,14 +29,17 @@
 
 namespace keng::graphics
 {
-	namespace {
-		struct Vertex {
-			edt::geom::Vector<float, 3> pos;
-			edt::geom::Vector<float, 4> col;
-			edt::geom::Vector<float, 2> tex;
-		};
+    namespace
+    {
+        struct Vertex
+        {
+            edt::geom::Vector<float, 3> pos;
+            edt::geom::Vector<float, 4> col;
+            edt::geom::Vector<float, 2> tex;
+        };
 
-        struct SystemParams {
+        struct SystemParams
+        {
             bool debugDevice = false;
             bool noDeviceMultithreading = false;
         };
@@ -45,10 +48,10 @@ namespace keng::graphics
             return CallAndRethrowM + [&] {
                 SystemParams params;
 
-                #ifdef _DEBUG
+#ifdef _DEBUG
                 params.noDeviceMultithreading = true;
                 params.debugDevice = true;
-                #endif
+#endif
 
                 try {
                     XmlDocument configDoc("Configs/graphics_system.xml");
@@ -63,22 +66,20 @@ namespace keng::graphics
                         auto node_text = node->GetValue();
                         params.debugDevice = static_cast<bool>(std::stoi(node_text.data()));
                     }
-                }
-                catch (...)
-                {
+                } catch (...) {
                 }
 
                 return params;
             };
         }
-	}
+    }
 
-	void GraphicsSystem::RT::Activate(Device* device) {
+    void GraphicsSystem::RT::Activate(Device* device) {
         auto deviceImpl = device->GetDevice();
         auto rtv = rt->GetView<ResourceViewType::RenderTarget>(deviceImpl, rt->GetFormat());
         auto dsv = ds->GetView<ResourceViewType::DepthStencil>(deviceImpl, TextureFormat::D24_UNORM_S8_UINT).Get();
         device->SetRenderTarget(*rtv, dsv);
-	}
+    }
 
     void GraphicsSystem::RT::Clear(Device* device, const float(&color)[4]) {
         auto deviceImpl = device->GetDevice();
@@ -88,74 +89,72 @@ namespace keng::graphics
         device->GetContext()->ClearDepthStencilView(dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
     }
 
-	GraphicsSystem::GraphicsSystem()
-	{
-		m_dependencies.push_back(resource::IResourceSystem::GetGUID());
-		m_dependencies.push_back(window_system::IWindowSystem::GetGUID());
-	}
+    GraphicsSystem::GraphicsSystem() {
+        m_dependencies.push_back(resource::IResourceSystem::GetGUID());
+        m_dependencies.push_back(window_system::IWindowSystem::GetGUID());
+    }
 
     GraphicsSystem::~GraphicsSystem() = default;
 
-	const char* GraphicsSystem::GetGUID()
-	{
-		return "E6080ACE-E91E-4693-AFA5-5B6A0BB29A41";
-	}
+    const char* GraphicsSystem::GetGUID() {
+        return "E6080ACE-E91E-4693-AFA5-5B6A0BB29A41";
+    }
 
-	void GraphicsSystem::OnWindowResize(int w, int h) {
-		UnusedVar(w, h);
-		OutputDebugStringA("Resize\n");
-	}
+    void GraphicsSystem::OnWindowResize(int w, int h) {
+        UnusedVar(w, h);
+        OutputDebugStringA("Resize\n");
+    }
 
     void GraphicsSystem::Initialize(core::IApplication* app) {
-		CallAndRethrowM + [&] {
+        CallAndRethrowM + [&] {
             m_app = dynamic_cast<core::Application*>(app);
             edt::ThrowIfFailed(m_app != nullptr, "Failed to cast IApplication to keng::Application");
             auto params = ReadDefaultParams();
 
-			{// Initialize device
-				Device::CreateParams deviceParams;
-				deviceParams.debugDevice = params.debugDevice;
-				deviceParams.noDeviceMultithreading = params.noDeviceMultithreading;
-				m_device = core::Ptr<Device>::MakeInstance(deviceParams);
-			}
+            {// Initialize device
+                Device::CreateParams deviceParams;
+                deviceParams.debugDevice = params.debugDevice;
+                deviceParams.noDeviceMultithreading = params.noDeviceMultithreading;
+                m_device = core::Ptr<Device>::MakeInstance(deviceParams);
+            }
             auto wndSystem = m_app->GetSystem<window_system::IWindowSystem>();
             auto window = wndSystem->GetWindow();
-			uint32_t w, h;
-			window->GetClientSize(&w, &h);
+            uint32_t w, h;
+            window->GetClientSize(&w, &h);
 
-			{// Initialize swapchain
+            {// Initialize swapchain
                 WindowRenderTargetParameters window_rt_params;
                 window_rt_params.format = d3d_tools::TextureFormat::R8_G8_B8_A8_UNORM;
                 window_rt_params.window = window;
                 m_windowRT = CreateWindowRenderTarget(window_rt_params);
-			}
+            }
 
-			{// Initialize viewport
-				D3D11_VIEWPORT viewport[1] {};
-				viewport[0].TopLeftX = 0;
-				viewport[0].TopLeftY = 0;
-				viewport[0].Width = static_cast<float>(w);
-				viewport[0].Height = static_cast<float>(h);
-				m_device->SetViewports(edt::MakeArrayView(viewport));
-			}
+            {// Initialize viewport
+                D3D11_VIEWPORT viewport[1]{};
+                viewport[0].TopLeftX = 0;
+                viewport[0].TopLeftY = 0;
+                viewport[0].Width = static_cast<float>(w);
+                viewport[0].Height = static_cast<float>(h);
+                m_device->SetViewports(edt::MakeArrayView(viewport));
+            }
 
-			m_app->GetSystem<window_system::IWindowSystem>()->GetWindow()->Subscribe(this);;
-			auto resourceSystem = m_app->GetSystem<resource::IResourceSystem>();
+            m_app->GetSystem<window_system::IWindowSystem>()->GetWindow()->Subscribe(this);;
+            auto resourceSystem = m_app->GetSystem<resource::IResourceSystem>();
 
             {
                 ResourceFabricRegisterer fabricRegisterer(this);
                 fabricRegisterer.Register(resourceSystem);
             }
 
-			// Create render target
-			{
-				auto& rt = m_renderTarget;
-				auto device = m_device->GetDevice();
-				rt.rt = core::Ptr<Texture>::MakeInstance(device, w, h, TextureFormat::R8_G8_B8_A8_UNORM, TextureFlags::RenderTarget | TextureFlags::ShaderResource);
-				rt.ds = core::Ptr<Texture>::MakeInstance(device, w, h, TextureFormat::R24_G8_TYPELESS, TextureFlags::DepthStencil | TextureFlags::ShaderResource);
-			}
-		};
-	}
+            // Create render target
+            {
+                auto& rt = m_renderTarget;
+                auto device = m_device->GetDevice();
+                rt.rt = core::Ptr<Texture>::MakeInstance(device, w, h, TextureFormat::R8_G8_B8_A8_UNORM, TextureFlags::RenderTarget | TextureFlags::ShaderResource);
+                rt.ds = core::Ptr<Texture>::MakeInstance(device, w, h, TextureFormat::R24_G8_TYPELESS, TextureFlags::DepthStencil | TextureFlags::ShaderResource);
+            }
+        };
+    }
 
     core::Ptr<IWindowRenderTarget> GraphicsSystem::CreateWindowRenderTarget(const WindowRenderTargetParameters& params) {
         return core::Ptr<WindowRenderTarget>::MakeInstance(*m_device, params);

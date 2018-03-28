@@ -21,13 +21,13 @@ namespace keng::graphics
 
     enum class DeviceBufferBindFlags
     {
-        None            = 0,
-        VertexBuffer    = (1 << 0),
-        IndexBuffer     = (1 << 1),
-        ConstantBuffer  = (1 << 2),
-        ShaderResource  = (1 << 3),
-        RenderTarget    = (1 << 5),
-        DepthStencil    = (1 << 6),
+        None = 0,
+        VertexBuffer = (1 << 0),
+        IndexBuffer = (1 << 1),
+        ConstantBuffer = (1 << 2),
+        ShaderResource = (1 << 3),
+        RenderTarget = (1 << 5),
+        DepthStencil = (1 << 6),
         UnorderedAccess = (1 << 7),
         Last
     };
@@ -36,9 +36,9 @@ namespace keng::graphics
 
     enum class DeviceAccessFlags
     {
-        None  = 0,
+        None = 0,
         Write = (1 << 0),
-        Read  = (1 << 1),
+        Read = (1 << 1),
         Last
     };
 
