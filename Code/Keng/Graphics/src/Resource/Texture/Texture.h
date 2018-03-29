@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include "Keng/Graphics/Resource/ITexture.h"
 
 namespace keng::graphics
