@@ -13,7 +13,7 @@ namespace keng::graphics
 
     Effect::~Effect() = default;
 
-    void Effect::Use() {
+    void Effect::AssignToPipeline() {
         CallAndRethrowM + [&] {
             device->SetShader(vs->m_impl);
             device->SetShader(fs->m_impl);

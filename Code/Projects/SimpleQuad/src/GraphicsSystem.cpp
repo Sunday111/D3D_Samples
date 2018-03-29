@@ -74,13 +74,22 @@ namespace simple_quad_sample
                 });
 
                 d3d_tools::Annotate(m_device.Get(), L"Draw triangle", [&]() {
+                    VertexBufferAssignParameters vbAssignParams{};
+                    vbAssignParams.slot = 0;
+                    vbAssignParams.stride = sizeof(Vertex);
+
+                    ConstantBufferAssignParameters cbAssignParams{};
+                    cbAssignParams.slot = 0;
+                    cbAssignParams.stride = sizeof(CB);
+                    cbAssignParams.shaderType = d3d_tools::ShaderType::Vertex;
+
                     m_textureRT->ClearRenderTarget(clearColor);
                     m_depthStencil->Clear(DepthStencilClearFlags::ClearDepth | DepthStencilClearFlags::ClearStencil, 1.0f, 0);
                     m_textureRT->Activate(m_depthStencil);
-                    m_effect->Use();
-                    m_device->SetVertexBuffer(m_vertexBuffer, sizeof(Vertex), 0);
+                    m_effect->AssignToPipeline();
+                    m_vertexBuffer->AssignToPipeline(vbAssignParams);
                     m_device->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-                    m_device->SetConstantBuffer(m_constantBuffer, d3d_tools::ShaderType::Vertex);
+                    m_constantBuffer->AssignToPipeline(cbAssignParams);
                     m_device->Draw(4);
                 });
 

@@ -96,8 +96,7 @@ namespace keng::graphics
             if (data.GetSize() > 0) {
                 CheckSizeCompatibility(data.GetSize());
             }
-            m_context = device.GetContext();
-            m_context.AddReference();
+            m_device = &device;
             auto desc = MakeDescription(params);
             m_buffer = MakeBuffer(device.GetDevice(), desc, data.GetData());
         };
@@ -116,14 +115,15 @@ namespace keng::graphics
         return CallAndRethrowM + [&] {
             // Map
             D3D11_MAPPED_SUBRESOURCE subresource;
-            WinAPI<char>::ThrowIfError(m_context->Map(m_buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &subresource));
+            auto context = m_device->GetContext();
+            WinAPI<char>::ThrowIfError(context->Map(m_buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &subresource));
             return edt::DenseArrayView<uint8_t>((uint8_t*)subresource.pData, m_params.size);
         };
     }
 
     void DeviceBuffer::Unmap() {
         CallAndRethrowM + [&] {
-            m_context->Unmap(m_buffer.Get(), 0);
+            m_device->GetContext()->Unmap(m_buffer.Get(), 0);
         };
     }
 
@@ -133,6 +133,48 @@ namespace keng::graphics
 
     void DeviceBuffer::MakeMapper(DeviceBufferMapper& mapper) {
         mapper = DeviceBufferMapper(core::Ptr<DeviceBuffer>(this));
+    }
+
+    void DeviceBuffer::AssignToPipeline(const VertexBufferAssignParameters& params) {
+        CallAndRethrowM + [&] {
+            edt::ThrowIfFailed(params.stride != 0, "Tring to use buffer as vertex buffer with stride 0!");
+            auto rawBuffer = m_buffer.Get();
+            m_device->GetContext()->IASetVertexBuffers(params.slot, 1, &rawBuffer, &params.stride, &params.offset);
+        };
+    }
+
+    void DeviceBuffer::AssignToPipeline(const ConstantBufferAssignParameters& params) {
+        CallAndRethrowM + [&] {
+            edt::ThrowIfFailed(params.stride != 0, "Tring to use buffer as constant buffer with stride 0!");
+
+            using Method = void (ID3D11DeviceContext::*)(UINT, UINT, ID3D11Buffer* const *);
+            Method method = nullptr;
+
+            switch (params.shaderType) {
+            case d3d_tools::ShaderType::Compute:
+                method = &ID3D11DeviceContext::CSSetConstantBuffers;
+                break;
+            case d3d_tools::ShaderType::Domain:
+                method = &ID3D11DeviceContext::DSSetConstantBuffers;
+                break;
+            case d3d_tools::ShaderType::Geometry:
+                method = &ID3D11DeviceContext::GSSetConstantBuffers;
+                break;
+            case d3d_tools::ShaderType::Hull:
+                method = &ID3D11DeviceContext::HSSetConstantBuffers;
+                break;
+            case d3d_tools::ShaderType::Pixel:
+                method = &ID3D11DeviceContext::PSSetConstantBuffers;
+                break;
+            case d3d_tools::ShaderType::Vertex:
+                method = &ID3D11DeviceContext::VSSetConstantBuffers;
+                break;
+            }
+
+            edt::ThrowIfFailed(method != nullptr, "Not implemented for this shader type");
+            auto rawBuffer = m_buffer.Get();
+            (*m_device->GetContext().*method)(0, 1, &rawBuffer);
+        };
     }
 
     void* DeviceBuffer::GetNativeBuffer() const {

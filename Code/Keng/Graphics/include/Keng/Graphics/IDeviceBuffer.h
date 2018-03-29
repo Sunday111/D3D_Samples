@@ -4,6 +4,7 @@
 #include "EverydayTools/Array/ArrayView.h"
 #include "Keng/Core/IRefCountObject.h"
 #include "Keng/Core/Ptr.h"
+#include "D3D_Tools/shader.h"
 
 namespace keng::graphics
 {
@@ -53,6 +54,23 @@ namespace keng::graphics
         DeviceAccessFlags accessFlags = DeviceAccessFlags::None;
     };
 
+    class VertexBufferAssignParameters
+    {
+    public:
+        uint32_t slot = 0;
+        uint32_t stride = 0;
+        uint32_t offset = 0;
+    };
+
+    class ConstantBufferAssignParameters
+    {
+    public:
+        uint32_t slot = 0;
+        uint32_t stride = 0;
+        uint32_t offset = 0;
+        d3d_tools::ShaderType shaderType = d3d_tools::ShaderType::Vertex;
+    };
+
     class IDeviceBuffer :
         public core::IRefCountObject
     {
@@ -61,6 +79,9 @@ namespace keng::graphics
         virtual edt::DenseArrayView<uint8_t> Map() = 0;
         virtual void Unmap() = 0;
         virtual void MakeMapper(DeviceBufferMapper& mapper) = 0;
+
+        virtual void AssignToPipeline(const VertexBufferAssignParameters& params) = 0;
+        virtual void AssignToPipeline(const ConstantBufferAssignParameters& params) = 0;
 
         //Temporary!!!
         virtual void* GetNativeBuffer() const = 0;

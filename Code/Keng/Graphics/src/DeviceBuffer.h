@@ -19,11 +19,13 @@ namespace keng::graphics
         virtual void Unmap() override;
         virtual void MakeMapper(DeviceBufferMapper& mapper) override;
         virtual void* GetNativeBuffer() const override;
+        virtual void AssignToPipeline(const VertexBufferAssignParameters& params) override;
+        virtual void AssignToPipeline(const ConstantBufferAssignParameters& params) override;
 
     protected:
         void CheckSizeCompatibility(size_t size) const;
     private:
-        ComPtr<ID3D11DeviceContext> m_context;
+        core::Ptr<Device> m_device;
         ComPtr<ID3D11Buffer> m_buffer;
         DeviceBufferParams m_params;
     };

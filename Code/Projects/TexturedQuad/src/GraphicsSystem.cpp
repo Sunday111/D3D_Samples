@@ -73,21 +73,28 @@ namespace textured_quad_sample
                     DeviceBufferMapper mapper;
                     m_constantBuffer->MakeMapper(mapper);
                     auto cbView = mapper.GetTypedView<CB>();
-                    edt::geom::Vector<float, 3> t;
+                    edt::geom::Vector<float, 3> t{};
                     t.rx() = std::sin(angle);
-                    t.ry() = 0.f;
-                    t.rz() = 0.f;
                     cbView[0].transform = MakeTranslationMatrix(t);
                 });
 
                 d3d_tools::Annotate(m_device.Get(), L"Draw triangle", [&]() {
+                    VertexBufferAssignParameters vbAssignParams{};
+                    vbAssignParams.slot = 0;
+                    vbAssignParams.stride = sizeof(Vertex);
+
+                    ConstantBufferAssignParameters cbAssignParams{};
+                    cbAssignParams.slot = 0;
+                    cbAssignParams.stride = sizeof(CB);
+                    cbAssignParams.shaderType = d3d_tools::ShaderType::Vertex;
+
                     m_textureRT->ClearRenderTarget(clearColor);
                     m_depthStencil->Clear(DepthStencilClearFlags::ClearDepth | DepthStencilClearFlags::ClearStencil, 1.0f, 0);
                     m_textureRT->Activate(m_depthStencil);
-                    m_effect->Use();
-                    m_device->SetVertexBuffer(m_vertexBuffer, sizeof(Vertex), 0);
+                    m_effect->AssignToPipeline();
+                    m_vertexBuffer->AssignToPipeline(vbAssignParams);
                     m_device->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-                    m_device->SetConstantBuffer(m_constantBuffer, d3d_tools::ShaderType::Vertex);
+                    m_constantBuffer->AssignToPipeline(cbAssignParams);
                     m_device->SetSampler(0, m_sampler.Get(), d3d_tools::ShaderType::Pixel);
                     m_texture->AssignToPipeline(d3d_tools::ShaderType::Pixel, 0);
                     m_device->Draw(4);
@@ -155,10 +162,7 @@ namespace textured_quad_sample
 
             {
                 CB constantBufferInitData;
-                edt::geom::Vector<float, 3> t;
-                t.rx() = 0.f;
-                t.ry() = 0.2f;
-                t.rz() = 0.f;
+                edt::geom::Vector<float, 3> t{};
                 constantBufferInitData.transform = MakeTranslationMatrix(t);
 
                 graphics::DeviceBufferParams params;

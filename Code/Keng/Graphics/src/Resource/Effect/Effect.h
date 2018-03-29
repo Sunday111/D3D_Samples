@@ -16,7 +16,7 @@ namespace keng::graphics
 
         // IEffect
         virtual void InitDefaultInputLayout() override;
-        virtual void Use() override;
+        virtual void AssignToPipeline() override;
 
         core::Ptr<Device> device;
         ComPtr<ID3D11InputLayout> layout;
