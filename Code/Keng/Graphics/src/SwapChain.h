@@ -3,6 +3,7 @@
 #include "d3d11.h"
 #include "D3D_Tools/Texture.h"
 #include "Keng/Graphics/ISwapChain.h"
+#include "Keng/Graphics/Resource/TextureView.h"
 
 namespace keng::graphics
 {

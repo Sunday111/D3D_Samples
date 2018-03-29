@@ -29,7 +29,7 @@ namespace keng::graphics
                     return *it;
                 }
 
-                auto result = core::Ptr<TextureView<type>>::MakeInstance(device, m_texture.Get(), (TextureFormat)format);
+                auto result = core::Ptr<TextureView<type>>::MakeInstance(device, m_texture.Get(), (d3d_tools::TextureFormat)format);
                 views.insert(it, result);
                 return result;
             };

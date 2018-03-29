@@ -2,17 +2,17 @@
 
 #include "D3D_Tools/Texture.h"
 #include "Keng/Core/IRefCountObject.h"
+#include "Keng/Graphics/FragmentFormat.h"
 
 namespace keng::graphics
 {
     using d3d_tools::ResourceViewType;
-    using d3d_tools::TextureFormat;
 
     class ITextureView : public core::IRefCountObject
     {
     public:
         virtual void* GetNativeInterface() const = 0;
-        virtual TextureFormat GetFormat() const = 0;
+        virtual FragmentFormat GetFormat() const = 0;
         virtual ResourceViewType GetViewType() const = 0;
         virtual ~ITextureView() = default;
     };
@@ -33,8 +33,8 @@ namespace keng::graphics
             return this->GetView();
         }
 
-        TextureFormat GetFormat() const override {
-            return this->GetViewFormat();
+        FragmentFormat GetFormat() const override {
+            return static_cast<FragmentFormat>(this->GetViewFormat());
         }
     };
 }

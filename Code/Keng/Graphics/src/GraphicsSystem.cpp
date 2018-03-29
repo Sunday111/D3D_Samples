@@ -106,7 +106,7 @@ namespace keng::graphics
 
             {// Initialize swapchain
                 WindowRenderTargetParameters window_rt_params;
-                window_rt_params.format = d3d_tools::TextureFormat::R8_G8_B8_A8_UNORM;
+                window_rt_params.format = FragmentFormat::R8_G8_B8_A8_UNORM;
                 window_rt_params.window = window;
                 m_windowRT = CreateWindowRenderTarget(window_rt_params);
             }

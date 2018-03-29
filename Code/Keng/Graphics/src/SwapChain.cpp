@@ -1,6 +1,7 @@
 #include "SwapChain.h"
 #include "Keng/Graphics/Device.h"
 #include "Keng/WindowSystem/IWindow.h"
+#include "D3D_11/EnumConverter.h"
 
 namespace keng::graphics
 {
@@ -12,7 +13,7 @@ namespace keng::graphics
 
             DXGI_SWAP_CHAIN_DESC scd{};
             scd.BufferCount = 1;                                                                    // one back buffer
-            scd.BufferDesc.Format = d3d_tools::texture_details::ConvertFormat(params.format);       // use 32-bit color
+            scd.BufferDesc.Format = d3d::ConvertTextureFormat(params.format);
             scd.BufferDesc.Width = static_cast<unsigned>(params.width);
             scd.BufferDesc.Height = static_cast<unsigned>(params.height);
             scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;                                      // how swap chain is to be used
