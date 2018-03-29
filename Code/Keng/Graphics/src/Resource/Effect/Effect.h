@@ -20,8 +20,8 @@ namespace keng::graphics
 
         core::Ptr<Device> device;
         ComPtr<ID3D11InputLayout> layout;
-        core::Ptr<Shader<ShaderType::Vertex>> vs;
-        core::Ptr<Shader<ShaderType::Pixel>> fs;
+        core::Ptr<Shader<d3d_tools::ShaderType::Vertex>> vs;
+        core::Ptr<Shader<d3d_tools::ShaderType::Pixel>> fs;
     };
 
 }

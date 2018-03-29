@@ -17,17 +17,17 @@ namespace keng::graphics
         core::Ptr<resource::IResource> Compile() {
             switch (shaderTemplate->type) {
             case ShaderType::Vertex:
-                return Compile<ShaderType::Vertex>();
+                return Compile<d3d_tools::ShaderType::Vertex>();
 
-            case ShaderType::Pixel:
-                return Compile<ShaderType::Pixel>();
+            case ShaderType::Fragment:
+                return Compile<d3d_tools::ShaderType::Pixel>();
 
             default:
                 throw std::runtime_error("Not implemented for this shader type here");
             }
         }
 
-        template<ShaderType st>
+        template<d3d_tools::ShaderType st>
         core::Ptr<Shader<st>> Compile() {
             auto result = core::Ptr<Shader<st>>::MakeInstance();
             auto view =

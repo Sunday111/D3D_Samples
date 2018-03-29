@@ -81,7 +81,7 @@ namespace simple_quad_sample
                     ConstantBufferAssignParameters cbAssignParams{};
                     cbAssignParams.slot = 0;
                     cbAssignParams.stride = sizeof(CB);
-                    cbAssignParams.shaderType = d3d_tools::ShaderType::Vertex;
+                    cbAssignParams.shaderType = ShaderType::Vertex;
 
                     m_textureRT->ClearRenderTarget(clearColor);
                     m_depthStencil->Clear(DepthStencilClearFlags::ClearDepth | DepthStencilClearFlags::ClearStencil, 1.0f, 0);

@@ -9,8 +9,8 @@ namespace keng::graphics
     static ShaderType ParseShaderType(std::string_view str) {
         return CallAndRethrowM + [&] {
             if (str == "Vertex") return ShaderType::Vertex;
-            if (str == "Pixel") return ShaderType::Pixel;
-            if (str == "Fragment") return ShaderType::Pixel;
+            if (str == "Pixel") return ShaderType::Fragment;
+            if (str == "Fragment") return ShaderType::Fragment;
             throw std::runtime_error("Failed to parse shader type");
         };
     }

@@ -106,9 +106,9 @@ namespace keng::graphics
         throw std::runtime_error("Unknown resource view type or not implemented");
     }
 
-    void Texture::AssignToPipeline(d3d_tools::ShaderType shaderType, size_t slot) {
+    void Texture::AssignToPipeline(ShaderType shaderType, size_t slot) {
         auto srv = GetView<ResourceViewType::ShaderResource>(m_device->GetDevice().Get(), GetFormat());
-        m_device->SetShaderResource(static_cast<uint32_t>(slot), shaderType, srv->GetView());
+        m_device->SetShaderResource(static_cast<uint32_t>(slot), (d3d_tools::ShaderType)shaderType, srv->GetView());
     }
 
     void Texture::CopyTo(core::Ptr<ITexture> abstract){

@@ -86,7 +86,7 @@ namespace textured_quad_sample
                     ConstantBufferAssignParameters cbAssignParams{};
                     cbAssignParams.slot = 0;
                     cbAssignParams.stride = sizeof(CB);
-                    cbAssignParams.shaderType = d3d_tools::ShaderType::Vertex;
+                    cbAssignParams.shaderType = ShaderType::Vertex;
 
                     m_textureRT->ClearRenderTarget(clearColor);
                     m_depthStencil->Clear(DepthStencilClearFlags::ClearDepth | DepthStencilClearFlags::ClearStencil, 1.0f, 0);
@@ -96,7 +96,7 @@ namespace textured_quad_sample
                     m_device->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
                     m_constantBuffer->AssignToPipeline(cbAssignParams);
                     m_device->SetSampler(0, m_sampler.Get(), d3d_tools::ShaderType::Pixel);
-                    m_texture->AssignToPipeline(d3d_tools::ShaderType::Pixel, 0);
+                    m_texture->AssignToPipeline(ShaderType::Fragment, 0);
                     m_device->Draw(4);
                 });
 

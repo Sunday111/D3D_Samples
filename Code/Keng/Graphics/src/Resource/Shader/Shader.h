@@ -3,14 +3,14 @@
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/ResourceSystem/IResource.h"
 #include "D3D_Tools/Shader.h"
+#include "Keng/Graphics/ShaderType.h"
 
 namespace keng::graphics
 {
     class Device;
-    using ShaderType = d3d_tools::ShaderType;
     using ShaderVersion = d3d_tools::ShaderVersion;
 
-    template<ShaderType shaderType>
+    template<d3d_tools::ShaderType shaderType>
     class Shader :
         public core::RefCountImpl<resource::IResource>
     {

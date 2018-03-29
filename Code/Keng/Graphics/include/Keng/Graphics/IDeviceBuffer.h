@@ -4,7 +4,7 @@
 #include "EverydayTools/Array/ArrayView.h"
 #include "Keng/Core/IRefCountObject.h"
 #include "Keng/Core/Ptr.h"
-#include "D3D_Tools/shader.h"
+#include "Keng/Graphics/ShaderType.h"
 
 namespace keng::graphics
 {
@@ -68,7 +68,7 @@ namespace keng::graphics
         uint32_t slot = 0;
         uint32_t stride = 0;
         uint32_t offset = 0;
-        d3d_tools::ShaderType shaderType = d3d_tools::ShaderType::Vertex;
+        ShaderType shaderType = ShaderType::Vertex;
     };
 
     class IDeviceBuffer :

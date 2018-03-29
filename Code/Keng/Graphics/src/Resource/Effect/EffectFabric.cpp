@@ -29,7 +29,7 @@ namespace keng::graphics
             {
                 auto vsNode = node->FindFirstNode("vertex_shader");
                 if (vsNode != nullptr) {
-                    result->vs = std::dynamic_pointer_cast<Shader<ShaderType::Vertex>>(resourceSystem->GetResource(vsNode->GetValue()));
+                    result->vs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Vertex>>(resourceSystem->GetResource(vsNode->GetValue()));
                     anyShader = true;
                 }
             }
@@ -37,7 +37,7 @@ namespace keng::graphics
             {
                 auto vsNode = node->FindFirstNode("fragment_shader");
                 if (vsNode != nullptr) {
-                    result->fs = std::dynamic_pointer_cast<Shader<ShaderType::Pixel>>(resourceSystem->GetResource(vsNode->GetValue()));
+                    result->fs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Pixel>>(resourceSystem->GetResource(vsNode->GetValue()));
                     anyShader = true;
                 }
             }
