@@ -7,7 +7,7 @@ namespace keng::graphics
     class DepthStencilParameters
     {
     public:
-        d3d_tools::TextureFormat format;
+        FragmentFormat format;
         core::Ptr<ITexture> texture;
     };
 }

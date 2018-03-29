@@ -7,6 +7,8 @@
 
 #include <vector>
 
+#include "Keng/Graphics/FragmentFormat.h"
+
 namespace keng::graphics
 {
     using d3d_tools::TextureFlags;
@@ -17,8 +19,8 @@ namespace keng::graphics
     {
     public:
         virtual void* GetNativeInterface() const = 0;
-        virtual TextureFormat GetFormat() const = 0;
-        virtual core::Ptr<ITextureView> GetView(ResourceViewType viewType, TextureFormat format) = 0;
+        virtual FragmentFormat GetFormat() const = 0;
+        virtual core::Ptr<ITextureView> GetView(ResourceViewType viewType, FragmentFormat format) = 0;
         virtual ~ITexture() = default;
     };
 }

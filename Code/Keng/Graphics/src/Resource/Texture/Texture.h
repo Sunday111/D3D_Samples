@@ -8,31 +8,28 @@ namespace keng::graphics
     class Device;
 
     class Texture :
-        public core::RefCountImpl<ITexture>,
-        public d3d_tools::Texture
+        public core::RefCountImpl<ITexture>
     {
     public:
-        using d3d_tools::Texture::Texture;
-
-        Texture(Device& device, uint32_t w, uint32_t h, TextureFormat format, TextureFlags flags, void* initialData = nullptr);
+        Texture(Device& device, uint32_t w, uint32_t h, FragmentFormat format, TextureFlags flags, void* initialData = nullptr);
 
         virtual void* GetNativeInterface() const override;
-        virtual TextureFormat GetFormat() const override;
-        virtual core::Ptr<ITextureView> GetView(ResourceViewType viewType, TextureFormat format) override;
+        virtual FragmentFormat GetFormat() const override;
+        virtual core::Ptr<ITextureView> GetView(ResourceViewType viewType, FragmentFormat format) override;
 
         template<ResourceViewType type>
-        core::Ptr<TextureView<type>> GetView(ID3D11Device* device, TextureFormat format) {
+        core::Ptr<TextureView<type>> GetView(ID3D11Device* device, FragmentFormat format) {
             return CallAndRethrowM + [&]() {
                 auto& views = GetTypedViews<type>();
                 auto it = std::lower_bound(views.begin(), views.end(), format,
-                    [](auto& view, TextureFormat format) {
+                    [](auto& view, FragmentFormat format) {
                     return (int)format < (int)view->GetViewFormat();
                 });
-                if (it != views.end() && (*it)->GetViewFormat() == format) {
+                if (it != views.end() && (FragmentFormat)(*it)->GetViewFormat() == format) {
                     return *it;
                 }
 
-                auto result = core::Ptr<TextureView<type>>::MakeInstance(device, GetTexture(), format);
+                auto result = core::Ptr<TextureView<type>>::MakeInstance(device, m_texture.Get(), (TextureFormat)format);
                 views.insert(it, result);
                 return result;
             };
@@ -54,5 +51,6 @@ namespace keng::graphics
         TypedViews<ResourceViewType::RandomAccess>   m_rav;
 
         core::Ptr<Device> m_device;
+        ComPtr<ID3D11Texture2D> m_texture;
     };
 }

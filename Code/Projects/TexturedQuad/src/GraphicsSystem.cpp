@@ -89,7 +89,7 @@ namespace textured_quad_sample
                     m_device->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
                     m_device->SetConstantBuffer(m_constantBuffer, d3d_tools::ShaderType::Vertex);
                     m_device->SetSampler(0, m_sampler.Get(), d3d_tools::ShaderType::Pixel);
-                    auto textureView = m_texture->GetView(ResourceViewType::ShaderResource, TextureFormat::R8_G8_B8_A8_UNORM);
+                    auto textureView = m_texture->GetView(ResourceViewType::ShaderResource, FragmentFormat::R8_G8_B8_A8_UNORM);
                     m_device->SetShaderResource(0, d3d_tools::ShaderType::Pixel, (ID3D11ShaderResourceView*)textureView->GetNativeInterface());
                     m_device->Draw(4);
                 });
