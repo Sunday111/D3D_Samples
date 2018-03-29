@@ -7,7 +7,7 @@ namespace keng::graphics
     class Device;
 
     class ShaderFabric :
-        public resource::IResourceFabric
+        public core::RefCountImpl<resource::IResourceFabric>
     {
     public:
         ShaderFabric(core::Ptr<Device>);

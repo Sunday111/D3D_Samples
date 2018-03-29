@@ -8,9 +8,9 @@ namespace keng::graphics
     class WindowRenderTargetParameters;
     class SwapChain;
 
-    class WindowRenderTarget : public IWindowRenderTarget
+    class WindowRenderTarget :
+        public core::RefCountImpl<IWindowRenderTarget>
     {
-        IMPLEMENT_IREFCOUNT
     public:
         WindowRenderTarget(Device& device, const WindowRenderTargetParameters& params);
         virtual void Activate(const core::Ptr<IDepthStencil>& depthStencil) override;

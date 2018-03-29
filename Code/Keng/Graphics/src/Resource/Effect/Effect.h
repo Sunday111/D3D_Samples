@@ -7,9 +7,9 @@ namespace keng::graphics
 {
     class Device;
 
-    class Effect : public IEffect
+    class Effect :
+        public core::RefCountImpl<IEffect>
     {
-        IMPLEMENT_IREFCOUNT
     public:
         Effect();
         ~Effect();

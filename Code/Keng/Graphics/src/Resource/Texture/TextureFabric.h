@@ -7,7 +7,7 @@ namespace keng::graphics
     class Device;
 
     class TextureFabric :
-        public resource::IResourceFabric
+        public core::RefCountImpl<resource::IResourceFabric>
     {
     public:
         TextureFabric(core::Ptr<Device>);

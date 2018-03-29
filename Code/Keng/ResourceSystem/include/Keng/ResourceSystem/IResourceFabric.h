@@ -17,7 +17,6 @@ namespace keng::resource
 
     class IResourceFabric : public core::IRefCountObject
     {
-        IMPLEMENT_IREFCOUNT
     public:
         virtual std::string_view GetResourceType() const = 0;
         virtual std::string_view GetNodeName() const = 0;

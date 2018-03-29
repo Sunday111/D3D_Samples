@@ -5,9 +5,8 @@
 namespace keng::graphics
 {
     class ShaderTemplate :
-        public resource::IResource
+        public core::RefCountImpl<resource::IResource>
     {
-        IMPLEMENT_IREFCOUNT
     public:
         ShaderTemplate();
 

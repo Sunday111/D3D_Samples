@@ -8,7 +8,7 @@ namespace keng::graphics
     class Device;
 
     class EffectFabric :
-        public resource::IResourceFabric
+        public core::RefCountImpl<resource::IResourceFabric>
     {
     public:
         EffectFabric(core::Ptr<Device> device);

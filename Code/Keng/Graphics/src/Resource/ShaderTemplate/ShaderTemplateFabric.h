@@ -5,7 +5,7 @@
 namespace keng::graphics
 {
     class ShaderTemplateFabric :
-        public resource::IResourceFabric
+        public core::RefCountImpl<resource::IResourceFabric>
     {
     public:
         virtual std::string_view GetNodeName() const override;

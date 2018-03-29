@@ -20,10 +20,9 @@ namespace keng::graphics
     };
 
     class Device :
-        public IDevice,
+        public core::RefCountImpl<IDevice>,
         public d3d_tools::Device
     {
-        IMPLEMENT_IREFCOUNT
     public:
         using d3d_tools::Device::Device;
 

@@ -12,9 +12,8 @@ namespace keng::graphics
 
     template<ShaderType shaderType>
     class Shader :
-        public resource::IResource
+        public core::RefCountImpl<resource::IResource>
     {
-        IMPLEMENT_IREFCOUNT
     public:
         d3d_tools::Shader<shaderType> m_impl;
     };

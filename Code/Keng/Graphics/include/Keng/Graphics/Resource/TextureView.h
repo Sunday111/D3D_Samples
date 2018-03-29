@@ -19,10 +19,9 @@ namespace keng::graphics
 
     template<ResourceViewType type>
     class TextureView :
-        public ITextureView,
+        public core::RefCountImpl<ITextureView>,
         public d3d_tools::TextureView<type>
     {
-        IMPLEMENT_IREFCOUNT
     public:
         using d3d_tools::TextureView<type>::TextureView;
 

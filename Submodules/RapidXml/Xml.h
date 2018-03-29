@@ -30,7 +30,7 @@ namespace keng
 	
 	template<typename Derived>
 	class IXmlNodeImpl :
-        public IXmlNode
+        public core::RefCountImpl<IXmlNode>
 	{
 	public:
 		virtual core::Ptr<IXmlNode> FindFirstNode(std::string_view name) override {
@@ -79,7 +79,6 @@ namespace keng
 	class XmlNode :
 	    public IXmlNodeImpl<XmlNode>
 	{
-        IMPLEMENT_IREFCOUNT
 	public:
 	    XmlNode(rapidxml::xml_node<char>* node) :
 	        m_impl(node)
@@ -96,7 +95,6 @@ namespace keng
 	class XmlDocument :
 	    public IXmlNodeImpl<XmlDocument>
 	{
-        IMPLEMENT_IREFCOUNT
 	public:
         XmlDocument(std::string_view filename) {
             CallAndRethrowM + [&] {

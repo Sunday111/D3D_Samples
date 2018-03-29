@@ -7,9 +7,9 @@ namespace keng::graphics
     class Texture;
     class DepthStencilParameters;
 
-    class DepthStencil : public IDepthStencil
+    class DepthStencil :
+        public core::RefCountImpl<IDepthStencil>
     {
-        IMPLEMENT_IREFCOUNT
     public:
         DepthStencil(Device& device, const DepthStencilParameters&);
         ~DepthStencil();

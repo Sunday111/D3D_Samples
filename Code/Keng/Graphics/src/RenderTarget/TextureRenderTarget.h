@@ -8,10 +8,9 @@ namespace keng::graphics
     class Device;
     class TextureRenderTargetParameters;
 
-    class TextureRenderTarget : public ITextureRenderTarget
+    class TextureRenderTarget :
+        public core::RefCountImpl<ITextureRenderTarget>
     {
-    public:
-        IMPLEMENT_IREFCOUNT
     public:
         TextureRenderTarget(Device& device, const TextureRenderTargetParameters& params);
         ~TextureRenderTarget();

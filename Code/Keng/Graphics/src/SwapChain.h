@@ -8,9 +8,9 @@ namespace keng::graphics
 {
     class Device;
 
-    class SwapChain : public ISwapChain
+    class SwapChain :
+        public core::RefCountImpl<ISwapChain>
     {
-        IMPLEMENT_IREFCOUNT
     public:
         SwapChain(Device& device, const SwapChainParameters& params);
         ~SwapChain();

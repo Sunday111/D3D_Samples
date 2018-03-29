@@ -8,10 +8,9 @@ namespace keng::graphics
     class Device;
 
     class Texture :
-        public ITexture,
+        public core::RefCountImpl<ITexture>,
         public d3d_tools::Texture
     {
-        IMPLEMENT_IREFCOUNT
     public:
         using d3d_tools::Texture::Texture;
 

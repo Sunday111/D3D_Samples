@@ -7,9 +7,9 @@ namespace keng::graphics
 {
     class Device;
 
-    class DeviceBuffer : public IDeviceBuffer
+    class DeviceBuffer :
+        public core::RefCountImpl<IDeviceBuffer>
     {
-        IMPLEMENT_IREFCOUNT
     public:
         DeviceBuffer(Device& device, const DeviceBufferParams& createParams, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
 
