@@ -8,6 +8,8 @@
 namespace keng::graphics
 {
     class Device;
+    class ITexture;
+    class Texture;
 
     class SwapChain :
         public core::RefCountImpl<ISwapChain>
@@ -18,11 +20,12 @@ namespace keng::graphics
 
         virtual core::Ptr<ITextureView> GetBackBufferView() override;
         virtual void Present() override;
-        d3d_tools::Texture GetBackBuffer(uint32_t index = 0);
+        core::Ptr<ITexture> GetBackBuffer(uint32_t index = 0);
+        ComPtr<ID3D11Texture2D> GetTexture(uint32_t index);
+        void CopyFromTexture(const core::Ptr<Texture>& texture, uint32_t index);
 
     private:
         core::Ptr<Device> m_device;
         ComPtr<IDXGISwapChain> m_swapchain;
-        core::Ptr<TextureView<ResourceViewType::RenderTarget>> m_renderTargetView;
     };
 }

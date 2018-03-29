@@ -42,4 +42,8 @@ namespace keng::graphics
             return m_texture->GetView<ResourceViewType::RenderTarget>(m_device->GetDevice().Get(), m_texture->GetFormat());
         };
     }
+
+    core::Ptr<ITexture> TextureRenderTarget::GetTexture() const {
+        return m_texture;
+    }
 }

@@ -55,8 +55,15 @@ namespace keng::graphics
         }
     }
 
-    Texture::Texture(Device& device, uint32_t w, uint32_t h, FragmentFormat format, TextureFlags flags, void* initialData)
-    {
+    Texture::Texture(Device& device, ComPtr<ID3D11Texture2D> texture) {
+        CallAndRethrowM + [&] {
+            edt::ThrowIfFailed(texture != nullptr, "trying tu initialize with null handle");
+            m_device = &device;
+            m_texture = texture;
+        };
+    }
+
+    Texture::Texture(Device& device, uint32_t w, uint32_t h, FragmentFormat format, TextureFlags flags, void* initialData) {
         m_device = &device;
         auto rawDevice = m_device->GetDevice();
 
@@ -97,5 +104,22 @@ namespace keng::graphics
         }
 
         throw std::runtime_error("Unknown resource view type or not implemented");
+    }
+
+    void Texture::AssignToPipeline(d3d_tools::ShaderType shaderType, size_t slot) {
+        auto srv = GetView<ResourceViewType::ShaderResource>(m_device->GetDevice().Get(), GetFormat());
+        m_device->SetShaderResource(static_cast<uint32_t>(slot), shaderType, srv->GetView());
+    }
+
+    void Texture::CopyTo(core::Ptr<ITexture> abstract){
+        CallAndRethrowM + [&] {
+            auto to = std::static_pointer_cast<Texture>(abstract);
+            CopyTo(to->m_texture);
+        };
+    }
+    void Texture::CopyTo(const ComPtr<ID3D11Texture2D>& to) {
+        CallAndRethrowM + [&] {
+            m_device->GetContext()->CopyResource(to.Get(), m_texture.Get());
+        };
     }
 }

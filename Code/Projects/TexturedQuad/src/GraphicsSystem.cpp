@@ -89,19 +89,12 @@ namespace textured_quad_sample
                     m_device->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
                     m_device->SetConstantBuffer(m_constantBuffer, d3d_tools::ShaderType::Vertex);
                     m_device->SetSampler(0, m_sampler.Get(), d3d_tools::ShaderType::Pixel);
-                    auto textureView = m_texture->GetView(ResourceViewType::ShaderResource, FragmentFormat::R8_G8_B8_A8_UNORM);
-                    m_device->SetShaderResource(0, d3d_tools::ShaderType::Pixel, (ID3D11ShaderResourceView*)textureView->GetNativeInterface());
+                    m_texture->AssignToPipeline(d3d_tools::ShaderType::Pixel, 0);
                     m_device->Draw(4);
                 });
 
                 d3d_tools::Annotate(m_device.Get(), L"Copy texture to swap chain texture", [&]() {
-                    ID3D11Resource* finalRT;
-                    auto finalRTV = GetWindowRenderTarget()->GetRenderTargetView();
-                    auto textureRTV = m_textureRT->GetRenderTargetView();
-                    ((ID3D11RenderTargetView*)finalRTV->GetNativeInterface())->GetResource(&finalRT);
-                    ID3D11Resource* textureResource;
-                    static_cast<ID3D11RenderTargetView*>(textureRTV->GetNativeInterface())->GetResource(&textureResource);
-                    m_device->GetContext()->CopyResource(finalRT, textureResource);
+                    GetWindowRenderTarget()->CopyFrom(m_textureRT->GetTexture());
                 });
 
                 GetWindowRenderTarget()->Present();

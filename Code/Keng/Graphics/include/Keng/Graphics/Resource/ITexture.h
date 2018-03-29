@@ -4,6 +4,7 @@
 #include "Keng/Graphics/Resource/TextureView.h"
 #include "Keng/ResourceSystem/IResource.h"
 #include "Keng/Core/Ptr.h"
+#include "D3D_Tools/shader.h"
 
 #include <vector>
 
@@ -21,6 +22,8 @@ namespace keng::graphics
         virtual void* GetNativeInterface() const = 0;
         virtual FragmentFormat GetFormat() const = 0;
         virtual core::Ptr<ITextureView> GetView(ResourceViewType viewType, FragmentFormat format) = 0;
+        virtual void AssignToPipeline(d3d_tools::ShaderType shaderType, size_t slot) = 0;
+        virtual void CopyTo(core::Ptr<ITexture>) = 0;
         virtual ~ITexture() = default;
     };
 }

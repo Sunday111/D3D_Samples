@@ -2,6 +2,7 @@
 #include "Keng/Graphics/Device.h"
 #include "Keng/WindowSystem/IWindow.h"
 #include "D3D_11/EnumConverter.h"
+#include "Resource/Texture/Texture.h"
 
 namespace keng::graphics
 {
@@ -32,25 +33,32 @@ namespace keng::graphics
     }
 
     core::Ptr<ITextureView> SwapChain::GetBackBufferView() {
-        if (!m_renderTargetView) {
-            auto backbuffer = GetBackBuffer();
-            m_renderTargetView = core::Ptr<TextureView<ResourceViewType::RenderTarget>>::MakeInstance(
-                m_device->GetDevice().Get(), backbuffer.GetTexture());
-        }
-        return m_renderTargetView;
+        auto backbuffer = std::static_pointer_cast<Texture>(GetBackBuffer());
+        return backbuffer->GetView<ResourceViewType::RenderTarget>(m_device->GetDevice().Get(), backbuffer->GetFormat());
     }
 
     void SwapChain::Present() {
         m_swapchain->Present(0, 0);
     }
 
-    d3d_tools::Texture SwapChain::GetBackBuffer(uint32_t index) {
+    core::Ptr<ITexture> SwapChain::GetBackBuffer(uint32_t index) {
+        return CallAndRethrowM + [&] {
+            return core::Ptr<Texture>::MakeInstance(*m_device, GetTexture(index));
+        };
+    }
+
+    ComPtr<ID3D11Texture2D> SwapChain::GetTexture(uint32_t index) {
         return CallAndRethrowM + [&] {
             ComPtr<ID3D11Texture2D> backBuffer;
-            // get the address of the back buffer
             WinAPI<char>::ThrowIfError(m_swapchain->GetBuffer(index, __uuidof(ID3D11Texture2D), (void**)backBuffer.Receive()));
             backBuffer->AddRef();
-            return d3d_tools::Texture(std::move(backBuffer));
+            return backBuffer;
+        };
+    }
+
+    void SwapChain::CopyFromTexture(const core::Ptr<Texture>& texture, uint32_t index) {
+        return CallAndRethrowM + [&] {
+            texture->CopyTo(GetTexture(index));
         };
     }
 }

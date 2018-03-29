@@ -1,7 +1,7 @@
 #include "Keng/Graphics/Device.h"
 #include "SwapChain.h"
 #include "Keng/WindowSystem/IWindow.h"
-#include "D3D_Tools/Texture.h"
+#include "Resource/Texture/Texture.h"
 #include "DepthStencil.h"
 #include "Keng/Graphics/RenderTarget/WindowRenderTargetParameters.h"
 #include "RenderTarget/WindowRenderTarget.h"
@@ -41,6 +41,13 @@ namespace keng::graphics
 
     core::Ptr<ITextureView> WindowRenderTarget::GetRenderTargetView() {
         return m_swapChain->GetBackBufferView();
+    }
+
+    void WindowRenderTarget::CopyFrom(const core::Ptr<ITexture>& abstract, uint32_t backBufferIndex) {
+        CallAndRethrowM + [&] {
+            auto from = std::static_pointer_cast<Texture>(abstract);
+            m_swapChain->CopyFromTexture(from, backBufferIndex);
+        };
     }
 
     void WindowRenderTarget::Present() {
