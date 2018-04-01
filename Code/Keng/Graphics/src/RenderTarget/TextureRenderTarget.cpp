@@ -1,6 +1,6 @@
 #include "keng/Graphics/Device.h"
 #include "Resource/Texture/Texture.h"
-#include "Keng/Graphics/Resource/TextureView.h"
+#include "Resource/Texture/TextureView.h"
 #include "DepthStencil.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "Keng/Graphics/RenderTarget/TextureRenderTargetParameters.h"

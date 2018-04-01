@@ -2,6 +2,7 @@
 
 #include "Keng/Graphics/RenderTarget/IDepthStencil.h"
 #include "Keng/Graphics/Resource/ITexture.h"
+#include "Resource/Texture/TextureView.h"
 
 namespace keng::graphics
 {

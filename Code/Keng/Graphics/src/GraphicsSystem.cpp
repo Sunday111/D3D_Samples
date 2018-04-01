@@ -133,14 +133,14 @@ namespace keng::graphics
 
             {// Create render target
                 TextureRenderTargetParameters texture_rt_params{};
-                texture_rt_params.renderTarget = core::Ptr<Texture>::MakeInstance(*m_device, w, h, FragmentFormat::R8_G8_B8_A8_UNORM, TextureFlags::RenderTarget | TextureFlags::ShaderResource);
+                texture_rt_params.renderTarget = core::Ptr<Texture>::MakeInstance(*m_device, w, h, FragmentFormat::R8_G8_B8_A8_UNORM, d3d_tools::TextureFlags::RenderTarget | d3d_tools::TextureFlags::ShaderResource);
                 m_textureRT = core::Ptr<TextureRenderTarget>::MakeInstance(*m_device, texture_rt_params);
             }
             
             {// Create depth stencil
                 DepthStencilParameters depthStencilParams{};
                 depthStencilParams.format = FragmentFormat::D24_UNORM_S8_UINT;
-                depthStencilParams.texture = core::Ptr<Texture>::MakeInstance(*m_device, w, h, FragmentFormat::R24_G8_TYPELESS, TextureFlags::DepthStencil | TextureFlags::ShaderResource);
+                depthStencilParams.texture = core::Ptr<Texture>::MakeInstance(*m_device, w, h, FragmentFormat::R24_G8_TYPELESS, d3d_tools::TextureFlags::DepthStencil | d3d_tools::TextureFlags::ShaderResource);
                 m_depthStencil = core::Ptr<DepthStencil>::MakeInstance(*m_device, depthStencilParams);
             }
         };

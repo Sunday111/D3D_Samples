@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include "Keng/Graphics/Resource/ITexture.h"
+#include "Resource/Texture/TextureView.h"
 
 namespace keng::graphics
 {
@@ -12,11 +13,10 @@ namespace keng::graphics
     {
     public:
         Texture(Device& device, ComPtr<ID3D11Texture2D> texture);
-        Texture(Device& device, uint32_t w, uint32_t h, FragmentFormat format, TextureFlags flags, void* initialData = nullptr);
+        Texture(Device& device, uint32_t w, uint32_t h, FragmentFormat format, d3d_tools::TextureFlags flags, void* initialData = nullptr);
 
         virtual void* GetNativeInterface() const override;
         virtual FragmentFormat GetFormat() const override;
-        virtual core::Ptr<ITextureView> GetView(ResourceViewType viewType, FragmentFormat format) override;
         virtual void AssignToPipeline(ShaderType shaderType, size_t slot) override;
         virtual void CopyTo(core::Ptr<ITexture>) override;
         void CopyTo(const ComPtr<ID3D11Texture2D>& to);

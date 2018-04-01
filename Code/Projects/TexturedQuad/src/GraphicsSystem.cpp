@@ -3,7 +3,6 @@
 #include "Keng/Core/Application.h"
 #include "Keng/Graphics/DeviceBufferMapper.h"
 #include "Keng/Graphics/Resource/ITexture.h"
-#include "Keng/Graphics/Resource/TextureView.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "Keng/Graphics/RenderTarget/IWindowRenderTarget.h"
 #include "Keng/Graphics/RenderTarget/ITextureRenderTarget.h"
