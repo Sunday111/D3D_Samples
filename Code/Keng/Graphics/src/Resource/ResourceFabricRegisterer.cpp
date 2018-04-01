@@ -10,18 +10,12 @@
 
 namespace keng::graphics
 {
-    ResourceFabricRegisterer::ResourceFabricRegisterer(GraphicsSystem* graphicsSystem) :
-        m_graphicsSystem(graphicsSystem) {
-        assert(m_graphicsSystem);
-    }
-
     void ResourceFabricRegisterer::Register(resource::IResourceSystem* resourceSystem) {
         CallAndRethrowM + [&] {
-            auto device = m_graphicsSystem->GetDevice();
-            resourceSystem->RegisterResourceFabric(core::Ptr<EffectFabric>::MakeInstance(device));
-            resourceSystem->RegisterResourceFabric(core::Ptr<ShaderFabric>::MakeInstance(device));
+            resourceSystem->RegisterResourceFabric(core::Ptr<EffectFabric>::MakeInstance());
+            resourceSystem->RegisterResourceFabric(core::Ptr<ShaderFabric>::MakeInstance());
             resourceSystem->RegisterResourceFabric(core::Ptr<ShaderTemplateFabric>::MakeInstance());
-            resourceSystem->RegisterResourceFabric(core::Ptr<TextureFabric>::MakeInstance(device));
+            resourceSystem->RegisterResourceFabric(core::Ptr<TextureFabric>::MakeInstance());
         };
     }
 }

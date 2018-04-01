@@ -23,7 +23,8 @@ namespace keng::graphics
         return "ShaderTemplate";
     }
 
-    core::Ptr<resource::IResource> ShaderTemplateFabric::LoadResource(resource::IResourceSystem*, core::Ptr<IXmlNode> node) const {
+    core::Ptr<resource::IResource> ShaderTemplateFabric::LoadResource(resource::IResourceSystem*,
+        const core::Ptr<IXmlNode>& node, const core::Ptr<resource::IDevice>&) const {
         return CallAndRethrowM + [&] {
             auto typeNode = node->GetFirstNode("type");
             auto fileNode = node->GetFirstNode("file");

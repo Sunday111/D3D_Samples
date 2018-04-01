@@ -40,10 +40,6 @@ namespace keng::graphics
         }
     };
 
-    ShaderFabric::ShaderFabric(core::Ptr<Device> device) :
-        m_device(device) {
-    }
-
     std::string_view ShaderFabric::GetNodeName() const {
         return "shader";
     }
@@ -52,10 +48,14 @@ namespace keng::graphics
         return "Shader";
     }
 
-    core::Ptr<resource::IResource> ShaderFabric::LoadResource(resource::IResourceSystem* resourceSystem, core::Ptr<IXmlNode> node) const {
+    core::Ptr<resource::IResource> ShaderFabric::LoadResource(resource::IResourceSystem* resourceSystem,
+        const core::Ptr<IXmlNode>& node, const core::Ptr<resource::IDevice>& abstractDevice) const {
         return CallAndRethrowM + [&] {
+            edt::ThrowIfFailed(abstractDevice != nullptr, "Can't create shader without device");
+            auto device = std::dynamic_pointer_cast<Device>(abstractDevice);
+
             ShaderCompiler shaderCompiler;
-            shaderCompiler.device = m_device;
+            shaderCompiler.device = device;
 
             // Template
             auto templateNode = node->GetFirstNode("template");

@@ -118,11 +118,11 @@ namespace textured_quad_sample
             using namespace keng::resource;
             using namespace keng::graphics;
             auto resourceSystem = dynamic_cast<core::Application*>(app)->GetSystem<IResourceSystem>();
-            m_texture = std::static_pointer_cast<ITexture>(resourceSystem->GetResource("Assets/Textures/container.xml"));
+            m_texture = std::static_pointer_cast<ITexture>(resourceSystem->GetResource("Assets/Textures/container.xml", m_device));
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Textured.xml";
-                m_effect = std::static_pointer_cast<IEffect>(resourceSystem->GetResource(effectName));
+                m_effect = std::static_pointer_cast<IEffect>(resourceSystem->GetResource(effectName, m_device));
                 m_effect->InitDefaultInputLayout();
             }
 
@@ -175,8 +175,9 @@ namespace textured_quad_sample
 
             {// Create sampler
                 CD3D11_SAMPLER_DESC samplerDesc(D3D11_DEFAULT);
-                samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-                samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+                samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+                samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+                samplerDesc.Filter = D3D11_FILTER::D3D11_FILTER_ANISOTROPIC;
                 m_device->GetDevice()->CreateSamplerState(&samplerDesc, m_sampler.Receive());
             }
         };

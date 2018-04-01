@@ -4,12 +4,13 @@
 #include "Keng/Core/Ptr.h"
 #include "Keng/Core/IRefCountObject.h"
 #include "Keng/Graphics/IDeviceBuffer.h"
+#include "Keng/ResourceSystem/IDevice.h"
 
 namespace keng::graphics
 {
     class IDeviceBuffer;
 
-    class IDevice : public core::IRefCountObject
+    class IDevice : public resource::IDevice
     {
     public:
         virtual void* GetNativeDevice() const = 0;

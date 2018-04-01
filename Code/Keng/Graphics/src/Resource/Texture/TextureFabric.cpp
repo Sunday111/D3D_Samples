@@ -10,10 +10,6 @@
 
 namespace keng::graphics
 {
-    TextureFabric::TextureFabric(core::Ptr<Device> device) :
-        m_device(device) {
-    }
-
     std::string_view TextureFabric::GetNodeName() const {
         return "texture";
     }
@@ -22,8 +18,12 @@ namespace keng::graphics
         return "Texture";
     }
 
-    core::Ptr<resource::IResource> TextureFabric::LoadResource(resource::IResourceSystem*, core::Ptr<IXmlNode> node) const {
+    core::Ptr<resource::IResource> TextureFabric::LoadResource(resource::IResourceSystem*,
+        const core::Ptr<IXmlNode>& node, const core::Ptr<resource::IDevice>& abstractDevice) const {
         return CallAndRethrowM + [&] {
+            edt::ThrowIfFailed(abstractDevice != nullptr, "Can't create texture without device");
+            auto device = std::dynamic_pointer_cast<Device>(abstractDevice);
+
             auto fileNode = node->GetFirstNode("file");
             auto textureFilename = fileNode->GetValue();
 
@@ -46,7 +46,7 @@ namespace keng::graphics
             img_data.reset(stbi_load(textureFilename.data(), &w, &h, &n, 4));
             auto ptr = img_data.get();
 
-            return core::Ptr<Texture>::MakeInstance(*m_device, w, h, FragmentFormat::R8_G8_B8_A8_UNORM, d3d_tools::TextureFlags::ShaderResource, ptr);
+            return core::Ptr<Texture>::MakeInstance(*device, w, h, FragmentFormat::R8_G8_B8_A8_UNORM, d3d_tools::TextureFlags::ShaderResource, ptr);
         };
     }
 }

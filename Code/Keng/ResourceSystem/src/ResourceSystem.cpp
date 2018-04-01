@@ -8,27 +8,28 @@
 
 #include "Xml.h"
 
+#include <algorithm>
 #include <chrono>
 #include <fstream>
 
 namespace keng::resource
 {
-    ResourceSystem::ResourceInfo::ResourceInfo() = default;
-    ResourceSystem::ResourceInfo::~ResourceInfo() = default;
+    ResourceInfo::ResourceInfo() = default;
+    ResourceInfo::~ResourceInfo() = default;
 
     ResourceSystem::ResourceSystem() = default;
 
     ResourceSystem::~ResourceSystem() = default;
 
-    bool ResourceSystem::ResourceInfo::IsSingleReference() const {
+    bool ResourceInfo::IsSingleReference() const {
         return resource->GetReferencesCount() < 2;
     }
 
-    bool ResourceSystem::ResourceInfo::IsExpired() const {
+    bool ResourceInfo::IsExpired() const {
         return false;
     }
 
-    bool ResourceSystem::ResourceInfo::ShouldBeReleased(float timeNow) {
+    bool ResourceInfo::ShouldBeReleased(float timeNow) {
         if (IsSingleReference()) {
             if (lastTouchMs < 0.f) {
                 // Start countdown before dying
@@ -57,24 +58,25 @@ namespace keng::resource
             auto now = duration_cast<milliseconds>(dt).count();
             float nowMs = static_cast<float>(now);
 
-            auto iResourceInfo = m_resources.begin();
-            while (iResourceInfo != m_resources.end()) {
-                if (iResourceInfo->second.ShouldBeReleased(nowMs)) {
-                    iResourceInfo = m_resources.erase(iResourceInfo);
-                } else {
-                    ++iResourceInfo;
-                }
+            for (auto& deviceResources : m_devicesResources) {
+                deviceResources->Update(nowMs);
             }
 
             return true;
         };
     }
 
-    core::Ptr<IResource> ResourceSystem::GetResource(std::string_view filename) {
+    DeviceResources::DeviceResources(const core::Ptr<IDevice>& devicePtr) :
+        device(devicePtr)
+    {
+
+    }
+
+    core::Ptr<IResource> DeviceResources::GetResource(ResourceSystem& system, std::string_view filename) {
         return CallAndRethrowM + [&] {
             std::string filename_copy(filename);
-            auto resource_it = m_resources.find(filename_copy);
-            if (resource_it != m_resources.end()) {
+            auto resource_it = resources.find(filename_copy);
+            if (resource_it != resources.end()) {
                 return resource_it->second.resource;
             }
 
@@ -82,19 +84,30 @@ namespace keng::resource
             auto resource_node = doc->GetFirstNode(ResourceNodeName);
             auto typeNode = resource_node->GetFirstNode(ResourceTypeNodeName);
             auto resourceTypeName = std::string(typeNode->GetValue());
-            auto fabric_it = m_fabrics.find(resourceTypeName);
-
-            edt::ThrowIfFailed(
-                fabric_it != m_fabrics.end(),
-                "Fabric for resource \"", resourceTypeName, "\" is not registered");
-
-            auto exactNode = resource_node->GetFirstNode(fabric_it->second->GetNodeName());
-            auto result = fabric_it->second->LoadResource(this, exactNode);
+            auto fabric = system.GetFabric(resourceTypeName);
+            auto exactNode = resource_node->GetFirstNode(fabric->GetNodeName());
+            auto result = fabric->LoadResource(&system, exactNode, device);
 
             ResourceInfo info;
             info.resource = result;
             return InsertResource(std::move(filename_copy), std::move(info));
         };
+    }
+
+    core::Ptr<IResource> ResourceSystem::GetResource(std::string_view filename) {
+        return GetResource(filename, nullptr);
+    }
+
+    core::Ptr<IResource> ResourceSystem::MakeRuntimeResource(core::Ptr<IXmlDocument> description) {
+        return MakeRuntimeResource(description, nullptr);
+    }
+
+    core::Ptr<IResource> ResourceSystem::GetResource(std::string_view filename, const core::Ptr<IDevice>& device) {
+        return GetDeviceResources(device).GetResource(*this, filename);
+    }
+
+    core::Ptr<IResource> ResourceSystem::MakeRuntimeResource(core::Ptr<IXmlDocument> description, const core::Ptr<IDevice>& device) {
+        return GetDeviceResources(device).MakeRuntimeResource(*this, description);
     }
 
     void ResourceSystem::RegisterResourceFabric(core::Ptr<IResourceFabric> fabric) {
@@ -113,7 +126,30 @@ namespace keng::resource
         };
     }
 
-    ResourceSystem::SystemParams ResourceSystem::ReadDefaultParams() {
+    core::Ptr<IResourceFabric> ResourceSystem::GetFabric(const std::string& resourceType) {
+        return CallAndRethrowM + [&] {
+            auto fabric_it = m_fabrics.find(resourceType);
+            edt::ThrowIfFailed(
+                fabric_it != m_fabrics.end(),
+                "Fabric \"", resourceType, "\" is not registered");
+            return fabric_it->second;
+        };
+    }
+
+    DeviceResources& ResourceSystem::GetDeviceResources(const core::Ptr<IDevice>& device) {
+        auto it = std::lower_bound(m_devicesResources.begin(), m_devicesResources.end(), device,
+            [](const DeviceResourcesPtr& pDeviceResources, const core::Ptr<IDevice>& device) {
+            return device < pDeviceResources->device;
+        });
+
+        if (it == m_devicesResources.end() || (*it)->device != device) {
+            it = m_devicesResources.insert(it, std::make_unique<DeviceResources>(device));
+        }
+
+        return **it;
+    }
+
+    SystemParams ResourceSystem::ReadDefaultParams() {
         return CallAndRethrowM + [&] {
             SystemParams result;
 
@@ -133,13 +169,24 @@ namespace keng::resource
         };
     }
 
-    core::Ptr<IResource> ResourceSystem::InsertResource(std::string&& name, ResourceInfo&& info) {
+    core::Ptr<IResource> DeviceResources::InsertResource(std::string&& name, ResourceInfo&& info) {
         auto resource = info.resource;
-        m_resources.insert(std::make_pair(std::move(name), std::move(info)));
+        resources.insert(std::make_pair(std::move(name), std::move(info)));
         return resource;
     }
 
-    std::string ResourceSystem::GenerateRuntimeResourceName() {
+    void DeviceResources::Update(float currentTime) {
+        auto iResourceInfo = resources.begin();
+        while (iResourceInfo != resources.end()) {
+            if (iResourceInfo->second.ShouldBeReleased(currentTime)) {
+                iResourceInfo = resources.erase(iResourceInfo);
+            } else {
+                ++iResourceInfo;
+            }
+        }
+    }
+
+    std::string DeviceResources::GenerateRuntimeResourceName() {
         std::stringstream stream;
         stream << "runtime://" << m_nextRuntimeResourceIndex++;
         return stream.str();
@@ -161,19 +208,15 @@ namespace keng::resource
         return GetGUID();
     }
 
-    core::Ptr<IResource> ResourceSystem::MakeRuntimeResource(core::Ptr<IXmlDocument> doc) {
+    core::Ptr<IResource> DeviceResources::MakeRuntimeResource(ResourceSystem& system, core::Ptr<IXmlDocument> doc) {
         return CallAndRethrowM + [&] {
             auto resource_node = doc->GetFirstNode(ResourceNodeName);
             auto typeNode = resource_node->GetFirstNode(ResourceTypeNodeName);
             auto resourceTypeName = std::string(typeNode->GetValue());
-            auto fabric_it = m_fabrics.find(resourceTypeName);
+            auto fabric = system.GetFabric(resourceTypeName);
 
-            edt::ThrowIfFailed(
-                fabric_it != m_fabrics.end(),
-                "Fabric for resource \"", resourceTypeName, "\" is not registered");
-
-            auto exactNode = resource_node->GetFirstNode(fabric_it->second->GetNodeName());
-            auto result = fabric_it->second->LoadResource(this, exactNode);
+            auto exactNode = resource_node->GetFirstNode(fabric->GetNodeName());
+            auto result = fabric->LoadResource(&system, exactNode, device);
 
             ResourceInfo info;
             info.resource = result;

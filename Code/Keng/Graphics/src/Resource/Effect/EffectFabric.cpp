@@ -5,12 +5,6 @@
 
 namespace keng::graphics
 {
-    EffectFabric::EffectFabric(core::Ptr<Device> device) :
-        m_device(device) {
-    }
-
-    EffectFabric::~EffectFabric() = default;
-
     std::string_view EffectFabric::GetNodeName() const {
         return "effect";
     }
@@ -19,8 +13,12 @@ namespace keng::graphics
         return "Effect";
     }
 
-    core::Ptr<resource::IResource> EffectFabric::LoadResource(resource::IResourceSystem* resourceSystem, core::Ptr<IXmlNode> node) const {
+    core::Ptr<resource::IResource> EffectFabric::LoadResource(resource::IResourceSystem* resourceSystem,
+        const core::Ptr<IXmlNode>& node, const core::Ptr<resource::IDevice>& abstractDevice) const {
         return CallAndRethrowM + [&] {
+            edt::ThrowIfFailed(abstractDevice != nullptr, "Can't create effect without device");
+            auto device = std::dynamic_pointer_cast<Device>(abstractDevice);
+
             bool anyShader = false;
             auto result = core::Ptr<Effect>::MakeInstance();
 
@@ -29,7 +27,7 @@ namespace keng::graphics
             {
                 auto vsNode = node->FindFirstNode("vertex_shader");
                 if (vsNode != nullptr) {
-                    result->vs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Vertex>>(resourceSystem->GetResource(vsNode->GetValue()));
+                    result->vs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Vertex>>(resourceSystem->GetResource(vsNode->GetValue(), device));
                     anyShader = true;
                 }
             }
@@ -37,13 +35,13 @@ namespace keng::graphics
             {
                 auto vsNode = node->FindFirstNode("fragment_shader");
                 if (vsNode != nullptr) {
-                    result->fs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Pixel>>(resourceSystem->GetResource(vsNode->GetValue()));
+                    result->fs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Pixel>>(resourceSystem->GetResource(vsNode->GetValue(), device));
                     anyShader = true;
                 }
             }
 
             edt::ThrowIfFailed(anyShader, "Invalid effect file (0 shaders)");
-            result->device = m_device;
+            result->device = device;
             return result;
         };
     }

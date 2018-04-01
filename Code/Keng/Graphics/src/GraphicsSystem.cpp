@@ -107,10 +107,11 @@ namespace keng::graphics
             uint32_t w, h;
             window->GetClientSize(&w, &h);
 
-            {// Initialize swapchain
+            {// Create window render target
                 WindowRenderTargetParameters window_rt_params;
                 window_rt_params.swapChain.format = FragmentFormat::R8_G8_B8_A8_UNORM;
                 window_rt_params.swapChain.window = window;
+                window_rt_params.swapChain.buffers = 2;
                 m_windowRT = CreateWindowRenderTarget(window_rt_params);
             }
 
@@ -127,7 +128,7 @@ namespace keng::graphics
             auto resourceSystem = m_app->GetSystem<resource::IResourceSystem>();
 
             {// Register resource fabrics
-                ResourceFabricRegisterer fabricRegisterer(this);
+                ResourceFabricRegisterer fabricRegisterer;
                 fabricRegisterer.Register(resourceSystem);
             }
 
