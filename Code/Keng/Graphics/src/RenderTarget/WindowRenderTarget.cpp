@@ -21,7 +21,7 @@ namespace keng::graphics
         m_swapChain = core::Ptr<SwapChain>::MakeInstance(device, scp);
     }
 
-    void WindowRenderTarget::Activate(const core::Ptr<IDepthStencil>& depthStencil) {
+    void WindowRenderTarget::AssignToPipeline(const core::Ptr<IDepthStencil>& depthStencil) {
         auto rtv = std::dynamic_pointer_cast<TextureView<ResourceViewType::RenderTarget>>(GetRenderTargetView());
         assert(rtv);
         core::Ptr<TextureView<ResourceViewType::DepthStencil>> dsv;
@@ -33,7 +33,7 @@ namespace keng::graphics
         m_device->SetRenderTarget(*rtv, dsv.Get());
     }
 
-    void WindowRenderTarget::ClearRenderTarget(const float(&flatColor)[4]) {
+    void WindowRenderTarget::Clear(const float(&flatColor)[4]) {
         auto rtv = std::dynamic_pointer_cast<TextureView<ResourceViewType::RenderTarget>>(GetRenderTargetView());
         assert(rtv);
         m_device->GetContext()->ClearRenderTargetView(rtv->GetView(), flatColor);

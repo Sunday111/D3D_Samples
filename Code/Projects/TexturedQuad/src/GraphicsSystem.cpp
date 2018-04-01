@@ -88,9 +88,9 @@ namespace textured_quad_sample
                     cbAssignParams.stride = sizeof(CB);
                     cbAssignParams.shaderType = ShaderType::Vertex;
 
-                    m_textureRT->ClearRenderTarget(clearColor);
+                    m_textureRT->Clear(clearColor);
                     m_depthStencil->Clear(DepthStencilClearFlags::ClearDepth | DepthStencilClearFlags::ClearStencil, 1.0f, 0);
-                    m_textureRT->Activate(m_depthStencil);
+                    m_textureRT->AssignToPipeline(m_depthStencil);
                     m_effect->AssignToPipeline();
                     m_vertexBuffer->AssignToPipeline(vbAssignParams);
                     m_device->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
