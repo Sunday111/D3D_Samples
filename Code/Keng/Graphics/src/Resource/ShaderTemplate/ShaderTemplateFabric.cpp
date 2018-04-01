@@ -6,6 +6,18 @@
 
 namespace keng::graphics
 {
+    namespace
+    {
+        struct Test
+        {
+            void serialize(yasli::Archive& ar) {
+                ar(a, "a", "a");
+            }
+
+            int a = 10;
+        };
+    }
+
     static ShaderType ParseShaderType(std::string_view str) {
         return CallAndRethrowM + [&] {
             if (str == "Vertex") return ShaderType::Vertex;
