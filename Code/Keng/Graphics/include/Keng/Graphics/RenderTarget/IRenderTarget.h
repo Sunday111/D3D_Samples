@@ -14,7 +14,6 @@ namespace keng::graphics
     public:
         virtual void AssignToPipeline(const core::Ptr<IDepthStencil>& depthStencil) = 0;
         virtual void Clear(const float(&flatColor)[4]) = 0;
-        virtual core::Ptr<ITextureView> GetRenderTargetView() = 0;
         virtual ~IRenderTarget() = default;
     };
 }

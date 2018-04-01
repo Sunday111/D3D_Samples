@@ -4,7 +4,6 @@
 #include "Keng/WindowSystem/IWindowListener.h"
 
 #include "Keng/Graphics/Device.h"
-#include "Keng/Graphics/ISwapChain.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "IGraphicsListener.h"
 
@@ -35,6 +34,8 @@ namespace keng::graphics
     class ITextureRenderTarget;
     class DepthStencilParameters;
     class IDepthStencil;
+    class SwapChainParameters;
+    class ISwapChain;
 
     class IGraphicsSystem :
         public core::ISystem

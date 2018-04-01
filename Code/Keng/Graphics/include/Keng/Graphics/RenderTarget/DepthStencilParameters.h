@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Keng/Graphics/FragmentFormat.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 
 namespace keng::graphics

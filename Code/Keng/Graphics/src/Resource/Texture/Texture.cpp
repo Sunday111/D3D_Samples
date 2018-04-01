@@ -95,10 +95,10 @@ namespace keng::graphics
     core::Ptr<ITextureView> Texture::GetView(ResourceViewType viewType, FragmentFormat format) {
         auto device = m_device->GetDevice();
         switch (viewType) {
-        case ResourceViewType::RenderTarget: return GetView<ResourceViewType::RenderTarget>(device.Get(), format);
-        case ResourceViewType::DepthStencil: return GetView<ResourceViewType::DepthStencil>(device.Get(), format);
-        case ResourceViewType::ShaderResource: return GetView<ResourceViewType::ShaderResource>(device.Get(), format);
-        case ResourceViewType::RandomAccess: return GetView<ResourceViewType::RandomAccess>(device.Get(), format);
+        case ResourceViewType::RenderTarget: return GetView<ResourceViewType::RenderTarget>(format);
+        case ResourceViewType::DepthStencil: return GetView<ResourceViewType::DepthStencil>(format);
+        case ResourceViewType::ShaderResource: return GetView<ResourceViewType::ShaderResource>(format);
+        case ResourceViewType::RandomAccess: return GetView<ResourceViewType::RandomAccess>(format);
         default:
             break;
         }
@@ -107,7 +107,7 @@ namespace keng::graphics
     }
 
     void Texture::AssignToPipeline(ShaderType shaderType, size_t slot) {
-        auto srv = GetView<ResourceViewType::ShaderResource>(m_device->GetDevice().Get(), GetFormat());
+        auto srv = GetView<ResourceViewType::ShaderResource>();
         m_device->SetShaderResource(static_cast<uint32_t>(slot), (d3d_tools::ShaderType)shaderType, srv->GetView());
     }
 

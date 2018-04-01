@@ -66,7 +66,7 @@ namespace textured_quad_sample
                 };
 
                 static float angle = 0.f;
-                constexpr float delta_angle = 0.001f;
+                constexpr float delta_angle = 0.002f;
                 angle += delta_angle;
 
                 d3d_tools::Annotate(m_device.Get(), L"Move triangle", [&]() {
@@ -75,6 +75,7 @@ namespace textured_quad_sample
                     auto cbView = mapper.GetTypedView<CB>();
                     edt::geom::Vector<float, 3> t{};
                     t.rx() = std::sin(angle);
+                    t.ry() = std::sin(angle);
                     cbView[0].transform = MakeTranslationMatrix(t);
                 });
 

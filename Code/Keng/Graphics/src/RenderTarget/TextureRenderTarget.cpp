@@ -19,7 +19,7 @@ namespace keng::graphics
 
     void TextureRenderTarget::AssignToPipeline(const core::Ptr<IDepthStencil>& depthStencil) {
         CallAndRethrowM + [&] {
-            auto rtv = m_texture->GetView<ResourceViewType::RenderTarget>(m_device->GetDevice().Get(), m_texture->GetFormat());
+            auto rtv = m_texture->GetView<ResourceViewType::RenderTarget>();
             core::Ptr<TextureView<ResourceViewType::DepthStencil>> dsv;
             if (depthStencil) {
                 auto castedDepthStencil = std::dynamic_pointer_cast<DepthStencil>(depthStencil);
@@ -32,14 +32,8 @@ namespace keng::graphics
 
     void TextureRenderTarget::Clear(const float(&flatColor)[4]) {
         CallAndRethrowM + [&] {
-            auto rtv = m_texture->GetView<ResourceViewType::RenderTarget>(m_device->GetDevice().Get(), m_texture->GetFormat());
+            auto rtv = m_texture->GetView<ResourceViewType::RenderTarget>();
             m_device->GetContext()->ClearRenderTargetView(rtv->GetView(), flatColor);
-        };
-    }
-
-    core::Ptr<ITextureView> TextureRenderTarget::GetRenderTargetView() {
-        return CallAndRethrowM + [&] {
-            return m_texture->GetView<ResourceViewType::RenderTarget>(m_device->GetDevice().Get(), m_texture->GetFormat());
         };
     }
 

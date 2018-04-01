@@ -11,19 +11,11 @@ namespace keng::graphics
     WindowRenderTarget::WindowRenderTarget(Device& device, const WindowRenderTargetParameters& params)
     {
         m_device = &device;
-        uint32_t w, h;
-        params.window->GetClientSize(&w, &h);
-        SwapChainParameters scp{};
-        scp.width = w;
-        scp.height = h;
-        scp.window = params.window;
-        scp.format = params.format;
-        m_swapChain = core::Ptr<SwapChain>::MakeInstance(device, scp);
+        m_swapChain = core::Ptr<SwapChain>::MakeInstance(device, params.swapChain);
     }
 
     void WindowRenderTarget::AssignToPipeline(const core::Ptr<IDepthStencil>& depthStencil) {
-        auto rtv = std::dynamic_pointer_cast<TextureView<ResourceViewType::RenderTarget>>(GetRenderTargetView());
-        assert(rtv);
+        auto rtv = m_swapChain->GetCurrentTexture()->GetView<ResourceViewType::RenderTarget>();
         core::Ptr<TextureView<ResourceViewType::DepthStencil>> dsv;
         if (depthStencil) {
             auto castedDepthStencil = std::dynamic_pointer_cast<DepthStencil>(depthStencil);
@@ -34,19 +26,14 @@ namespace keng::graphics
     }
 
     void WindowRenderTarget::Clear(const float(&flatColor)[4]) {
-        auto rtv = std::dynamic_pointer_cast<TextureView<ResourceViewType::RenderTarget>>(GetRenderTargetView());
-        assert(rtv);
+        auto rtv = m_swapChain->GetCurrentTexture()->GetView<ResourceViewType::RenderTarget>();
         m_device->GetContext()->ClearRenderTargetView(rtv->GetView(), flatColor);
     }
 
-    core::Ptr<ITextureView> WindowRenderTarget::GetRenderTargetView() {
-        return m_swapChain->GetBackBufferView();
-    }
-
-    void WindowRenderTarget::CopyFrom(const core::Ptr<ITexture>& abstract, uint32_t backBufferIndex) {
+    void WindowRenderTarget::CopyFrom(const core::Ptr<ITexture>& abstract) {
         CallAndRethrowM + [&] {
             auto from = std::static_pointer_cast<Texture>(abstract);
-            m_swapChain->CopyFromTexture(from, backBufferIndex);
+            m_swapChain->CopyFromTexture(from);
         };
     }
 

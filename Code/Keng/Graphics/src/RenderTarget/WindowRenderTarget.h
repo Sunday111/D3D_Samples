@@ -15,8 +15,7 @@ namespace keng::graphics
         WindowRenderTarget(Device& device, const WindowRenderTargetParameters& params);
         virtual void AssignToPipeline(const core::Ptr<IDepthStencil>& depthStencil) override;
         virtual void Clear(const float(&flatColor)[4]) override;
-        virtual core::Ptr<ITextureView> GetRenderTargetView() override;
-        virtual void CopyFrom(const core::Ptr<ITexture>&, uint32_t backBufferIndex) override;
+        virtual void CopyFrom(const core::Ptr<ITexture>&) override;
         virtual void Present() override;
 
     private:

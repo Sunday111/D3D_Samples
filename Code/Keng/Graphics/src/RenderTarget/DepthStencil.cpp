@@ -9,7 +9,7 @@ namespace keng::graphics
         CallAndRethrowM + [&] {
             m_device = &device;
             m_texture = std::dynamic_pointer_cast<Texture>(p.texture);
-            m_dsv = m_texture->GetView<d3d_tools::ResourceViewType::DepthStencil>(m_device->GetDevice().Get(), p.format);
+            m_dsv = m_texture->GetView<d3d_tools::ResourceViewType::DepthStencil>(p.format);
         };
     }
     DepthStencil::~DepthStencil() = default;

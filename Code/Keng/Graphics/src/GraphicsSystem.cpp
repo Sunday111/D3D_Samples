@@ -16,10 +16,13 @@
 #include "RenderTarget/TextureRenderTarget.h"
 #include "Keng/Graphics/RenderTarget/DepthStencilParameters.h"
 #include "RenderTarget/DepthStencil.h"
+#include "Keng/Graphics/RenderTarget/DepthStencilParameters.h"
+#include "RenderTarget/DepthStencil.h"
+#include "Keng/Graphics/RenderTarget/SwapChainParameters.h"
+#include "RenderTarget/SwapChain.h"
 
 #include "EverydayTools/Geom/Vector.h"
 #include "DeviceBuffer.h"
-#include "SwapChain.h"
 
 #include <algorithm>
 #include "Xml.h"
@@ -106,8 +109,8 @@ namespace keng::graphics
 
             {// Initialize swapchain
                 WindowRenderTargetParameters window_rt_params;
-                window_rt_params.format = FragmentFormat::R8_G8_B8_A8_UNORM;
-                window_rt_params.window = window;
+                window_rt_params.swapChain.format = FragmentFormat::R8_G8_B8_A8_UNORM;
+                window_rt_params.swapChain.window = window;
                 m_windowRT = CreateWindowRenderTarget(window_rt_params);
             }
 

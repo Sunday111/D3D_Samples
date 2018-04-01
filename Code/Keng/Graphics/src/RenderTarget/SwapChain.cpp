@@ -3,6 +3,7 @@
 #include "Keng/WindowSystem/IWindow.h"
 #include "D3D_11/EnumConverter.h"
 #include "Resource/Texture/Texture.h"
+#include "Keng/Graphics/RenderTarget/SwapChainParameters.h"
 
 namespace keng::graphics
 {
@@ -13,7 +14,7 @@ namespace keng::graphics
             WinAPI<char>::ThrowIfError(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(factory.Receive())));
 
             DXGI_SWAP_CHAIN_DESC scd{};
-            scd.BufferCount = 1;                                                                    // one back buffer
+            scd.BufferCount = static_cast<unsigned>(params.buffers);                                // one back buffer
             scd.BufferDesc.Format = d3d::ConvertTextureFormat(params.format);
             scd.BufferDesc.Width = static_cast<unsigned>(params.width);
             scd.BufferDesc.Height = static_cast<unsigned>(params.height);
@@ -32,22 +33,20 @@ namespace keng::graphics
         }
     }
 
-    core::Ptr<ITextureView> SwapChain::GetBackBufferView() {
-        auto backbuffer = std::static_pointer_cast<Texture>(GetBackBuffer());
-        return backbuffer->GetView<ResourceViewType::RenderTarget>(m_device->GetDevice().Get(), backbuffer->GetFormat());
-    }
-
     void SwapChain::Present() {
         m_swapchain->Present(0, 0);
     }
 
-    core::Ptr<ITexture> SwapChain::GetBackBuffer(uint32_t index) {
-        return CallAndRethrowM + [&] {
-            return core::Ptr<Texture>::MakeInstance(*m_device, GetTexture(index));
-        };
+    core::Ptr<Texture> SwapChain::GetCurrentTexture() {
+        if (!m_currentTexture) {
+            auto rawTexture = GetBackBuffer(0);
+            m_currentTexture = core::Ptr<Texture>::MakeInstance(*m_device, rawTexture);
+        }
+
+        return m_currentTexture;
     }
 
-    ComPtr<ID3D11Texture2D> SwapChain::GetTexture(uint32_t index) {
+    ComPtr<ID3D11Texture2D> SwapChain::GetBackBuffer(uint32_t index) {
         return CallAndRethrowM + [&] {
             ComPtr<ID3D11Texture2D> backBuffer;
             WinAPI<char>::ThrowIfError(m_swapchain->GetBuffer(index, __uuidof(ID3D11Texture2D), (void**)backBuffer.Receive()));
@@ -56,9 +55,9 @@ namespace keng::graphics
         };
     }
 
-    void SwapChain::CopyFromTexture(const core::Ptr<Texture>& texture, uint32_t index) {
+    void SwapChain::CopyFromTexture(const core::Ptr<Texture>& texture) {
         return CallAndRethrowM + [&] {
-            texture->CopyTo(GetTexture(index));
+            texture->CopyTo(GetCurrentTexture());
         };
     }
 }

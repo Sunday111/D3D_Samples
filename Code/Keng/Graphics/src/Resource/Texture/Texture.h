@@ -21,8 +21,14 @@ namespace keng::graphics
         virtual void CopyTo(core::Ptr<ITexture>) override;
         void CopyTo(const ComPtr<ID3D11Texture2D>& to);
 
+
         template<ResourceViewType type>
-        core::Ptr<TextureView<type>> GetView(ID3D11Device* device, FragmentFormat format) {
+        core::Ptr<TextureView<type>> GetView() {
+            return GetView<type>(GetFormat());
+        }
+
+        template<ResourceViewType type>
+        core::Ptr<TextureView<type>> GetView(FragmentFormat format) {
             return CallAndRethrowM + [&]() {
                 auto& views = GetTypedViews<type>();
                 auto it = std::lower_bound(views.begin(), views.end(), format,
@@ -33,7 +39,7 @@ namespace keng::graphics
                     return *it;
                 }
 
-                auto result = core::Ptr<TextureView<type>>::MakeInstance(device, m_texture.Get(), (d3d_tools::TextureFormat)format);
+                auto result = core::Ptr<TextureView<type>>::MakeInstance(m_device->GetDevice().Get(), m_texture.Get(), (d3d_tools::TextureFormat)format);
                 views.insert(it, result);
                 return result;
             };

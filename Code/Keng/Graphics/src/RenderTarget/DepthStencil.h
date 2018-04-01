@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Keng/Graphics/RenderTarget/IDepthStencil.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 

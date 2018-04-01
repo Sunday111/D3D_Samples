@@ -1,4 +1,4 @@
-#include "Keng/Graphics/FragmentFormat.h"
+#include "Keng/Graphics/RenderTarget/SwapChainParameters.h"
 
 namespace keng::window_system
 {
@@ -10,7 +10,6 @@ namespace keng::graphics
     class WindowRenderTargetParameters
     {
     public:
-        FragmentFormat format = FragmentFormat::R8_G8_B8_A8_UNORM;
-        window_system::IWindow* window;
+        SwapChainParameters swapChain;
     };
 }
