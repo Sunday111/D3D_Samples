@@ -19,9 +19,9 @@ namespace keng::resource
         static const char* GetGUID() { return "8BA11029-9DE9-473C-925A-5FD0D7B36141"; }
 
         virtual ResourcePtr GetResource(std::string_view filename) = 0;
-        virtual ResourcePtr GetResource(std::string_view filename, const core::Ptr<IDevice>& deivce) = 0;
+        virtual ResourcePtr GetResource(std::string_view filename, const DevicePtr& deivce) = 0;
         virtual void AddRuntimeResource(const ResourcePtr& resource) = 0;
-        virtual void AddRuntimeResource(const ResourcePtr& resource, const core::Ptr<IDevice>& deivce) = 0;
+        virtual void AddRuntimeResource(const ResourcePtr& resource, const DevicePtr& deivce) = 0;
         virtual void RegisterResourceFabric(const ResourceFabricPtr& fabric) = 0;
         virtual void UnregisterFabric(const ResourceFabricPtr& fabric) = 0;
         virtual ~IResourceSystem() = default;

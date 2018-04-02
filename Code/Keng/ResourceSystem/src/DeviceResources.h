@@ -4,9 +4,9 @@
 #include <string_view>
 #include <unordered_map>
 
+#include "Keng/ResourceSystem/FwdDecl.h"
 #include "Keng/Base/Serialization/Serialization.h"
 #include "Keng/Core/IRefCountObject.h"
-#include "Keng/Core/Ptr.h"
 
 namespace yasli
 {
@@ -35,22 +35,22 @@ namespace keng::resource
         bool ShouldBeReleased(float timeNow);
 
         ResourceParameters params;
-        core::Ptr<IResource> resource;
+        ResourcePtr resource;
         float lastTouchMs = -1.f;
     };
 
     class DeviceResources
     {
     public:
-        DeviceResources(const core::Ptr<IDevice>& devicePtr);
+        DeviceResources(const DevicePtr& devicePtr);
 
-        core::Ptr<IResource> GetResource(ResourceSystem& system, std::string_view filename);
-        core::Ptr<IResource> InsertResource(std::string&& name, ResourceInfo&& info);
-        void AddRuntimeResource(ResourceSystem& system, const core::Ptr<IResource>& resource);
+        ResourcePtr GetResource(ResourceSystem& system, std::string_view filename);
+        ResourcePtr InsertResource(std::string&& name, ResourceInfo&& info);
+        void AddRuntimeResource(ResourceSystem& system, const ResourcePtr& resource);
         void Update(float currentTime);
         std::string GenerateRuntimeResourceName();
 
-        core::Ptr<IDevice> device;
+        DevicePtr device;
         std::unordered_map<std::string, ResourceInfo> resources;
         size_t m_nextRuntimeResourceIndex = 0;
     };

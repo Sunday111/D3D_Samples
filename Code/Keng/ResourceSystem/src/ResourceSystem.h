@@ -37,13 +37,13 @@ namespace keng::resource
 
         // IResource system
         virtual ResourcePtr GetResource(std::string_view filename) override;
-        virtual ResourcePtr GetResource(std::string_view filename, const core::Ptr<IDevice>& device) override;
+        virtual ResourcePtr GetResource(std::string_view filename, const DevicePtr& device) override;
         virtual void AddRuntimeResource(const ResourcePtr& resource) override;
-        virtual void AddRuntimeResource(const ResourcePtr& resource, const core::Ptr<IDevice>& device) override;
+        virtual void AddRuntimeResource(const ResourcePtr& resource, const DevicePtr& device) override;
         virtual void RegisterResourceFabric(const ResourceFabricPtr& fabric) override;
         virtual void UnregisterFabric(const ResourceFabricPtr& fabric) override;
         ResourceFabricPtr GetFabric(const std::string& resourceType);
-        DeviceResources& GetDeviceResources(const core::Ptr<IDevice>& device);
+        DeviceResources& GetDeviceResources(const DevicePtr& device);
 
     protected:
         SystemParams ReadDefaultParams();

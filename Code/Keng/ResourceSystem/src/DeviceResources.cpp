@@ -21,7 +21,7 @@ namespace keng::resource
 
         struct ResourceParseInfo
         {
-            ResourceParseInfo(ResourceSystem& system_, const core::Ptr<IDevice>& device_) :
+            ResourceParseInfo(ResourceSystem& system_, const DevicePtr& device_) :
                 system(system_),
                 device(device_)
             {
@@ -29,7 +29,7 @@ namespace keng::resource
             }
 
             ResourceSystem& system;
-            core::Ptr<IDevice> device;
+            DevicePtr device;
             ResourcePtr resource;
             std::string type;
             void serialize(Archive& ar) {
@@ -41,7 +41,7 @@ namespace keng::resource
 
         struct FileParseInfo
         {
-            FileParseInfo(ResourceSystem& system, const core::Ptr<IDevice>& device) :
+            FileParseInfo(ResourceSystem& system, const DevicePtr& device) :
                 resourceParseInfo(system, device)
             {
             }
@@ -84,7 +84,7 @@ namespace keng::resource
         return false;
     }
 
-    DeviceResources::DeviceResources(const core::Ptr<IDevice>& devicePtr) :
+    DeviceResources::DeviceResources(const DevicePtr& devicePtr) :
         device(devicePtr) {
 
     }
@@ -134,7 +134,7 @@ namespace keng::resource
         return stream.str();
     }
 
-    void DeviceResources::AddRuntimeResource(ResourceSystem& system, const core::Ptr<IResource>& resource) {
+    void DeviceResources::AddRuntimeResource(ResourceSystem& system, const ResourcePtr& resource) {
         CallAndRethrowM + [&] {
             ResourceInfo info {};
             info.resource = resource;

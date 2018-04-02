@@ -53,11 +53,11 @@ namespace keng::resource
         AddRuntimeResource(resource, nullptr);
     }
 
-    ResourcePtr ResourceSystem::GetResource(std::string_view filename, const core::Ptr<IDevice>& device) {
+    ResourcePtr ResourceSystem::GetResource(std::string_view filename, const DevicePtr& device) {
         return GetDeviceResources(device).GetResource(*this, filename);
     }
 
-    void ResourceSystem::AddRuntimeResource(const ResourcePtr& resource, const core::Ptr<IDevice>& device) {
+    void ResourceSystem::AddRuntimeResource(const ResourcePtr& resource, const DevicePtr& device) {
         GetDeviceResources(device).AddRuntimeResource(*this, resource);
     }
 
@@ -87,9 +87,9 @@ namespace keng::resource
         };
     }
 
-    DeviceResources& ResourceSystem::GetDeviceResources(const core::Ptr<IDevice>& device) {
+    DeviceResources& ResourceSystem::GetDeviceResources(const DevicePtr& device) {
         auto it = std::lower_bound(m_devicesResources.begin(), m_devicesResources.end(), device,
-            [](const DeviceResourcesPtr& pDeviceResources, const core::Ptr<IDevice>& device) {
+            [](const DeviceResourcesPtr& pDeviceResources, const DevicePtr& device) {
             return device < pDeviceResources->device;
         });
 
