@@ -50,6 +50,7 @@ namespace keng::graphics
         ISamplerPtr CreateSampler(const SamplerParameters& params);
         void SetTopology(PrimitiveTopology topo);
         void Draw(uint32_t vertices, uint32_t offset);
+        void SetViewport(const ViewportParameters&);
 
     protected:
         core::Ptr<Device> m_device;

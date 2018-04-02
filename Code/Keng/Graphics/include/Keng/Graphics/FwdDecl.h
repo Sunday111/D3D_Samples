@@ -49,4 +49,5 @@ namespace keng::graphics
     using ISamplerPtr = core::Ptr<ISampler>;
 
     class SamplerParameters;
+    class ViewportParameters;
 }

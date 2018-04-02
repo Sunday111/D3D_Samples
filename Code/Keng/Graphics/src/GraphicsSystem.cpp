@@ -24,6 +24,7 @@
 #include "RenderTarget/DepthStencil.h"
 #include "Keng/Graphics/RenderTarget/SwapChainParameters.h"
 #include "RenderTarget/SwapChain.h"
+#include "Keng/Graphics/ViewportParameters.h"
 
 #include "Sampler.h"
 
@@ -155,6 +156,15 @@ namespace keng::graphics
 
     void GraphicsSystem::Draw(uint32_t vertices, uint32_t offset) {
         m_device->GetContext()->Draw(vertices, offset);
+    }
+
+    void GraphicsSystem::SetViewport(const ViewportParameters& p) {
+        D3D11_VIEWPORT v[1]{};
+        v[0].TopLeftX = p.Position.x();
+        v[0].TopLeftY = p.Position.y();
+        v[0].Width = p.Size.x();
+        v[0].Height = p.Size.y();
+        m_device->SetViewports(edt::MakeArrayView(v));
     }
 
     bool GraphicsSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {

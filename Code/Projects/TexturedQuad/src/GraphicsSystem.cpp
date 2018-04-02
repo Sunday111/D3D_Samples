@@ -15,6 +15,7 @@
 #include "Keng/Graphics/DeviceBufferMapper.h"
 #include "Keng/Graphics/SamplerParameters.h"
 #include "Keng/Graphics/ISampler.h"
+#include "Keng/Graphics/ViewportParameters.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
@@ -131,12 +132,12 @@ namespace textured_quad_sample
             window->GetClientSize(&w, &h);
 
             {// Initialize viewport
-                D3D11_VIEWPORT viewport[1]{};
-                viewport[0].TopLeftX = 0;
-                viewport[0].TopLeftY = 0;
-                viewport[0].Width = static_cast<float>(w);
-                viewport[0].Height = static_cast<float>(h);
-                m_device->SetViewports(edt::MakeArrayView(viewport));
+                ViewportParameters v{};
+                v.Position.rx() = 0.f;
+                v.Position.ry() = 0.f;
+                v.Size.rx() = static_cast<float>(w);
+                v.Size.ry() = static_cast<float>(h);
+                SetViewport(v);
             }
 
             {// Create window render target
