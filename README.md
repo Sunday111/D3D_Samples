@@ -12,6 +12,3 @@ cd example
 git submodule init
 git submodule update
 ```
- 
-TODO:
- - Consider using persistent device buffers
