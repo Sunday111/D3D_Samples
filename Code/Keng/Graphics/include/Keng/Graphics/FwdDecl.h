@@ -43,4 +43,5 @@ namespace keng::graphics
 
     class IGraphicsListener;
 
+    class TextureParameters;
 }

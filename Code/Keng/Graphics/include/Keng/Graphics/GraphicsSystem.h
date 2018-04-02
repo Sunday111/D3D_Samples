@@ -54,6 +54,7 @@ namespace keng::graphics
 
         IDeviceBufferPtr CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
         ISwapChainPtr CreateSwapChain(const SwapChainParameters& params);
+        ITexturePtr CreateTexture(const TextureParameters& params);
 
     protected:
         core::Ptr<Device> m_device;
@@ -61,7 +62,6 @@ namespace keng::graphics
         IDepthStencilPtr m_depthStencil;
 
     private:
-
         bool m_fullscreen = false;
         core::Application* m_app = nullptr;
         std::vector<std::string> m_dependencies;

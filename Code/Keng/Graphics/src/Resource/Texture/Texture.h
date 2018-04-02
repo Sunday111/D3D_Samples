@@ -11,8 +11,8 @@ namespace keng::graphics
         public core::RefCountImpl<ITexture>
     {
     public:
+        Texture(Device& device, const TextureParameters& params);
         Texture(Device& device, ComPtr<ID3D11Texture2D> texture);
-        Texture(Device& device, uint32_t w, uint32_t h, FragmentFormat format, d3d_tools::TextureFlags flags, void* initialData = nullptr);
 
         virtual void* GetNativeInterface() const override;
         virtual FragmentFormat GetFormat() const override;

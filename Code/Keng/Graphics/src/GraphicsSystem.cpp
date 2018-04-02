@@ -8,6 +8,7 @@
 #include "Keng/WindowSystem/IWindow.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 
+#include "keng/Graphics/Resource/TextureParameters.h"
 #include "Resource/Texture/Texture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "Resource/Effect/Effect.h"
@@ -140,14 +141,25 @@ namespace keng::graphics
 
             {// Create render target
                 TextureRenderTargetParameters texture_rt_params{};
-                texture_rt_params.renderTarget = TexturePtr::MakeInstance(*m_device, w, h, FragmentFormat::R8_G8_B8_A8_UNORM, d3d_tools::TextureFlags::RenderTarget | d3d_tools::TextureFlags::ShaderResource);
+                TextureParameters rtTextureParams {};
+                rtTextureParams.format = FragmentFormat::R8_G8_B8_A8_UNORM;
+                rtTextureParams.width = w;
+                rtTextureParams.height = h;
+                rtTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::RenderTarget;
+                texture_rt_params.renderTarget = CreateTexture(rtTextureParams);
                 m_textureRT = TextureRenderTargetPtr::MakeInstance(*m_device, texture_rt_params);
             }
             
             {// Create depth stencil
-                DepthStencilParameters depthStencilParams{};
+                DepthStencilParameters depthStencilParams {};
+                TextureParameters dsTextureParams {};
+                dsTextureParams.format = FragmentFormat::R24_G8_TYPELESS;
+                dsTextureParams.width = w;
+                dsTextureParams.height = h;
+                dsTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::DepthStencil;
+
                 depthStencilParams.format = FragmentFormat::D24_UNORM_S8_UINT;
-                depthStencilParams.texture = TexturePtr::MakeInstance(*m_device, w, h, FragmentFormat::R24_G8_TYPELESS, d3d_tools::TextureFlags::DepthStencil | d3d_tools::TextureFlags::ShaderResource);
+                depthStencilParams.texture = CreateTexture(dsTextureParams);
                 m_depthStencil = DepthStencilPtr::MakeInstance(*m_device, depthStencilParams);
             }
         };
@@ -177,6 +189,10 @@ namespace keng::graphics
 
     ISwapChainPtr GraphicsSystem::CreateSwapChain(const SwapChainParameters& params) {
         return SwapChainPtr::MakeInstance(*m_device, params);
+    }
+
+    ITexturePtr GraphicsSystem::CreateTexture(const TextureParameters& params) {
+        return TexturePtr::MakeInstance(*m_device, params);
     }
 
     bool GraphicsSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {

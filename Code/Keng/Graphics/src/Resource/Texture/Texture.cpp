@@ -2,38 +2,39 @@
 #include "Keng/Graphics/GraphicsSystem.h"
 #include "Keng/Graphics/Device.h"
 #include "D3D_11/EnumConverter.h"
+#include "Keng/Graphics/Resource/TextureParameters.h"
 
 namespace keng::graphics
 {
     namespace
     {
-        template<d3d_tools::TextureFlags flag>
-        static bool FlagIsSet(d3d_tools::TextureFlags flags) {
-            return (flags & flag) != d3d_tools::TextureFlags::None;
+        template<TextureUsage flag>
+        static bool FlagIsSet(TextureUsage flags) {
+            return (flags & flag) != TextureUsage::None;
         }
 
-        static UINT MakeBindFlags(d3d_tools::TextureFlags flags) {
+        static UINT MakeBindFlags(TextureUsage flags) {
             return CallAndRethrowM + [&] {
                 // Check for confilected flags:
-                if (FlagIsSet<d3d_tools::TextureFlags::RenderTarget>(flags) &&
-                    FlagIsSet<d3d_tools::TextureFlags::DepthStencil>(flags)) {
+                if (FlagIsSet<TextureUsage::RenderTarget>(flags) &&
+                    FlagIsSet<TextureUsage::DepthStencil>(flags)) {
                     throw std::runtime_error("Could not be render target and depth stencil at the same time");
                 }
                 UINT result = 0;
-                if (FlagIsSet<d3d_tools::TextureFlags::RenderTarget>(flags)) {
+                if (FlagIsSet<TextureUsage::RenderTarget>(flags)) {
                     result |= D3D11_BIND_RENDER_TARGET;
                 }
-                if (FlagIsSet<d3d_tools::TextureFlags::DepthStencil>(flags)) {
+                if (FlagIsSet<TextureUsage::DepthStencil>(flags)) {
                     result |= D3D11_BIND_DEPTH_STENCIL;
                 }
-                if (FlagIsSet<d3d_tools::TextureFlags::ShaderResource>(flags)) {
+                if (FlagIsSet<TextureUsage::ShaderResource>(flags)) {
                     result |= D3D11_BIND_SHADER_RESOURCE;
                 }
                 return result;
             };
         }
 
-        static D3D11_TEXTURE2D_DESC MakeTextureDescription(uint32_t w, uint32_t h, FragmentFormat format, d3d_tools::TextureFlags flags) {
+        static D3D11_TEXTURE2D_DESC MakeTextureDescription(uint32_t w, uint32_t h, FragmentFormat format, TextureUsage flags) {
             return CallAndRethrowM + [&] {
                 D3D11_TEXTURE2D_DESC d{};
                 d.Width = w;
@@ -54,30 +55,31 @@ namespace keng::graphics
         }
     }
 
-    Texture::Texture(Device& device, ComPtr<ID3D11Texture2D> texture) {
-        CallAndRethrowM + [&] {
-            edt::ThrowIfFailed(texture != nullptr, "trying tu initialize with null handle");
-            m_device = &device;
-            m_texture = texture;
-        };
-    }
-
-    Texture::Texture(Device& device, uint32_t w, uint32_t h, FragmentFormat format, d3d_tools::TextureFlags flags, void* initialData) {
+    Texture::Texture(Device& device, const TextureParameters& params) {
         m_device = &device;
         auto rawDevice = m_device->GetDevice();
 
         CallAndRethrowM + [&] {
-            auto desc = MakeTextureDescription(w, h, format, flags);
+            auto desc = MakeTextureDescription(params.width, params.height, params.format, params.usage);
             HRESULT hres = S_OK;
-            if (initialData) {
-                D3D11_SUBRESOURCE_DATA subresource{};
-                subresource.pSysMem = initialData;
-                subresource.SysMemPitch = static_cast<UINT>(w * ComputeBytesPerPixel(format));
+            if (params.data) {
+                D3D11_SUBRESOURCE_DATA subresource {};
+                subresource.pSysMem = params.data;
+                subresource.SysMemPitch = static_cast<UINT>(params.width * ComputeBytesPerPixel(params.format));
                 hres = rawDevice->CreateTexture2D(&desc, &subresource, m_texture.Receive());
-            } else {
+            }
+            else {
                 hres = rawDevice->CreateTexture2D(&desc, nullptr, m_texture.Receive());
             }
             WinAPI<char>::ThrowIfError(hres);
+        };
+    }
+
+    Texture::Texture(Device& device, ComPtr<ID3D11Texture2D> texture) {
+        CallAndRethrowM + [&] {
+            edt::ThrowIfFailed(texture != nullptr, "trying to initialize with null handle");
+            m_device = &device;
+            m_texture = texture;
         };
     }
 
