@@ -1,9 +1,8 @@
-#include "Keng/WindowSystem/CreateSystem.h"
 #include "WindowSystem.h"
 
-namespace keng::window_system
+extern "C"
 {
-    IWindowSystem* CreateSystem() {
-        return new WindowSystem();
+    void __declspec(dllexport) __cdecl CreateSystem(void** result) {
+        *result = new keng::window_system::WindowSystem();
     }
 }

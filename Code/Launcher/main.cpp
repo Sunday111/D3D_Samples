@@ -7,6 +7,27 @@
 #include <string>
 #include <sstream>
 
+#include "Keng/Core/Application.h"
+
+using SystemCreatorSignature = void(__cdecl*)(void** );
+
+int Run(SystemCreatorSignature createFn) {
+    using namespace keng;
+    using namespace core;
+
+    void* rawSystem = nullptr;
+    createFn(&rawSystem);
+
+    auto system = reinterpret_cast<ISystem*>(rawSystem);
+
+    Application app;
+    app.AddSystem(system);
+    app.Initialize();
+    app.Run();
+
+    return 0;
+}
+
 template<typename T>
 struct LocalFreeDeleter
 {
@@ -21,6 +42,8 @@ template<typename T>
 using WinLocalPtr = std::unique_ptr<T, LocalFreeDeleter<T>>;
 
 INT WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nCmdShow) {
+    UnusedVar(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+
     try {
         using WA = WinAPI<wchar_t>;
         return CallAndRethrowM + [&] {
@@ -61,11 +84,10 @@ INT WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nC
             auto module = WA::LoadLibrary_(libraryName.c_str());
             edt::ThrowIfFailed(module != nullptr, L"Failed to load library!");
 
-            using RunFunction = int(__cdecl*)(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int nCmdShow);
-            std::string_view runFunctionName = "RunApplication";
-            auto runFn = (RunFunction)GetProcAddress(module, runFunctionName.data());
+            std::string_view runFunctionName = "CreateSystem";
+            auto runFn = (SystemCreatorSignature)GetProcAddress(module, runFunctionName.data());
             edt::ThrowIfFailed(runFn, "Failed to get \"", runFunctionName, "\" function!");
-            return runFn(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+            return Run(runFn);
         };
     } catch (const std::exception& ex) {
         using WA = WinAPI<char>;

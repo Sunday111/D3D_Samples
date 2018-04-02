@@ -10,7 +10,7 @@ namespace keng::graphics
     class IGraphicsSystem : public core::ISystem
     {
     public:
-        static const char* GetGUID() { return "E6080ACE-E91E-4693-AFA5-5B6A0BB29A41"; }
+        static std::string_view SystemName() { return "KengGraphics"; }
         virtual IWindowRenderTargetPtr CreateWindowRenderTarget(const WindowRenderTargetParameters& params) = 0;
         virtual ITextureRenderTargetPtr CreateTextureRenderTarget(const TextureRenderTargetParameters& params) = 0;
         virtual IDepthStencilPtr CreateDepthStencil(const DepthStencilParameters& params) = 0;

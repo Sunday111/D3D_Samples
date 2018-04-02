@@ -88,8 +88,8 @@ namespace keng::graphics
     }
 
     GraphicsSystem::GraphicsSystem() {
-        m_dependencies.push_back(resource::IResourceSystem::GetGUID());
-        m_dependencies.push_back(window_system::IWindowSystem::GetGUID());
+        m_dependencies.emplace_back(resource::IResourceSystem::SystemName());
+        m_dependencies.emplace_back(window_system::IWindowSystem::SystemName());
     }
 
     GraphicsSystem::~GraphicsSystem() = default;
@@ -177,19 +177,19 @@ namespace keng::graphics
         return AnnotationPtr::MakeInstance(*m_device);
     }
 
-    bool GraphicsSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {
+    std::string_view GraphicsSystem::GetSystemName() const {
+        return SystemName();
+    }
+
+    bool GraphicsSystem::ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const {
         return CallAndRethrowM + [&]() -> bool {
-            for (auto& guid : m_dependencies) {
-                if (pfn(guid.data(), context)) {
+            for (auto& systemName : m_dependencies) {
+                if (pfn(systemName, context)) {
                     return true;
                 }
             }
 
             return false;
         };
-    }
-
-    const char* GraphicsSystem::GetSystemGUID() {
-        return GetGUID();
     }
 }

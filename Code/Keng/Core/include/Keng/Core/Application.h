@@ -56,6 +56,9 @@ namespace keng::core {
         void SetVSync(bool value);
 
     private:
+        void LoadDependency(std::string_view name);
+        void LoadDependencies();
+
         bool UpdateSystems() {
             return CallAndRethrowM + [&] {
                 bool finished = false;

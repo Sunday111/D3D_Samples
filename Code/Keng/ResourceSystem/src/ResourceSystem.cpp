@@ -128,19 +128,19 @@ namespace keng::resource
         };
     }
 
-    bool ResourceSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {
+    std::string_view ResourceSystem::GetSystemName() const {
+        return SystemName();
+    }
+
+    bool ResourceSystem::ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const {
         return CallAndRethrowM + [&]() -> bool {
-            for (auto& guid : m_dependencies) {
-                if (pfn(guid.data(), context)) {
+            for (auto& systemName : m_dependencies) {
+                if (pfn(systemName, context)) {
                     return true;
                 }
             }
 
             return false;
         };
-    }
-
-    const char* ResourceSystem::GetSystemGUID() {
-        return GetGUID();
     }
 }

@@ -20,8 +20,8 @@ namespace keng::graphics
         ~GraphicsSystem();
 
         // ISystem
-        virtual bool ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) override;
-        virtual const char* GetSystemGUID() override;
+        virtual std::string_view GetSystemName() const override;
+        virtual bool ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const override;
         virtual void Initialize(core::IApplication* app) override;
         virtual bool Update() override;
 

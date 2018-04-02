@@ -20,6 +20,7 @@ add_executable(${target_name} WIN32 ${target_sources})
 target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${target_name} PRIVATE EverydayTools)
 target_link_libraries(${target_name} PRIVATE WinWrappers)
+target_link_libraries(${target_name} PRIVATE KengCore)
 
 if(MSVC)
 	set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${target_name})

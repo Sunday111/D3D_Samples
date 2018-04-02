@@ -121,14 +121,14 @@ namespace textured_quad_sample
         };
     }
 
-    const char* SampleSystem::GetSystemGUID() {
-        return "B6668257-A6E7-4754-AA1E-BA7673B3B756";
+    std::string_view SampleSystem::GetSystemName() const {
+        return "TexturedQuad";
     }
 
-    bool SampleSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {
-        if (pfn(keng::graphics::IGraphicsSystem::GetGUID(), context)) return true;
-        if (pfn(keng::resource::IResourceSystem::GetGUID(), context)) return true;
-        if (pfn(keng::window_system::IWindowSystem::GetGUID(), context)) return true;
+    bool SampleSystem::ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const {
+        if (pfn(keng::graphics::IGraphicsSystem::SystemName(), context)) return true;
+        if (pfn(keng::resource::IResourceSystem::SystemName(), context)) return true;
+        if (pfn(keng::window_system::IWindowSystem::SystemName(), context)) return true;
         return false;
     }
 

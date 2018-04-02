@@ -1,9 +1,8 @@
-#include "Keng/Graphics/CreateSystem.h"
 #include "GraphicsSystem.h"
 
-namespace keng::graphics
+extern "C"
 {
-    KENG_GRAPHICS_SYSTEM_API IGraphicsSystem* CreateSystem() {
-        return new GraphicsSystem();
+    void __declspec(dllexport) __cdecl CreateSystem(void** result) {
+        *result = new keng::graphics::GraphicsSystem();
     }
 }

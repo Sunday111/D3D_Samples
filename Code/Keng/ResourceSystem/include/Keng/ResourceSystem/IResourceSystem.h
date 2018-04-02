@@ -16,8 +16,7 @@ namespace keng::resource
         public core::ISystem
     {
     public:
-        static const char* GetGUID() { return "8BA11029-9DE9-473C-925A-5FD0D7B36141"; }
-
+        static std::string_view SystemName() { return "KengResourceSystem"; }
         virtual IResourcePtr GetResource(std::string_view filename) = 0;
         virtual IResourcePtr GetResource(std::string_view filename, const IDevicePtr& deivce) = 0;
         virtual void AddRuntimeResource(const IResourcePtr& resource) = 0;

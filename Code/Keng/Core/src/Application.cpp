@@ -3,15 +3,67 @@
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "WinWrappers/WinWrappers.h"
 #include <algorithm>
+#include "WinWrappers/WinWrappers.h"
 
 namespace keng::core
 {
+    using SystemCreatorSignature = void(__cdecl*)(void**);
 
     void Application::SetVSync(bool value) {
         m_vSync = value;
     }
 
+    void Application::LoadDependency(std::string_view name) {
+        using WA = WinAPI<char>;
+        auto module = WA::LoadLibrary_(name.data());
+        edt::ThrowIfFailed(module != nullptr, L"Failed to load library!");
+
+        std::string_view runFunctionName = "CreateSystem";
+        auto createFn = (SystemCreatorSignature)GetProcAddress(module, runFunctionName.data());
+        edt::ThrowIfFailed(createFn, "Failed to get \"", runFunctionName, "\" function!");
+
+        void* rawSystem = nullptr;
+        createFn(&rawSystem);
+
+        std::unique_ptr<ISystem> system;
+        system.reset(reinterpret_cast<ISystem*>(rawSystem));
+        m_systems.push_back(std::move(system));
+    }
+
+    void Application::LoadDependencies() {
+        bool addedNewSystem;
+
+        do
+        {
+            addedNewSystem = false;
+            for (auto& system : m_systems) {
+                addedNewSystem = system->ForEachSystemDependency([&](std::string_view dependencyName) {
+                    bool alreadyHere = false;
+                    for (auto& loadedSystem : m_systems) {
+                        if (loadedSystem->GetSystemName() == dependencyName) {
+                            alreadyHere = true;
+                            break;
+                        }
+                    }
+
+                    if (alreadyHere) {
+                        return false;
+                    }
+
+                    LoadDependency(dependencyName);
+                    return true;
+                });
+
+                if (addedNewSystem) {
+                    break;
+                }
+            }
+        } while (addedNewSystem);
+    }
+
     void Application::Initialize() {
+        LoadDependencies();
+
         std::vector<ISystem*> walkQueue;
         std::vector<ISystem*> initQueue;
 
@@ -22,19 +74,19 @@ namespace keng::core
         std::stable_sort(initQueue.begin(), initQueue.end(), [&](ISystem* a, ISystem* b) {
             walkQueue.clear();
 
-            auto a_guid = std::string_view(a->GetSystemGUID());
+            auto a_name = a->GetSystemName();
             bool dependencyFound = false;
             walkQueue.push_back(b);
             while (!dependencyFound && !walkQueue.empty()) {
                 auto current = walkQueue.back();
                 walkQueue.pop_back();
-                dependencyFound = current->ForEachSystemDependency([&](const char* guid) {
-                    if (a_guid == std::string_view(guid)) {
+                dependencyFound = current->ForEachSystemDependency([&](std::string_view name) {
+                    if (a_name == name) {
                         return true;
                     }
 
-                    auto sysIt = std::find_if(m_systems.begin(), m_systems.end(), [guid](const std::unique_ptr<ISystem>& sys) {
-                        return std::string_view(sys->GetSystemGUID()) == std::string_view(guid);
+                    auto sysIt = std::find_if(m_systems.begin(), m_systems.end(), [name](const std::unique_ptr<ISystem>& sys) {
+                        return std::string_view(sys->GetSystemName()) == name;
                     });
                     edt::ThrowIfFailed(sysIt != m_systems.end(), "Found dependency that was not registered as system");
                     walkQueue.push_back(sysIt->get());

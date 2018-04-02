@@ -1,8 +1,8 @@
-#include "ResourceSystem.h"
+#include "SampleSystem.h"
 
 extern "C"
 {
     void __declspec(dllexport) __cdecl CreateSystem(void** result) {
-        *result = new keng::resource::ResourceSystem();
+        *result = new textured_quad_sample::SampleSystem();
     }
 }

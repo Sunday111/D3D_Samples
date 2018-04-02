@@ -118,14 +118,14 @@ namespace simple_quad_sample
         };
     }
 
-    const char* SampleSystem::GetSystemGUID() {
-        return "DDDA1197-05A6-4955-A41D-4C8C23BFFB53";
+    std::string_view SampleSystem::GetSystemName() const {
+        return "SimpleQuad";
     }
 
-    bool SampleSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {
-        if (pfn(keng::graphics::IGraphicsSystem::GetGUID(), context)) return true;
-        if (pfn(keng::resource::IResourceSystem::GetGUID(), context)) return true;
-        if (pfn(keng::window_system::IWindowSystem::GetGUID(), context)) return true;
+    bool SampleSystem::ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const {
+        if (pfn(keng::graphics::IGraphicsSystem::SystemName(), context)) return true;
+        if (pfn(keng::resource::IResourceSystem::SystemName(), context)) return true;
+        if (pfn(keng::window_system::IWindowSystem::SystemName(), context)) return true;
         return false;
     }
 
