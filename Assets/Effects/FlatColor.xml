@@ -1,7 +1,0 @@
-<resource>
-    <type>Effect</type>
-    <effect>
-        <vertex_shader>Assets/Shaders/ColorVS.xml</vertex_shader>
-        <fragment_shader>Assets/Shaders/ColorFS.xml</fragment_shader>
-    </effect>
-</resource>

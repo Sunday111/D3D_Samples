@@ -2,6 +2,7 @@
 
 #include "Keng/Core/Application.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
+#include "Keng/ResourceSystem/OpenArchiveJSON.h"
 #include "Keng/WindowSystem/IWindow.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 
@@ -25,7 +26,8 @@
 #include "DeviceBuffer.h"
 
 #include <algorithm>
-#include "Xml.h"
+
+#include "yasli/JSONIArchive.h"
 
 namespace keng::graphics
 {
@@ -40,36 +42,38 @@ namespace keng::graphics
 
         struct SystemParams
         {
+            void serialize(yasli::Archive& ar) {
+                ar(debugDevice, "debug_device");
+                ar(deviceMultithreading, "device_multithreading");
+            }
             bool debugDevice = false;
-            bool noDeviceMultithreading = false;
+            bool deviceMultithreading = false;
         };
 
         SystemParams ReadDefaultParams() {
             return CallAndRethrowM + [&] {
-                SystemParams params;
+                struct ConfigFile
+                {
+                    void serialize(yasli::Archive& ar) { ar(params, "graphics_system"); }
+                    SystemParams params;
+                };
+
+                ConfigFile file;
 
 #ifdef _DEBUG
-                params.noDeviceMultithreading = true;
-                params.debugDevice = true;
+                file.params.deviceMultithreading = true;
+                file.params.debugDevice = true;
 #endif
 
                 try {
-                    XmlDocument configDoc("Configs/graphics_system.xml");
-                    auto systemNode = configDoc.GetFirstNode("graphics_system");
-
-                    if (auto node = systemNode->FindFirstNode("device_multithreading")) {
-                        auto node_text = node->GetValue();
-                        params.noDeviceMultithreading = !static_cast<bool>(std::stoi(node_text.data()));
-                    }
-
-                    if (auto node = systemNode->FindFirstNode("debug_device")) {
-                        auto node_text = node->GetValue();
-                        params.debugDevice = static_cast<bool>(std::stoi(node_text.data()));
-                    }
+                    auto buffer = resource::ReadFileToBuffer("Configs/graphics_system.json");
+                    yasli::JSONIArchive ar;
+                    resource::OpenArchiveJSON(buffer, ar);
+                    ar(file);
                 } catch (...) {
                 }
 
-                return params;
+                return file.params;
             };
         }
     }
@@ -99,7 +103,7 @@ namespace keng::graphics
             {// Initialize device
                 Device::CreateParams deviceParams;
                 deviceParams.debugDevice = params.debugDevice;
-                deviceParams.noDeviceMultithreading = params.noDeviceMultithreading;
+                deviceParams.noDeviceMultithreading = !params.deviceMultithreading;
                 m_device = core::Ptr<Device>::MakeInstance(deviceParams);
             }
             auto wndSystem = m_app->GetSystem<window_system::IWindowSystem>();

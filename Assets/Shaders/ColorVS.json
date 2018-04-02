@@ -1,0 +1,14 @@
+{
+    "resource" :
+    {
+        "type": "Shader",
+        "shader" : {
+            "template": "Assets/Shaders/VertexShaderTemplate.json",
+            "entry_point": "VShader",
+            "definitions":
+            [
+                { "name": "USE_COLOR" }
+            ]
+        }
+    }
+}

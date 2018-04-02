@@ -2,8 +2,8 @@
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "Resource/Texture/Texture.h"
 #include "Keng/Graphics/GraphicsSystem.h"
-#include "Xml.h"
-
+#include "yasli/STL.h"
+#include "keng/ResourceSystem/OpenArchiveJSON.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -19,13 +19,20 @@ namespace keng::graphics
     }
 
     core::Ptr<resource::IResource> TextureFabric::LoadResource(resource::IResourceSystem*,
-        const core::Ptr<IXmlNode>& node, const core::Ptr<resource::IDevice>& abstractDevice) const {
+        yasli::Archive& ar, const core::Ptr<resource::IDevice>& abstractDevice) const {
         return CallAndRethrowM + [&] {
             edt::ThrowIfFailed(abstractDevice != nullptr, "Can't create texture without device");
             auto device = std::dynamic_pointer_cast<Device>(abstractDevice);
 
-            auto fileNode = node->GetFirstNode("file");
-            auto textureFilename = fileNode->GetValue();
+            struct TextureInfo {
+                void serialize(yasli::Archive& ar) {
+                    resource::SerializeMandatory(ar, file, "file");
+                }
+                std::string file;
+            };
+
+            TextureInfo info;
+            resource::SerializeMandatory(ar, info, GetNodeName().data());
 
             //std::ifstream textureFile;
             //textureFile.open(textureFilename.data());
@@ -43,7 +50,7 @@ namespace keng::graphics
 
             int w, h, n;
             std::unique_ptr<stbi_uc[]> img_data;
-            img_data.reset(stbi_load(textureFilename.data(), &w, &h, &n, 4));
+            img_data.reset(stbi_load(info.file.data(), &w, &h, &n, 4));
             auto ptr = img_data.get();
 
             return core::Ptr<Texture>::MakeInstance(*device, w, h, FragmentFormat::R8_G8_B8_A8_UNORM, d3d_tools::TextureFlags::ShaderResource, ptr);

@@ -1,32 +1,13 @@
 #include "ShaderTemplateFabric.h"
 #include <fstream>
 #include "EverydayTools/Exception/CallAndRethrow.h"
-#include "Xml.h"
 #include "Resource/ShaderTemplate/ShaderTemplate.h"
+#include "yasli/STL.h"
+#include "EverydayTools/Exception/ThrowIfFailed.h"
+#include "keng/ResourceSystem/OpenArchiveJSON.h"
 
 namespace keng::graphics
 {
-    namespace
-    {
-        struct Test
-        {
-            void serialize(yasli::Archive& ar) {
-                ar(a, "a", "a");
-            }
-
-            int a = 10;
-        };
-    }
-
-    static ShaderType ParseShaderType(std::string_view str) {
-        return CallAndRethrowM + [&] {
-            if (str == "Vertex") return ShaderType::Vertex;
-            if (str == "Pixel") return ShaderType::Fragment;
-            if (str == "Fragment") return ShaderType::Fragment;
-            throw std::runtime_error("Failed to parse shader type");
-        };
-    }
-
     std::string_view ShaderTemplateFabric::GetNodeName() const {
         return "shader_template";
     }
@@ -36,24 +17,30 @@ namespace keng::graphics
     }
 
     core::Ptr<resource::IResource> ShaderTemplateFabric::LoadResource(resource::IResourceSystem*,
-        const core::Ptr<IXmlNode>& node, const core::Ptr<resource::IDevice>&) const {
+        yasli::Archive& ar, const core::Ptr<resource::IDevice>&) const {
         return CallAndRethrowM + [&] {
-            auto typeNode = node->GetFirstNode("type");
-            auto fileNode = node->GetFirstNode("file");
+            struct ShaderTemplateInfo {
+                void serialize(yasli::Archive& ar) {
+                    resource::SerializeMandatory(ar, type, "type");
+                    resource::SerializeMandatory(ar, filename, "file");
+                }
+                ShaderType type;
+                std::string filename;
+            };
 
-            auto shaderType = ParseShaderType(typeNode->GetValue());
+            ShaderTemplateInfo info;
+            resource::SerializeMandatory(ar, info, GetNodeName().data());
 
-            auto shaderFilename = fileNode->GetValue();
             std::ifstream shaderFile;
-            shaderFile.open(shaderFilename.data());
-            edt::ThrowIfFailed(shaderFile.is_open(), "Could not open file \"", shaderFilename, "\"");
+            shaderFile.open(info.filename.data());
+            edt::ThrowIfFailed(shaderFile.is_open(), "Could not open file \"", info.filename, "\"");
 
             auto content = std::string(
                 (std::istreambuf_iterator<char>(shaderFile)),
                 (std::istreambuf_iterator<char>()));
 
             auto shaderTemplate = core::Ptr<ShaderTemplate>::MakeInstance();
-            shaderTemplate->type = shaderType;
+            shaderTemplate->type = info.type;
             shaderTemplate->code = std::move(content);
 
             return shaderTemplate;

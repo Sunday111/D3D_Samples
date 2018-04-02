@@ -20,7 +20,7 @@ namespace yasli{
 
 class Archive;
 
-struct LessStrCmp : std::binary_function<const char*, const char*, bool>
+struct LessStrCmp
 {
 	bool operator()(const char* l, const char* r) const{
 		return strcmp(l, r) < 0;
@@ -42,9 +42,10 @@ public:
 	template<class Enum>
 	bool serialize(Archive& ar, Enum& value, const char* name, const char* label) const
 	{
+		static_assert(sizeof(int) >= sizeof(Enum), "Check this place");
 		int index = 0;
 		if(ar.isOutput())
-			index = indexByValue(value);
+			index = indexByValue(static_cast<int>(value));
 
 		StringListStaticValue stringListValue(ar.isEdit() ? labels() : names(), index);
 		if(ar(stringListValue, name, label)){

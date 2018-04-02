@@ -23,7 +23,6 @@ target_include_directories(${keng_module_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DI
 target_compile_definitions(${keng_module_name} PRIVATE "-DKENG_WINDOW_SYSTEM_DLL")
 target_link_libraries(${keng_module_name} PUBLIC EverydayTools)
 target_link_libraries(${keng_module_name} PUBLIC WinWrappers)
-target_link_libraries(${keng_module_name} PUBLIC RapidXML)
 target_link_libraries(${keng_module_name} PUBLIC KengCore)
 
 set(added_target_name ${keng_module_name} PARENT_SCOPE)

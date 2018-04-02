@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -13,6 +14,8 @@ namespace keng::resource
     class SystemParams
     {
     public:
+        void serialize(yasli::Archive& ar);
+
         ResourceParameters defaultResourceParams;
     };
 
@@ -34,8 +37,8 @@ namespace keng::resource
         // IResource system
         virtual core::Ptr<IResource> GetResource(std::string_view filename) override;
         virtual core::Ptr<IResource> GetResource(std::string_view filename, const core::Ptr<IDevice>& device) override;
-        virtual core::Ptr<IResource> MakeRuntimeResource(core::Ptr<IXmlDocument> description) override;
-        virtual core::Ptr<IResource> MakeRuntimeResource(core::Ptr<IXmlDocument> description, const core::Ptr<IDevice>& device) override;
+        virtual core::Ptr<IResource> MakeRuntimeResource(yasli::Archive& description) override;
+        virtual core::Ptr<IResource> MakeRuntimeResource(yasli::Archive& description, const core::Ptr<IDevice>& device) override;
         virtual void RegisterResourceFabric(core::Ptr<IResourceFabric> fabric) override;
         virtual void UnregisterFabric(core::Ptr<IResourceFabric> fabric) override;
         core::Ptr<IResourceFabric> GetFabric(const std::string& resourceType);

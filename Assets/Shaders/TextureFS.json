@@ -1,0 +1,14 @@
+{
+    "resource" :
+    {
+        "type": "Shader",
+        "shader" : {
+            "template": "Assets/Shaders/FragmentShaderTemplate.json",
+            "entry_point": "PShader",
+            "definitions":
+            [
+                { "name": "USE_TEXTURE" }
+            ]
+        }
+    }
+}

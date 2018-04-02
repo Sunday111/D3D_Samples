@@ -3,11 +3,62 @@
 #include "Keng/ResourceSystem/IDevice.h"
 #include "Keng/ResourceSystem/IResource.h"
 #include "Keng/ResourceSystem/IResourceFabric.h"
-#include "xml.h"
 #include "ResourceSystem.h"
+#include <sstream>
+#include "EverydayTools/Exception/ThrowIfFailed.h"
+#include "yasli/JSONIArchive.h"
+#include "yasli/STL.h"
+#include "keng/ResourceSystem/OpenArchiveJSON.h"
 
 namespace keng::resource
 {
+    namespace
+    {
+        static constexpr auto ResourceNodeName = "resource";
+        static constexpr auto ResourceTypeNodeName = "type";
+
+        struct ResourceParseInfo
+        {
+            ResourceParseInfo(ResourceSystem& system_, const core::Ptr<IDevice>& device_) :
+                system(system_),
+                device(device_)
+            {
+
+            }
+
+            ResourceSystem& system;
+            core::Ptr<IDevice> device;
+            core::Ptr<IResource> resource;
+            std::string type;
+            void serialize(yasli::Archive& ar) {
+                SerializeMandatory(ar, type, ResourceTypeNodeName);
+                auto fabric = system.GetFabric(type);
+                resource = fabric->LoadResource(&system, ar, device);
+            }
+        };
+
+        struct FileParseInfo
+        {
+            FileParseInfo(ResourceSystem& system, const core::Ptr<IDevice>& device) :
+                resourceParseInfo(system, device)
+            {
+            }
+
+            core::Ptr<IResource> GetResource() const {
+                return resourceParseInfo.resource;
+            }
+
+            void serialize(yasli::Archive& ar) {
+                SerializeMandatory(ar, resourceParseInfo, ResourceNodeName);
+            }
+            ResourceParseInfo resourceParseInfo;
+        };
+    }
+
+    void ResourceParameters::serialize(yasli::Archive& ar) {
+        ar(releaseDelay, "release_delay");
+    }
+
     bool ResourceInfo::IsSingleReference() const {
         return resource->GetReferencesCount() < 2;
     }
@@ -44,16 +95,16 @@ namespace keng::resource
                 return resource_it->second.resource;
             }
 
-            auto doc = std::make_shared<XmlDocument>(filename);
-            auto resource_node = doc->GetFirstNode(ResourceNodeName);
-            auto typeNode = resource_node->GetFirstNode(ResourceTypeNodeName);
-            auto resourceTypeName = std::string(typeNode->GetValue());
-            auto fabric = system.GetFabric(resourceTypeName);
-            auto exactNode = resource_node->GetFirstNode(fabric->GetNodeName());
-            auto result = fabric->LoadResource(&system, exactNode, device);
+            auto buffer = ReadFileToBuffer(filename);
+
+            yasli::JSONIArchive ar;
+            OpenArchiveJSON(buffer, ar);
+
+            FileParseInfo fileParseInfo(system, device);
+            SerializeMandatory(ar, fileParseInfo);
 
             ResourceInfo info;
-            info.resource = result;
+            info.resource = fileParseInfo.GetResource();
             return InsertResource(std::move(filename_copy), std::move(info));
         };
     }
@@ -81,18 +132,12 @@ namespace keng::resource
         return stream.str();
     }
 
-    core::Ptr<IResource> DeviceResources::MakeRuntimeResource(ResourceSystem& system, core::Ptr<IXmlDocument> doc) {
+    core::Ptr<IResource> DeviceResources::MakeRuntimeResource(ResourceSystem& system, yasli::Archive& ar) {
         return CallAndRethrowM + [&] {
-            auto resource_node = doc->GetFirstNode(ResourceNodeName);
-            auto typeNode = resource_node->GetFirstNode(ResourceTypeNodeName);
-            auto resourceTypeName = std::string(typeNode->GetValue());
-            auto fabric = system.GetFabric(resourceTypeName);
-
-            auto exactNode = resource_node->GetFirstNode(fabric->GetNodeName());
-            auto result = fabric->LoadResource(&system, exactNode, device);
-
+            FileParseInfo fileParseInfo(system, device);
+            SerializeMandatory(ar, fileParseInfo);
             ResourceInfo info;
-            info.resource = result;
+            info.resource = fileParseInfo.GetResource();
             return InsertResource(GenerateRuntimeResourceName(), std::move(info));
         };
     }
