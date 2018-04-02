@@ -175,11 +175,11 @@ namespace textured_quad_sample
                 m_depthStencil = CreateDepthStencil(depthStencilParams);
             }
 
-            m_texture = std::static_pointer_cast<ITexture>(resourceSystem->GetResource("Assets/Textures/container.json", m_device));
+            m_texture = std::static_pointer_cast<ITexture>(resourceSystem->GetResource("Assets/Textures/container.json", GetDevice()));
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Textured.json";
-                m_effect = std::static_pointer_cast<IEffect>(resourceSystem->GetResource(effectName, m_device));
+                m_effect = std::static_pointer_cast<IEffect>(resourceSystem->GetResource(effectName, GetDevice()));
                 m_effect->InitDefaultInputLayout();
             }
 

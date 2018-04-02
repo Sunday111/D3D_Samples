@@ -42,8 +42,7 @@ namespace keng::graphics
         virtual ITextureRenderTargetPtr CreateTextureRenderTarget(const TextureRenderTargetParameters& params) override;
         virtual IDepthStencilPtr CreateDepthStencil(const DepthStencilParameters& params) override;
 
-        core::Ptr<Device> GetDevice() { return m_device; }
-
+        core::Ptr<IDevice> GetDevice();
         IDeviceBufferPtr CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
         ISwapChainPtr CreateSwapChain(const SwapChainParameters& params);
         ITexturePtr CreateTexture(const TextureParameters& params);
@@ -53,12 +52,10 @@ namespace keng::graphics
         void SetViewport(const ViewportParameters&);
         IAnnotationPtr CreateAnnotation();
 
-    protected:
-        core::Ptr<Device> m_device;
-
     private:
         bool m_fullscreen = false;
         core::Application* m_app = nullptr;
+        core::Ptr<Device> m_device;
         std::vector<std::string> m_dependencies;
     };
 }

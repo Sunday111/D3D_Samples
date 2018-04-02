@@ -131,6 +131,10 @@ namespace keng::graphics
         return DepthStencilPtr::MakeInstance(*m_device, params);
     }
 
+    core::Ptr<IDevice> GraphicsSystem::GetDevice() {
+        return m_device;
+    }
+
     IDeviceBufferPtr GraphicsSystem::CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data) {
         return CallAndRethrowM + [&] {
             return DeviceBufferPtr::MakeInstance(*m_device, params, data);
