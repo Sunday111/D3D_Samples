@@ -25,6 +25,8 @@
 #include "Keng/Graphics/RenderTarget/SwapChainParameters.h"
 #include "RenderTarget/SwapChain.h"
 
+#include "Sampler.h"
+
 #include "EverydayTools/Geom/Vector.h"
 #include "DeviceBuffer.h"
 
@@ -136,7 +138,14 @@ namespace keng::graphics
     }
 
     ITexturePtr GraphicsSystem::CreateTexture(const TextureParameters& params) {
-        return TexturePtr::MakeInstance(*m_device, params);
+        auto tex = TexturePtr::MakeInstance(*m_device, params);
+        auto resourceSystem = m_app->GetSystem<resource::IResourceSystem>();
+        resourceSystem->AddRuntimeResource(tex, m_device);
+        return tex;
+    }
+
+    ISamplerPtr GraphicsSystem::CreateSampler(const SamplerParameters& params) {
+        return SamplerPtr::MakeInstance(*m_device, params);
     }
 
     bool GraphicsSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {

@@ -44,4 +44,7 @@ namespace keng::graphics
 
     class Device;
     using DevicePtr = core::Ptr<Device>;
+
+    class Sampler;
+    using SamplerPtr = core::Ptr<Sampler>;
 }

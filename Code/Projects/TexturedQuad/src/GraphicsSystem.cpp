@@ -13,6 +13,8 @@
 #include "Keng/Graphics/RenderTarget/IDepthStencil.h"
 #include "Keng/Graphics/RenderTarget/DepthStencilParameters.h"
 #include "Keng/Graphics/DeviceBufferMapper.h"
+#include "Keng/Graphics/SamplerParameters.h"
+#include "Keng/Graphics/ISampler.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
@@ -98,7 +100,7 @@ namespace textured_quad_sample
                     m_vertexBuffer->AssignToPipeline(vbAssignParams);
                     m_device->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
                     m_constantBuffer->AssignToPipeline(cbAssignParams);
-                    m_device->SetSampler(0, m_sampler.Get(), d3d_tools::ShaderType::Pixel);
+                    m_sampler->AssignToPipeline(ShaderType::Fragment, 0);
                     m_texture->AssignToPipeline(ShaderType::Fragment, 0);
                     m_device->Draw(4);
                 });
@@ -225,11 +227,12 @@ namespace textured_quad_sample
             }
 
             {// Create sampler
-                CD3D11_SAMPLER_DESC samplerDesc(D3D11_DEFAULT);
-                samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-                samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-                samplerDesc.Filter = D3D11_FILTER::D3D11_FILTER_ANISOTROPIC;
-                m_device->GetDevice()->CreateSamplerState(&samplerDesc, m_sampler.Receive());
+                SamplerParameters samplerParams{};
+                samplerParams.addressU = TextureAddressMode::Clamp;
+                samplerParams.addressV = TextureAddressMode::Clamp;
+                samplerParams.addressW = TextureAddressMode::Clamp;
+                samplerParams.filter = FilteringMode::Anisotropic;
+                m_sampler = CreateSampler(samplerParams);
             }
         };
     }

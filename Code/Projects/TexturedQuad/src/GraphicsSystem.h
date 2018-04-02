@@ -20,7 +20,6 @@ namespace textured_quad_sample
         virtual bool Update() override;
 
     protected:
-        ComPtr<ID3D11SamplerState> m_sampler;
         keng::graphics::IEffectPtr m_effect;
         keng::graphics::IDeviceBufferPtr m_constantBuffer;
         keng::graphics::IDeviceBufferPtr m_vertexBuffer;
@@ -28,5 +27,6 @@ namespace textured_quad_sample
         keng::graphics::ITexturePtr m_texture;
         keng::graphics::IDepthStencilPtr m_depthStencil;
         keng::graphics::IWindowRenderTargetPtr m_windowRT;
+        keng::graphics::ISamplerPtr m_sampler;
     };
 }

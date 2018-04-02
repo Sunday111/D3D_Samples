@@ -46,6 +46,7 @@ namespace keng::graphics
         IDeviceBufferPtr CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
         ISwapChainPtr CreateSwapChain(const SwapChainParameters& params);
         ITexturePtr CreateTexture(const TextureParameters& params);
+        ISamplerPtr CreateSampler(const SamplerParameters& params);
 
     protected:
         core::Ptr<Device> m_device;

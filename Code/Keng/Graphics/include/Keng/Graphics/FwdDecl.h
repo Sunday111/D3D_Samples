@@ -44,4 +44,9 @@ namespace keng::graphics
     class IGraphicsListener;
 
     class TextureParameters;
+
+    class ISampler;
+    using ISamplerPtr = core::Ptr<ISampler>;
+
+    class SamplerParameters;
 }
