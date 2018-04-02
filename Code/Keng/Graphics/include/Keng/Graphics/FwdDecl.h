@@ -50,4 +50,7 @@ namespace keng::graphics
 
     class SamplerParameters;
     class ViewportParameters;
+
+    class IAnnotation;
+    using IAnnotationPtr = core::Ptr<IAnnotation>;
 }

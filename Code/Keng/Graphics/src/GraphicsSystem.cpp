@@ -26,6 +26,8 @@
 #include "RenderTarget/SwapChain.h"
 #include "Keng/Graphics/ViewportParameters.h"
 
+#include "Annotation.h"
+
 #include "Sampler.h"
 
 #include "EverydayTools/Geom/Vector.h"
@@ -165,6 +167,10 @@ namespace keng::graphics
         v[0].Width = p.Size.x();
         v[0].Height = p.Size.y();
         m_device->SetViewports(edt::MakeArrayView(v));
+    }
+
+    IAnnotationPtr GraphicsSystem::CreateAnnotation() {
+        return AnnotationPtr::MakeInstance(*m_device);
     }
 
     bool GraphicsSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {

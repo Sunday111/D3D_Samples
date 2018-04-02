@@ -51,6 +51,7 @@ namespace keng::graphics
         void SetTopology(PrimitiveTopology topo);
         void Draw(uint32_t vertices, uint32_t offset);
         void SetViewport(const ViewportParameters&);
+        IAnnotationPtr CreateAnnotation();
 
     protected:
         core::Ptr<Device> m_device;

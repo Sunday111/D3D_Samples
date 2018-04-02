@@ -47,4 +47,7 @@ namespace keng::graphics
 
     class Sampler;
     using SamplerPtr = core::Ptr<Sampler>;
+
+    class Annotation;
+    using AnnotationPtr = core::Ptr<Annotation>;
 }
