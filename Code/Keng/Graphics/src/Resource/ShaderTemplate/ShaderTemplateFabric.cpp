@@ -4,7 +4,7 @@
 #include "Resource/ShaderTemplate/ShaderTemplate.h"
 #include "yasli/STL.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
-#include "keng/ResourceSystem/OpenArchiveJSON.h"
+#include "Keng/Base/Serialization/SerializeMandatory.h"
 
 namespace keng::graphics
 {
@@ -17,19 +17,19 @@ namespace keng::graphics
     }
 
     core::Ptr<resource::IResource> ShaderTemplateFabric::LoadResource(resource::IResourceSystem*,
-        yasli::Archive& ar, const core::Ptr<resource::IDevice>&) const {
+        Archive& ar, const core::Ptr<resource::IDevice>&) const {
         return CallAndRethrowM + [&] {
             struct ShaderTemplateInfo {
-                void serialize(yasli::Archive& ar) {
-                    resource::SerializeMandatory(ar, type, "type");
-                    resource::SerializeMandatory(ar, filename, "file");
+                void serialize(Archive& ar) {
+                    SerializeMandatory(ar, type, "type");
+                    SerializeMandatory(ar, filename, "file");
                 }
                 ShaderType type;
                 std::string filename;
             };
 
             ShaderTemplateInfo info;
-            resource::SerializeMandatory(ar, info, GetNodeName().data());
+            SerializeMandatory(ar, info, GetNodeName().data());
 
             std::ifstream shaderFile;
             shaderFile.open(info.filename.data());

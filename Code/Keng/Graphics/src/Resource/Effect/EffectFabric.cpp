@@ -1,7 +1,7 @@
 #include "Keng/Graphics/Device.h"
 #include "Resource/Effect/EffectFabric.h"
 #include "Resource/Effect/Effect.h"
-#include "keng/ResourceSystem/OpenArchiveJSON.h"
+#include "Keng/Base/Serialization/SerializeMandatory.h"
 #include "yasli/STL.h"
 
 namespace keng::graphics
@@ -15,7 +15,7 @@ namespace keng::graphics
     }
 
     core::Ptr<resource::IResource> EffectFabric::LoadResource(resource::IResourceSystem* resourceSystem,
-        yasli::Archive& ar, const core::Ptr<resource::IDevice>& abstractDevice) const {
+        Archive& ar, const core::Ptr<resource::IDevice>& abstractDevice) const {
         return CallAndRethrowM + [&] {
             edt::ThrowIfFailed(abstractDevice != nullptr, "Can't create effect without device");
             auto device = std::dynamic_pointer_cast<Device>(abstractDevice);
@@ -25,7 +25,7 @@ namespace keng::graphics
             // TODO: check legal shader types combinations?
 
             struct EffectInfo {
-                void serialize(yasli::Archive& ar) {
+                void serialize(Archive& ar) {
                     ar(vs, "vertex_shader");
                     ar(fs, "fragment_shader");
                 }
@@ -35,7 +35,7 @@ namespace keng::graphics
             };
 
             EffectInfo effectInfo;
-            resource::SerializeMandatory(ar, effectInfo, GetNodeName().data());
+            SerializeMandatory(ar, effectInfo, GetNodeName().data());
 
             bool anyShader = false;
 

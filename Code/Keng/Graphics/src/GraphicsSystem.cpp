@@ -1,8 +1,10 @@
 #include "Keng/Graphics/GraphicsSystem.h"
 
+#include "Keng/Base/Serialization/OpenArchiveJSON.h"
+#include "Keng/Base/Serialization/SerializeMandatory.h"
+#include "Keng/Base/Serialization/ReadFileToBuffer.h"
 #include "Keng/Core/Application.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
-#include "Keng/ResourceSystem/OpenArchiveJSON.h"
 #include "Keng/WindowSystem/IWindow.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 
@@ -42,7 +44,7 @@ namespace keng::graphics
 
         struct SystemParams
         {
-            void serialize(yasli::Archive& ar) {
+            void serialize(Archive& ar) {
                 ar(debugDevice, "debug_device");
                 ar(deviceMultithreading, "device_multithreading");
             }
@@ -54,7 +56,7 @@ namespace keng::graphics
             return CallAndRethrowM + [&] {
                 struct ConfigFile
                 {
-                    void serialize(yasli::Archive& ar) { ar(params, "graphics_system"); }
+                    void serialize(Archive& ar) { ar(params, "graphics_system"); }
                     SystemParams params;
                 };
 
@@ -66,9 +68,9 @@ namespace keng::graphics
 #endif
 
                 try {
-                    auto buffer = resource::ReadFileToBuffer("Configs/graphics_system.json");
+                    auto buffer = ReadFileToBuffer("Configs/graphics_system.json");
                     yasli::JSONIArchive ar;
-                    resource::OpenArchiveJSON(buffer, ar);
+                    OpenArchiveJSON(buffer, ar);
                     ar(file);
                 } catch (...) {
                 }

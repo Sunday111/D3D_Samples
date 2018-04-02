@@ -4,6 +4,7 @@
 #include <string_view>
 #include <unordered_map>
 
+#include "Keng/Base/Serialization/Serialization.h"
 #include "Keng/Core/IRefCountObject.h"
 #include "Keng/Core/Ptr.h"
 
@@ -21,7 +22,7 @@ namespace keng::resource
     class ResourceParameters
     {
     public:
-        void serialize(yasli::Archive& ar);
+        void serialize(Archive& ar);
 
         float releaseDelay = 0.0f;
     };
@@ -45,7 +46,7 @@ namespace keng::resource
 
         core::Ptr<IResource> GetResource(ResourceSystem& system, std::string_view filename);
         core::Ptr<IResource> InsertResource(std::string&& name, ResourceInfo&& info);
-        core::Ptr<IResource> MakeRuntimeResource(ResourceSystem& system, yasli::Archive& description);
+        core::Ptr<IResource> MakeRuntimeResource(ResourceSystem& system, Archive& description);
         void Update(float currentTime);
         std::string GenerateRuntimeResourceName();
 

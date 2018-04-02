@@ -3,7 +3,7 @@
 #include "Resource/Texture/Texture.h"
 #include "Keng/Graphics/GraphicsSystem.h"
 #include "yasli/STL.h"
-#include "keng/ResourceSystem/OpenArchiveJSON.h"
+#include "Keng/Base/Serialization/SerializeMandatory.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -19,20 +19,20 @@ namespace keng::graphics
     }
 
     core::Ptr<resource::IResource> TextureFabric::LoadResource(resource::IResourceSystem*,
-        yasli::Archive& ar, const core::Ptr<resource::IDevice>& abstractDevice) const {
+        Archive& ar, const core::Ptr<resource::IDevice>& abstractDevice) const {
         return CallAndRethrowM + [&] {
             edt::ThrowIfFailed(abstractDevice != nullptr, "Can't create texture without device");
             auto device = std::dynamic_pointer_cast<Device>(abstractDevice);
 
             struct TextureInfo {
-                void serialize(yasli::Archive& ar) {
-                    resource::SerializeMandatory(ar, file, "file");
+                void serialize(Archive& ar) {
+                    SerializeMandatory(ar, file, "file");
                 }
                 std::string file;
             };
 
             TextureInfo info;
-            resource::SerializeMandatory(ar, info, GetNodeName().data());
+            SerializeMandatory(ar, info, GetNodeName().data());
 
             //std::ifstream textureFile;
             //textureFile.open(textureFilename.data());

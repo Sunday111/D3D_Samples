@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Keng/Base/Serialization/Serialization.h"
 #include "Keng/Core/ISystem.h"
 #include "Keng/Core/Ptr.h"
 #include "Keng/ResourceSystem/IResource.h"
@@ -24,8 +25,8 @@ namespace keng::resource
 
         virtual core::Ptr<IResource> GetResource(std::string_view filename) = 0;
         virtual core::Ptr<IResource> GetResource(std::string_view filename, const core::Ptr<IDevice>& deivce) = 0;
-        virtual core::Ptr<IResource> MakeRuntimeResource(yasli::Archive& description) = 0;
-        virtual core::Ptr<IResource> MakeRuntimeResource(yasli::Archive& description, const core::Ptr<IDevice>& deivce) = 0;
+        virtual core::Ptr<IResource> MakeRuntimeResource(Archive& description) = 0;
+        virtual core::Ptr<IResource> MakeRuntimeResource(Archive& description, const core::Ptr<IDevice>& deivce) = 0;
         virtual void RegisterResourceFabric(core::Ptr<IResourceFabric> fabric) = 0;
         virtual void UnregisterFabric(core::Ptr<IResourceFabric> fabric) = 0;
         virtual ~IResourceSystem() = default;

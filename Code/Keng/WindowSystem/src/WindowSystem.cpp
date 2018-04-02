@@ -1,5 +1,9 @@
 #include "WindowSystem.h"
-#include "Xml.h"
+#include "Keng/Base/Serialization/SerializeMandatory.h"
+#include "keng/Base/Serialization/ReadFileToBuffer.h"
+#include "keng/Base/Serialization/OpenArchiveJSON.h"
+#include "yasli/JSONIArchive.h"
+#include "yasli/STL.h"
 
 namespace keng::window_system
 {
@@ -34,34 +38,34 @@ namespace keng::window_system
         return m_window.get();
     }
 
+    void WindowSystem::SystemParams::serialize(Archive& ar) {
+        ar(Width, "width");
+        ar(Height, "height");
+        ar(WindowTitle, "title");
+    }
+
     WindowSystem::SystemParams WindowSystem::ReadDefaultParams() {
         return CallAndRethrowM + [&] {
-            SystemParams params{};
-            params.hInstance = GetModuleHandle(NULL);
-            params.WindowTitle = "MainWindow";
+            struct File {
+                void serialize(Archive& ar) {
+                    SerializeMandatory(ar, params, "window_system");
+                }
+                SystemParams params;
+            };
+
+            File file {};
+            file.params.hInstance = GetModuleHandle(NULL);
+            file.params.WindowTitle = "MainWindow";
 
             try {
-                XmlDocument configDoc("Configs/window_system.xml");
-                auto systemNode = configDoc.GetFirstNode("window_system");
-                if (auto windowNode = systemNode->FindFirstNode("window")) {
-                    if (auto widthNode = windowNode->FindFirstNode("width")) {
-                        auto widthNodeText = widthNode->GetValue();
-                        params.Width = std::stoi(widthNodeText.data());
-                    }
-
-                    if (auto heightNode = windowNode->FindFirstNode("height")) {
-                        auto heightNodeText = heightNode->GetValue();
-                        params.Height = std::stoi(heightNodeText.data());
-                    }
-
-                    if (auto titleNode = windowNode->FindFirstNode("title")) {
-                        params.WindowTitle = titleNode->GetValue();
-                    }
-                }
+                auto buffer = ReadFileToBuffer("Configs/window_system.json");
+                yasli::JSONIArchive configArchive;
+                OpenArchiveJSON(buffer, configArchive);
+                configArchive(file);
             } catch (...) {
             }
 
-            return params;
+            return file.params;
         };
     }
 

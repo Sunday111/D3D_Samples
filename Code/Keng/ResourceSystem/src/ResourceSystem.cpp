@@ -2,7 +2,9 @@
 #include "Keng/ResourceSystem/IResource.h"
 #include "Keng/ResourceSystem/IResourceFabric.h"
 #include "Keng/ResourceSystem/IDevice.h"
-#include "keng/ResourceSystem/OpenArchiveJSON.h"
+#include "keng/Base/Serialization/OpenArchiveJSON.h"
+#include "keng/Base/Serialization/ReadFileToBuffer.h"
+#include "keng/Base/Serialization/SerializeMandatory.h"
 
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
@@ -47,7 +49,7 @@ namespace keng::resource
         return GetResource(filename, nullptr);
     }
 
-    core::Ptr<IResource> ResourceSystem::MakeRuntimeResource(yasli::Archive& description) {
+    core::Ptr<IResource> ResourceSystem::MakeRuntimeResource(Archive& description) {
         return MakeRuntimeResource(description, nullptr);
     }
 
@@ -55,7 +57,7 @@ namespace keng::resource
         return GetDeviceResources(device).GetResource(*this, filename);
     }
 
-    core::Ptr<IResource> ResourceSystem::MakeRuntimeResource(yasli::Archive& description, const core::Ptr<IDevice>& device) {
+    core::Ptr<IResource> ResourceSystem::MakeRuntimeResource(Archive& description, const core::Ptr<IDevice>& device) {
         return GetDeviceResources(device).MakeRuntimeResource(*this, description);
     }
 
@@ -98,14 +100,14 @@ namespace keng::resource
         return **it;
     }
 
-    void SystemParams::serialize(yasli::Archive& ar) {
+    void SystemParams::serialize(Archive& ar) {
         ar(defaultResourceParams, "resource");
     }
 
     SystemParams ResourceSystem::ReadDefaultParams() {
         return CallAndRethrowM + [&] {
             struct ConfigFile {
-                void serialize(yasli::Archive& ar) {
+                void serialize(Archive& ar) {
                     ar(params, "resource_system");
                 }
                 SystemParams params;

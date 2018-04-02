@@ -8,7 +8,9 @@
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "yasli/JSONIArchive.h"
 #include "yasli/STL.h"
-#include "keng/ResourceSystem/OpenArchiveJSON.h"
+#include "Keng/Base/Serialization/SerializeMandatory.h"
+#include "Keng/Base/Serialization/ReadFileToBuffer.h"
+#include "Keng/Base/Serialization/OpenArchiveJSON.h"
 
 namespace keng::resource
 {
@@ -30,7 +32,7 @@ namespace keng::resource
             core::Ptr<IDevice> device;
             core::Ptr<IResource> resource;
             std::string type;
-            void serialize(yasli::Archive& ar) {
+            void serialize(Archive& ar) {
                 SerializeMandatory(ar, type, ResourceTypeNodeName);
                 auto fabric = system.GetFabric(type);
                 resource = fabric->LoadResource(&system, ar, device);
@@ -48,14 +50,14 @@ namespace keng::resource
                 return resourceParseInfo.resource;
             }
 
-            void serialize(yasli::Archive& ar) {
+            void serialize(Archive& ar) {
                 SerializeMandatory(ar, resourceParseInfo, ResourceNodeName);
             }
             ResourceParseInfo resourceParseInfo;
         };
     }
 
-    void ResourceParameters::serialize(yasli::Archive& ar) {
+    void ResourceParameters::serialize(Archive& ar) {
         ar(releaseDelay, "release_delay");
     }
 
@@ -132,7 +134,7 @@ namespace keng::resource
         return stream.str();
     }
 
-    core::Ptr<IResource> DeviceResources::MakeRuntimeResource(ResourceSystem& system, yasli::Archive& ar) {
+    core::Ptr<IResource> DeviceResources::MakeRuntimeResource(ResourceSystem& system, Archive& ar) {
         return CallAndRethrowM + [&] {
             FileParseInfo fileParseInfo(system, device);
             SerializeMandatory(ar, fileParseInfo);

@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include "DeviceResources.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
+#include "Keng/Base/Serialization/Serialization.h"
 
 namespace keng::resource
 {
@@ -14,7 +15,7 @@ namespace keng::resource
     class SystemParams
     {
     public:
-        void serialize(yasli::Archive& ar);
+        void serialize(Archive& ar);
 
         ResourceParameters defaultResourceParams;
     };
@@ -37,8 +38,8 @@ namespace keng::resource
         // IResource system
         virtual core::Ptr<IResource> GetResource(std::string_view filename) override;
         virtual core::Ptr<IResource> GetResource(std::string_view filename, const core::Ptr<IDevice>& device) override;
-        virtual core::Ptr<IResource> MakeRuntimeResource(yasli::Archive& description) override;
-        virtual core::Ptr<IResource> MakeRuntimeResource(yasli::Archive& description, const core::Ptr<IDevice>& device) override;
+        virtual core::Ptr<IResource> MakeRuntimeResource(Archive& description) override;
+        virtual core::Ptr<IResource> MakeRuntimeResource(Archive& description, const core::Ptr<IDevice>& device) override;
         virtual void RegisterResourceFabric(core::Ptr<IResourceFabric> fabric) override;
         virtual void UnregisterFabric(core::Ptr<IResourceFabric> fabric) override;
         core::Ptr<IResourceFabric> GetFabric(const std::string& resourceType);

@@ -5,23 +5,23 @@
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include <vector>
 #include "yasli/STL.h"
-#include "keng/ResourceSystem/OpenArchiveJSON.h"
+#include "Keng/Base/Serialization/SerializeMandatory.h"
 
 namespace keng::graphics
 {
     struct ShaderInfo {
         struct Definition {
-            void serialize(yasli::Archive& ar) {
-                resource::SerializeMandatory(ar, name, "name");
+            void serialize(Archive& ar) {
+                SerializeMandatory(ar, name, "name");
                 ar(value, "value");
             }
             std::string name;
             std::string value;
         };
 
-        void serialize(yasli::Archive& ar) {
-            resource::SerializeMandatory(ar, shaderTemplate, "template");
-            resource::SerializeMandatory(ar, entryPoint, "entry_point");
+        void serialize(Archive& ar) {
+            SerializeMandatory(ar, shaderTemplate, "template");
+            SerializeMandatory(ar, entryPoint, "entry_point");
             ar(definitions, "definitions");
         }
 
@@ -72,13 +72,13 @@ namespace keng::graphics
     }
 
     core::Ptr<resource::IResource> ShaderFabric::LoadResource(resource::IResourceSystem* resourceSystem,
-        yasli::Archive& ar, const core::Ptr<resource::IDevice>& abstractDevice) const {
+        Archive& ar, const core::Ptr<resource::IDevice>& abstractDevice) const {
         return CallAndRethrowM + [&] {
             edt::ThrowIfFailed(abstractDevice != nullptr, "Can't create shader without device");
             auto device = std::dynamic_pointer_cast<Device>(abstractDevice);
 
             ShaderInfo info;
-            resource::SerializeMandatory(ar, info, GetNodeName().data());
+            SerializeMandatory(ar, info, GetNodeName().data());
 
             ShaderCompiler shaderCompiler;
             shaderCompiler.device = device;
