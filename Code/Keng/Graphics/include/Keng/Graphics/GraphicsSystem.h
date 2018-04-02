@@ -49,6 +49,7 @@ namespace keng::graphics
         ITexturePtr CreateTexture(const TextureParameters& params);
         ISamplerPtr CreateSampler(const SamplerParameters& params);
         void SetTopology(PrimitiveTopology topo);
+        void Draw(uint32_t vertices, uint32_t offset);
 
     protected:
         core::Ptr<Device> m_device;

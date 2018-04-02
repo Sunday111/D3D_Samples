@@ -153,6 +153,10 @@ namespace keng::graphics
         m_device->GetContext()->IASetPrimitiveTopology(d3d::ConvertTopology(topo));
     }
 
+    void GraphicsSystem::Draw(uint32_t vertices, uint32_t offset) {
+        m_device->GetContext()->Draw(vertices, offset);
+    }
+
     bool GraphicsSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {
         return CallAndRethrowM + [&]() -> bool {
             for (auto& guid : m_dependencies) {

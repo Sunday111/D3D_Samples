@@ -102,7 +102,7 @@ namespace textured_quad_sample
                     m_constantBuffer->AssignToPipeline(cbAssignParams);
                     m_sampler->AssignToPipeline(ShaderType::Fragment, 0);
                     m_texture->AssignToPipeline(ShaderType::Fragment, 0);
-                    m_device->Draw(4);
+                    Draw(4, 0);
                 });
 
                 d3d_tools::Annotate(m_device.Get(), L"Copy texture to swap chain texture", [&]() {
