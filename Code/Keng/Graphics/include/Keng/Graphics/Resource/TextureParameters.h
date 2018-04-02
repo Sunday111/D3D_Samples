@@ -1,6 +1,5 @@
 #pragma once
 
-#include "FwdDecl.h"
 #include "Keng/Graphics/TextureUsage.h"
 #include "Keng/Graphics/FragmentFormat.h"
 

@@ -15,8 +15,11 @@ namespace simple_quad_sample
         virtual bool Update() override;
 
     protected:
-        keng::core::Ptr<keng::graphics::IEffect> m_effect;
-        keng::core::Ptr<keng::graphics::IDeviceBuffer> m_constantBuffer;
-        keng::core::Ptr<keng::graphics::IDeviceBuffer> m_vertexBuffer;
+        keng::graphics::IEffectPtr m_effect;
+        keng::graphics::IDeviceBufferPtr m_constantBuffer;
+        keng::graphics::IDeviceBufferPtr m_vertexBuffer;
+        keng::graphics::ITextureRenderTargetPtr m_textureRT;
+        keng::graphics::IDepthStencilPtr m_depthStencil;
+        keng::graphics::IWindowRenderTargetPtr m_windowRT;
     };
 }

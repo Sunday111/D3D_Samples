@@ -21,9 +21,12 @@ namespace textured_quad_sample
 
     protected:
         ComPtr<ID3D11SamplerState> m_sampler;
-        keng::core::Ptr<keng::graphics::IEffect> m_effect;
-        keng::core::Ptr<keng::graphics::IDeviceBuffer> m_constantBuffer;
-        keng::core::Ptr<keng::graphics::IDeviceBuffer> m_vertexBuffer;
-        keng::core::Ptr<keng::graphics::ITexture> m_texture;
+        keng::graphics::IEffectPtr m_effect;
+        keng::graphics::IDeviceBufferPtr m_constantBuffer;
+        keng::graphics::IDeviceBufferPtr m_vertexBuffer;
+        keng::graphics::ITextureRenderTargetPtr m_textureRT;
+        keng::graphics::ITexturePtr m_texture;
+        keng::graphics::IDepthStencilPtr m_depthStencil;
+        keng::graphics::IWindowRenderTargetPtr m_windowRT;
     };
 }

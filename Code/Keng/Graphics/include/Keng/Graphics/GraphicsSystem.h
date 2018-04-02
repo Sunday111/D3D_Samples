@@ -3,13 +3,10 @@
 #include "Keng/Graphics/FwdDecl.h"
 
 #include "Keng/Core/ISystem.h"
-#include "Keng/WindowSystem/IWindowListener.h"
 
 #include "Keng/Graphics/Device.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "IGraphicsListener.h"
-
-#include "EverydayTools/Observable.h"
 
 namespace keng::core
 {
@@ -26,18 +23,13 @@ namespace keng::graphics
         virtual IDepthStencilPtr CreateDepthStencil(const DepthStencilParameters& params) = 0;
     };
 
-    class GraphicsSystem :
-        public IGraphicsSystem,
-        public window_system::IWindowListener,
-        public Observable<GraphicsSystem, IGraphicsListener>
+    class GraphicsSystem : public IGraphicsSystem
     {
     public:
         GraphicsSystem();
         ~GraphicsSystem();
 
         static const char* GetGUID();
-
-        void OnWindowResize(int w, int h) override;
 
         // ISystem
         virtual bool ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) override;
@@ -50,7 +42,6 @@ namespace keng::graphics
         virtual IDepthStencilPtr CreateDepthStencil(const DepthStencilParameters& params) override;
 
         core::Ptr<Device> GetDevice() { return m_device; }
-        IWindowRenderTargetPtr GetWindowRenderTarget();
 
         IDeviceBufferPtr CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
         ISwapChainPtr CreateSwapChain(const SwapChainParameters& params);
@@ -58,13 +49,10 @@ namespace keng::graphics
 
     protected:
         core::Ptr<Device> m_device;
-        ITextureRenderTargetPtr m_textureRT;
-        IDepthStencilPtr m_depthStencil;
 
     private:
         bool m_fullscreen = false;
         core::Application* m_app = nullptr;
         std::vector<std::string> m_dependencies;
-        IWindowRenderTargetPtr m_windowRT;
     };
 }

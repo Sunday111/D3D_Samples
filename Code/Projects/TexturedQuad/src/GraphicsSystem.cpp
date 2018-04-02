@@ -1,18 +1,21 @@
 #include "GraphicsSystem.h"
-
+#include "EverydayTools/Array/ArrayViewVector.h"
+#include "EverydayTools/Geom/Vector.h"
+#include "D3D_Tools/Annotation.h"
 #include "Keng/Core/Application.h"
-#include "Keng/Graphics/DeviceBufferMapper.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
+#include "Keng/Graphics/Resource/TextureParameters.h"
 #include "Keng/Graphics/RenderTarget/IWindowRenderTarget.h"
+#include "Keng/Graphics/RenderTarget/WindowRenderTargetParameters.h"
 #include "Keng/Graphics/RenderTarget/ITextureRenderTarget.h"
+#include "Keng/Graphics/RenderTarget/TextureRenderTargetParameters.h"
 #include "Keng/Graphics/RenderTarget/IDepthStencil.h"
+#include "Keng/Graphics/RenderTarget/DepthStencilParameters.h"
+#include "Keng/Graphics/DeviceBufferMapper.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
-
-#include "D3D_Tools/Annotation.h"
-#include "EverydayTools/Geom/Vector.h"
-#include "EverydayTools/Array/ArrayViewVector.h"
-#include "Keng/Graphics/IDeviceBuffer.h"
+#include "Keng/WindowSystem/IWindowSystem.h"
+#include "Keng/WindowSystem/IWindow.h"
 
 namespace textured_quad_sample
 {
@@ -101,23 +104,71 @@ namespace textured_quad_sample
                 });
 
                 d3d_tools::Annotate(m_device.Get(), L"Copy texture to swap chain texture", [&]() {
-                    GetWindowRenderTarget()->CopyFrom(m_textureRT->GetTexture());
+                    m_windowRT->CopyFrom(m_textureRT->GetTexture());
                 });
 
-                GetWindowRenderTarget()->Present();
+                m_windowRT->Present();
 
                 return true;
             });
         };
     }
 
-    void GraphicsSystem::Initialize(keng::core::IApplication* app) {
+    void GraphicsSystem::Initialize(keng::core::IApplication* abstractApp) {
+        using namespace keng;
+        using namespace keng::resource;
+        using namespace keng::graphics;
         CallAndRethrowM + [&] {
-            Base::Initialize(app);
-            using namespace keng;
-            using namespace keng::resource;
-            using namespace keng::graphics;
-            auto resourceSystem = dynamic_cast<core::Application*>(app)->GetSystem<IResourceSystem>();
+            Base::Initialize(abstractApp);
+            auto app = dynamic_cast<core::Application*>(abstractApp);
+            auto resourceSystem = app->GetSystem<resource::IResourceSystem>();
+
+            auto wndSystem = app->GetSystem<window_system::IWindowSystem>();
+            auto window = wndSystem->GetWindow();
+            uint32_t w, h;
+            window->GetClientSize(&w, &h);
+
+            {// Initialize viewport
+                D3D11_VIEWPORT viewport[1]{};
+                viewport[0].TopLeftX = 0;
+                viewport[0].TopLeftY = 0;
+                viewport[0].Width = static_cast<float>(w);
+                viewport[0].Height = static_cast<float>(h);
+                m_device->SetViewports(edt::MakeArrayView(viewport));
+            }
+
+            {// Create window render target
+                WindowRenderTargetParameters window_rt_params;
+                window_rt_params.swapChain.format = FragmentFormat::R8_G8_B8_A8_UNORM;
+                window_rt_params.swapChain.window = window;
+                window_rt_params.swapChain.buffers = 2;
+                m_windowRT = CreateWindowRenderTarget(window_rt_params);
+            }
+
+            {// Create texture render target
+                TextureRenderTargetParameters texture_rt_params{};
+                TextureParameters rtTextureParams{};
+                rtTextureParams.format = FragmentFormat::R8_G8_B8_A8_UNORM;
+                rtTextureParams.width = w;
+                rtTextureParams.height = h;
+                rtTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::RenderTarget;
+                texture_rt_params.renderTarget = CreateTexture(rtTextureParams);
+                m_textureRT = CreateTextureRenderTarget(texture_rt_params);
+            }
+
+            {// Create depth stencil
+                DepthStencilParameters depthStencilParams{};
+                TextureParameters dsTextureParams{};
+                dsTextureParams.format = FragmentFormat::R24_G8_TYPELESS;
+                dsTextureParams.width = w;
+                dsTextureParams.height = h;
+                dsTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::DepthStencil;
+
+                depthStencilParams.format = FragmentFormat::D24_UNORM_S8_UINT;
+                depthStencilParams.texture = CreateTexture(dsTextureParams);
+                m_depthStencil = CreateDepthStencil(depthStencilParams);
+            }
+
             m_texture = std::static_pointer_cast<ITexture>(resourceSystem->GetResource("Assets/Textures/container.json", m_device));
 
             {// Read and compile shaders

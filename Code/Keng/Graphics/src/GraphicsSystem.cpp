@@ -92,75 +92,23 @@ namespace keng::graphics
         return "E6080ACE-E91E-4693-AFA5-5B6A0BB29A41";
     }
 
-    void GraphicsSystem::OnWindowResize(int w, int h) {
-        UnusedVar(w, h);
-        OutputDebugStringA("Resize\n");
-    }
-
     void GraphicsSystem::Initialize(core::IApplication* app) {
         CallAndRethrowM + [&] {
             m_app = dynamic_cast<core::Application*>(app);
             edt::ThrowIfFailed(m_app != nullptr, "Failed to cast IApplication to keng::Application");
             auto params = ReadDefaultParams();
 
+            {// Register resource fabrics
+                auto resourceSystem = m_app->GetSystem<resource::IResourceSystem>();
+                ResourceFabricRegisterer fabricRegisterer;
+                fabricRegisterer.Register(resourceSystem);
+            }
+
             {// Initialize device
                 Device::CreateParams deviceParams;
                 deviceParams.debugDevice = params.debugDevice;
                 deviceParams.noDeviceMultithreading = !params.deviceMultithreading;
                 m_device = DevicePtr::MakeInstance(deviceParams);
-            }
-            auto wndSystem = m_app->GetSystem<window_system::IWindowSystem>();
-            auto window = wndSystem->GetWindow();
-            uint32_t w, h;
-            window->GetClientSize(&w, &h);
-
-            {// Create window render target
-                WindowRenderTargetParameters window_rt_params;
-                window_rt_params.swapChain.format = FragmentFormat::R8_G8_B8_A8_UNORM;
-                window_rt_params.swapChain.window = window;
-                window_rt_params.swapChain.buffers = 2;
-                m_windowRT = CreateWindowRenderTarget(window_rt_params);
-            }
-
-            {// Initialize viewport
-                D3D11_VIEWPORT viewport[1]{};
-                viewport[0].TopLeftX = 0;
-                viewport[0].TopLeftY = 0;
-                viewport[0].Width = static_cast<float>(w);
-                viewport[0].Height = static_cast<float>(h);
-                m_device->SetViewports(edt::MakeArrayView(viewport));
-            }
-
-            m_app->GetSystem<window_system::IWindowSystem>()->GetWindow()->Subscribe(this);;
-            auto resourceSystem = m_app->GetSystem<resource::IResourceSystem>();
-
-            {// Register resource fabrics
-                ResourceFabricRegisterer fabricRegisterer;
-                fabricRegisterer.Register(resourceSystem);
-            }
-
-            {// Create render target
-                TextureRenderTargetParameters texture_rt_params{};
-                TextureParameters rtTextureParams {};
-                rtTextureParams.format = FragmentFormat::R8_G8_B8_A8_UNORM;
-                rtTextureParams.width = w;
-                rtTextureParams.height = h;
-                rtTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::RenderTarget;
-                texture_rt_params.renderTarget = CreateTexture(rtTextureParams);
-                m_textureRT = TextureRenderTargetPtr::MakeInstance(*m_device, texture_rt_params);
-            }
-            
-            {// Create depth stencil
-                DepthStencilParameters depthStencilParams {};
-                TextureParameters dsTextureParams {};
-                dsTextureParams.format = FragmentFormat::R24_G8_TYPELESS;
-                dsTextureParams.width = w;
-                dsTextureParams.height = h;
-                dsTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::DepthStencil;
-
-                depthStencilParams.format = FragmentFormat::D24_UNORM_S8_UINT;
-                depthStencilParams.texture = CreateTexture(dsTextureParams);
-                m_depthStencil = DepthStencilPtr::MakeInstance(*m_device, depthStencilParams);
             }
         };
     }
@@ -175,10 +123,6 @@ namespace keng::graphics
 
     IDepthStencilPtr GraphicsSystem::CreateDepthStencil(const DepthStencilParameters& params) {
         return DepthStencilPtr::MakeInstance(*m_device, params);
-    }
-
-    IWindowRenderTargetPtr GraphicsSystem::GetWindowRenderTarget() {
-        return m_windowRT;
     }
 
     IDeviceBufferPtr GraphicsSystem::CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data) {
