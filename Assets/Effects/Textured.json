@@ -1,0 +1,9 @@
+{
+    "resource": {
+        "type": "Effect",
+        "effect": {
+            "vertex_shader": "Assets/Shaders/TextureVS.json",
+            "fragment_shader": "Assets/Shaders/TextureFS.json"
+        }
+    }
+}

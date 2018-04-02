@@ -112,7 +112,7 @@ namespace simple_quad_sample
             auto resourceSystem = dynamic_cast<core::Application*>(app)->GetSystem<resource::IResourceSystem>();
 
             {// Read and compile shaders
-                std::string_view effectName = "Assets/Effects/FlatColor.xml";
+                std::string_view effectName = "Assets/Effects/FlatColor.json";
                 m_effect = std::static_pointer_cast<graphics::IEffect>(resourceSystem->GetResource(effectName, m_device));
                 m_effect->InitDefaultInputLayout();
             }

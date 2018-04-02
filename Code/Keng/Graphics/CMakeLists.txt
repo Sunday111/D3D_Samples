@@ -26,5 +26,6 @@ target_link_libraries(${keng_module_name} PUBLIC WinWrappers)
 target_link_libraries(${keng_module_name} PUBLIC KengCore)
 target_link_libraries(${keng_module_name} PUBLIC KengResourceSystem)
 target_link_libraries(${keng_module_name} PUBLIC KengWindowSystem)
+target_link_libraries(${keng_module_name} PUBLIC Yasli)
 
 set(added_target_name ${keng_module_name} PARENT_SCOPE)

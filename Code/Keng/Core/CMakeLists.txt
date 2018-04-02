@@ -24,6 +24,5 @@ target_compile_definitions(${keng_module_name} PRIVATE "-DKENG_CORE_DLL")
 target_link_libraries(${keng_module_name} PUBLIC D3D_Tools)
 target_link_libraries(${keng_module_name} PUBLIC EverydayTools)
 target_link_libraries(${keng_module_name} PUBLIC WinWrappers)
-target_link_libraries(${keng_module_name} PUBLIC RapidXML)
 
 set(added_target_name ${keng_module_name} PARENT_SCOPE)

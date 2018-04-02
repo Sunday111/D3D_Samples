@@ -3,11 +3,12 @@
 #include <memory>
 #include <string_view>
 
+#include "Keng/Base/Serialization/Serialization.h"
 #include "Keng/Core/Ptr.h"
 
-namespace keng
+namespace yasli
 {
-    class IXmlNode;
+    class Archive;
 }
 
 namespace keng::resource
@@ -21,7 +22,7 @@ namespace keng::resource
     public:
         virtual std::string_view GetResourceType() const = 0;
         virtual std::string_view GetNodeName() const = 0;
-        virtual core::Ptr<IResource> LoadResource(IResourceSystem*, const core::Ptr<IXmlNode>& document, const core::Ptr<IDevice>& device) const = 0;
+        virtual core::Ptr<IResource> LoadResource(IResourceSystem*, Archive& ar, const core::Ptr<IDevice>& device) const = 0;
         virtual ~IResourceFabric() = default;
     };
 }

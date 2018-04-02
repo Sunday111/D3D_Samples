@@ -4,12 +4,13 @@
 #include <string_view>
 #include <unordered_map>
 
+#include "Keng/Base/Serialization/Serialization.h"
 #include "Keng/Core/IRefCountObject.h"
 #include "Keng/Core/Ptr.h"
 
-namespace keng
+namespace yasli
 {
-    class IXmlDocument;
+    class Archive;
 }
 
 namespace keng::resource
@@ -21,6 +22,8 @@ namespace keng::resource
     class ResourceParameters
     {
     public:
+        void serialize(Archive& ar);
+
         float releaseDelay = 0.0f;
     };
 
@@ -43,14 +46,12 @@ namespace keng::resource
 
         core::Ptr<IResource> GetResource(ResourceSystem& system, std::string_view filename);
         core::Ptr<IResource> InsertResource(std::string&& name, ResourceInfo&& info);
-        core::Ptr<IResource> MakeRuntimeResource(ResourceSystem& system, core::Ptr<IXmlDocument> description);
+        core::Ptr<IResource> MakeRuntimeResource(ResourceSystem& system, Archive& description);
         void Update(float currentTime);
         std::string GenerateRuntimeResourceName();
 
         core::Ptr<IDevice> device;
         std::unordered_map<std::string, ResourceInfo> resources;
-        static constexpr auto ResourceNodeName = "resource";
-        static constexpr auto ResourceTypeNodeName = "type";
         size_t m_nextRuntimeResourceIndex = 0;
     };
 }

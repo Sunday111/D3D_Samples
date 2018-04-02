@@ -1,0 +1,10 @@
+{
+    "resource" :
+    {
+        "type": "Texture",
+        "texture":
+        {
+            "file": "Assets/Textures/container.jpg"
+        }
+    }
+}

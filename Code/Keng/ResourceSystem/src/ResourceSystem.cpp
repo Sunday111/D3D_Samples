@@ -2,16 +2,20 @@
 #include "Keng/ResourceSystem/IResource.h"
 #include "Keng/ResourceSystem/IResourceFabric.h"
 #include "Keng/ResourceSystem/IDevice.h"
+#include "keng/Base/Serialization/OpenArchiveJSON.h"
+#include "keng/Base/Serialization/ReadFileToBuffer.h"
+#include "keng/Base/Serialization/SerializeMandatory.h"
 
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "EverydayTools/UnusedVar.h"
 
-#include "Xml.h"
-
 #include <algorithm>
 #include <chrono>
 #include <fstream>
+#include "yasli/JSONOArchive.h"
+#include "yasli/JSONIArchive.h"
+#include "yasli/STL.h"
 
 namespace keng::resource
 {
@@ -45,7 +49,7 @@ namespace keng::resource
         return GetResource(filename, nullptr);
     }
 
-    core::Ptr<IResource> ResourceSystem::MakeRuntimeResource(core::Ptr<IXmlDocument> description) {
+    core::Ptr<IResource> ResourceSystem::MakeRuntimeResource(Archive& description) {
         return MakeRuntimeResource(description, nullptr);
     }
 
@@ -53,7 +57,7 @@ namespace keng::resource
         return GetDeviceResources(device).GetResource(*this, filename);
     }
 
-    core::Ptr<IResource> ResourceSystem::MakeRuntimeResource(core::Ptr<IXmlDocument> description, const core::Ptr<IDevice>& device) {
+    core::Ptr<IResource> ResourceSystem::MakeRuntimeResource(Archive& description, const core::Ptr<IDevice>& device) {
         return GetDeviceResources(device).MakeRuntimeResource(*this, description);
     }
 
@@ -96,23 +100,31 @@ namespace keng::resource
         return **it;
     }
 
+    void SystemParams::serialize(Archive& ar) {
+        ar(defaultResourceParams, "resource");
+    }
+
     SystemParams ResourceSystem::ReadDefaultParams() {
         return CallAndRethrowM + [&] {
-            SystemParams result;
+            struct ConfigFile {
+                void serialize(Archive& ar) {
+                    ar(params, "resource_system");
+                }
+                SystemParams params;
+            };
+
+            ConfigFile file {};
 
             try {
-                XmlDocument configDoc("Configs/resource_system.xml");
-                auto resourceSystemNode = configDoc.GetFirstNode("resource_system");
-                if (auto resourceNode = resourceSystemNode->FindFirstNode("resource")) {
-                    if (auto releaseDelayNode = resourceNode->FindFirstNode("release_delay")) {
-                        auto releaseDelayText = releaseDelayNode->GetValue();
-                        result.defaultResourceParams.releaseDelay = std::stof(releaseDelayText.data());
-                    }
-                }
+                auto buffer = ReadFileToBuffer("Configs/resource_system.json");
+
+                yasli::JSONIArchive ar;
+                OpenArchiveJSON(buffer, ar);
+                SerializeMandatory(ar, file);
             } catch (...) {
             }
 
-            return result;
+            return file.params;
         };
     }
 

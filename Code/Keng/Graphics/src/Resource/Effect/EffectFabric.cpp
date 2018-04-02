@@ -1,7 +1,8 @@
 #include "Keng/Graphics/Device.h"
 #include "Resource/Effect/EffectFabric.h"
 #include "Resource/Effect/Effect.h"
-#include "Xml.h"
+#include "Keng/Base/Serialization/SerializeMandatory.h"
+#include "yasli/STL.h"
 
 namespace keng::graphics
 {
@@ -14,28 +15,40 @@ namespace keng::graphics
     }
 
     core::Ptr<resource::IResource> EffectFabric::LoadResource(resource::IResourceSystem* resourceSystem,
-        const core::Ptr<IXmlNode>& node, const core::Ptr<resource::IDevice>& abstractDevice) const {
+        Archive& ar, const core::Ptr<resource::IDevice>& abstractDevice) const {
         return CallAndRethrowM + [&] {
             edt::ThrowIfFailed(abstractDevice != nullptr, "Can't create effect without device");
             auto device = std::dynamic_pointer_cast<Device>(abstractDevice);
 
-            bool anyShader = false;
             auto result = core::Ptr<Effect>::MakeInstance();
 
             // TODO: check legal shader types combinations?
 
+            struct EffectInfo {
+                void serialize(Archive& ar) {
+                    ar(vs, "vertex_shader");
+                    ar(fs, "fragment_shader");
+                }
+
+                std::string vs;
+                std::string fs;
+            };
+
+            EffectInfo effectInfo;
+            SerializeMandatory(ar, effectInfo, GetNodeName().data());
+
+            bool anyShader = false;
+
             {
-                auto vsNode = node->FindFirstNode("vertex_shader");
-                if (vsNode != nullptr) {
-                    result->vs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Vertex>>(resourceSystem->GetResource(vsNode->GetValue(), device));
+                if (!effectInfo.vs.empty()) {
+                    result->vs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Vertex>>(resourceSystem->GetResource(effectInfo.vs, device));
                     anyShader = true;
                 }
             }
 
             {
-                auto vsNode = node->FindFirstNode("fragment_shader");
-                if (vsNode != nullptr) {
-                    result->fs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Pixel>>(resourceSystem->GetResource(vsNode->GetValue(), device));
+                if (!effectInfo.fs.empty()) {
+                    result->fs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Pixel>>(resourceSystem->GetResource(effectInfo.fs, device));
                     anyShader = true;
                 }
             }

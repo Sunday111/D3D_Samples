@@ -4,9 +4,32 @@
 #include "Keng/Graphics/GraphicsSystem.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include <vector>
+#include "yasli/STL.h"
+#include "Keng/Base/Serialization/SerializeMandatory.h"
 
 namespace keng::graphics
 {
+    struct ShaderInfo {
+        struct Definition {
+            void serialize(Archive& ar) {
+                SerializeMandatory(ar, name, "name");
+                ar(value, "value");
+            }
+            std::string name;
+            std::string value;
+        };
+
+        void serialize(Archive& ar) {
+            SerializeMandatory(ar, shaderTemplate, "template");
+            SerializeMandatory(ar, entryPoint, "entry_point");
+            ar(definitions, "definitions");
+        }
+
+        std::string shaderTemplate;
+        std::string entryPoint;
+        std::vector<Definition> definitions;
+    };
+
     struct ShaderCompiler
     {
         core::Ptr<Device> device;
@@ -49,37 +72,23 @@ namespace keng::graphics
     }
 
     core::Ptr<resource::IResource> ShaderFabric::LoadResource(resource::IResourceSystem* resourceSystem,
-        const core::Ptr<IXmlNode>& node, const core::Ptr<resource::IDevice>& abstractDevice) const {
+        Archive& ar, const core::Ptr<resource::IDevice>& abstractDevice) const {
         return CallAndRethrowM + [&] {
             edt::ThrowIfFailed(abstractDevice != nullptr, "Can't create shader without device");
             auto device = std::dynamic_pointer_cast<Device>(abstractDevice);
 
+            ShaderInfo info;
+            SerializeMandatory(ar, info, GetNodeName().data());
+
             ShaderCompiler shaderCompiler;
             shaderCompiler.device = device;
-
-            // Template
-            auto templateNode = node->GetFirstNode("template");
-            shaderCompiler.shaderTemplate = std::static_pointer_cast<ShaderTemplate>(resourceSystem->GetResource(templateNode->GetValue()));
-
-            auto entryNode = node->GetFirstNode("entry_point");
-            shaderCompiler.entryPoint = entryNode->GetValue();
-
-            if (auto definitionsNode = node->FindFirstNode("definitions")) {
-                for (
-                    auto definitionNode = definitionsNode->FindFirstNode("definition");
-                    definitionNode != nullptr;
-                    definitionNode = definitionsNode->NextSibling()) {
-                    d3d_tools::ShaderMacro macro;
-
-                    auto definitionName = definitionNode->GetFirstNode("name");
-                    macro.name = definitionName->GetValue();
-
-                    if (auto definitionValue = definitionNode->FindFirstNode("value")) {
-                        macro.value = definitionValue->GetValue();
-                    }
-
-                    shaderCompiler.definitions.push_back(macro);
-                }
+            shaderCompiler.shaderTemplate = std::static_pointer_cast<ShaderTemplate>(resourceSystem->GetResource(info.shaderTemplate));
+            shaderCompiler.entryPoint = info.entryPoint;
+            shaderCompiler.definitions.reserve(info.definitions.size());
+            for (auto& def : info.definitions) {
+                shaderCompiler.definitions.push_back(d3d_tools::ShaderMacro {
+                    def.name, def.value
+                });
             }
 
             return shaderCompiler.Compile();

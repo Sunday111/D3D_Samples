@@ -5,6 +5,12 @@
 #include "MainWindow.h"
 #include "WinWrappers/WinWrappers.h"
 #include "Keng/Core/ISystem.h"
+#include "Keng/Base/Serialization/Serialization.h"
+
+namespace yasli
+{
+    class Archive;
+}
 
 namespace keng::window_system
 {
@@ -17,6 +23,7 @@ namespace keng::window_system
 
         struct SystemParams
         {
+            void serialize(Archive& ar);
             HINSTANCE hInstance = nullptr;
             std::string WindowTitle;
             int nCmdShow = SW_SHOW;
