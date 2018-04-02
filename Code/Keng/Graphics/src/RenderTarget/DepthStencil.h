@@ -7,9 +7,6 @@
 
 namespace keng::graphics
 {
-    class Device;
-    class Texture;
-
     class DepthStencil :
         public core::RefCountImpl<IDepthStencil>
     {

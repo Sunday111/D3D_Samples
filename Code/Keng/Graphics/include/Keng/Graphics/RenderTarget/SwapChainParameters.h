@@ -4,11 +4,6 @@
 #include "Keng/Graphics/FragmentFormat.h"
 #include <cstdint>
 
-namespace keng::window_system
-{
-    class IWindow;
-}
-
 namespace keng::graphics
 {
     class SwapChainParameters

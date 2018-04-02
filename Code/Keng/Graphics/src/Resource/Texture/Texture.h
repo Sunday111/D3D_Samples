@@ -7,8 +7,6 @@
 
 namespace keng::graphics
 {
-    class Device;
-
     class Texture :
         public core::RefCountImpl<ITexture>
     {

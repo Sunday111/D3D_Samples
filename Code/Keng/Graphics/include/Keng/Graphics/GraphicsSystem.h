@@ -16,11 +16,6 @@ namespace keng::core
     class Application;
 }
 
-namespace keng::window_system
-{
-    class IWindow;
-}
-
 namespace keng::graphics
 {
     class IGraphicsSystem : public core::ISystem

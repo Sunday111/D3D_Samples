@@ -8,7 +8,6 @@
 namespace keng::graphics
 {
     class Device;
-    class DeviceBufferMapper;
 
     enum class DeviceBufferUsage
     {

@@ -4,10 +4,6 @@
 
 namespace keng::graphics
 {
-    class Texture;
-    class Device;
-    class TextureRenderTargetParameters;
-
     class TextureRenderTarget :
         public core::RefCountImpl<ITextureRenderTarget>
     {

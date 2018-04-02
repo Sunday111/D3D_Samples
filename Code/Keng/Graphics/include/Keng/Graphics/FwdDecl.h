@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Keng/ResourceSystem/FwdDecl.h"
+#include "Keng/WindowSystem/IWindow.h"
 
 namespace keng::graphics
 {
@@ -35,6 +36,8 @@ namespace keng::graphics
 
     class IDeviceBuffer;
     using IDeviceBufferPtr = core::Ptr<IDeviceBuffer>;
+
+    class DeviceBufferMapper;
 
     class DeviceBufferParams;
 

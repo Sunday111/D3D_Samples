@@ -8,7 +8,6 @@
 
 namespace keng::graphics
 {
-    class Device;
     using ShaderVersion = d3d_tools::ShaderVersion;
 
     template<d3d_tools::ShaderType shaderType>

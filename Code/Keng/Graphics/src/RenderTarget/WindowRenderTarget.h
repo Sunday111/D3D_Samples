@@ -5,8 +5,6 @@
 
 namespace keng::graphics
 {
-    class Device;
-
     class WindowRenderTarget :
         public core::RefCountImpl<IWindowRenderTarget>
     {
