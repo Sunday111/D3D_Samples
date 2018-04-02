@@ -1,11 +1,13 @@
 #include "ShaderFabric.h"
 #include "Resource/Shader/Shader.h"
 #include "Resource/ShaderTemplate/ShaderTemplate.h"
-#include "Keng/Graphics/GraphicsSystem.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include <vector>
 #include "yasli/STL.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
+#include "EverydayTools/Exception/CallAndRethrow.h"
+#include "EverydayTools/Exception/ThrowIfFailed.h"
+#include "Device.h"
 
 namespace keng::graphics
 {

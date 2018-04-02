@@ -1,7 +1,6 @@
 #include "ResourceFabricRegisterer.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
-#include "Keng/Graphics/GraphicsSystem.h"
 
 #include "Resource/Shader/ShaderFabric.h"
 #include "Resource/Effect/EffectFabric.h"

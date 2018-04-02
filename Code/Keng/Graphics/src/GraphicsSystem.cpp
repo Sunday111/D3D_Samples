@@ -1,4 +1,4 @@
-#include "Keng/Graphics/GraphicsSystem.h"
+#include "GraphicsSystem.h"
 
 #include "Keng/Base/Serialization/OpenArchiveJSON.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
@@ -94,10 +94,6 @@ namespace keng::graphics
 
     GraphicsSystem::~GraphicsSystem() = default;
 
-    const char* GraphicsSystem::GetGUID() {
-        return "E6080ACE-E91E-4693-AFA5-5B6A0BB29A41";
-    }
-
     void GraphicsSystem::Initialize(core::IApplication* app) {
         CallAndRethrowM + [&] {
             m_app = dynamic_cast<core::Application*>(app);
@@ -117,6 +113,10 @@ namespace keng::graphics
                 m_device = DevicePtr::MakeInstance(deviceParams);
             }
         };
+    }
+
+    bool GraphicsSystem::Update() {
+        return true;
     }
 
     IWindowRenderTargetPtr GraphicsSystem::CreateWindowRenderTarget(const WindowRenderTargetParameters& params) {

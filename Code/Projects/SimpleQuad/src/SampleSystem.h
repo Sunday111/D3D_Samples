@@ -1,20 +1,24 @@
 #pragma once
 
-#include "Keng/Graphics/GraphicsSystem.h"
+#include "Keng/Graphics/FwdDecl.h"
+#include "Keng/Core/ISystem.h"
 
 namespace simple_quad_sample
 {
-    class GraphicsSystem : public keng::graphics::GraphicsSystem
+    class SampleSystem : public keng::core::ISystem
     {
     public:
-        GraphicsSystem();
-        ~GraphicsSystem();
+        SampleSystem();
+        ~SampleSystem();
 
-        using Base = keng::graphics::GraphicsSystem;
+        // ISystem
         virtual void Initialize(keng::core::IApplication* app) override;
         virtual bool Update() override;
+        virtual const char* GetSystemGUID() override;
+        virtual bool ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) override;
 
     protected:
+        keng::graphics::IGraphicsSystem* m_graphicsSystem;
         keng::graphics::IEffectPtr m_effect;
         keng::graphics::IDeviceBufferPtr m_constantBuffer;
         keng::graphics::IDeviceBufferPtr m_vertexBuffer;

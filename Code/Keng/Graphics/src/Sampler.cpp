@@ -1,6 +1,6 @@
 #include "Sampler.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
-#include "Keng/Graphics/Device.h"
+#include "Device.h"
 #include "WinWrappers/WinWrappers.h"
 #include "D3D_11/EnumConverter.h"
 #include "Keng/Graphics/SamplerParameters.h"

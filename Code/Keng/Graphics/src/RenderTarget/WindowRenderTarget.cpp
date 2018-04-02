@@ -1,4 +1,4 @@
-#include "Keng/Graphics/Device.h"
+#include "Device.h"
 #include "SwapChain.h"
 #include "Keng/WindowSystem/IWindow.h"
 #include "Resource/Texture/Texture.h"

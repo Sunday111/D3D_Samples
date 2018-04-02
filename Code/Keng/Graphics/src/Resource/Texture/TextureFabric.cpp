@@ -1,10 +1,11 @@
 #include "TextureFabric.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
+#include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "Resource/Texture/Texture.h"
-#include "Keng/Graphics/GraphicsSystem.h"
 #include "yasli/STL.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
 #include "Keng/Graphics/Resource/TextureParameters.h"
+#include "Device.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"

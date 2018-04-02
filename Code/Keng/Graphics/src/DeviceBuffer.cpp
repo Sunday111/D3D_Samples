@@ -1,5 +1,5 @@
 #include "DeviceBuffer.h"
-#include "Keng/Graphics/Device.h"
+#include "Device.h"
 #include "WinWrappers/WinWrappers.h"
 
 namespace keng::graphics
@@ -151,22 +151,22 @@ namespace keng::graphics
             Method method = nullptr;
 
             switch (params.shaderType) {
-            case d3d_tools::ShaderType::Compute:
+            case ShaderType::Compute:
                 method = &ID3D11DeviceContext::CSSetConstantBuffers;
                 break;
-            case d3d_tools::ShaderType::Domain:
+            case ShaderType::Domain:
                 method = &ID3D11DeviceContext::DSSetConstantBuffers;
                 break;
-            case d3d_tools::ShaderType::Geometry:
+            case ShaderType::Geometry:
                 method = &ID3D11DeviceContext::GSSetConstantBuffers;
                 break;
-            case d3d_tools::ShaderType::Hull:
+            case ShaderType::Hull:
                 method = &ID3D11DeviceContext::HSSetConstantBuffers;
                 break;
-            case d3d_tools::ShaderType::Pixel:
+            case ShaderType::Fragment:
                 method = &ID3D11DeviceContext::PSSetConstantBuffers;
                 break;
-            case d3d_tools::ShaderType::Vertex:
+            case ShaderType::Vertex:
                 method = &ID3D11DeviceContext::VSSetConstantBuffers;
                 break;
             }

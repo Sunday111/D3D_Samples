@@ -1,6 +1,5 @@
 #include "Resource/Texture/Texture.h"
-#include "Keng/Graphics/GraphicsSystem.h"
-#include "Keng/Graphics/Device.h"
+#include "Device.h"
 #include "D3D_11/EnumConverter.h"
 #include "Keng/Graphics/Resource/TextureParameters.h"
 

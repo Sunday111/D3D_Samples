@@ -1,4 +1,4 @@
-#include "keng/Graphics/Device.h"
+#include "Device.h"
 #include "Resource/Texture/Texture.h"
 #include "Resource/Texture/TextureView.h"
 #include "DepthStencil.h"

@@ -1,5 +1,5 @@
 #include "Annotation.h"
-#include "Keng/Graphics/Device.h"
+#include "Device.h"
 
 namespace keng::graphics
 {

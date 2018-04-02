@@ -1,5 +1,5 @@
 #include "SwapChain.h"
-#include "Keng/Graphics/Device.h"
+#include "Device.h"
 #include "Keng/WindowSystem/IWindow.h"
 #include "D3D_11/EnumConverter.h"
 #include "Resource/Texture/Texture.h"

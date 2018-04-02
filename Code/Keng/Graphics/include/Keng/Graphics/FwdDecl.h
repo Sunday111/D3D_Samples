@@ -53,4 +53,10 @@ namespace keng::graphics
 
     class IAnnotation;
     using IAnnotationPtr = core::Ptr<IAnnotation>;
+
+    class IDevice;
+    using IDevicePtr = core::Ptr<IDevice>;
+
+    class IGraphicsSystem;
+    using IGraphicsSystemPtr = core::Ptr<IGraphicsSystem>;
 }

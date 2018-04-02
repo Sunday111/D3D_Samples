@@ -1,4 +1,4 @@
-#include "GraphicsSystem.h"
+#include "SampleSystem.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Geom/Vector.h"
 #include "D3D_Tools/Annotation.h"
@@ -13,22 +13,22 @@
 #include "Keng/Graphics/RenderTarget/IDepthStencil.h"
 #include "Keng/Graphics/RenderTarget/DepthStencilParameters.h"
 #include "Keng/Graphics/DeviceBufferMapper.h"
-#include "Keng/Graphics/SamplerParameters.h"
-#include "Keng/Graphics/ISampler.h"
 #include "Keng/Graphics/ViewportParameters.h"
 #include "Keng/Graphics/ScopedAnnotation.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
+#include "Keng/Graphics/IGraphicsSystem.h"
+#include "Keng/Graphics/IDevice.h"
 
-namespace textured_quad_sample
+namespace simple_quad_sample
 {
     namespace
     {
         struct Vertex
         {
             edt::geom::Vector<float, 4> pos;
-            edt::geom::Vector<float, 2> tex;
+            edt::geom::Vector<float, 4> col;
         };
 
         struct CB
@@ -58,10 +58,11 @@ namespace textured_quad_sample
         }
     }
 
-    GraphicsSystem::GraphicsSystem() = default;
-    GraphicsSystem::~GraphicsSystem() = default;
+    SampleSystem::SampleSystem() = default;
 
-    bool GraphicsSystem::Update() {
+    SampleSystem::~SampleSystem() = default;
+
+    bool SampleSystem::Update() {
         using namespace keng;
         using namespace graphics;
 
@@ -72,16 +73,17 @@ namespace textured_quad_sample
                 };
 
                 static float angle = 0.f;
-                constexpr float delta_angle = 0.002f;
+                constexpr float delta_angle = 0.001f;
                 angle += delta_angle;
 
                 Annotate(m_annotation, "Move triangle", [&] {
                     DeviceBufferMapper mapper;
                     m_constantBuffer->MakeMapper(mapper);
                     auto cbView = mapper.GetTypedView<CB>();
-                    edt::geom::Vector<float, 3> t{};
+                    edt::geom::Vector<float, 3> t;
                     t.rx() = std::sin(angle);
-                    t.ry() = std::sin(angle);
+                    t.ry() = 0.f;
+                    t.rz() = 0.f;
                     cbView[0].transform = MakeTranslationMatrix(t);
                 });
 
@@ -100,11 +102,9 @@ namespace textured_quad_sample
                     m_textureRT->AssignToPipeline(m_depthStencil);
                     m_effect->AssignToPipeline();
                     m_vertexBuffer->AssignToPipeline(vbAssignParams);
-                    SetTopology(PrimitiveTopology::TriangleStrip);
+                    m_graphicsSystem->SetTopology(PrimitiveTopology::TriangleStrip);
                     m_constantBuffer->AssignToPipeline(cbAssignParams);
-                    m_sampler->AssignToPipeline(ShaderType::Fragment, 0);
-                    m_texture->AssignToPipeline(ShaderType::Fragment, 0);
-                    Draw(4, 0);
+                    m_graphicsSystem->Draw(4, 0);
                 });
 
                 Annotate(m_annotation, "Copy texture to swap chain texture", [&] {
@@ -118,16 +118,26 @@ namespace textured_quad_sample
         };
     }
 
-    void GraphicsSystem::Initialize(keng::core::IApplication* abstractApp) {
-        using namespace keng;
-        using namespace keng::resource;
-        using namespace keng::graphics;
-        CallAndRethrowM + [&] {
-            Base::Initialize(abstractApp);
-            m_annotation = CreateAnnotation();
+    const char* SampleSystem::GetSystemGUID() {
+        return "DDDA1197-05A6-4955-A41D-4C8C23BFFB53";
+    }
 
+    bool SampleSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {
+        if (pfn(keng::graphics::IGraphicsSystem::GetGUID(), context)) return true;
+        if (pfn(keng::resource::IResourceSystem::GetGUID(), context)) return true;
+        if (pfn(keng::window_system::IWindowSystem::GetGUID(), context)) return true;
+        return false;
+    }
+
+    void SampleSystem::Initialize(keng::core::IApplication* abstractApp) {
+        using namespace keng;
+        using namespace graphics;
+
+        CallAndRethrowM + [&] {
             auto app = dynamic_cast<core::Application*>(abstractApp);
             auto resourceSystem = app->GetSystem<resource::IResourceSystem>();
+            m_graphicsSystem = app->GetSystem<graphics::IGraphicsSystem>();
+            m_annotation = m_graphicsSystem->CreateAnnotation();
 
             auto wndSystem = app->GetSystem<window_system::IWindowSystem>();
             auto window = wndSystem->GetWindow();
@@ -140,7 +150,7 @@ namespace textured_quad_sample
                 v.Position.ry() = 0.f;
                 v.Size.rx() = static_cast<float>(w);
                 v.Size.ry() = static_cast<float>(h);
-                SetViewport(v);
+                m_graphicsSystem->SetViewport(v);
             }
 
             {// Create window render target
@@ -148,7 +158,7 @@ namespace textured_quad_sample
                 window_rt_params.swapChain.format = FragmentFormat::R8_G8_B8_A8_UNORM;
                 window_rt_params.swapChain.window = window;
                 window_rt_params.swapChain.buffers = 2;
-                m_windowRT = CreateWindowRenderTarget(window_rt_params);
+                m_windowRT = m_graphicsSystem->CreateWindowRenderTarget(window_rt_params);
             }
 
             {// Create texture render target
@@ -158,8 +168,8 @@ namespace textured_quad_sample
                 rtTextureParams.width = w;
                 rtTextureParams.height = h;
                 rtTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::RenderTarget;
-                texture_rt_params.renderTarget = CreateTexture(rtTextureParams);
-                m_textureRT = CreateTextureRenderTarget(texture_rt_params);
+                texture_rt_params.renderTarget = m_graphicsSystem->CreateTexture(rtTextureParams);
+                m_textureRT = m_graphicsSystem->CreateTextureRenderTarget(texture_rt_params);
             }
 
             {// Create depth stencil
@@ -171,42 +181,40 @@ namespace textured_quad_sample
                 dsTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::DepthStencil;
 
                 depthStencilParams.format = FragmentFormat::D24_UNORM_S8_UINT;
-                depthStencilParams.texture = CreateTexture(dsTextureParams);
-                m_depthStencil = CreateDepthStencil(depthStencilParams);
+                depthStencilParams.texture = m_graphicsSystem->CreateTexture(dsTextureParams);
+                m_depthStencil = m_graphicsSystem->CreateDepthStencil(depthStencilParams);
             }
 
-            m_texture = std::static_pointer_cast<ITexture>(resourceSystem->GetResource("Assets/Textures/container.json", GetDevice()));
-
             {// Read and compile shaders
-                std::string_view effectName = "Assets/Effects/Textured.json";
-                m_effect = std::static_pointer_cast<IEffect>(resourceSystem->GetResource(effectName, GetDevice()));
+                std::string_view effectName = "Assets/Effects/FlatColor.json";
+                m_effect = std::static_pointer_cast<IEffect>(resourceSystem->GetResource(effectName, m_graphicsSystem->GetDevice()));
                 m_effect->InitDefaultInputLayout();
             }
 
             {// Create vertex buffer
                 Vertex vertices[4];
 
-                //      POSITION               ////         TEXTURE COORDS       /**/
+                //      POSITION               ////         COLOR               
                 /////////////////////////////////////////////////////////////////////
-                vertices[0].pos.rx() = -0.50f; /**/ vertices[0].tex.rx() = 0.0f; /**/
-                vertices[0].pos.ry() = -0.50f; /**/ vertices[0].tex.ry() = 0.0f; /**/
-                vertices[0].pos.rz() = +0.00f; /**/                              /**/
-                vertices[0].pos.rw() = +1.00f; /**/                              /**/
+                vertices[0].pos.rx() = -0.50f; /**/ vertices[0].col.rx() = 0.0f; /**/
+                vertices[0].pos.ry() = -0.50f; /**/ vertices[0].col.ry() = 0.0f; /**/
+                vertices[0].pos.rz() = +0.00f; /**/ vertices[0].col.rz() = 1.0f; /**/
+                vertices[0].pos.rw() = +1.00f; /**/ vertices[0].col.rw() = 1.0f; /**/
                 /////////////////////////////////////////////////////////////////////
-                vertices[1].pos.rx() = -0.50f; /**/ vertices[1].tex.rx() = 0.0f; /**/
-                vertices[1].pos.ry() = +0.50f; /**/ vertices[1].tex.ry() = 1.0f; /**/
-                vertices[1].pos.rz() = +0.00f; /**/                              /**/
-                vertices[1].pos.rw() = +1.00f; /**/                              /**/
+                vertices[1].pos.rx() = -0.50f; /**/ vertices[1].col.rx() = 1.0f; /**/
+                vertices[1].pos.ry() = +0.50f; /**/ vertices[1].col.ry() = 0.0f; /**/
+                vertices[1].pos.rz() = +0.00f; /**/ vertices[1].col.rz() = 0.0f; /**/
+                vertices[1].pos.rw() = +1.00f; /**/ vertices[1].col.rw() = 1.0f; /**/
                 /////////////////////////////////////////////////////////////////////
-                vertices[2].pos.rx() = +0.50f; /**/ vertices[2].tex.rx() = 1.0f; /**/
-                vertices[2].pos.ry() = -0.50f; /**/ vertices[2].tex.ry() = 0.0f; /**/
-                vertices[2].pos.rz() = +0.00f; /**/                              /**/
-                vertices[2].pos.rw() = +1.00f; /**/                              /**/
+                vertices[2].pos.rx() = +0.50f; /**/ vertices[2].col.rx() = 0.0f; /**/
+                vertices[2].pos.ry() = -0.50f; /**/ vertices[2].col.ry() = 1.0f; /**/
+                vertices[2].pos.rz() = +0.00f; /**/ vertices[2].col.rz() = 0.0f; /**/
+                vertices[2].pos.rw() = +1.00f; /**/ vertices[2].col.rw() = 1.0f; /**/
                 /////////////////////////////////////////////////////////////////////
-                vertices[3].pos.rx() = +0.50f; /**/ vertices[3].tex.rx() = 1.0f; /**/
-                vertices[3].pos.ry() = +0.50f; /**/ vertices[3].tex.ry() = 1.0f; /**/
-                vertices[3].pos.rz() = +0.00f; /**/                              /**/
-                vertices[3].pos.rw() = +1.00f; /**/                              /**/
+                vertices[3].pos.rx() = +0.50f; /**/ vertices[3].col.rx() = 0.0f; /**/
+                vertices[3].pos.ry() = +0.50f; /**/ vertices[3].col.ry() = 1.0f; /**/
+                vertices[3].pos.rz() = +0.00f; /**/ vertices[3].col.rz() = 0.0f; /**/
+                vertices[3].pos.rw() = +1.00f; /**/ vertices[3].col.rw() = 1.0f; /**/
                 /////////////////////////////////////////////////////////////////////
 
                 graphics::DeviceBufferParams params;
@@ -214,12 +222,15 @@ namespace textured_quad_sample
                 params.usage = graphics::DeviceBufferUsage::Dynamic;
                 params.bindFlags = graphics::DeviceBufferBindFlags::VertexBuffer;
                 params.accessFlags = graphics::DeviceAccessFlags::Write;
-                m_vertexBuffer = CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
+                m_vertexBuffer = m_graphicsSystem->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
             }
 
             {
                 CB constantBufferInitData;
-                edt::geom::Vector<float, 3> t{};
+                edt::geom::Vector<float, 3> t;
+                t.rx() = 0.f;
+                t.ry() = 0.2f;
+                t.rz() = 0.f;
                 constantBufferInitData.transform = MakeTranslationMatrix(t);
 
                 graphics::DeviceBufferParams params;
@@ -227,18 +238,8 @@ namespace textured_quad_sample
                 params.usage = graphics::DeviceBufferUsage::Dynamic;
                 params.bindFlags = graphics::DeviceBufferBindFlags::ConstantBuffer;
                 params.accessFlags = graphics::DeviceAccessFlags::Write;
-                m_constantBuffer = CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
-            }
-
-            {// Create sampler
-                SamplerParameters samplerParams{};
-                samplerParams.addressU = TextureAddressMode::Clamp;
-                samplerParams.addressV = TextureAddressMode::Clamp;
-                samplerParams.addressW = TextureAddressMode::Clamp;
-                samplerParams.filter = FilteringMode::Anisotropic;
-                m_sampler = CreateSampler(samplerParams);
+                m_constantBuffer = m_graphicsSystem->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
             }
         };
     }
-
 }

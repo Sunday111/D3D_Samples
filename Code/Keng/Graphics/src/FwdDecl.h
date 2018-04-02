@@ -50,4 +50,7 @@ namespace keng::graphics
 
     class Annotation;
     using AnnotationPtr = core::Ptr<Annotation>;
+
+    class GraphicsSystem;
+    using GraphicsSystemPtr = core::Ptr<GraphicsSystem>;
 }

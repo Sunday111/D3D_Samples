@@ -1,4 +1,4 @@
-#include "Keng/Graphics/Device.h"
+#include "Device.h"
 #include "Resource/Effect/EffectFabric.h"
 #include "Resource/Effect/Effect.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
