@@ -30,7 +30,7 @@ namespace keng::resource
 
             ResourceSystem& system;
             core::Ptr<IDevice> device;
-            core::Ptr<IResource> resource;
+            ResourcePtr resource;
             std::string type;
             void serialize(Archive& ar) {
                 SerializeMandatory(ar, type, ResourceTypeNodeName);
@@ -46,7 +46,7 @@ namespace keng::resource
             {
             }
 
-            core::Ptr<IResource> GetResource() const {
+            ResourcePtr GetResource() const {
                 return resourceParseInfo.resource;
             }
 
@@ -89,7 +89,7 @@ namespace keng::resource
 
     }
 
-    core::Ptr<IResource> DeviceResources::GetResource(ResourceSystem& system, std::string_view filename) {
+    ResourcePtr DeviceResources::GetResource(ResourceSystem& system, std::string_view filename) {
         return CallAndRethrowM + [&] {
             std::string filename_copy(filename);
             auto resource_it = resources.find(filename_copy);
@@ -111,7 +111,7 @@ namespace keng::resource
         };
     }
 
-    core::Ptr<IResource> DeviceResources::InsertResource(std::string&& name, ResourceInfo&& info) {
+    ResourcePtr DeviceResources::InsertResource(std::string&& name, ResourceInfo&& info) {
         auto resource = info.resource;
         resources.insert(std::make_pair(std::move(name), std::move(info)));
         return resource;
@@ -134,12 +134,10 @@ namespace keng::resource
         return stream.str();
     }
 
-    core::Ptr<IResource> DeviceResources::MakeRuntimeResource(ResourceSystem& system, Archive& ar) {
-        return CallAndRethrowM + [&] {
-            FileParseInfo fileParseInfo(system, device);
-            SerializeMandatory(ar, fileParseInfo);
-            ResourceInfo info;
-            info.resource = fileParseInfo.GetResource();
+    void DeviceResources::AddRuntimeResource(ResourceSystem& system, const core::Ptr<IResource>& resource) {
+        CallAndRethrowM + [&] {
+            ResourceInfo info {};
+            info.resource = resource;
             return InsertResource(GenerateRuntimeResourceName(), std::move(info));
         };
     }

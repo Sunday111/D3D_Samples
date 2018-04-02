@@ -46,7 +46,7 @@ namespace keng::resource
 
         core::Ptr<IResource> GetResource(ResourceSystem& system, std::string_view filename);
         core::Ptr<IResource> InsertResource(std::string&& name, ResourceInfo&& info);
-        core::Ptr<IResource> MakeRuntimeResource(ResourceSystem& system, Archive& description);
+        void AddRuntimeResource(ResourceSystem& system, const core::Ptr<IResource>& resource);
         void Update(float currentTime);
         std::string GenerateRuntimeResourceName();
 

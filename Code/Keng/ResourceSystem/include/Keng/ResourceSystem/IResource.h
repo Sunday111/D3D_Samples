@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Keng/Core/IRefCountObject.h"
+#include "Keng/Core/Ptr.h"
 
 namespace keng::resource
 {
@@ -9,4 +10,5 @@ namespace keng::resource
     public:
         virtual ~IResource() = default;
     };
+
 }

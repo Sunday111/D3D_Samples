@@ -45,23 +45,23 @@ namespace keng::resource
         };
     }
 
-    core::Ptr<IResource> ResourceSystem::GetResource(std::string_view filename) {
+    ResourcePtr ResourceSystem::GetResource(std::string_view filename) {
         return GetResource(filename, nullptr);
     }
 
-    core::Ptr<IResource> ResourceSystem::MakeRuntimeResource(Archive& description) {
-        return MakeRuntimeResource(description, nullptr);
+    void ResourceSystem::AddRuntimeResource(const ResourcePtr& resource) {
+        AddRuntimeResource(resource, nullptr);
     }
 
-    core::Ptr<IResource> ResourceSystem::GetResource(std::string_view filename, const core::Ptr<IDevice>& device) {
+    ResourcePtr ResourceSystem::GetResource(std::string_view filename, const core::Ptr<IDevice>& device) {
         return GetDeviceResources(device).GetResource(*this, filename);
     }
 
-    core::Ptr<IResource> ResourceSystem::MakeRuntimeResource(Archive& description, const core::Ptr<IDevice>& device) {
-        return GetDeviceResources(device).MakeRuntimeResource(*this, description);
+    void ResourceSystem::AddRuntimeResource(const ResourcePtr& resource, const core::Ptr<IDevice>& device) {
+        GetDeviceResources(device).AddRuntimeResource(*this, resource);
     }
 
-    void ResourceSystem::RegisterResourceFabric(core::Ptr<IResourceFabric> fabric) {
+    void ResourceSystem::RegisterResourceFabric(const ResourceFabricPtr& fabric) {
         CallAndRethrowM + [&] {
             auto resourceTypeName = fabric->GetResourceType();
             auto res = m_fabrics.insert(std::make_pair(std::string(resourceTypeName), fabric));
@@ -69,7 +69,7 @@ namespace keng::resource
         };
     }
 
-    void ResourceSystem::UnregisterFabric(core::Ptr<IResourceFabric> fabric) {
+    void ResourceSystem::UnregisterFabric(const ResourceFabricPtr& fabric) {
         CallAndRethrowM + [&] {
             auto resourceTypeName = fabric->GetResourceType();
             auto eraseCount = m_fabrics.erase(std::string(resourceTypeName));
@@ -77,7 +77,7 @@ namespace keng::resource
         };
     }
 
-    core::Ptr<IResourceFabric> ResourceSystem::GetFabric(const std::string& resourceType) {
+    ResourceFabricPtr ResourceSystem::GetFabric(const std::string& resourceType) {
         return CallAndRethrowM + [&] {
             auto fabric_it = m_fabrics.find(resourceType);
             edt::ThrowIfFailed(
