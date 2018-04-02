@@ -16,6 +16,7 @@
 #include "Keng/Graphics/SamplerParameters.h"
 #include "Keng/Graphics/ISampler.h"
 #include "Keng/Graphics/ViewportParameters.h"
+#include "Keng/Graphics/ScopedAnnotation.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
@@ -65,7 +66,7 @@ namespace textured_quad_sample
         using namespace graphics;
 
         return CallAndRethrowM + [&] {
-            return d3d_tools::Annotate(m_device.Get(), L"Frame", [&]() {
+            return Annotate(m_annotation, "Frame", [&] {
                 float clearColor[4]{
                     0.0f, 0.2f, 0.4f, 1.0f
                 };
@@ -74,7 +75,7 @@ namespace textured_quad_sample
                 constexpr float delta_angle = 0.002f;
                 angle += delta_angle;
 
-                d3d_tools::Annotate(m_device.Get(), L"Move triangle", [&]() {
+                Annotate(m_annotation, "Move triangle", [&] {
                     DeviceBufferMapper mapper;
                     m_constantBuffer->MakeMapper(mapper);
                     auto cbView = mapper.GetTypedView<CB>();
@@ -84,7 +85,7 @@ namespace textured_quad_sample
                     cbView[0].transform = MakeTranslationMatrix(t);
                 });
 
-                d3d_tools::Annotate(m_device.Get(), L"Draw triangle", [&]() {
+                Annotate(m_annotation, "Draw triangle", [&] {
                     VertexBufferAssignParameters vbAssignParams{};
                     vbAssignParams.slot = 0;
                     vbAssignParams.stride = sizeof(Vertex);
@@ -106,7 +107,7 @@ namespace textured_quad_sample
                     Draw(4, 0);
                 });
 
-                d3d_tools::Annotate(m_device.Get(), L"Copy texture to swap chain texture", [&]() {
+                Annotate(m_annotation, "Copy texture to swap chain texture", [&] {
                     m_windowRT->CopyFrom(m_textureRT->GetTexture());
                 });
 
@@ -123,6 +124,8 @@ namespace textured_quad_sample
         using namespace keng::graphics;
         CallAndRethrowM + [&] {
             Base::Initialize(abstractApp);
+            m_annotation = CreateAnnotation();
+
             auto app = dynamic_cast<core::Application*>(abstractApp);
             auto resourceSystem = app->GetSystem<resource::IResourceSystem>();
 

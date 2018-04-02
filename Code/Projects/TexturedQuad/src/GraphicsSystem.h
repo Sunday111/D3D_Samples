@@ -28,5 +28,6 @@ namespace textured_quad_sample
         keng::graphics::IDepthStencilPtr m_depthStencil;
         keng::graphics::IWindowRenderTargetPtr m_windowRT;
         keng::graphics::ISamplerPtr m_sampler;
+        keng::graphics::IAnnotationPtr m_annotation;
     };
 }

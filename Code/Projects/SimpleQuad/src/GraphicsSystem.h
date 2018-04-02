@@ -21,5 +21,6 @@ namespace simple_quad_sample
         keng::graphics::ITextureRenderTargetPtr m_textureRT;
         keng::graphics::IDepthStencilPtr m_depthStencil;
         keng::graphics::IWindowRenderTargetPtr m_windowRT;
+        keng::graphics::IAnnotationPtr m_annotation;
     };
 }
