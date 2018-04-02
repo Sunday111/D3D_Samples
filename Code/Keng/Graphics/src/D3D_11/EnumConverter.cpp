@@ -3,16 +3,6 @@
 
 namespace keng::graphics::d3d
 {
-    //template<typename T1, typename T2, typename = std::enable_if_t<std::is_enum_v<T1> && std::is_enum_v<T2>>>
-    //struct MappedEnum
-    //{
-    //    template<T1 from>
-    //    static T2 Convert();
-    //
-    //    template<T2 from>
-    //    stat
-    //};
-
     DXGI_FORMAT ConvertTextureFormat(FragmentFormat from) {
         return CallAndRethrowM + [&] {
             switch (from) {
@@ -69,6 +59,25 @@ namespace keng::graphics::d3d
             case keng::graphics::FilteringMode::Trilinear:   return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
             case keng::graphics::FilteringMode::Anisotropic: return D3D11_FILTER_ANISOTROPIC;
             default: throw std::runtime_error("This filtering mode is not implemented here");
+            }
+        };
+    }
+
+    PrimitiveTopology ConvertTopology(D3D_PRIMITIVE_TOPOLOGY from) {
+        return CallAndRethrowM + [&] {
+            switch (from) {
+            case D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST: return PrimitiveTopology::TriangleList;
+            case D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP: return PrimitiveTopology::TriangleStrip;
+            default: throw std::runtime_error("This topology is not implemented here");
+            }
+        };
+    }
+    D3D_PRIMITIVE_TOPOLOGY ConvertTopology(PrimitiveTopology from) {
+        return CallAndRethrowM + [&] {
+            switch (from) {
+            case PrimitiveTopology::TriangleList: return D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+            case PrimitiveTopology::TriangleStrip: return D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+            default: throw std::runtime_error("This topology is not implemented here");
             }
         };
     }

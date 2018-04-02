@@ -7,6 +7,7 @@
 #include "Keng/Graphics/Device.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "IGraphicsListener.h"
+#include "PrimitiveTopology.h"
 
 namespace keng::core
 {
@@ -47,6 +48,7 @@ namespace keng::graphics
         ISwapChainPtr CreateSwapChain(const SwapChainParameters& params);
         ITexturePtr CreateTexture(const TextureParameters& params);
         ISamplerPtr CreateSampler(const SamplerParameters& params);
+        void SetTopology(PrimitiveTopology topo);
 
     protected:
         core::Ptr<Device> m_device;

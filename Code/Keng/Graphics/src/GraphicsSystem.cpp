@@ -33,6 +33,7 @@
 #include <algorithm>
 
 #include "yasli/JSONIArchive.h"
+#include "D3D_11/EnumConverter.h"
 
 namespace keng::graphics
 {
@@ -146,6 +147,10 @@ namespace keng::graphics
 
     ISamplerPtr GraphicsSystem::CreateSampler(const SamplerParameters& params) {
         return SamplerPtr::MakeInstance(*m_device, params);
+    }
+
+    void GraphicsSystem::SetTopology(PrimitiveTopology topo) {
+        m_device->GetContext()->IASetPrimitiveTopology(d3d::ConvertTopology(topo));
     }
 
     bool GraphicsSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {

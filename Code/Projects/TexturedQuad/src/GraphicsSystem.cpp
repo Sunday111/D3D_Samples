@@ -98,7 +98,7 @@ namespace textured_quad_sample
                     m_textureRT->AssignToPipeline(m_depthStencil);
                     m_effect->AssignToPipeline();
                     m_vertexBuffer->AssignToPipeline(vbAssignParams);
-                    m_device->SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+                    SetTopology(PrimitiveTopology::TriangleStrip);
                     m_constantBuffer->AssignToPipeline(cbAssignParams);
                     m_sampler->AssignToPipeline(ShaderType::Fragment, 0);
                     m_texture->AssignToPipeline(ShaderType::Fragment, 0);
