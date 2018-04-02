@@ -8,7 +8,7 @@ namespace keng::graphics
     {
     public:
         virtual void Present() = 0;
-        virtual void CopyFrom(const core::Ptr<ITexture>&) = 0;
+        virtual void CopyFrom(const ITexturePtr&) = 0;
         virtual ~IWindowRenderTarget() = default;
     };
 }

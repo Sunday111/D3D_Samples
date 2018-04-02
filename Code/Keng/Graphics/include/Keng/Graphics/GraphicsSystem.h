@@ -1,14 +1,13 @@
 #pragma once
 
+#include "Keng/Graphics/FwdDecl.h"
+
 #include "Keng/Core/ISystem.h"
 #include "Keng/WindowSystem/IWindowListener.h"
 
 #include "Keng/Graphics/Device.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "IGraphicsListener.h"
-
-#include "D3D_Tools/Texture.h"
-#include "D3D_Tools/Shader.h"
 
 #include "EverydayTools/Observable.h"
 
@@ -24,26 +23,12 @@ namespace keng::window_system
 
 namespace keng::graphics
 {
-    class ITexture;
-    class Texture;
-    class IDeviceBuffer;
-    class DeviceBufferParams;
-    class WindowRenderTargetParameters;
-    class IWindowRenderTarget;
-    class TextureRenderTargetParameters;
-    class ITextureRenderTarget;
-    class DepthStencilParameters;
-    class IDepthStencil;
-    class SwapChainParameters;
-    class ISwapChain;
-
-    class IGraphicsSystem :
-        public core::ISystem
+    class IGraphicsSystem : public core::ISystem
     {
     public:
-        virtual core::Ptr<IWindowRenderTarget> CreateWindowRenderTarget(const WindowRenderTargetParameters& params) = 0;
-        virtual core::Ptr<ITextureRenderTarget> CreateTextureRenderTarget(const TextureRenderTargetParameters& params) = 0;
-        virtual core::Ptr<IDepthStencil> CreateDepthStencil(const DepthStencilParameters& params) = 0;
+        virtual IWindowRenderTargetPtr CreateWindowRenderTarget(const WindowRenderTargetParameters& params) = 0;
+        virtual ITextureRenderTargetPtr CreateTextureRenderTarget(const TextureRenderTargetParameters& params) = 0;
+        virtual IDepthStencilPtr CreateDepthStencil(const DepthStencilParameters& params) = 0;
     };
 
     class GraphicsSystem :
@@ -65,26 +50,26 @@ namespace keng::graphics
         virtual void Initialize(core::IApplication* app) override;
 
         // IGraphicsSystem
-        virtual core::Ptr<IWindowRenderTarget> CreateWindowRenderTarget(const WindowRenderTargetParameters& params) override;
-        virtual core::Ptr<ITextureRenderTarget> CreateTextureRenderTarget(const TextureRenderTargetParameters& params) override;
-        virtual core::Ptr<IDepthStencil> CreateDepthStencil(const DepthStencilParameters& params) override;
+        virtual IWindowRenderTargetPtr CreateWindowRenderTarget(const WindowRenderTargetParameters& params) override;
+        virtual ITextureRenderTargetPtr CreateTextureRenderTarget(const TextureRenderTargetParameters& params) override;
+        virtual IDepthStencilPtr CreateDepthStencil(const DepthStencilParameters& params) override;
 
         core::Ptr<Device> GetDevice() { return m_device; }
-        core::Ptr<IWindowRenderTarget> GetWindowRenderTarget();
+        IWindowRenderTargetPtr GetWindowRenderTarget();
 
-        core::Ptr<IDeviceBuffer> CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
-        core::Ptr<ISwapChain> CreateSwapChain(const SwapChainParameters& params);
+        IDeviceBufferPtr CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
+        ISwapChainPtr CreateSwapChain(const SwapChainParameters& params);
 
     protected:
         core::Ptr<Device> m_device;
-        core::Ptr<ITextureRenderTarget> m_textureRT;
-        core::Ptr<IDepthStencil> m_depthStencil;
+        ITextureRenderTargetPtr m_textureRT;
+        IDepthStencilPtr m_depthStencil;
 
     private:
 
         bool m_fullscreen = false;
         core::Application* m_app = nullptr;
         std::vector<std::string> m_dependencies;
-        core::Ptr<IWindowRenderTarget> m_windowRT;
+        IWindowRenderTargetPtr m_windowRT;
     };
 }

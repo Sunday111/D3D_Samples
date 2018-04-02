@@ -1,3 +1,6 @@
+#pragma once
+
+#include "Keng/Graphics/FwdDecl.h"
 #include "Keng/Graphics/IDeviceBuffer.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
@@ -10,7 +13,7 @@ namespace keng::graphics
     public:
         DeviceBufferMapper() = default;
 
-        DeviceBufferMapper(core::Ptr<IDeviceBuffer> buffer) :
+        DeviceBufferMapper(IDeviceBufferPtr buffer) :
             m_buffer(buffer) {
             m_view = buffer->Map();
         }
@@ -67,7 +70,7 @@ namespace keng::graphics
         }
 
     private:
-        core::Ptr<IDeviceBuffer> m_buffer;
+        IDeviceBufferPtr m_buffer;
         edt::DenseArrayView<uint8_t> m_view;
     };
 }

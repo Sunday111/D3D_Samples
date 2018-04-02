@@ -9,6 +9,6 @@ namespace keng::graphics
     {
     public:
         FragmentFormat format;
-        core::Ptr<ITexture> texture;
+        ITexturePtr texture;
     };
 }

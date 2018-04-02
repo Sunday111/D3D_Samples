@@ -96,7 +96,7 @@ namespace keng::graphics
         m_device->SetShaderResource(static_cast<uint32_t>(slot), (d3d_tools::ShaderType)shaderType, srv->GetView());
     }
 
-    void Texture::CopyTo(core::Ptr<ITexture> abstract){
+    void Texture::CopyTo(ITexturePtr abstract){
         CallAndRethrowM + [&] {
             auto to = std::static_pointer_cast<Texture>(abstract);
             CopyTo(to->m_texture);

@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Keng/Core/Ptr.h"
-#include "Keng/Core/IRefCountObject.h"
-#include "Keng/Graphics/FragmentFormat.h"
+#include "Keng/Graphics/FwdDecl.h"
 
 namespace keng::graphics
 {

@@ -1,9 +1,8 @@
 #pragma once
 
+#include "Keng/Graphics/FwdDecl.h"
 #include "EverydayTools/EnumFlag.h"
 #include "EverydayTools/Array/ArrayView.h"
-#include "Keng/Core/IRefCountObject.h"
-#include "Keng/Core/Ptr.h"
 #include "Keng/Graphics/ShaderType.h"
 
 namespace keng::graphics

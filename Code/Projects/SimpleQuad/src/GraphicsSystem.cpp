@@ -104,6 +104,10 @@ namespace simple_quad_sample
         };
     }
 
+    GraphicsSystem::GraphicsSystem() = default;
+
+    GraphicsSystem::~GraphicsSystem() = default;
+
     void GraphicsSystem::Initialize(keng::core::IApplication* app) {
         CallAndRethrowM + [&] {
             Base::Initialize(app);

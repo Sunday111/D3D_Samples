@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Keng/Graphics/FwdDecl.h"
 #include "Keng/ResourceSystem/IResource.h"
 
 namespace keng::graphics

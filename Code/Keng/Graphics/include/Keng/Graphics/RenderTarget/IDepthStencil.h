@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keng/Core/IRefCountObject.h"
+#include "Keng/Graphics/FwdDecl.h"
 #include "EverydayTools/EnumFlag.h"
 #include <cstdint>
 

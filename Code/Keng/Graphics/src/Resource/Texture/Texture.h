@@ -18,7 +18,7 @@ namespace keng::graphics
         virtual void* GetNativeInterface() const override;
         virtual FragmentFormat GetFormat() const override;
         virtual void AssignToPipeline(ShaderType shaderType, size_t slot) override;
-        virtual void CopyTo(core::Ptr<ITexture>) override;
+        virtual void CopyTo(ITexturePtr) override;
         void CopyTo(const ComPtr<ID3D11Texture2D>& to);
 
 

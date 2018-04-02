@@ -1,15 +1,13 @@
 #pragma once
 
+#include "Keng/Graphics/FwdDecl.h"
 #include "D3D_Tools/Device.h"
 #include "Keng/Core/Ptr.h"
 #include "Keng/Core/IRefCountObject.h"
-#include "Keng/Graphics/IDeviceBuffer.h"
 #include "Keng/ResourceSystem/IDevice.h"
 
 namespace keng::graphics
 {
-    class IDeviceBuffer;
-
     class IDevice : public resource::IDevice
     {
     public:

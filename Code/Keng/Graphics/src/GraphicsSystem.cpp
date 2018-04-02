@@ -153,29 +153,29 @@ namespace keng::graphics
         };
     }
 
-    core::Ptr<IWindowRenderTarget> GraphicsSystem::CreateWindowRenderTarget(const WindowRenderTargetParameters& params) {
+    IWindowRenderTargetPtr GraphicsSystem::CreateWindowRenderTarget(const WindowRenderTargetParameters& params) {
         return core::Ptr<WindowRenderTarget>::MakeInstance(*m_device, params);
     }
 
-    core::Ptr<ITextureRenderTarget> GraphicsSystem::CreateTextureRenderTarget(const TextureRenderTargetParameters& params) {
+    ITextureRenderTargetPtr GraphicsSystem::CreateTextureRenderTarget(const TextureRenderTargetParameters& params) {
         return core::Ptr<TextureRenderTarget>::MakeInstance(*m_device, params);
     }
 
-    core::Ptr<IDepthStencil> GraphicsSystem::CreateDepthStencil(const DepthStencilParameters& params) {
+    IDepthStencilPtr GraphicsSystem::CreateDepthStencil(const DepthStencilParameters& params) {
         return core::Ptr<DepthStencil>::MakeInstance(*m_device, params);
     }
 
-    core::Ptr<IWindowRenderTarget> GraphicsSystem::GetWindowRenderTarget() {
+    IWindowRenderTargetPtr GraphicsSystem::GetWindowRenderTarget() {
         return m_windowRT;
     }
 
-    core::Ptr<IDeviceBuffer> GraphicsSystem::CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data) {
+    IDeviceBufferPtr GraphicsSystem::CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data) {
         return CallAndRethrowM + [&] {
             return core::Ptr<DeviceBuffer>::MakeInstance(*m_device, params, data);
         };
     }
 
-    core::Ptr<ISwapChain> GraphicsSystem::CreateSwapChain(const SwapChainParameters& params) {
+    ISwapChainPtr GraphicsSystem::CreateSwapChain(const SwapChainParameters& params) {
         return core::Ptr<SwapChain>::MakeInstance(*m_device, params);
     }
 

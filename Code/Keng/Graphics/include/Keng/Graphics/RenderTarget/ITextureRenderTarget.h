@@ -8,6 +8,6 @@ namespace keng::graphics
     class ITextureRenderTarget : public IRenderTarget
     {
     public:
-        virtual core::Ptr<ITexture> GetTexture() const = 0;
+        virtual ITexturePtr GetTexture() const = 0;
     };
 }

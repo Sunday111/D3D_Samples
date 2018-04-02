@@ -7,6 +7,9 @@ namespace simple_quad_sample
     class GraphicsSystem : public keng::graphics::GraphicsSystem
     {
     public:
+        GraphicsSystem();
+        ~GraphicsSystem();
+
         using Base = keng::graphics::GraphicsSystem;
         virtual void Initialize(keng::core::IApplication* app) override;
         virtual bool Update() override;
