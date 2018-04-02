@@ -3,11 +3,13 @@
 namespace keng::resource
 {
     class IResource;
-    using ResourcePtr = core::Ptr<IResource>;
+    using IResourcePtr = core::Ptr<IResource>;
 
     class IDevice;
-    using DevicePtr = core::Ptr<IDevice>;
+    using IDevicePtr = core::Ptr<IDevice>;
 
     class IResourceFabric;
-    using ResourceFabricPtr = core::Ptr<IResourceFabric>;
+    using IResourceFabricPtr = core::Ptr<IResourceFabric>;
+
+    class IResourceSystem;
 }

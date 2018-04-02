@@ -18,7 +18,7 @@ namespace keng::graphics
         virtual void Clear(const float(&flatColor)[4]) override;
         virtual ITexturePtr GetTexture() const override;
     private:
-        core::Ptr<Device> m_device;
-        core::Ptr<Texture> m_texture;
+        DevicePtr m_device;
+        TexturePtr m_texture;
     };
 }

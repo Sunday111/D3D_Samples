@@ -14,13 +14,13 @@ namespace keng::graphics
         return "Effect";
     }
 
-    core::Ptr<resource::IResource> EffectFabric::LoadResource(resource::IResourceSystem* resourceSystem,
-        Archive& ar, const core::Ptr<resource::IDevice>& abstractDevice) const {
+    resource::IResourcePtr EffectFabric::LoadResource(resource::IResourceSystem* resourceSystem,
+        Archive& ar, const resource::IDevicePtr& abstractDevice) const {
         return CallAndRethrowM + [&] {
             edt::ThrowIfFailed(abstractDevice != nullptr, "Can't create effect without device");
             auto device = std::dynamic_pointer_cast<Device>(abstractDevice);
 
-            auto result = core::Ptr<Effect>::MakeInstance();
+            auto result = EffectPtr::MakeInstance();
 
             // TODO: check legal shader types combinations?
 

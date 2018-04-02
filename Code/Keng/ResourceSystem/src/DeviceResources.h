@@ -35,22 +35,22 @@ namespace keng::resource
         bool ShouldBeReleased(float timeNow);
 
         ResourceParameters params;
-        ResourcePtr resource;
+        IResourcePtr resource;
         float lastTouchMs = -1.f;
     };
 
     class DeviceResources
     {
     public:
-        DeviceResources(const DevicePtr& devicePtr);
+        DeviceResources(const IDevicePtr& devicePtr);
 
-        ResourcePtr GetResource(ResourceSystem& system, std::string_view filename);
-        ResourcePtr InsertResource(std::string&& name, ResourceInfo&& info);
-        void AddRuntimeResource(ResourceSystem& system, const ResourcePtr& resource);
+        IResourcePtr GetResource(ResourceSystem& system, std::string_view filename);
+        IResourcePtr InsertResource(std::string&& name, ResourceInfo&& info);
+        void AddRuntimeResource(ResourceSystem& system, const IResourcePtr& resource);
         void Update(float currentTime);
         std::string GenerateRuntimeResourceName();
 
-        DevicePtr device;
+        IDevicePtr device;
         std::unordered_map<std::string, ResourceInfo> resources;
         size_t m_nextRuntimeResourceIndex = 0;
     };

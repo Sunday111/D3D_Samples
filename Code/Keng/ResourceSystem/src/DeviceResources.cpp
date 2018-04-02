@@ -21,7 +21,7 @@ namespace keng::resource
 
         struct ResourceParseInfo
         {
-            ResourceParseInfo(ResourceSystem& system_, const DevicePtr& device_) :
+            ResourceParseInfo(ResourceSystem& system_, const IDevicePtr& device_) :
                 system(system_),
                 device(device_)
             {
@@ -29,8 +29,8 @@ namespace keng::resource
             }
 
             ResourceSystem& system;
-            DevicePtr device;
-            ResourcePtr resource;
+            IDevicePtr device;
+            IResourcePtr resource;
             std::string type;
             void serialize(Archive& ar) {
                 SerializeMandatory(ar, type, ResourceTypeNodeName);
@@ -41,12 +41,12 @@ namespace keng::resource
 
         struct FileParseInfo
         {
-            FileParseInfo(ResourceSystem& system, const DevicePtr& device) :
+            FileParseInfo(ResourceSystem& system, const IDevicePtr& device) :
                 resourceParseInfo(system, device)
             {
             }
 
-            ResourcePtr GetResource() const {
+            IResourcePtr GetResource() const {
                 return resourceParseInfo.resource;
             }
 
@@ -84,12 +84,12 @@ namespace keng::resource
         return false;
     }
 
-    DeviceResources::DeviceResources(const DevicePtr& devicePtr) :
+    DeviceResources::DeviceResources(const IDevicePtr& devicePtr) :
         device(devicePtr) {
 
     }
 
-    ResourcePtr DeviceResources::GetResource(ResourceSystem& system, std::string_view filename) {
+    IResourcePtr DeviceResources::GetResource(ResourceSystem& system, std::string_view filename) {
         return CallAndRethrowM + [&] {
             std::string filename_copy(filename);
             auto resource_it = resources.find(filename_copy);
@@ -111,7 +111,7 @@ namespace keng::resource
         };
     }
 
-    ResourcePtr DeviceResources::InsertResource(std::string&& name, ResourceInfo&& info) {
+    IResourcePtr DeviceResources::InsertResource(std::string&& name, ResourceInfo&& info) {
         auto resource = info.resource;
         resources.insert(std::make_pair(std::move(name), std::move(info)));
         return resource;
@@ -134,7 +134,7 @@ namespace keng::resource
         return stream.str();
     }
 
-    void DeviceResources::AddRuntimeResource(ResourceSystem& system, const ResourcePtr& resource) {
+    void DeviceResources::AddRuntimeResource(ResourceSystem& system, const IResourcePtr& resource) {
         CallAndRethrowM + [&] {
             ResourceInfo info {};
             info.resource = resource;

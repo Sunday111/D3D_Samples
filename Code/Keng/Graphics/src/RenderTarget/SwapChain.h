@@ -1,5 +1,6 @@
 #pragma once
 
+#include "FwdDecl.h"
 #include "d3d11.h"
 #include "D3D_Tools/Texture.h"
 #include "Keng/Graphics/RenderTarget/ISwapChain.h"
@@ -7,9 +8,7 @@
 namespace keng::graphics
 {
     class Device;
-    class ITexture;
     class Texture;
-    class SwapChainParameters;
 
     class SwapChain :
         public core::RefCountImpl<ISwapChain>
@@ -19,14 +18,14 @@ namespace keng::graphics
         ~SwapChain();
 
         virtual void Present() override;
-        core::Ptr<Texture> GetCurrentTexture();
-        void CopyFromTexture(const core::Ptr<Texture>& texture);
+        TexturePtr GetCurrentTexture();
+        void CopyFromTexture(const TexturePtr& texture);
 
     private:
         ComPtr<ID3D11Texture2D> GetBackBuffer(uint32_t index);
 
-        core::Ptr<Device> m_device;
-        core::Ptr<Texture> m_currentTexture;
+        DevicePtr m_device;
+        TexturePtr m_currentTexture;
         ComPtr<IDXGISwapChain> m_swapchain;
     };
 }

@@ -45,23 +45,23 @@ namespace keng::resource
         };
     }
 
-    ResourcePtr ResourceSystem::GetResource(std::string_view filename) {
+    IResourcePtr ResourceSystem::GetResource(std::string_view filename) {
         return GetResource(filename, nullptr);
     }
 
-    void ResourceSystem::AddRuntimeResource(const ResourcePtr& resource) {
+    void ResourceSystem::AddRuntimeResource(const IResourcePtr& resource) {
         AddRuntimeResource(resource, nullptr);
     }
 
-    ResourcePtr ResourceSystem::GetResource(std::string_view filename, const DevicePtr& device) {
+    IResourcePtr ResourceSystem::GetResource(std::string_view filename, const IDevicePtr& device) {
         return GetDeviceResources(device).GetResource(*this, filename);
     }
 
-    void ResourceSystem::AddRuntimeResource(const ResourcePtr& resource, const DevicePtr& device) {
+    void ResourceSystem::AddRuntimeResource(const IResourcePtr& resource, const IDevicePtr& device) {
         GetDeviceResources(device).AddRuntimeResource(*this, resource);
     }
 
-    void ResourceSystem::RegisterResourceFabric(const ResourceFabricPtr& fabric) {
+    void ResourceSystem::RegisterResourceFabric(const IResourceFabricPtr& fabric) {
         CallAndRethrowM + [&] {
             auto resourceTypeName = fabric->GetResourceType();
             auto res = m_fabrics.insert(std::make_pair(std::string(resourceTypeName), fabric));
@@ -69,7 +69,7 @@ namespace keng::resource
         };
     }
 
-    void ResourceSystem::UnregisterFabric(const ResourceFabricPtr& fabric) {
+    void ResourceSystem::UnregisterFabric(const IResourceFabricPtr& fabric) {
         CallAndRethrowM + [&] {
             auto resourceTypeName = fabric->GetResourceType();
             auto eraseCount = m_fabrics.erase(std::string(resourceTypeName));
@@ -77,7 +77,7 @@ namespace keng::resource
         };
     }
 
-    ResourceFabricPtr ResourceSystem::GetFabric(const std::string& resourceType) {
+    IResourceFabricPtr ResourceSystem::GetFabric(const std::string& resourceType) {
         return CallAndRethrowM + [&] {
             auto fabric_it = m_fabrics.find(resourceType);
             edt::ThrowIfFailed(
@@ -87,9 +87,9 @@ namespace keng::resource
         };
     }
 
-    DeviceResources& ResourceSystem::GetDeviceResources(const DevicePtr& device) {
+    DeviceResources& ResourceSystem::GetDeviceResources(const IDevicePtr& device) {
         auto it = std::lower_bound(m_devicesResources.begin(), m_devicesResources.end(), device,
-            [](const DeviceResourcesPtr& pDeviceResources, const DevicePtr& device) {
+            [](const DeviceResourcesPtr& pDeviceResources, const IDevicePtr& device) {
             return device < pDeviceResources->device;
         });
 

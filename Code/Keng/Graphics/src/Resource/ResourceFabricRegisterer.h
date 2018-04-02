@@ -1,9 +1,6 @@
 #pragma once
 
-namespace keng::resource
-{
-    class IResourceSystem;
-}
+#include "FwdDecl.h"
 
 namespace keng::graphics
 {

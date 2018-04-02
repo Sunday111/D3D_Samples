@@ -19,8 +19,8 @@ namespace keng::graphics
         return "Texture";
     }
 
-    core::Ptr<resource::IResource> TextureFabric::LoadResource(resource::IResourceSystem*,
-        Archive& ar, const core::Ptr<resource::IDevice>& abstractDevice) const {
+    resource::IResourcePtr TextureFabric::LoadResource(resource::IResourceSystem*,
+        Archive& ar, const resource::IDevicePtr& abstractDevice) const {
         return CallAndRethrowM + [&] {
             edt::ThrowIfFailed(abstractDevice != nullptr, "Can't create texture without device");
             auto device = std::dynamic_pointer_cast<Device>(abstractDevice);
@@ -55,7 +55,7 @@ namespace keng::graphics
                 params.height = static_cast<uint32_t>(h);
             }
 
-            return core::Ptr<Texture>::MakeInstance(
+            return TexturePtr::MakeInstance(
                 *device, params.width, params.height,
                 FragmentFormat::R8_G8_B8_A8_UNORM,
                 d3d_tools::TextureFlags::ShaderResource,

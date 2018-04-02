@@ -1,3 +1,4 @@
+#include "FwdDecl.h"
 #include "Keng/Graphics/IDeviceBuffer.h"
 #include "Keng/Graphics/DeviceBufferMapper.h"
 #include "d3d11.h"
@@ -5,10 +6,7 @@
 
 namespace keng::graphics
 {
-    class Device;
-
-    class DeviceBuffer :
-        public core::RefCountImpl<IDeviceBuffer>
+    class DeviceBuffer : public core::RefCountImpl<IDeviceBuffer>
     {
     public:
         DeviceBuffer(Device& device, const DeviceBufferParams& createParams, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
@@ -25,7 +23,7 @@ namespace keng::graphics
     protected:
         void CheckSizeCompatibility(size_t size) const;
     private:
-        core::Ptr<Device> m_device;
+        DevicePtr m_device;
         ComPtr<ID3D11Buffer> m_buffer;
         DeviceBufferParams m_params;
     };

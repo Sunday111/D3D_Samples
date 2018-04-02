@@ -1,5 +1,6 @@
 #pragma once
 
+#include "FwdDecl.h"
 #include <algorithm>
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Resource/Texture/TextureView.h"
@@ -60,7 +61,7 @@ namespace keng::graphics
         TypedViews<ResourceViewType::ShaderResource> m_srv;
         TypedViews<ResourceViewType::RandomAccess>   m_rav;
 
-        core::Ptr<Device> m_device;
+        DevicePtr m_device;
         ComPtr<ID3D11Texture2D> m_texture;
     };
 }

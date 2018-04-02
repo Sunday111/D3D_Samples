@@ -32,12 +32,12 @@ namespace keng::graphics
 
     struct ShaderCompiler
     {
-        core::Ptr<Device> device;
-        core::Ptr<ShaderTemplate> shaderTemplate;
+        DevicePtr device;
+        ShaderTemplatePtr shaderTemplate;
         std::string_view entryPoint;
         std::vector<d3d_tools::ShaderMacro> definitions;
 
-        core::Ptr<resource::IResource> Compile() {
+        resource::IResourcePtr Compile() {
             switch (shaderTemplate->type) {
             case ShaderType::Vertex:
                 return Compile<d3d_tools::ShaderType::Vertex>();
@@ -71,8 +71,8 @@ namespace keng::graphics
         return "Shader";
     }
 
-    core::Ptr<resource::IResource> ShaderFabric::LoadResource(resource::IResourceSystem* resourceSystem,
-        Archive& ar, const core::Ptr<resource::IDevice>& abstractDevice) const {
+    resource::IResourcePtr ShaderFabric::LoadResource(resource::IResourceSystem* resourceSystem,
+        Archive& ar, const resource::IDevicePtr& abstractDevice) const {
         return CallAndRethrowM + [&] {
             edt::ThrowIfFailed(abstractDevice != nullptr, "Can't create shader without device");
             auto device = std::dynamic_pointer_cast<Device>(abstractDevice);

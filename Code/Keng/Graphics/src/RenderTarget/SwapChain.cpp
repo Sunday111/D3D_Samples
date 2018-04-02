@@ -37,10 +37,10 @@ namespace keng::graphics
         m_swapchain->Present(0, 0);
     }
 
-    core::Ptr<Texture> SwapChain::GetCurrentTexture() {
+    TexturePtr SwapChain::GetCurrentTexture() {
         if (!m_currentTexture) {
             auto rawTexture = GetBackBuffer(0);
-            m_currentTexture = core::Ptr<Texture>::MakeInstance(*m_device, rawTexture);
+            m_currentTexture = TexturePtr::MakeInstance(*m_device, rawTexture);
         }
 
         return m_currentTexture;
@@ -55,7 +55,7 @@ namespace keng::graphics
         };
     }
 
-    void SwapChain::CopyFromTexture(const core::Ptr<Texture>& texture) {
+    void SwapChain::CopyFromTexture(const TexturePtr& texture) {
         return CallAndRethrowM + [&] {
             texture->CopyTo(GetCurrentTexture());
         };

@@ -1,12 +1,11 @@
 #pragma once
 
+#include "FwdDecl.h"
 #include "Keng/Graphics/RenderTarget/IWindowRenderTarget.h"
 
 namespace keng::graphics
 {
     class Device;
-    class WindowRenderTargetParameters;
-    class SwapChain;
 
     class WindowRenderTarget :
         public core::RefCountImpl<IWindowRenderTarget>
@@ -19,7 +18,7 @@ namespace keng::graphics
         virtual void Present() override;
 
     private:
-        core::Ptr<Device> m_device;
-        core::Ptr<SwapChain> m_swapChain;
+        DevicePtr m_device;
+        SwapChainPtr m_swapChain;
     };
 }

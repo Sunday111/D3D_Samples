@@ -16,8 +16,8 @@ namespace keng::graphics
         return "ShaderTemplate";
     }
 
-    core::Ptr<resource::IResource> ShaderTemplateFabric::LoadResource(resource::IResourceSystem*,
-        Archive& ar, const core::Ptr<resource::IDevice>&) const {
+    resource::IResourcePtr ShaderTemplateFabric::LoadResource(resource::IResourceSystem*,
+        Archive& ar, const resource::IDevicePtr&) const {
         return CallAndRethrowM + [&] {
             struct ShaderTemplateInfo {
                 void serialize(Archive& ar) {
@@ -39,7 +39,7 @@ namespace keng::graphics
                 (std::istreambuf_iterator<char>(shaderFile)),
                 (std::istreambuf_iterator<char>()));
 
-            auto shaderTemplate = core::Ptr<ShaderTemplate>::MakeInstance();
+            auto shaderTemplate = ShaderTemplatePtr::MakeInstance();
             shaderTemplate->type = info.type;
             shaderTemplate->code = std::move(content);
 

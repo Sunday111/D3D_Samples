@@ -106,7 +106,7 @@ namespace keng::graphics
                 Device::CreateParams deviceParams;
                 deviceParams.debugDevice = params.debugDevice;
                 deviceParams.noDeviceMultithreading = !params.deviceMultithreading;
-                m_device = core::Ptr<Device>::MakeInstance(deviceParams);
+                m_device = DevicePtr::MakeInstance(deviceParams);
             }
             auto wndSystem = m_app->GetSystem<window_system::IWindowSystem>();
             auto window = wndSystem->GetWindow();
@@ -140,29 +140,29 @@ namespace keng::graphics
 
             {// Create render target
                 TextureRenderTargetParameters texture_rt_params{};
-                texture_rt_params.renderTarget = core::Ptr<Texture>::MakeInstance(*m_device, w, h, FragmentFormat::R8_G8_B8_A8_UNORM, d3d_tools::TextureFlags::RenderTarget | d3d_tools::TextureFlags::ShaderResource);
-                m_textureRT = core::Ptr<TextureRenderTarget>::MakeInstance(*m_device, texture_rt_params);
+                texture_rt_params.renderTarget = TexturePtr::MakeInstance(*m_device, w, h, FragmentFormat::R8_G8_B8_A8_UNORM, d3d_tools::TextureFlags::RenderTarget | d3d_tools::TextureFlags::ShaderResource);
+                m_textureRT = TextureRenderTargetPtr::MakeInstance(*m_device, texture_rt_params);
             }
             
             {// Create depth stencil
                 DepthStencilParameters depthStencilParams{};
                 depthStencilParams.format = FragmentFormat::D24_UNORM_S8_UINT;
-                depthStencilParams.texture = core::Ptr<Texture>::MakeInstance(*m_device, w, h, FragmentFormat::R24_G8_TYPELESS, d3d_tools::TextureFlags::DepthStencil | d3d_tools::TextureFlags::ShaderResource);
-                m_depthStencil = core::Ptr<DepthStencil>::MakeInstance(*m_device, depthStencilParams);
+                depthStencilParams.texture = TexturePtr::MakeInstance(*m_device, w, h, FragmentFormat::R24_G8_TYPELESS, d3d_tools::TextureFlags::DepthStencil | d3d_tools::TextureFlags::ShaderResource);
+                m_depthStencil = DepthStencilPtr::MakeInstance(*m_device, depthStencilParams);
             }
         };
     }
 
     IWindowRenderTargetPtr GraphicsSystem::CreateWindowRenderTarget(const WindowRenderTargetParameters& params) {
-        return core::Ptr<WindowRenderTarget>::MakeInstance(*m_device, params);
+        return WindowRenderTargetPtr::MakeInstance(*m_device, params);
     }
 
     ITextureRenderTargetPtr GraphicsSystem::CreateTextureRenderTarget(const TextureRenderTargetParameters& params) {
-        return core::Ptr<TextureRenderTarget>::MakeInstance(*m_device, params);
+        return TextureRenderTargetPtr::MakeInstance(*m_device, params);
     }
 
     IDepthStencilPtr GraphicsSystem::CreateDepthStencil(const DepthStencilParameters& params) {
-        return core::Ptr<DepthStencil>::MakeInstance(*m_device, params);
+        return DepthStencilPtr::MakeInstance(*m_device, params);
     }
 
     IWindowRenderTargetPtr GraphicsSystem::GetWindowRenderTarget() {
@@ -171,12 +171,12 @@ namespace keng::graphics
 
     IDeviceBufferPtr GraphicsSystem::CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data) {
         return CallAndRethrowM + [&] {
-            return core::Ptr<DeviceBuffer>::MakeInstance(*m_device, params, data);
+            return DeviceBufferPtr::MakeInstance(*m_device, params, data);
         };
     }
 
     ISwapChainPtr GraphicsSystem::CreateSwapChain(const SwapChainParameters& params) {
-        return core::Ptr<SwapChain>::MakeInstance(*m_device, params);
+        return SwapChainPtr::MakeInstance(*m_device, params);
     }
 
     bool GraphicsSystem::ForEachSystemDependency(bool(*pfn)(const char* systemGUID, void* context), void* context) {

@@ -132,7 +132,7 @@ namespace keng::graphics
     }
 
     void DeviceBuffer::MakeMapper(DeviceBufferMapper& mapper) {
-        mapper = DeviceBufferMapper(core::Ptr<DeviceBuffer>(this));
+        mapper = DeviceBufferMapper(DeviceBufferPtr(this));
     }
 
     void DeviceBuffer::AssignToPipeline(const VertexBufferAssignParameters& params) {

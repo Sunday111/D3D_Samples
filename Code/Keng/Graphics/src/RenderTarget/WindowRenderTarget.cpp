@@ -11,7 +11,7 @@ namespace keng::graphics
     WindowRenderTarget::WindowRenderTarget(Device& device, const WindowRenderTargetParameters& params)
     {
         m_device = &device;
-        m_swapChain = core::Ptr<SwapChain>::MakeInstance(device, params.swapChain);
+        m_swapChain = SwapChainPtr::MakeInstance(device, params.swapChain);
     }
 
     void WindowRenderTarget::AssignToPipeline(const IDepthStencilPtr& depthStencil) {

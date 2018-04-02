@@ -1,5 +1,6 @@
 #pragma once
 
+#include "FwdDecl.h"
 #include "Keng/Graphics/RenderTarget/IDepthStencil.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Resource/Texture/TextureView.h"
@@ -8,7 +9,6 @@ namespace keng::graphics
 {
     class Device;
     class Texture;
-    class DepthStencilParameters;
 
     class DepthStencil :
         public core::RefCountImpl<IDepthStencil>
@@ -20,8 +20,8 @@ namespace keng::graphics
         core::Ptr<TextureView<d3d_tools::ResourceViewType::DepthStencil>> GetView() const;
 
     private:
-        core::Ptr<Device> m_device;
-        core::Ptr<Texture> m_texture;
+        DevicePtr m_device;
+        TexturePtr m_texture;
         core::Ptr<TextureView<d3d_tools::ResourceViewType::DepthStencil>> m_dsv;
     };
 }

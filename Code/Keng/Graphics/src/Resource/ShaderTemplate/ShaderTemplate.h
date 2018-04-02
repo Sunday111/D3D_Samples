@@ -1,5 +1,6 @@
 #pragma once
 
+#include "FwdDecl.h"
 #include "Resource/Shader/Shader.h"
 
 namespace keng::graphics

@@ -36,14 +36,14 @@ namespace keng::resource
         virtual bool Update() override;
 
         // IResource system
-        virtual ResourcePtr GetResource(std::string_view filename) override;
-        virtual ResourcePtr GetResource(std::string_view filename, const DevicePtr& device) override;
-        virtual void AddRuntimeResource(const ResourcePtr& resource) override;
-        virtual void AddRuntimeResource(const ResourcePtr& resource, const DevicePtr& device) override;
-        virtual void RegisterResourceFabric(const ResourceFabricPtr& fabric) override;
-        virtual void UnregisterFabric(const ResourceFabricPtr& fabric) override;
-        ResourceFabricPtr GetFabric(const std::string& resourceType);
-        DeviceResources& GetDeviceResources(const DevicePtr& device);
+        virtual IResourcePtr GetResource(std::string_view filename) override;
+        virtual IResourcePtr GetResource(std::string_view filename, const IDevicePtr& device) override;
+        virtual void AddRuntimeResource(const IResourcePtr& resource) override;
+        virtual void AddRuntimeResource(const IResourcePtr& resource, const IDevicePtr& device) override;
+        virtual void RegisterResourceFabric(const IResourceFabricPtr& fabric) override;
+        virtual void UnregisterFabric(const IResourceFabricPtr& fabric) override;
+        IResourceFabricPtr GetFabric(const std::string& resourceType);
+        DeviceResources& GetDeviceResources(const IDevicePtr& device);
 
     protected:
         SystemParams ReadDefaultParams();
@@ -55,6 +55,6 @@ namespace keng::resource
         SystemParams m_parameters;
 
         std::vector<DeviceResourcesPtr> m_devicesResources;
-        std::unordered_map<std::string, ResourceFabricPtr> m_fabrics;
+        std::unordered_map<std::string, IResourceFabricPtr> m_fabrics;
     };
 }

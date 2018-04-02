@@ -1,5 +1,6 @@
 #pragma once
 
+#include "FwdDecl.h"
 #include <string>
 #include "Keng/Base/Serialization/Serialization.h"
 #include "keng/Graphics/TextureUsage.h"

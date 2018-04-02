@@ -12,10 +12,10 @@ namespace keng::graphics
 {
     void ResourceFabricRegisterer::Register(resource::IResourceSystem* resourceSystem) {
         CallAndRethrowM + [&] {
-            resourceSystem->RegisterResourceFabric(core::Ptr<EffectFabric>::MakeInstance());
-            resourceSystem->RegisterResourceFabric(core::Ptr<ShaderFabric>::MakeInstance());
-            resourceSystem->RegisterResourceFabric(core::Ptr<ShaderTemplateFabric>::MakeInstance());
-            resourceSystem->RegisterResourceFabric(core::Ptr<TextureFabric>::MakeInstance());
+            resourceSystem->RegisterResourceFabric(EffectFabricPtr::MakeInstance());
+            resourceSystem->RegisterResourceFabric(ShaderFabricPtr::MakeInstance());
+            resourceSystem->RegisterResourceFabric(ShaderTemplateFabricPtr::MakeInstance());
+            resourceSystem->RegisterResourceFabric(TextureFabricPtr::MakeInstance());
         };
     }
 }
