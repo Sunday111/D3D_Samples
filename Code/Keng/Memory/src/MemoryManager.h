@@ -57,9 +57,14 @@ namespace keng::memory
         }
 
         bool OwnsThisPointer(void* pointer) const {
-            auto data = reinterpret_cast<size_t>(m_memory.data);
-            auto address = reinterpret_cast<size_t>(pointer);
-            return ((address >= data) && (address < (data + pageSize * m_memory.commitedPages)));
+            auto poolAddress = reinterpret_cast<size_t>(m_memory.data);
+            auto pointerAddress = reinterpret_cast<size_t>(pointer);
+            if (pointerAddress < poolAddress) {
+                return false;
+            }
+            auto delta = pointerAddress - poolAddress;
+            auto index = delta / sizeof(T);
+            return index < m_size;
         }
 
         size_t GetSize() const { return m_size; }
@@ -89,27 +94,30 @@ namespace keng::memory
     class SmallChunkPool
     {
     public:
+        using Chunk = AllocatedMemoryChunk<bytes>;
+        using ChunkLayout = std::aligned_storage_t<sizeof(Chunk), sizeof(void*)>;
+
         void* Allocate() {
             auto size = m_vector.GetSize();
             for (size_t i = m_lastFree; i < Capacity && i < size; ++i) {
-                if (m_vector[i].poolIndex < 0) {
-                    m_vector[i].poolIndex = static_cast<int>(i);
+                if (ChunckAt(i).poolIndex < 0) {
+                    ChunckAt(i).poolIndex = static_cast<int>(i);
                     m_lastFree = i;
-                    return &(m_vector[i].data[0]);
+                    return &(ChunckAt(i).data[0]);
                 }
             }
             m_lastFree = size;
             m_vector.Resize(size + 1);
-            m_vector[size].poolIndex = static_cast<int>(size);
-            return &(m_vector[size].data[0]);
+            ChunckAt(size).poolIndex = static_cast<int>(size);
+            return &(ChunckAt(size).data[0]);
         }
 
         bool TryDeallocate(void* pointer) {
             if (m_vector.OwnsThisPointer(pointer)) {
                 auto a = m_vector.GetStartAddress();
                 auto b = (size_t)pointer;
-                auto i = (b - a) / bytes;
-                m_vector[i].poolIndex = -1;
+                auto i = (b - a) / sizeof(ChunkLayout);
+                ChunckAt(i).poolIndex = -1;
                 m_lastFree = i;
                 return true;
             }
@@ -117,8 +125,13 @@ namespace keng::memory
             return false;
         }
 
+    private:
+        Chunk& ChunckAt(size_t index) {
+            return (Chunk&)m_vector[index];
+        }
+
         size_t m_lastFree = 0;
-        VirtualVector<AllocatedMemoryChunk<bytes>, pageSize, Capacity> m_vector;
+        VirtualVector<ChunkLayout, pageSize, Capacity> m_vector;
     };
 
     class MemoryManager

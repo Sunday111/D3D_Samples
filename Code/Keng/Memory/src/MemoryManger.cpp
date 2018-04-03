@@ -3,7 +3,6 @@
 namespace keng::memory
 {
     void* MemoryManager::Allocate(size_t size) {
-
         switch (size)
         {
         case  8: return  m8.Allocate();
