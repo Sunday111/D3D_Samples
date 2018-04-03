@@ -6,6 +6,7 @@
 #include <cassert>
 #include <vector>
 #include <map>
+#include <memory>
 
 namespace keng::memory
 {
@@ -71,11 +72,15 @@ namespace keng::memory
         size_t GetSize() const { return m_size; }
         size_t GetStartAddress() const { return (size_t)m_memory.data; }
 
-        void Resize(size_t size) {
+        bool Resize(size_t size) {
             if (size > m_size) {
+                if (size > Capacity) {
+                    return false;
+                }
                 m_memory.Commit(size * sizeof(T));
             }
             m_size = size;
+            return true;
         }
 
     private:
@@ -84,52 +89,46 @@ namespace keng::memory
     };
 
     template<size_t bytes>
-    class AllocatedMemoryChunk
+    union MemoryChunkData
     {
-    public:
         uint8_t data[bytes];
-        bool busy;
+        MemoryChunkData* nextFree;
     };
 
     template<size_t bytes, size_t resizeValue, size_t Capacity>
     class SmallChunkPool
     {
     public:
-        using Chunk = AllocatedMemoryChunk<bytes>;
+        using Chunk = MemoryChunkData<bytes>;
         using ChunkLayout = std::aligned_storage_t<sizeof(Chunk), sizeof(void*)>;
 
         void* Allocate() {
-            auto size = m_vector.GetSize();
-            for (size_t i = m_lastFree; i < Capacity && i < size; ++i) {
-                if (!ChunckAt(i).busy) {
-                    ChunckAt(i).busy = true;
-                    m_lastFree = i;
-                    return &(ChunckAt(i).data[0]);
-                }
-            }
-
-            if (size == Capacity) {
+            if (m_nextFree == nullptr && (!Expand())) {
                 return nullptr;
             }
 
-            m_lastFree = size;
-            m_vector.Resize(size + 1);
-            ChunckAt(size).busy = true;
-            return &(ChunckAt(size).data[0]);
+            void* result = &(m_nextFree->data[0]);
+            m_nextFree = m_nextFree->nextFree;
+            return result;
         }
 
         bool TryDeallocate(void* pointer) {
             if (!m_vector.OwnsThisPointer(pointer)) {
                 return false;
             }
+            auto p = (Chunk*)pointer;
+            p->nextFree = m_nextFree;
+            m_nextFree = p;
+            return true;
+        }
 
-            auto a = m_vector.GetStartAddress();
-            auto b = (size_t)pointer;
-            auto i = (b - a) / sizeof(ChunkLayout);
-            ChunckAt(i).busy = false;
-            if (i < m_lastFree) {
-                m_lastFree = i;
+        bool Expand() {
+            auto size = m_vector.GetSize();
+            if (!m_vector.Resize(size + 1)) {
+                return false;
             }
+            m_nextFree = (Chunk*)&m_vector[size];
+            m_nextFree->nextFree = nullptr;
             return true;
         }
 
@@ -138,8 +137,8 @@ namespace keng::memory
             return (Chunk&)m_vector[index];
         }
 
-        size_t m_lastFree = 0;
         VirtualVector<ChunkLayout, resizeValue, Capacity> m_vector;
+        Chunk* m_nextFree = nullptr;
     };
 
     class MemoryManager
