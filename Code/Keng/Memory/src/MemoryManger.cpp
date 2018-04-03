@@ -3,15 +3,24 @@
 namespace keng::memory
 {
     void* MemoryManager::Allocate(size_t size) {
-        switch (size)
-        {
-        case  8: return  m8.Allocate();
-        case 16: return m16.Allocate();
-        case 32: return m32.Allocate();
-        case 64: return m64.Allocate();
+        //auto it = m_stats.find(size);
+        //if (it == m_stats.end()) {
+        //    m_stats[size] = 1;
+        //} else {
+        //    it->second += 1;
+        //}
+
+        void* result = nullptr;
+
+             if (size <=   8) result =  m8.Allocate();
+        else if (size <=  16) result = m16.Allocate();
+        else if (size <=  32) result = m32.Allocate();
+        else if (size <=  64) result = m64.Allocate();
+
+        if (!result) {
+            result = malloc(size);
         }
 
-        auto result = malloc(size);
         assert(result);
         return result;
     }
