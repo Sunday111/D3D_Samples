@@ -16,11 +16,10 @@ foreach(entry ${sources_exts})
 	list(APPEND target_sources ${sources_by_ext})
 endforeach()
 
-add_library(${keng_module_name} STATIC "${target_sources}")
+add_library(${keng_module_name} SHARED "${target_sources}")
 generate_vs_filters(${target_sources})
 target_include_directories(${keng_module_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${keng_module_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_compile_definitions(${keng_module_name} PRIVATE "-DKENG_CORE_DLL")
 target_link_libraries(${keng_module_name} PUBLIC EverydayTools)
 target_link_libraries(${keng_module_name} PRIVATE WinWrappers)
 

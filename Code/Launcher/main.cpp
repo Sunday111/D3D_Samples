@@ -1,3 +1,5 @@
+#define NOMINMAX
+
 #include "WinWrappers/WinWrappers.h"
 #include "EverydayTools/Array/ArrayView.h"
 #include "EverydayTools/UnusedVar.h"
@@ -7,26 +9,7 @@
 #include <string>
 #include <sstream>
 
-#include "Keng/Core/Application.h"
-
-using SystemCreatorSignature = void(__cdecl*)(void** );
-
-int Run(SystemCreatorSignature createFn) {
-    using namespace keng;
-    using namespace core;
-
-    void* rawSystem = nullptr;
-    createFn(&rawSystem);
-
-    auto system = reinterpret_cast<ISystem*>(rawSystem);
-
-    Application app;
-    app.AddSystem(system);
-    app.Initialize();
-    app.Run();
-
-    return 0;
-}
+#include "Keng/Core/IApplication.h"
 
 template<typename T>
 struct LocalFreeDeleter
@@ -37,6 +20,22 @@ struct LocalFreeDeleter
         }
     }
 };
+
+static std::string ConvertString(const std::wstring& wide) {
+    std::string result;
+    result.reserve(wide.size());
+    for (wchar_t letter : wide) {
+        edt::ThrowIfFailed(
+            letter <= std::numeric_limits<char>::max() &&
+            letter >= std::numeric_limits<char>::min(),
+            "Only ASCII names supported"
+        );
+
+        result.push_back(static_cast<char>(letter));
+    }
+
+    return result;
+}
 
 template<typename T>
 using WinLocalPtr = std::unique_ptr<T, LocalFreeDeleter<T>>;
@@ -81,13 +80,26 @@ INT WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nC
                 libraryName = ofn.lpstrFile;
             }
 
-            auto module = WA::LoadLibrary_(libraryName.c_str());
+            auto module = WA::LoadLibrary_(L"KengCore.dll");
             edt::ThrowIfFailed(module != nullptr, L"Failed to load library!");
 
-            std::string_view runFunctionName = "CreateSystem";
-            auto runFn = (SystemCreatorSignature)GetProcAddress(module, runFunctionName.data());
-            edt::ThrowIfFailed(runFn, "Failed to get \"", runFunctionName, "\" function!");
-            return Run(runFn);
+            std::string_view runFunctionName = "CreateApplication";
+            using CreateApplicationFunction = void(__cdecl*)(void**);
+            auto createAppFunction = (CreateApplicationFunction)GetProcAddress(module, runFunctionName.data());
+            edt::ThrowIfFailed(createAppFunction, "Failed to get \"", runFunctionName, "\" function!");
+
+            void* rawApp = nullptr;
+            createAppFunction(&rawApp);
+            std::unique_ptr<keng::core::IApplication> app;
+            app.reset(reinterpret_cast<keng::core::IApplication*>(rawApp));
+            
+            keng::core::ApplicationStartupParameters params;
+            params.modulesToLoad.push_back(ConvertString(libraryName));
+
+            app->Initialize(params);
+            app->Run();
+
+            return 0;
         };
     } catch (const std::exception& ex) {
         using WA = WinAPI<char>;

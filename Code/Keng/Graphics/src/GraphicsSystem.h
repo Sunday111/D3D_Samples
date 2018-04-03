@@ -6,11 +6,6 @@
 #include "Keng/Graphics/IGraphicsSystem.h"
 #include "Device.h"
 
-namespace keng::core
-{
-    class Application;
-}
-
 namespace keng::graphics
 {
     class GraphicsSystem : public IGraphicsSystem
@@ -42,7 +37,8 @@ namespace keng::graphics
 
     private:
         bool m_fullscreen = false;
-        core::Application* m_app = nullptr;
+        core::IApplication* m_app = nullptr;
+        resource::IResourceSystem* m_resourceSystem = nullptr;
         core::Ptr<Device> m_device;
         std::vector<std::string> m_dependencies;
     };

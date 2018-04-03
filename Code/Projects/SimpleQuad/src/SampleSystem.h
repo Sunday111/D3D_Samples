@@ -18,7 +18,10 @@ namespace simple_quad_sample
         virtual bool ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const override;
 
     protected:
-        keng::graphics::IGraphicsSystem* m_graphicsSystem;
+        keng::resource::IResourceSystem* m_resourceSystem = nullptr;
+        keng::graphics::IGraphicsSystem* m_graphicsSystem = nullptr;
+        keng::window_system::IWindowSystem* m_windowSystem = nullptr;
+
         keng::graphics::IEffectPtr m_effect;
         keng::graphics::IDeviceBufferPtr m_constantBuffer;
         keng::graphics::IDeviceBufferPtr m_vertexBuffer;

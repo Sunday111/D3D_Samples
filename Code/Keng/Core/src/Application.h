@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Keng/Core/Common.h"
 #include "Keng/Core/ISystem.h"
 #include "Keng/Core/IApplication.h"
 
@@ -12,7 +11,7 @@
 #include <memory>
 
 namespace keng::core {
-    class KENG_CORE_API Application :
+    class Application :
         public IApplication
     {
     public:
@@ -24,39 +23,16 @@ namespace keng::core {
         static constexpr auto DesiredFPS = 60;
         using TFrameRateCounter = FrameRateCounter<Period, FpsSamplesCount>;
 
+        // IApplication
         virtual bool Update() override;
-        virtual ISystem* AddSystem(ISystem* system) override;
-        virtual void Initialize() override;
-
-        void Run();
-
-        template<typename T>
-        T* TryGetSystem() const {
-            return CallAndRethrowM + [&]() -> T* {
-                for (auto& system : m_systems) {
-                    if (auto ptr = dynamic_cast<T*>(system.get()))
-                    {
-                        return ptr;
-                    }
-                }
-
-                return nullptr;
-            };
-        }
-
-        template<typename T>
-        T* GetSystem() const {
-            return CallAndRethrowM + [&] {
-                auto ptr = TryGetSystem<T>();
-                edt::ThrowIfFailed(ptr != nullptr, "Requested system not found");
-                return ptr;
-            };
-        }
+        virtual void Initialize(const ApplicationStartupParameters& params) override;
+        virtual void Run() override;
+        virtual ISystem* FindSystem(std::string_view name) const override;
 
         void SetVSync(bool value);
 
     private:
-        void LoadDependency(std::string_view name);
+        void LoadModule(std::string_view name);
         void LoadDependencies();
 
         bool UpdateSystems() {

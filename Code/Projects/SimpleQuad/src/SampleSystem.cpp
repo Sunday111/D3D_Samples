@@ -1,7 +1,7 @@
 #include "SampleSystem.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Geom/Vector.h"
-#include "Keng/Core/Application.h"
+#include "Keng/Core/IApplication.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "Keng/Graphics/Resource/TextureParameters.h"
@@ -128,18 +128,19 @@ namespace simple_quad_sample
         return false;
     }
 
-    void SampleSystem::Initialize(keng::core::IApplication* abstractApp) {
+    void SampleSystem::Initialize(keng::core::IApplication* app) {
         using namespace keng;
         using namespace graphics;
+        using namespace resource;
+        using namespace window_system;
 
         CallAndRethrowM + [&] {
-            auto app = dynamic_cast<core::Application*>(abstractApp);
-            auto resourceSystem = app->GetSystem<resource::IResourceSystem>();
-            m_graphicsSystem = app->GetSystem<graphics::IGraphicsSystem>();
+            m_resourceSystem = app->FindSystem<resource::IResourceSystem>();
+            m_graphicsSystem = app->FindSystem<graphics::IGraphicsSystem>();
+            m_windowSystem = app->FindSystem<window_system::IWindowSystem>();
             m_annotation = m_graphicsSystem->CreateAnnotation();
 
-            auto wndSystem = app->GetSystem<window_system::IWindowSystem>();
-            auto window = wndSystem->GetWindow();
+            auto window = m_windowSystem->GetWindow();
             uint32_t w, h;
             window->GetClientSize(&w, &h);
 
@@ -186,7 +187,7 @@ namespace simple_quad_sample
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/FlatColor.json";
-                m_effect = std::static_pointer_cast<IEffect>(resourceSystem->GetResource(effectName, m_graphicsSystem->GetDevice()));
+                m_effect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName, m_graphicsSystem->GetDevice()));
                 m_effect->InitDefaultInputLayout();
             }
 

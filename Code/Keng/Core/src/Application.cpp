@@ -1,4 +1,4 @@
-#include "Keng/Core/Application.h"
+#include "Application.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "WinWrappers/WinWrappers.h"
@@ -13,7 +13,7 @@ namespace keng::core
         m_vSync = value;
     }
 
-    void Application::LoadDependency(std::string_view name) {
+    void Application::LoadModule(std::string_view name) {
         using WA = WinAPI<char>;
         auto module = WA::LoadLibrary_(name.data());
         edt::ThrowIfFailed(module != nullptr, L"Failed to load library!");
@@ -38,19 +38,11 @@ namespace keng::core
             addedNewSystem = false;
             for (auto& system : m_systems) {
                 addedNewSystem = system->ForEachSystemDependency([&](std::string_view dependencyName) {
-                    bool alreadyHere = false;
-                    for (auto& loadedSystem : m_systems) {
-                        if (loadedSystem->GetSystemName() == dependencyName) {
-                            alreadyHere = true;
-                            break;
-                        }
-                    }
-
-                    if (alreadyHere) {
+                    if (FindSystem(dependencyName)) {
                         return false;
                     }
 
-                    LoadDependency(dependencyName);
+                    LoadModule(dependencyName);
                     return true;
                 });
 
@@ -61,7 +53,11 @@ namespace keng::core
         } while (addedNewSystem);
     }
 
-    void Application::Initialize() {
+    void Application::Initialize(const ApplicationStartupParameters& params) {
+        for (auto& moduleToLoad: params.modulesToLoad) {
+            LoadModule(moduleToLoad);
+        }
+
         LoadDependencies();
 
         std::vector<ISystem*> walkQueue;
@@ -102,13 +98,6 @@ namespace keng::core
         }
     }
 
-    ISystem* Application::AddSystem(ISystem* pSystem) {
-        std::unique_ptr<ISystem> system;
-        system.reset(pSystem);
-        m_systems.push_back(std::move(system));
-        return m_systems.back().get();
-    }
-
     bool Application::Update() {
         return CallAndRethrowM + [&] {
             if (m_vSync) {
@@ -134,4 +123,16 @@ namespace keng::core
             while (Update());
         };
     }
+
+    keng::core::ISystem* Application::FindSystem(std::string_view name) const
+    {
+        for (auto& sys: m_systems) {
+            if (sys->GetSystemName() == name) {
+                return sys.get();
+            }
+        }
+
+        return nullptr;
+    }
+
 }

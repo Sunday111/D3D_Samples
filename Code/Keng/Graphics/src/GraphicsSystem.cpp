@@ -3,7 +3,7 @@
 #include "Keng/Base/Serialization/OpenArchiveJSON.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
 #include "Keng/Base/Serialization/ReadFileToBuffer.h"
-#include "Keng/Core/Application.h"
+#include "Keng/Core/IApplication.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
@@ -96,14 +96,14 @@ namespace keng::graphics
 
     void GraphicsSystem::Initialize(core::IApplication* app) {
         CallAndRethrowM + [&] {
-            m_app = dynamic_cast<core::Application*>(app);
+            m_app = app;
             edt::ThrowIfFailed(m_app != nullptr, "Failed to cast IApplication to keng::Application");
             auto params = ReadDefaultParams();
 
             {// Register resource fabrics
-                auto resourceSystem = m_app->GetSystem<resource::IResourceSystem>();
+                m_resourceSystem = m_app->FindSystem<resource::IResourceSystem>();
                 ResourceFabricRegisterer fabricRegisterer;
-                fabricRegisterer.Register(resourceSystem);
+                fabricRegisterer.Register(m_resourceSystem);
             }
 
             {// Initialize device
@@ -147,8 +147,7 @@ namespace keng::graphics
 
     ITexturePtr GraphicsSystem::CreateTexture(const TextureParameters& params) {
         auto tex = TexturePtr::MakeInstance(*m_device, params);
-        auto resourceSystem = m_app->GetSystem<resource::IResourceSystem>();
-        resourceSystem->AddRuntimeResource(tex, m_device);
+        m_resourceSystem->AddRuntimeResource(tex, m_device);
         return tex;
     }
 

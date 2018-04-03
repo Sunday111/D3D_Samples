@@ -1,8 +1,7 @@
 #include "SampleSystem.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Geom/Vector.h"
-#include "D3D_Tools/Annotation.h"
-#include "Keng/Core/Application.h"
+#include "Keng/Core/IApplication.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "Keng/Graphics/Resource/TextureParameters.h"
@@ -132,18 +131,19 @@ namespace textured_quad_sample
         return false;
     }
 
-    void SampleSystem::Initialize(keng::core::IApplication* abstractApp) {
+    void SampleSystem::Initialize(keng::core::IApplication* app) {
         using namespace keng;
-        using namespace keng::resource;
-        using namespace keng::graphics;
+        using namespace graphics;
+        using namespace resource;
+        using namespace window_system;
+
         CallAndRethrowM + [&] {
-            auto app = dynamic_cast<core::Application*>(abstractApp);
-            auto resourceSystem = app->GetSystem<resource::IResourceSystem>();
-            m_graphicsSystem = app->GetSystem<graphics::IGraphicsSystem>();
+            m_resourceSystem = app->FindSystem<IResourceSystem>();
+            m_graphicsSystem = app->FindSystem<IGraphicsSystem>();
+            m_windowSystem = app->FindSystem<IWindowSystem>();
             m_annotation = m_graphicsSystem->CreateAnnotation();
 
-            auto wndSystem = app->GetSystem<window_system::IWindowSystem>();
-            auto window = wndSystem->GetWindow();
+            auto window = m_windowSystem->GetWindow();
             uint32_t w, h;
             window->GetClientSize(&w, &h);
 
@@ -188,11 +188,11 @@ namespace textured_quad_sample
                 m_depthStencil = m_graphicsSystem->CreateDepthStencil(depthStencilParams);
             }
 
-            m_texture = std::static_pointer_cast<ITexture>(resourceSystem->GetResource("Assets/Textures/container.json", m_graphicsSystem->GetDevice()));
+            m_texture = std::static_pointer_cast<ITexture>(m_resourceSystem->GetResource("Assets/Textures/container.json", m_graphicsSystem->GetDevice()));
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Textured.json";
-                m_effect = std::static_pointer_cast<IEffect>(resourceSystem->GetResource(effectName, m_graphicsSystem->GetDevice()));
+                m_effect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName, m_graphicsSystem->GetDevice()));
                 m_effect->InitDefaultInputLayout();
             }
 
