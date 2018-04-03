@@ -23,10 +23,15 @@ target_include_directories(${keng_module_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DI
 target_include_directories(${keng_module_name} PUBLIC "${root_dir}/Code/Keng/Core/include")
 target_include_directories(${keng_module_name} PUBLIC "${root_dir}/Code/Keng/ResourceSystem/include")
 target_include_directories(${keng_module_name} PUBLIC "${root_dir}/Code/Keng/WindowSystem/include")
-target_link_libraries(${keng_module_name} PRIVATE KengBase)
 target_link_libraries(${keng_module_name} PRIVATE D3D_Tools)
 target_link_libraries(${keng_module_name} PRIVATE WinWrappers)
 target_link_libraries(${keng_module_name} PUBLIC EverydayTools)
 target_link_libraries(${keng_module_name} PUBLIC Yasli)
+target_link_libraries(${keng_module_name} PUBLIC KengBase)
+
+if(${KENG_KengMemory})
+	target_link_libraries(${keng_module_name} PRIVATE KengMemory)
+	target_compile_definitions(${keng_module_name} PRIVATE "-DUSE_KENG_MEMORY")
+endif()
 
 set(added_target_name ${keng_module_name} PARENT_SCOPE)

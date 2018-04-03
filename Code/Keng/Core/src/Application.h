@@ -36,7 +36,7 @@ namespace keng::core {
         bool UpdateSystems();
 
     private:
-        bool m_vSync = true;
+        bool m_vSync = false;
         TFrameRateCounter m_fpsCounter;
         std::vector<ModulePtr> m_modules;
     };

@@ -25,4 +25,9 @@ target_link_libraries(${keng_module_name} PUBLIC EverydayTools)
 target_link_libraries(${keng_module_name} PUBLIC WinWrappers)
 target_link_libraries(${keng_module_name} PUBLIC KengBase)
 
+if(${KENG_KengMemory})
+	target_link_libraries(${keng_module_name} PRIVATE KengMemory)
+	target_compile_definitions(${keng_module_name} PRIVATE "-DUSE_KENG_MEMORY")
+endif()
+
 set(added_target_name ${keng_module_name} PARENT_SCOPE)
