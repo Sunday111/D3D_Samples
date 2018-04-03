@@ -1,9 +1,10 @@
 #pragma once
 
+#include "FwdDecl.h"
 #include "Keng/Core/IApplication.h"
 #include "Keng/Core/ISystem.h"
+#include "Module.h"
 #include "EverydayTools/FrameRateCounter.h"
-#include "EverydayTools/Exception/CallAndRethrow.h"
 #include <chrono>
 #include <vector>
 #include <memory>
@@ -37,6 +38,6 @@ namespace keng::core {
     private:
         bool m_vSync = true;
         TFrameRateCounter m_fpsCounter;
-        std::vector<ISystemPtr> m_systems;
+        std::vector<ModulePtr> m_modules;
     };
 }

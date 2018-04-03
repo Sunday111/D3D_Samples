@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
+#include "Keng/Core/ISystem.h"
 #include "WinWrappers/WinWrappers.h"
 #include <algorithm>
 #include "WinWrappers/WinWrappers.h"
@@ -17,18 +18,9 @@ namespace keng::core
     Application::~Application() = default;
 
     void Application::LoadModule(std::string_view name) {
-        using WA = WinAPI<char>;
-        auto module = WA::LoadLibrary_(name.data());
-        edt::ThrowIfFailed(module != nullptr, L"Failed to load library!");
-
-        std::string_view runFunctionName = "CreateSystem";
-        auto createFn = (SystemCreatorSignature)GetProcAddress(module, runFunctionName.data());
-        edt::ThrowIfFailed(createFn, "Failed to get \"", runFunctionName, "\" function!");
-
-        void* rawSystem = nullptr;
-        createFn(&rawSystem);
-
-        m_systems.push_back(ISystemPtr(reinterpret_cast<ISystem*>(rawSystem)));
+        CallAndRethrowM + [&] {
+            m_modules.push_back(ModulePtr::MakeInstance(name));
+        };
     }
 
     void Application::LoadDependencies() {
@@ -37,7 +29,8 @@ namespace keng::core
         do
         {
             addedNewSystem = false;
-            for (auto& system : m_systems) {
+            for (auto& module : m_modules) {
+                auto& system = module->GetSystem();
                 addedNewSystem = system->ForEachSystemDependency([&](std::string_view dependencyName) {
                     if (FindSystem(dependencyName)) {
                         return false;
@@ -57,8 +50,8 @@ namespace keng::core
     bool Application::UpdateSystems() {
         return CallAndRethrowM + [&] {
             bool finished = false;
-            for (auto& system : m_systems) {
-                if (!system->Update()) {
+            for (auto& module : m_modules) {
+                if (!module->GetSystem()->Update()) {
                     finished = true;
                 }
             }
@@ -76,8 +69,8 @@ namespace keng::core
         std::vector<ISystemPtr> walkQueue;
         std::vector<ISystemPtr> initQueue;
 
-        for (auto& sys : m_systems) {
-            initQueue.push_back(sys);
+        for (auto& module : m_modules) {
+            initQueue.push_back(module->GetSystem());
         }
 
         std::stable_sort(initQueue.begin(), initQueue.end(), [&](const ISystemPtr& a, const ISystemPtr& b) {
@@ -94,11 +87,9 @@ namespace keng::core
                         return true;
                     }
 
-                    auto sysIt = std::find_if(m_systems.begin(), m_systems.end(), [name](const ISystemPtr& sys) {
-                        return std::string_view(sys->GetSystemName()) == name;
-                    });
-                    edt::ThrowIfFailed(sysIt != m_systems.end(), "Found dependency that was not registered as system");
-                    walkQueue.push_back(*sysIt);
+                    auto system = FindSystem(name);
+                    edt::ThrowIfFailed(system != nullptr, "Found dependency that was not registered as system");
+                    walkQueue.push_back(system);
                     return false;
                 });
             }
@@ -140,9 +131,10 @@ namespace keng::core
 
     ISystemPtr Application::FindSystem(std::string_view name) const
     {
-        for (auto& sys: m_systems) {
-            if (sys->GetSystemName() == name) {
-                return sys;
+        for (auto& module: m_modules) {
+            auto& system = module->GetSystem();
+            if (system->GetSystemName() == name) {
+                return system;
             }
         }
 

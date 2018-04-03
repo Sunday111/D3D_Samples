@@ -10,6 +10,7 @@
 #include <sstream>
 
 #include "Keng/Core/IApplication.h"
+#include "Keng/Core/CreateApplication.h"
 
 template<typename T>
 struct LocalFreeDeleter
@@ -80,19 +81,11 @@ INT WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nC
                 libraryName = ofn.lpstrFile;
             }
 
-            auto module = WA::LoadLibrary_(L"KengCore.dll");
+            auto module = WA::LoadLibrary_(L"KengCore");
             edt::ThrowIfFailed(module != nullptr, L"Failed to load library!");
 
-            std::string_view runFunctionName = "CreateApplication";
-            using CreateApplicationFunction = void(__cdecl*)(void**);
-            auto createAppFunction = (CreateApplicationFunction)GetProcAddress(module, runFunctionName.data());
-            edt::ThrowIfFailed(createAppFunction, "Failed to get \"", runFunctionName, "\" function!");
+            auto app = keng::core::CreateApplication(module);
 
-            void* rawApp = nullptr;
-            createAppFunction(&rawApp);
-            std::unique_ptr<keng::core::IApplication> app;
-            app.reset(reinterpret_cast<keng::core::IApplication*>(rawApp));
-            
             keng::core::ApplicationStartupParameters params;
             params.modulesToLoad.push_back(ConvertString(libraryName));
 
