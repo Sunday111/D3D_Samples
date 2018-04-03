@@ -1,7 +1,6 @@
 #include "SampleSystem.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Geom/Vector.h"
-#include "D3D_Tools/Annotation.h"
 #include "Keng/Core/Application.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
@@ -225,12 +224,9 @@ namespace simple_quad_sample
                 m_vertexBuffer = m_graphicsSystem->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
             }
 
-            {
+            {// Create constant buffer
                 CB constantBufferInitData;
-                edt::geom::Vector<float, 3> t;
-                t.rx() = 0.f;
-                t.ry() = 0.2f;
-                t.rz() = 0.f;
+                edt::geom::Vector<float, 3> t {};
                 constantBufferInitData.transform = MakeTranslationMatrix(t);
 
                 graphics::DeviceBufferParams params;

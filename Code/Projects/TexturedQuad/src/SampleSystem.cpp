@@ -230,9 +230,9 @@ namespace textured_quad_sample
                 m_vertexBuffer = m_graphicsSystem->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
             }
 
-            {
+            {// Create constant buffer
                 CB constantBufferInitData;
-                edt::geom::Vector<float, 3> t{};
+                edt::geom::Vector<float, 3> t {};
                 constantBufferInitData.transform = MakeTranslationMatrix(t);
 
                 graphics::DeviceBufferParams params;
