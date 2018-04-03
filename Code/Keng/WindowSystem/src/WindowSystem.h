@@ -14,8 +14,7 @@ namespace yasli
 
 namespace keng::window_system
 {
-    class WindowSystem :
-        public window_system::IWindowSystem
+    class WindowSystem : public core::RefCountImpl<window_system::IWindowSystem>
     {
     public:
         using TChar = char;
@@ -40,7 +39,7 @@ namespace keng::window_system
         // ISystem
         virtual std::string_view GetSystemName() const override;
         virtual bool ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const override;
-        virtual void Initialize(core::IApplication* app) override;
+        virtual void Initialize(const core::IApplicationPtr& app) override;
         virtual bool Update() override;
 
     protected:

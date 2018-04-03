@@ -23,7 +23,7 @@ namespace keng::resource
 
     ResourceSystem::~ResourceSystem() = default;
 
-    void ResourceSystem::Initialize(core::IApplication* app) {
+    void ResourceSystem::Initialize(const core::IApplicationPtr& app) {
         UnusedVar(app);
         m_parameters = ReadDefaultParams();
     }

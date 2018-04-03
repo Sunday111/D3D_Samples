@@ -12,4 +12,5 @@ namespace keng::resource
     using IResourceFabricPtr = core::Ptr<IResourceFabric>;
 
     class IResourceSystem;
+    using IResourceSystemPtr = core::Ptr<IResourceSystem>;
 }

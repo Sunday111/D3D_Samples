@@ -128,7 +128,7 @@ namespace simple_quad_sample
         return false;
     }
 
-    void SampleSystem::Initialize(keng::core::IApplication* app) {
+    void SampleSystem::Initialize(const keng::core::IApplicationPtr& app) {
         using namespace keng;
         using namespace graphics;
         using namespace resource;

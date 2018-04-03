@@ -7,6 +7,6 @@ namespace keng::graphics
     class ResourceFabricRegisterer
     {
     public:
-        void Register(resource::IResourceSystem* resourceSystem);
+        void Register(const resource::IResourceSystemPtr& resourceSystem);
     };
 }

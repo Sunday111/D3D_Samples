@@ -7,7 +7,7 @@
 
 namespace keng::window_system
 {
-    void WindowSystem::Initialize(core::IApplication* app) {
+    void WindowSystem::Initialize(const core::IApplicationPtr& app) {
         CallAndRethrowM + [&] {
             UnusedVar(app);
             auto params = ReadDefaultParams();

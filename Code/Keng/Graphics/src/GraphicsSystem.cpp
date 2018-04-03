@@ -3,7 +3,6 @@
 #include "Keng/Base/Serialization/OpenArchiveJSON.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
 #include "Keng/Base/Serialization/ReadFileToBuffer.h"
-#include "Keng/Core/IApplication.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
@@ -37,6 +36,7 @@
 
 #include "yasli/JSONIArchive.h"
 #include "D3D_11/EnumConverter.h"
+#include "Keng/Core/IApplication.h"
 
 namespace keng::graphics
 {
@@ -94,7 +94,7 @@ namespace keng::graphics
 
     GraphicsSystem::~GraphicsSystem() = default;
 
-    void GraphicsSystem::Initialize(core::IApplication* app) {
+    void GraphicsSystem::Initialize(const core::IApplicationPtr& app) {
         CallAndRethrowM + [&] {
             m_app = app;
             edt::ThrowIfFailed(m_app != nullptr, "Failed to cast IApplication to keng::Application");

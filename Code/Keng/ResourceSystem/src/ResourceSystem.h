@@ -22,8 +22,7 @@ namespace keng::resource
 
     using DeviceResourcesPtr = std::unique_ptr<DeviceResources>;
 
-    class ResourceSystem :
-        public IResourceSystem
+    class ResourceSystem : public core::RefCountImpl<IResourceSystem>
     {
     public:
         ResourceSystem();
@@ -32,7 +31,7 @@ namespace keng::resource
         // ISystem
         virtual std::string_view GetSystemName() const override;
         virtual bool ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const override;
-        virtual void Initialize(core::IApplication* app) override;
+        virtual void Initialize(const core::IApplicationPtr& app) override;
         virtual bool Update() override;
 
         // IResource system

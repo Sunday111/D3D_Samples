@@ -8,7 +8,7 @@
 
 namespace keng::graphics
 {
-    class GraphicsSystem : public IGraphicsSystem
+    class GraphicsSystem : public core::RefCountImpl<IGraphicsSystem>
     {
     public:
         GraphicsSystem();
@@ -17,7 +17,7 @@ namespace keng::graphics
         // ISystem
         virtual std::string_view GetSystemName() const override;
         virtual bool ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const override;
-        virtual void Initialize(core::IApplication* app) override;
+        virtual void Initialize(const core::IApplicationPtr& app) override;
         virtual bool Update() override;
 
         // IGraphicsSystem
@@ -37,8 +37,8 @@ namespace keng::graphics
 
     private:
         bool m_fullscreen = false;
-        core::IApplication* m_app = nullptr;
-        resource::IResourceSystem* m_resourceSystem = nullptr;
+        core::IApplicationPtr m_app;
+        resource::IResourceSystemPtr m_resourceSystem;
         core::Ptr<Device> m_device;
         std::vector<std::string> m_dependencies;
     };

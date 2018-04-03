@@ -9,7 +9,7 @@
 
 namespace keng::graphics
 {
-    void ResourceFabricRegisterer::Register(resource::IResourceSystem* resourceSystem) {
+    void ResourceFabricRegisterer::Register(const resource::IResourceSystemPtr& resourceSystem) {
         CallAndRethrowM + [&] {
             resourceSystem->RegisterResourceFabric(EffectFabricPtr::MakeInstance());
             resourceSystem->RegisterResourceFabric(ShaderFabricPtr::MakeInstance());
