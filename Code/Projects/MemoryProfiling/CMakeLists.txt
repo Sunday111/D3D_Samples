@@ -1,0 +1,31 @@
+cmake_minimum_required(VERSION 3.5.1)
+include(generate_vs_filters)
+
+set(target_name MemoryProfiling)
+set(target_desc "The place to check memory manager speed")
+set(PROJECT_${target_name} true CACHE BOOL ${target_desc})
+if(NOT ${PROJECT_${target_name}})
+    return()
+endif()
+
+set(sources_dir ${CMAKE_CURRENT_SOURCE_DIR})
+set(sources_exts "h" "cpp")
+set(target_sources)
+
+foreach(entry ${sources_exts})
+	file(GLOB_RECURSE sources_by_ext "${sources_dir}/*.${entry}")
+	list(APPEND target_sources ${sources_by_ext})
+endforeach()
+
+add_library(${target_name} MODULE ${target_sources})
+generate_vs_filters(${target_sources})
+target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${target_name} PRIVATE "${root_dir}/Code/Keng/Core/include")
+target_link_libraries(${target_name} PUBLIC KengBase)
+
+if(${KENG_KengMemory})
+	target_link_libraries(${target_name} PRIVATE KengMemory)
+	target_compile_definitions(${target_name} PRIVATE "-DUSE_KENG_MEMORY")
+endif()
+
+set(added_target_name ${target_name} PARENT_SCOPE)

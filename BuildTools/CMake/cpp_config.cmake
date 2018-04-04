@@ -23,6 +23,7 @@ endif()
 #compile options
 if(MSVC)
   add_compile_options("/std:c++latest")
+  add_definitions("-D_CRT_SECURE_NO_WARNINGS")
 else()
   message(ERROR "Unknown compiler")
 endif()

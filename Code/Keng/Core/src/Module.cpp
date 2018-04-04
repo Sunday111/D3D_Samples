@@ -13,6 +13,7 @@ namespace keng::core
     }
 
     Module::~Module() {
+        m_system = nullptr;
         if (m_handle) {
             FreeLibrary(m_handle);
             m_handle = nullptr;

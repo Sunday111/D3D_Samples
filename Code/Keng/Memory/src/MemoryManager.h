@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <fstream>
 
 namespace keng::memory
 {
@@ -64,7 +65,7 @@ namespace keng::memory
             if (pointerAddress < poolAddress) {
                 return false;
             }
-            auto delta = pointerAddress - poolAddress;
+            auto delta = (pointerAddress - poolAddress);
             auto index = delta / sizeof(T);
             return index < m_size;
         }
@@ -132,6 +133,8 @@ namespace keng::memory
             return true;
         }
 
+        constexpr size_t GetElementSize() const { return bytes; }
+
     private:
         Chunk& ChunckAt(size_t index) {
             return (Chunk&)m_vector[index];
@@ -144,18 +147,20 @@ namespace keng::memory
     class MemoryManager
     {
     public:
+
         void* Allocate(std::size_t size);
         void Deallocate(void* pointer);
         static MemoryManager& Instance();
 
     private:
+        MemoryManager();
+
         SmallChunkPool< 8, 10, 100000>  m8;
         SmallChunkPool<16, 10, 100000> m16;
         SmallChunkPool<32, 10, 100000> m32;
         SmallChunkPool<64, 10, 100000> m64;
 
-        MemoryManager() = default;
-
+        std::ofstream m_log;
         //std::map<size_t, size_t> m_stats;
     };
 }

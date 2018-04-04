@@ -71,27 +71,6 @@ namespace textured_quad_sample
 
         return CallAndRethrowM + [&] {
             return Annotate(m_annotation, "Frame", [&] {
-                static std::vector<std::vector<uint8_t>> arrs;
-                for (int i = 0; i < 100; ++i) {
-                    int size = rand() % 256;
-                    std::vector<uint8_t> arr;
-                    arr.reserve(size);
-                    for (int j = 0; j < size; ++ j) {
-                        arr.push_back((uint8_t)rand());
-                    }
-                    arrs.push_back(std::move(arr));
-                }
-
-                while (!arrs.empty()) {
-                    auto eraseIt = arrs.begin() + (rand() % arrs.size());
-                    auto& arr = *eraseIt;
-                    while (!arr.empty()) {
-                        auto it = arr.begin() + (rand() % arr.size());
-                        arr.erase(it);
-                    }
-                    arrs.erase(eraseIt);
-                }
-
                 float clearColor[4]{
                     0.0f, 0.2f, 0.4f, 1.0f
                 };
@@ -165,8 +144,6 @@ namespace textured_quad_sample
             m_graphicsSystem = app->FindSystem<IGraphicsSystem>();
             m_windowSystem = app->FindSystem<IWindowSystem>();
             m_annotation = m_graphicsSystem->CreateAnnotation();
-
-            srand(105);
 
             auto window = m_windowSystem->GetWindow();
             uint32_t w, h;
