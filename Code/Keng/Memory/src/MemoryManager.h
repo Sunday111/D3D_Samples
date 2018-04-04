@@ -32,7 +32,11 @@ namespace keng::memory
             assert(bytes < pageSize * pagesCount);
             auto pages = BytesToPages(bytes);
             if (pages > commitedPages) {
-                VirtualAlloc(data, pages * pageSize, MEM_COMMIT, PAGE_READWRITE);
+                auto startAddress = reinterpret_cast<size_t>(data);
+                auto commitAddress = reinterpret_cast<void*>(startAddress + commitedPages * pageSize);
+                auto pagesToCommit = pages - commitedPages;
+                auto bytesToCommit = pagesToCommit * pageSize;
+                VirtualAlloc(commitAddress, bytesToCommit, MEM_COMMIT, PAGE_READWRITE);
                 commitedPages = pages;
             }
         }
