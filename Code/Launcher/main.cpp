@@ -1,5 +1,3 @@
-#define NOMINMAX
-
 #include "WinWrappers/WinWrappers.h"
 #include "EverydayTools/Array/ArrayView.h"
 #include "EverydayTools/UnusedVar.h"

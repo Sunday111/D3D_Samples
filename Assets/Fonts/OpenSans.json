@@ -1,0 +1,10 @@
+{
+    "resource" :
+    {
+        "type": "Font",
+        "font":
+        {
+            "file": "Assets/ttf/OpenSans/OpenSans-Regular.ttf"
+        }
+    }
+}

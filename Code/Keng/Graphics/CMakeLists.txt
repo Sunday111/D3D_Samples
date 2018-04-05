@@ -28,6 +28,7 @@ target_link_libraries(${keng_module_name} PRIVATE WinWrappers)
 target_link_libraries(${keng_module_name} PUBLIC EverydayTools)
 target_link_libraries(${keng_module_name} PUBLIC Yasli)
 target_link_libraries(${keng_module_name} PUBLIC KengBase)
+target_link_libraries(${keng_module_name} PUBLIC FreeType)
 
 if(${KENG_KengMemory})
 	target_link_libraries(${keng_module_name} PRIVATE KengMemory)

@@ -25,7 +25,6 @@ target_include_directories(${target_name} PRIVATE "${root_dir}/Code/Keng/Resourc
 target_include_directories(${target_name} PRIVATE "${root_dir}/Code/Keng/WindowSystem/include")
 target_include_directories(${target_name} PRIVATE "${root_dir}/Code/Keng/Graphics/include")
 target_link_libraries(${target_name} PUBLIC KengBase)
-target_link_libraries(${target_name} PRIVATE FreeType)
 add_dependencies(${target_name} KengCore)
 add_dependencies(${target_name} KengResourceSystem)
 add_dependencies(${target_name} KengWindowSystem)

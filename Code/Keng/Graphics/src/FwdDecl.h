@@ -53,4 +53,13 @@ namespace keng::graphics
 
     class GraphicsSystem;
     using GraphicsSystemPtr = core::Ptr<GraphicsSystem>;
+
+    class Font;
+    using FontPtr = core::Ptr<Font>;
+
+    class FontFabric;
+    using FontFabricPtr = core::Ptr<FontFabric>;
+
+    class GlyphAtlas;
+    using GlyphAtlasPtr = core::Ptr<GlyphAtlas>;
 }

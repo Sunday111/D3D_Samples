@@ -6,6 +6,7 @@
 #include "Resource/Effect/EffectFabric.h"
 #include "Resource/Texture/TextureFabric.h"
 #include "Resource/ShaderTemplate/ShaderTemplateFabric.h"
+#include "Resource/Font/FontFabric.h"
 
 namespace keng::graphics
 {
@@ -15,6 +16,7 @@ namespace keng::graphics
             resourceSystem->RegisterResourceFabric(ShaderFabricPtr::MakeInstance());
             resourceSystem->RegisterResourceFabric(ShaderTemplateFabricPtr::MakeInstance());
             resourceSystem->RegisterResourceFabric(TextureFabricPtr::MakeInstance());
+            resourceSystem->RegisterResourceFabric(FontFabricPtr::MakeInstance());
         };
     }
 }

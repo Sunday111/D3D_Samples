@@ -48,10 +48,28 @@ namespace keng::graphics
             };
         }
 
-        static size_t ComputeBytesPerPixel(FragmentFormat) {
-            // ???
-            return 4;
+        static size_t ComputeBytesPerPixel(FragmentFormat format) {
+            return CallAndRethrowM + [&] {
+                switch (format) {
+                case FragmentFormat::R8_G8_B8_A8_UNORM:
+                case FragmentFormat::R24_G8_TYPELESS:
+                case FragmentFormat::D24_UNORM_S8_UINT:
+                case FragmentFormat::R24_UNORM_X8_TYPELESS:
+                    return 4;
+                    break;
+
+                case FragmentFormat::R8_UNORM:
+                    return 1;
+                    break;
+                }
+
+                throw std::exception("This format is not supported here");
+            };
         }
+    }
+
+    DevicePtr Texture::GetDevice() const {
+        return m_device;
     }
 
     Texture::Texture(Device& device, const TextureParameters& params) {

@@ -59,4 +59,7 @@ namespace keng::graphics
 
     class IGraphicsSystem;
     using IGraphicsSystemPtr = core::Ptr<IGraphicsSystem>;
+
+    class IFont;
+    using IFontPtr = core::Ptr<IFont>;
 }

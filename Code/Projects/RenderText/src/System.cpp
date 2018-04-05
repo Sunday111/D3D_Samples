@@ -2,6 +2,7 @@
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Geom/Vector.h"
 #include "Keng/Core/IApplication.h"
+#include "Keng/Graphics/Resource/IFont.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "Keng/Graphics/Resource/TextureParameters.h"
@@ -23,7 +24,6 @@
 #include "Keng/Graphics/IDevice.h"
 
 #include "stdlib.h"
-#include "FreeType.h"
 
 
 namespace render_text_sample
@@ -146,9 +146,6 @@ namespace render_text_sample
         using namespace window_system;
 
         CallAndRethrowM + [&] {
-            free_type::Library lib;
-            lib.LoadFace();
-
             m_resourceSystem = app->FindSystem<IResourceSystem>();
             m_graphicsSystem = app->FindSystem<IGraphicsSystem>();
             m_windowSystem = app->FindSystem<IWindowSystem>();
@@ -188,7 +185,11 @@ namespace render_text_sample
                 m_depthStencil = m_graphicsSystem->CreateDepthStencil(depthStencilParams);
             }
 
-            m_texture = std::static_pointer_cast<ITexture>(m_resourceSystem->GetResource("Assets/Textures/font.json", m_graphicsSystem->GetDevice()));
+            //m_texture = std::static_pointer_cast<ITexture>(m_resourceSystem->GetResource("Assets/Textures/container.json", m_graphicsSystem->GetDevice()));
+
+            auto font = std::static_pointer_cast<IFont>(m_resourceSystem->GetResource("Assets/Fonts/OpenSans.json"));
+            font->Do(*m_graphicsSystem->GetDevice());
+            m_texture = font->GetTexture(*m_graphicsSystem->GetDevice());
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Textured.json";
@@ -199,27 +200,24 @@ namespace render_text_sample
             {// Create vertex buffer
                 Vertex vertices[4];
 
-                auto x0 = 0.371094f * (596.f / 1024.f);
-                auto x1 = 0.37793f * (596.f / 1024.f);;
-
                 //      POSITION               ////         TEXTURE COORDS       /**/
                 /////////////////////////////////////////////////////////////////////
-                vertices[0].pos.rx() = -0.50f; /**/ vertices[0].tex.rx() =   x0; /**/
+                vertices[0].pos.rx() = -0.50f; /**/ vertices[0].tex.rx() = 0.0f; /**/
                 vertices[0].pos.ry() = -0.50f; /**/ vertices[0].tex.ry() = 1.0f; /**/
                 vertices[0].pos.rz() = +0.00f; /**/                              /**/
                 vertices[0].pos.rw() = +1.00f; /**/                              /**/
                 /////////////////////////////////////////////////////////////////////
-                vertices[1].pos.rx() = -0.50f; /**/ vertices[1].tex.rx() =   x0; /**/
+                vertices[1].pos.rx() = -0.50f; /**/ vertices[1].tex.rx() = 0.0f; /**/
                 vertices[1].pos.ry() = +0.50f; /**/ vertices[1].tex.ry() = 0.0f; /**/
                 vertices[1].pos.rz() = +0.00f; /**/                              /**/
                 vertices[1].pos.rw() = +1.00f; /**/                              /**/
                 /////////////////////////////////////////////////////////////////////
-                vertices[2].pos.rx() = +0.50f; /**/ vertices[2].tex.rx() =   x1; /**/
+                vertices[2].pos.rx() = +0.50f; /**/ vertices[2].tex.rx() = 1.0f; /**/
                 vertices[2].pos.ry() = -0.50f; /**/ vertices[2].tex.ry() = 1.0f; /**/
                 vertices[2].pos.rz() = +0.00f; /**/                              /**/
                 vertices[2].pos.rw() = +1.00f; /**/                              /**/
                 /////////////////////////////////////////////////////////////////////
-                vertices[3].pos.rx() = +0.50f; /**/ vertices[3].tex.rx() =   x1; /**/
+                vertices[3].pos.rx() = +0.50f; /**/ vertices[3].tex.rx() = 1.0f; /**/
                 vertices[3].pos.ry() = +0.50f; /**/ vertices[3].tex.ry() = 0.0f; /**/
                 vertices[3].pos.rz() = +0.00f; /**/                              /**/
                 vertices[3].pos.rw() = +1.00f; /**/                              /**/
