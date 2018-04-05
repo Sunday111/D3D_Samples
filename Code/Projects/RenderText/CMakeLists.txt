@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.5.1)
 include(generate_vs_filters)
 
-set(target_name SimpleQuad)
-set(target_desc "Render quad")
+set(target_name RenderText)
+set(target_desc "Rendering simple text")
 set(PROJECT_${target_name} true CACHE BOOL ${target_desc})
 if(NOT ${PROJECT_${target_name}})
     return()

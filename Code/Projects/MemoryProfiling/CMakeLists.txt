@@ -22,6 +22,7 @@ generate_vs_filters(${target_sources})
 target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(${target_name} PRIVATE "${root_dir}/Code/Keng/Core/include")
 target_link_libraries(${target_name} PUBLIC KengBase)
+add_dependencies(${target_name} KengCore)
 
 if(${KENG_KengMemory})
 	target_link_libraries(${target_name} PRIVATE KengMemory)
