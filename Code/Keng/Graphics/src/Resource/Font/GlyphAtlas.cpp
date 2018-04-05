@@ -17,7 +17,7 @@ namespace keng::graphics
             m_parameters = params;
             auto resourceSystem = font.GetResourceSystem();
 
-            std::string letters = "AB";
+            std::string letters = "ABCDE";
 
             free_type::GlyphParameters glyphParams;
             glyphParams.height_pt = 20;
@@ -29,42 +29,9 @@ namespace keng::graphics
             m_cpuTexture.reset(new uint8_t[textureSize]);
             std::memset(m_cpuTexture.get(), 0, textureSize);
 
-            size_t sector_w = glyphParams.GetMaxWidthPx();
-            size_t sector_h = glyphParams.GetMaxHeightPx();
-
             for (auto letter : letters) {
                 glyphParams.unicode = letter;
-                auto& glyph = AddGlyph(glyphParams);
-
-                size_t gw = glyph.data.width;
-                size_t gh = glyph.data.height;
-                for (size_t y = 0; y < gh; ++y) {
-                    assert(sector_w >= gw);
-                    auto textureRowAddress = m_cpuTexture.get() + (glyph.y + y) * m_parameters.width + glyph.x;
-                    auto glyphRowAddress = glyph.data.buffer.get() + (glyph.y + y) * gw;
-                    std::memcpy(textureRowAddress, glyphRowAddress, gw);
-
-                    //for (size_t x = 0; x < gw; ++x) {
-                    //    auto& from = glyph.data.buffer[y * gw + x];
-                    //    auto& to = m_cpuTexture[(glyph.y + y) * m_parameters.width + x + glyph.x];
-                    //    to.color[0] = from / 255.f;
-                    //    to.color[1] = from / 255.f;
-                    //    to.color[2] = from / 255.f;
-                    //    to.color[3] = 1.f;
-                    //}
-                }
-            }
-
-            {
-                std::ofstream file;
-                file.open("tesst.txt");
-                for (size_t y = 0; y < m_parameters.width; ++y) {
-                    for (size_t x = 0; x < m_parameters.height; ++x) {
-                        auto val = m_cpuTexture[x + y * m_parameters.width];
-                        file.put(val ? '1' : ' ');
-                    }
-                    file << std::endl;
-                }
+                AddGlyph(glyphParams);
             }
 
             TextureParameters texureParameters{};
@@ -90,27 +57,37 @@ namespace keng::graphics
             size_t sector_w = params.GetMaxWidthPx();
             size_t sector_h = params.GetMaxHeightPx();
 
-            edt::ThrowIfFailed(next_x + sector_w <= m_parameters.width, "Atlas is full...");
+            edt::ThrowIfFailed(
+                next_x + sector_w <= m_parameters.width,
+                "Atlas is full...");
 
             AtlasGlyphData glyphData;
             auto& face = *m_font->GetFace();
             glyphData.data = face.RenderGlyph(params);
             glyphData.x = next_x;
             glyphData.y = next_y;
+
+            CopyGlyphData(glyphData);
             m_glyphs.push_back(std::move(glyphData));
 
+            next_x += sector_w;
             if (next_x + sector_w > m_parameters.width) {
-                if (next_y + sector_h > m_parameters.height) {
-                    next_x += sector_w;
-                } else {
+                if (next_y + sector_h <= m_parameters.height) {
                     next_x = 0;
                     next_y += sector_h;
                 }
-            } else {
-                next_x += sector_w;
             }
 
             return m_glyphs.back();
         };
+    }
+    void GlyphAtlas::CopyGlyphData(const AtlasGlyphData& g) {
+        auto gw = g.data.width;
+        auto gh = g.data.height;
+        for (size_t y = 0; y < gh; ++y) {
+            auto textureRowAddress = m_cpuTexture.get() + (g.y + y) * m_parameters.width + g.x;
+            auto glyphRowAddress = g.data.buffer.get() + y * gw;
+            std::memcpy(textureRowAddress, glyphRowAddress, gw);
+        }
     }
 }

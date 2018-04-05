@@ -13,7 +13,7 @@ namespace keng::graphics
     {
     public:
         uint32_t width = 300;
-        uint32_t height = 300;
+        uint32_t height = 500;
     };
 
     class AtlasGlyphData
@@ -37,6 +37,7 @@ namespace keng::graphics
 
     private:
         AtlasGlyphData& AddGlyph(const free_type::GlyphParameters& params);
+        void CopyGlyphData(const AtlasGlyphData&);
 
         TexturePtr m_texture;
         FontPtr m_font;
