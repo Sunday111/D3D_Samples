@@ -12,8 +12,8 @@ namespace keng::graphics
     class GlyphAtlasParameters
     {
     public:
-        uint32_t width = 300;
-        uint32_t height = 500;
+        uint32_t width = 1280 / 2;
+        uint32_t height = 720 / 2;
     };
 
     class AtlasGlyphData
@@ -36,7 +36,7 @@ namespace keng::graphics
         TexturePtr GetTexture() const;
 
     private:
-        AtlasGlyphData& AddGlyph(const free_type::GlyphParameters& params);
+        void AddGlyph(const free_type::GlyphParameters& params);
         void CopyGlyphData(const AtlasGlyphData&);
 
         TexturePtr m_texture;

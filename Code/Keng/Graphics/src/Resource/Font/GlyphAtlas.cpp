@@ -17,13 +17,13 @@ namespace keng::graphics
             m_parameters = params;
             auto resourceSystem = font.GetResourceSystem();
 
-            std::string letters = "ABCDE";
+            std::string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!?.,:;/\\|";
 
             free_type::GlyphParameters glyphParams;
-            glyphParams.height_pt = 20;
-            glyphParams.width_pt = 20;
-            glyphParams.x_dpi = 300;
-            glyphParams.y_dpi = 300;
+            glyphParams.height_pt = 12;
+            glyphParams.width_pt = 12;
+            glyphParams.x_dpi = 96;
+            glyphParams.y_dpi = 96;
 
             auto textureSize = m_parameters.width * m_parameters.height;
             m_cpuTexture.reset(new uint8_t[textureSize]);
@@ -52,8 +52,8 @@ namespace keng::graphics
         return m_texture;
     }
 
-    AtlasGlyphData& GlyphAtlas::AddGlyph(const free_type::GlyphParameters& params) {
-        return CallAndRethrowM + [&] () -> AtlasGlyphData& {
+    void GlyphAtlas::AddGlyph(const free_type::GlyphParameters& params) {
+        CallAndRethrowM + [&] {
             size_t sector_w = params.GetMaxWidthPx();
             size_t sector_h = params.GetMaxHeightPx();
 
@@ -70,15 +70,13 @@ namespace keng::graphics
             CopyGlyphData(glyphData);
             m_glyphs.push_back(std::move(glyphData));
 
-            next_x += sector_w;
+            next_x += glyphData.data.width;
             if (next_x + sector_w > m_parameters.width) {
                 if (next_y + sector_h <= m_parameters.height) {
                     next_x = 0;
                     next_y += sector_h;
                 }
             }
-
-            return m_glyphs.back();
         };
     }
     void GlyphAtlas::CopyGlyphData(const AtlasGlyphData& g) {

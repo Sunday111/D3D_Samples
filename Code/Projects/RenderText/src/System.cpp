@@ -192,7 +192,7 @@ namespace render_text_sample
             m_texture = font->GetTexture(*m_graphicsSystem->GetDevice());
 
             {// Read and compile shaders
-                std::string_view effectName = "Assets/Effects/Textured.json";
+                std::string_view effectName = "Assets/Effects/GrayscaleTexture.json";
                 m_effect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName, m_graphicsSystem->GetDevice()));
                 m_effect->InitDefaultInputLayout();
             }
