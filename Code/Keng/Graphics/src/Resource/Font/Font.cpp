@@ -21,6 +21,26 @@ namespace keng::graphics
 
     AtlasGlyphInfo Font::RequestGlyphInfo(uint32_t unicode, IDevice& device, const GlyphParameters& params) {
         return CallAndRethrowM + [&] {
+            class Temp
+            {
+            public:
+                void OnRequest(const AtlasGlyphInfo& info_) {
+                    info = info_;
+                }
+
+                AtlasGlyphInfo info;
+            } temp;
+
+            edt::Delegate<void(const AtlasGlyphInfo&)> delegate;
+            delegate.Bind<Temp, &Temp::OnRequest>(&temp);
+            edt::DenseArrayView<const uint32_t> unicodes(&unicode, 1);
+            RequestGlyphsInfo(unicodes, device, params, delegate);
+            return temp.info;
+        };
+    }
+
+    void Font::RequestGlyphsInfo(edt::DenseArrayView<const uint32_t> unicodes, IDevice& device, const GlyphParameters& params, edt::Delegate<void(const AtlasGlyphInfo&)> delegate) {
+        CallAndRethrowM + [&] {
             auto atlas = FindAtlas(device);
             if (atlas == nullptr) {
                 GlyphAtlasParameters atlasParams{};
@@ -28,9 +48,11 @@ namespace keng::graphics
                 m_atlases.push_back(atlas);
             }
             atlas->BeginUpdate();
-            auto result = atlas->GetGlyphInfo(unicode, params);
+            for (auto symbol : unicodes) {
+                auto glyphInfo = atlas->GetGlyphInfo(symbol, params);
+                delegate.Invoke(glyphInfo);
+            }
             atlas->EndUpdate();
-            return result;
         };
     }
 

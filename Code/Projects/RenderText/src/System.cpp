@@ -1,4 +1,5 @@
 #include "System.h"
+#include "EverydayTools/Delegate.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Geom/Vector.h"
 #include "Keng/Core/IApplication.h"
@@ -195,8 +196,18 @@ namespace render_text_sample
             glyphParams.dpiX = 96;
             glyphParams.dpiY = 96;
 
-            auto glyphInfo = font->RequestGlyphInfo('A', *m_graphicsSystem->GetDevice(), glyphParams);
-            m_texture = glyphInfo.texture;
+            std::vector<uint32_t> unicodes;
+            for (char letter : "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 1234567890 !?.,;:\\|/*-+") {
+                unicodes.push_back(letter);
+            }
+
+            auto onRequest = [&](const AtlasGlyphInfo& info) {
+                m_texture = info.texture;
+            };
+
+            edt::Delegate<void(const AtlasGlyphInfo&)> delegate;
+            delegate.Bind(onRequest);
+            font->RequestGlyphsInfo(edt::MakeArrayView(unicodes), *m_graphicsSystem->GetDevice(), glyphParams, delegate);
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/GrayscaleTexture.json";
