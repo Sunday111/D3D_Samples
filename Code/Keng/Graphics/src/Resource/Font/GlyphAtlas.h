@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Resource/Font/FreeType/GlyphInfo.h"
+#include "EverydayTools/EnumFlag.h"
 
 namespace keng::graphics
 {
@@ -34,10 +35,40 @@ namespace keng::graphics
         ~GlyphAtlas();
 
         TexturePtr GetTexture() const;
+        AtlasGlyphInfo GetGlyphInfo(uint32_t unicode, const graphics::GlyphParameters& params);
+
+        void BeginUpdate();
+        void EndUpdate();
 
     private:
-        void AddGlyph(const free_type::GlyphParameters& params);
+        enum StateFlag
+        {
+            None = 0,
+            Updating = (1 << 1),
+            NeedsFlush = (1 << 2)
+        };
+
+        template<typename StateFlag flag>
+        bool GetFlagState() const {
+            return (m_flags & flag) != StateFlag::None;
+        }
+
+        template<typename StateFlag flag, bool state>
+        void SetFlagState() {
+            if constexpr (state) {
+                m_flags |= flag;
+            } else {
+                m_flags &= ~flag;
+            }
+        }
+
+        EDT_ENUM_FLAG_OPERATORS_CLASS(StateFlag)
+
+        using AtlasGlyphsCollection = std::vector<AtlasGlyphData>;
+
+        AtlasGlyphData& AddGlyph(const free_type::GlyphParameters& params, AtlasGlyphsCollection::iterator insertIt);
         void CopyGlyphData(const AtlasGlyphData&);
+        void FlushTexture();
 
         TexturePtr m_texture;
         FontPtr m_font;
@@ -45,7 +76,8 @@ namespace keng::graphics
 
         size_t next_x = 0;
         size_t next_y = 0;
+        StateFlag m_flags;
         GlyphAtlasParameters m_parameters;
-        std::vector<AtlasGlyphData> m_glyphs;
+        AtlasGlyphsCollection m_glyphs;
     };
 }

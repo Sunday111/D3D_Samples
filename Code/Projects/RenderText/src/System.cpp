@@ -2,7 +2,9 @@
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Geom/Vector.h"
 #include "Keng/Core/IApplication.h"
-#include "Keng/Graphics/Resource/IFont.h"
+#include "Keng/Graphics/Resource/Font/IFont.h"
+#include "Keng/Graphics/Resource/Font/GlyphInfo.h"
+#include "Keng/Graphics/Resource/Font/GlyphParameters.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "Keng/Graphics/Resource/TextureParameters.h"
@@ -188,8 +190,13 @@ namespace render_text_sample
             //m_texture = std::static_pointer_cast<ITexture>(m_resourceSystem->GetResource("Assets/Textures/container.json", m_graphicsSystem->GetDevice()));
 
             auto font = std::static_pointer_cast<IFont>(m_resourceSystem->GetResource("Assets/Fonts/OpenSans.json"));
-            font->Do(*m_graphicsSystem->GetDevice());
-            m_texture = font->GetTexture(*m_graphicsSystem->GetDevice());
+            GlyphParameters glyphParams{};
+            glyphParams.size = 16;
+            glyphParams.dpiX = 96;
+            glyphParams.dpiY = 96;
+
+            auto glyphInfo = font->RequestGlyphInfo('A', *m_graphicsSystem->GetDevice(), glyphParams);
+            m_texture = glyphInfo.texture;
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/GrayscaleTexture.json";

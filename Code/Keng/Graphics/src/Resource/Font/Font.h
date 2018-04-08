@@ -1,14 +1,16 @@
 #pragma once
 
-#include "Keng/Graphics/Resource/IFont.h"
+#include "Keng/Graphics/Resource/Font/IFont.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "FwdDecl.h"
 #include <string_view>
 #include "FreeType/Face.h"
+#include <string>
 #include <vector>
 
 namespace keng::graphics
 {
+
     class Font : public core::RefCountImpl<IFont>
     {
     public:
@@ -16,11 +18,11 @@ namespace keng::graphics
         ~Font();
 
         // IFont
-        virtual void Do(IDevice& device) override;
-        virtual ITexturePtr GetTexture(IDevice& device) const override;
+        virtual AtlasGlyphInfo RequestGlyphInfo(uint32_t unicode, IDevice&, const GlyphParameters&) override;
 
         free_type::FacePtr GetFace() const;
         resource::IResourceSystemPtr GetResourceSystem() const;
+        GlyphAtlasPtr FindAtlas(IDevice& device) const;
 
     private:
         free_type::FacePtr m_face;

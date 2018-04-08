@@ -33,7 +33,7 @@ namespace keng::graphics
             };
         }
 
-        static D3D11_TEXTURE2D_DESC MakeTextureDescription(uint32_t w, uint32_t h, FragmentFormat format, TextureUsage flags) {
+        static D3D11_TEXTURE2D_DESC MakeTextureDescription(uint32_t w, uint32_t h, FragmentFormat format, TextureUsage usage, CpuAccessFlags cpuAccess) {
             return CallAndRethrowM + [&] {
                 D3D11_TEXTURE2D_DESC d{};
                 d.Width = w;
@@ -43,7 +43,13 @@ namespace keng::graphics
                 d.Format = d3d::ConvertTextureFormat(format);
                 d.SampleDesc.Count = 1;
                 d.Usage = D3D11_USAGE_DEFAULT;
-                d.BindFlags = MakeBindFlags(flags);
+                d.BindFlags = MakeBindFlags(usage);
+                d.CPUAccessFlags = d3d::ConvertCpuAccessFlags(cpuAccess);
+
+                if ((cpuAccess & CpuAccessFlags::Write) != CpuAccessFlags::None) {
+                    d.Usage = D3D11_USAGE_DYNAMIC;
+                }
+
                 return d;
             };
         }
@@ -72,12 +78,16 @@ namespace keng::graphics
         return m_device;
     }
 
+    ComPtr<ID3D11Texture2D> Texture::GetTexture() const {
+        return m_texture;
+    }
+
     Texture::Texture(Device& device, const TextureParameters& params) {
         m_device = &device;
         auto rawDevice = m_device->GetDevice();
 
         CallAndRethrowM + [&] {
-            auto desc = MakeTextureDescription(params.width, params.height, params.format, params.usage);
+            auto desc = MakeTextureDescription(params.width, params.height, params.format, params.usage, params.cpuAccessFlags);
             HRESULT hres = S_OK;
             if (params.data) {
                 D3D11_SUBRESOURCE_DATA subresource {};
@@ -98,10 +108,6 @@ namespace keng::graphics
             m_device = &device;
             m_texture = texture;
         };
-    }
-
-    void* Texture::GetNativeInterface() const {
-        return m_texture.Get();
     }
 
     FragmentFormat Texture::GetFormat() const {

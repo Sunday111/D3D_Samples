@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include "Keng/Graphics/Resource/Font/GlyphInfo.h"
+
 namespace keng::graphics::free_type
 {
     class GlyphParameters
@@ -26,23 +28,9 @@ namespace keng::graphics::free_type
         size_t width_pt = 20;
     };
 
-    class GlyphData
+    class GlyphData : public graphics::GlyphInfo
     {
     public:
-        uint32_t unicode;
-
-        size_t horizontalBearingX;
-        size_t horizontalBearingY;
-
-        size_t verticalBearingX;
-        size_t verticalBearingY;
-
-        size_t width;
-        size_t height;
-
-        size_t advanceX;
-        size_t advanceY;
-
         std::unique_ptr<uint8_t[]> buffer;
     };
 }

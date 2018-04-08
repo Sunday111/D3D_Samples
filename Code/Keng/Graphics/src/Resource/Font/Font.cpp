@@ -6,6 +6,7 @@
 #include "Resource/Font/FreeType/Face.h"
 #include "GlyphAtlas.h"
 #include "Resource/Texture/Texture.h"
+#include "Keng/Graphics/IDeviceBuffer.h"
 
 namespace keng::graphics
 {
@@ -18,23 +19,18 @@ namespace keng::graphics
 
     Font::~Font() = default;
 
-    void Font::Do(IDevice& device) {
-        GlyphAtlasParameters params{};
-        m_atlases.push_back(GlyphAtlasPtr::MakeInstance(
-            dynamic_cast<Device&>(device), params, *this));
-    }
-
-    ITexturePtr Font::GetTexture(IDevice& device) const {
-        return CallAndRethrowM + [&] () -> ITexturePtr {
-            IDevicePtr devicePtr = &device;
-            for (auto& atlas : m_atlases) {
-                auto tex = atlas->GetTexture();
-                if (devicePtr == tex->GetDevice()) {
-                    return tex;
-                }
+    AtlasGlyphInfo Font::RequestGlyphInfo(uint32_t unicode, IDevice& device, const GlyphParameters& params) {
+        return CallAndRethrowM + [&] {
+            auto atlas = FindAtlas(device);
+            if (atlas == nullptr) {
+                GlyphAtlasParameters atlasParams{};
+                atlas = GlyphAtlasPtr::MakeInstance(dynamic_cast<Device&>(device), atlasParams, *this);
+                m_atlases.push_back(atlas);
             }
-
-            return nullptr;
+            atlas->BeginUpdate();
+            auto result = atlas->GetGlyphInfo(unicode, params);
+            atlas->EndUpdate();
+            return result;
         };
     }
 
@@ -44,5 +40,19 @@ namespace keng::graphics
 
     resource::IResourceSystemPtr Font::GetResourceSystem() const {
         return m_resourceSystem;
+    }
+
+    GlyphAtlasPtr Font::FindAtlas(IDevice& device) const {
+        return CallAndRethrowM + [&]() -> GlyphAtlasPtr {
+            IDevicePtr devicePtr = &device;
+            for (auto& atlas : m_atlases) {
+                auto tex = atlas->GetTexture();
+                if (devicePtr == tex->GetDevice()) {
+                    return atlas;
+                }
+            }
+
+            return nullptr;
+        };
     }
 }
