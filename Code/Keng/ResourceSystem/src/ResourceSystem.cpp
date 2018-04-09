@@ -132,10 +132,10 @@ namespace keng::resource
         return SystemName();
     }
 
-    bool ResourceSystem::ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const {
+    bool ResourceSystem::ForEachDependency(const edt::Delegate<bool(std::string_view systemName)>& delegate) const {
         return CallAndRethrowM + [&]() -> bool {
             for (auto& systemName : m_dependencies) {
-                if (pfn(systemName, context)) {
+                if (delegate.Invoke(systemName)) {
                     return true;
                 }
             }

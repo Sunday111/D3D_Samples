@@ -9,7 +9,6 @@ set(bin_dir ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/BuildTools/CMake/")
 include(cpp_config)
 include(output_directory)
-include(make_sym_link)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 add_subdirectory(${submodules_dir})

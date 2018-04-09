@@ -127,10 +127,10 @@ namespace textured_quad_sample
         return "TexturedQuad";
     }
 
-    bool SampleSystem::ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const {
-        if (pfn(keng::graphics::IGraphicsSystem::SystemName(), context)) return true;
-        if (pfn(keng::resource::IResourceSystem::SystemName(), context)) return true;
-        if (pfn(keng::window_system::IWindowSystem::SystemName(), context)) return true;
+    bool SampleSystem::ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const {
+        if (delegate.Invoke(keng::graphics::IGraphicsSystem::SystemName())) return true;
+        if (delegate.Invoke(keng::resource::IResourceSystem::SystemName())) return true;
+        if (delegate.Invoke(keng::window_system::IWindowSystem::SystemName())) return true;
         return false;
     }
 

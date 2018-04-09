@@ -1,17 +1,18 @@
 #pragma once
 
 #include "Keng/Core/FwdDecl.h"
+#include "EverydayTools/Array/ArrayView.h"
 
 #include <memory>
 #include <string>
 #include <string_view>
-#include <vector>
 
 namespace keng::core
 {
-    struct ApplicationStartupParameters
+    class ApplicationStartupParameters
     {
-        std::vector<std::string> modulesToLoad;
+    public:
+        edt::SparseArrayView<const std::string> modulesToLoad;
     };
 
     class IApplication : public IRefCountObject

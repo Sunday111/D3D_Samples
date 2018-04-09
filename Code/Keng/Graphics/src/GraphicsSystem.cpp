@@ -183,10 +183,10 @@ namespace keng::graphics
         return SystemName();
     }
 
-    bool GraphicsSystem::ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const {
+    bool GraphicsSystem::ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const {
         return CallAndRethrowM + [&]() -> bool {
             for (auto& systemName : m_dependencies) {
-                if (pfn(systemName, context)) {
+                if (delegate.Invoke(systemName)) {
                     return true;
                 }
             }

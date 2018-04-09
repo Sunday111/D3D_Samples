@@ -10,11 +10,11 @@ namespace keng::graphics
     public:
         size_t unicode;
 
-        size_t horizontalBearingX;
-        size_t horizontalBearingY;
+        int horizontalBearingX;
+        int horizontalBearingY;
 
-        size_t verticalBearingX;
-        size_t verticalBearingY;
+        int verticalBearingX;
+        int verticalBearingY;
 
         size_t width;
         size_t height;

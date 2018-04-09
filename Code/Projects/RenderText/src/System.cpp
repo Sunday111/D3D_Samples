@@ -157,10 +157,10 @@ namespace render_text_sample
         return "RenderText";
     }
 
-    bool System::ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const {
-        if (pfn(keng::graphics::IGraphicsSystem::SystemName(), context)) return true;
-        if (pfn(keng::resource::IResourceSystem::SystemName(), context)) return true;
-        if (pfn(keng::window_system::IWindowSystem::SystemName(), context)) return true;
+    bool System::ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const {
+        if (delegate.Invoke(keng::graphics::IGraphicsSystem::SystemName())) return true;
+        if (delegate.Invoke(keng::resource::IResourceSystem::SystemName())) return true;
+        if (delegate.Invoke(keng::window_system::IWindowSystem::SystemName())) return true;
         return false;
     }
 
@@ -262,12 +262,12 @@ namespace render_text_sample
             
             {// Create text vertex buffer
                 GlyphParameters glyphParams{};
-                glyphParams.size = 40;
+                glyphParams.size = 20;
                 glyphParams.dpiX = 300;
                 glyphParams.dpiY = 300;
 
                 std::vector<uint32_t> unicodes;
-                for (char letter : "Hello, world! gg") {
+                for (char letter : "The quick brown fox jumps over the lazy dog") {
                     unicodes.push_back(letter);
                 }
 
@@ -275,11 +275,15 @@ namespace render_text_sample
                 vertices.reserve(unicodes.size());
                 
                 {// Generate triangles per symbol
-                    int currentX = 0;
+                    int currentX = - static_cast<int>(w);
                     int currentY = 0;
 
                     auto onRequest = [&](const AtlasGlyphInfo& info) {
                         m_atlasTexture = info.texture;
+
+                        if (info.unicode == 'j') {
+                            assert(false);
+                        }
 
                         auto x0 = edt::CheckedCast<float>(currentX) + info.horizontalBearingX;
                         auto x1 = x0 + info.width;
@@ -334,7 +338,7 @@ namespace render_text_sample
                         vertices.push_back(q[1]);
                         vertices.push_back(q[3]);
 
-                        currentX += info.advanceX;
+                        currentX += edt::CheckedCast<int>(info.advanceX);
                     };
 
                     edt::Delegate<void(const AtlasGlyphInfo&)> delegate;

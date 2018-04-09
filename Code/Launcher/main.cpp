@@ -77,8 +77,11 @@ INT WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nC
 
             auto app = keng::core::CreateApplication(module);
 
+            std::string modulesToLoad[1];
+            modulesToLoad[0] = ConvertString(libraryName);
+
             keng::core::ApplicationStartupParameters params;
-            params.modulesToLoad.push_back(ConvertString(libraryName));
+            params.modulesToLoad = edt::MakeArrayView(modulesToLoad);
 
             app->Initialize(params);
             app->Run();

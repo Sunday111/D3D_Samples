@@ -1,5 +1,6 @@
 #include "Sampler.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
+#include "EverydayTools/Exception/CheckedCast.h"
 #include "Device.h"
 #include "WinWrappers/WinWrappers.h"
 #include "D3D_11/EnumConverter.h"
@@ -27,7 +28,7 @@ namespace keng::graphics
 
     void Sampler::AssignToPipeline(ShaderType shaderType, size_t index) {
         CallAndRethrowM + [&] {
-            m_device->SetSampler(index, m_sampler.Get(), (d3d_tools::ShaderType)shaderType);
+            m_device->SetSampler(edt::CheckedCast<uint32_t>(index), m_sampler.Get(), (d3d_tools::ShaderType)shaderType);
         };
     }
 }
