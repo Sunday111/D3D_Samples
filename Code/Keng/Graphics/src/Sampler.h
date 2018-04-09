@@ -11,7 +11,7 @@ namespace keng::graphics
     {
     public:
         Sampler(Device& device, const SamplerParameters& params);
-        virtual void AssignToPipeline(ShaderType shaderType, uint32_t index) override;
+        virtual void AssignToPipeline(ShaderType shaderType, size_t index) override;
 
     private:
         DevicePtr m_device;

@@ -13,8 +13,8 @@ namespace keng::graphics
     class GlyphAtlasParameters
     {
     public:
-        uint32_t width = 1280 / 2;
-        uint32_t height = 720 / 2;
+        size_t width = 1280 / 2;
+        size_t height = 720 / 2;
     };
 
     class AtlasGlyphData

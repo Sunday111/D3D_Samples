@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "Keng/Graphics/Resource/Font/GlyphInfo.h"
+#include "EverydayTools/Exception/CheckedCast.h"
 
 namespace keng::graphics::free_type
 {
@@ -14,11 +15,11 @@ namespace keng::graphics::free_type
         static constexpr auto PointSize = 1.f / 72.f;
 
         inline size_t GetMaxWidthPx() const {
-            return static_cast<size_t>(width_pt * PointSize * x_dpi + 1);
+            return edt::CheckedCast<size_t>(width_pt * PointSize * x_dpi + 1);
         }
 
         inline size_t GetMaxHeightPx() const {
-            return static_cast<size_t>(height_pt * PointSize * y_dpi + 1);
+            return edt::CheckedCast<size_t>(height_pt * PointSize * y_dpi + 1);
         }
 
         uint32_t unicode = '?';

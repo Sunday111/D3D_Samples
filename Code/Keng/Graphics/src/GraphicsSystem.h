@@ -30,7 +30,7 @@ namespace keng::graphics
         virtual ITexturePtr CreateTexture(const TextureParameters& params) override;
         virtual ISamplerPtr CreateSampler(const SamplerParameters& params) override;
         virtual void SetTopology(PrimitiveTopology topo) override;
-        virtual void Draw(uint32_t vertices, uint32_t offset) override;
+        virtual void Draw(size_t vertices, size_t offset) override;
         virtual void SetViewport(const ViewportParameters&) override;
         virtual IAnnotationPtr CreateAnnotation() override;
 

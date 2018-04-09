@@ -8,8 +8,8 @@ namespace keng::graphics
     class GlyphParameters
     {
     public:
-        uint32_t size = 14;
-        uint32_t dpiX = 96;
-        uint32_t dpiY = 96;
+        size_t size = 14;
+        size_t dpiX = 96;
+        size_t dpiY = 96;
     };
 }

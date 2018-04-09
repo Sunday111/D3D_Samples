@@ -2,6 +2,7 @@
 #include "Device.h"
 #include "D3D_11/EnumConverter.h"
 #include "Keng/Graphics/Resource/TextureParameters.h"
+#include "EverydayTools/Exception/CheckedCast.h"
 
 namespace keng::graphics
 {
@@ -33,11 +34,11 @@ namespace keng::graphics
             };
         }
 
-        static D3D11_TEXTURE2D_DESC MakeTextureDescription(uint32_t w, uint32_t h, FragmentFormat format, TextureUsage usage, CpuAccessFlags cpuAccess) {
+        static D3D11_TEXTURE2D_DESC MakeTextureDescription(size_t w, size_t h, FragmentFormat format, TextureUsage usage, CpuAccessFlags cpuAccess) {
             return CallAndRethrowM + [&] {
                 D3D11_TEXTURE2D_DESC d{};
-                d.Width = w;
-                d.Height = h;
+                d.Width = edt::CheckedCast<uint32_t>(w);
+                d.Height = edt::CheckedCast<uint32_t>(h);
                 d.MipLevels = 1;
                 d.ArraySize = 1;
                 d.Format = d3d::ConvertTextureFormat(format);
@@ -84,6 +85,7 @@ namespace keng::graphics
 
     Texture::Texture(Device& device, const TextureParameters& params) {
         m_device = &device;
+        m_params = params;
         auto rawDevice = m_device->GetDevice();
 
         CallAndRethrowM + [&] {
@@ -92,7 +94,7 @@ namespace keng::graphics
             if (params.data) {
                 D3D11_SUBRESOURCE_DATA subresource {};
                 subresource.pSysMem = params.data;
-                subresource.SysMemPitch = static_cast<UINT>(params.width * ComputeBytesPerPixel(params.format));
+                subresource.SysMemPitch = edt::CheckedCast<UINT>(params.width * ComputeBytesPerPixel(params.format));
                 hres = rawDevice->CreateTexture2D(&desc, &subresource, m_texture.Receive());
             }
             else {
@@ -111,14 +113,12 @@ namespace keng::graphics
     }
 
     FragmentFormat Texture::GetFormat() const {
-        D3D11_TEXTURE2D_DESC desc;
-        m_texture->GetDesc(&desc);
-        return d3d::ConvertTextureFormat(desc.Format);
+        return m_params.format;
     }
 
     void Texture::AssignToPipeline(ShaderType shaderType, size_t slot) {
         auto srv = GetView<ResourceViewType::ShaderResource>();
-        m_device->SetShaderResource(static_cast<uint32_t>(slot), (d3d_tools::ShaderType)shaderType, srv->GetView());
+        m_device->SetShaderResource(edt::CheckedCast<uint32_t>(slot), (d3d_tools::ShaderType)shaderType, srv->GetView());
     }
 
     void Texture::CopyTo(ITexturePtr abstract){
@@ -131,5 +131,13 @@ namespace keng::graphics
         CallAndRethrowM + [&] {
             m_device->GetContext()->CopyResource(to.Get(), m_texture.Get());
         };
+    }
+
+    size_t Texture::GetWidth() const {
+        return m_params.width;
+    }
+
+    size_t Texture::GetHeight() const {
+        return m_params.height;
     }
 }

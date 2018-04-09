@@ -4,6 +4,7 @@
 #include <algorithm>
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Resource/Texture/TextureView.h"
+#include "Keng/Graphics/Resource/TextureParameters.h"
 
 namespace keng::graphics
 {
@@ -14,9 +15,13 @@ namespace keng::graphics
         Texture(Device& device, const TextureParameters& params);
         Texture(Device& device, ComPtr<ID3D11Texture2D> texture);
 
+        // ITexture
         virtual FragmentFormat GetFormat() const override;
         virtual void AssignToPipeline(ShaderType shaderType, size_t slot) override;
         virtual void CopyTo(ITexturePtr) override;
+        virtual size_t GetWidth() const override;
+        virtual size_t GetHeight() const override;
+
         void CopyTo(const ComPtr<ID3D11Texture2D>& to);
         DevicePtr GetDevice() const;
 
@@ -62,5 +67,6 @@ namespace keng::graphics
 
         DevicePtr m_device;
         ComPtr<ID3D11Texture2D> m_texture;
+        TextureParameters m_params;
     };
 }

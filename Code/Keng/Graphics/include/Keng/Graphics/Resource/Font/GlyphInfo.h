@@ -8,7 +8,7 @@ namespace keng::graphics
     class GlyphInfo
     {
     public:
-        uint32_t unicode;
+        size_t unicode;
 
         size_t horizontalBearingX;
         size_t horizontalBearingY;

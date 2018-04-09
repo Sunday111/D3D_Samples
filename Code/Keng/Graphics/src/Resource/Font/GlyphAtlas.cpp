@@ -99,7 +99,8 @@ namespace keng::graphics
 
             it = m_glyphs.insert(it, std::move(glyphData));
 
-            next_x += glyphData.data.width;
+            constexpr auto distanceBetweenGlyphs = 5;
+            next_x += glyphData.data.width + distanceBetweenGlyphs;
             if (next_x + sector_w > m_parameters.width) {
                 if (next_y + sector_h <= m_parameters.height) {
                     next_x = 0;

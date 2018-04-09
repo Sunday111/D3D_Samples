@@ -20,7 +20,7 @@ namespace keng::graphics
         virtual ITexturePtr CreateTexture(const TextureParameters& params) = 0;
         virtual ISamplerPtr CreateSampler(const SamplerParameters& params) = 0;
         virtual void SetTopology(PrimitiveTopology topo) = 0;
-        virtual void Draw(uint32_t vertices, uint32_t offset) = 0;
+        virtual void Draw(size_t vertices, size_t offset) = 0;
         virtual void SetViewport(const ViewportParameters&) = 0;
         virtual IAnnotationPtr CreateAnnotation() = 0;
     };

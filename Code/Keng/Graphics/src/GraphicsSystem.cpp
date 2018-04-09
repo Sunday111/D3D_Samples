@@ -29,6 +29,7 @@
 
 #include "Sampler.h"
 
+#include "EverydayTools/Exception/CheckedCast.h"
 #include "EverydayTools/Geom/Vector.h"
 #include "DeviceBuffer.h"
 
@@ -159,8 +160,10 @@ namespace keng::graphics
         m_device->GetContext()->IASetPrimitiveTopology(d3d::ConvertTopology(topo));
     }
 
-    void GraphicsSystem::Draw(uint32_t vertices, uint32_t offset) {
-        m_device->GetContext()->Draw(vertices, offset);
+    void GraphicsSystem::Draw(size_t vertices, size_t offset) {
+        m_device->GetContext()->Draw(
+            edt::CheckedCast<uint32_t>(vertices),
+            edt::CheckedCast<uint32_t>(offset));
     }
 
     void GraphicsSystem::SetViewport(const ViewportParameters& p) {

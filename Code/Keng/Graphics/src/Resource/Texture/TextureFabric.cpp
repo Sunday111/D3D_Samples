@@ -1,6 +1,6 @@
 #include "TextureFabric.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
-#include "EverydayTools/Exception/ThrowIfFailed.h"
+#include "EverydayTools/Exception/CheckedCast.h"
 #include "Resource/Texture/Texture.h"
 #include "yasli/STL.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
@@ -37,28 +37,14 @@ namespace keng::graphics
             FileInfo info;
             SerializeMandatory(ar, info, GetNodeName().data());
 
-            //std::ifstream textureFile;
-            //textureFile.open(textureFilename.data());
-            //edt::ThrowIfFailed(textureFile.is_open(), "Could not open file \"", textureFilename, "\"");
-            //
-            //auto content = std::string(
-            //	(std::istreambuf_iterator<char>(textureFile)),
-            //	(std::istreambuf_iterator<char>()));
-            //
-            //int w, h, n;
-            //auto img_data = stbi_load_from_memory(
-            //	(const stbi_uc*)content.data(),
-            //	static_cast<int>(content.size()),
-            //	&w, &h, &n, 3);
-
 
             std::unique_ptr<stbi_uc[]> img_data;
             int w, h, n;
             img_data.reset(stbi_load(info.file.data(), &w, &h, &n, 4));
 
             TextureParameters params {};
-            params.width = static_cast<uint32_t>(w);
-            params.height = static_cast<uint32_t>(h);
+            params.width = edt::CheckedCast<size_t>(w);
+            params.height = edt::CheckedCast<size_t>(h);
             params.usage = TextureUsage::ShaderResource;
             params.format = FragmentFormat::R8_G8_B8_A8_UNORM;
             params.data = img_data.get();

@@ -3,7 +3,7 @@
         "type": "ShaderTemplate",
         "shader_template": {
             "type": "Vertex",
-            "file": "Assets/hlsl/VertexShader.hlsl"
+            "file": "Assets/hlsl/TextVS.hlsl"
         }
     }
 }

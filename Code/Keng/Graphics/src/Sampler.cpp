@@ -25,7 +25,7 @@ namespace keng::graphics
         };
     }
 
-    void Sampler::AssignToPipeline(ShaderType shaderType, uint32_t index) {
+    void Sampler::AssignToPipeline(ShaderType shaderType, size_t index) {
         CallAndRethrowM + [&] {
             m_device->SetSampler(index, m_sampler.Get(), (d3d_tools::ShaderType)shaderType);
         };

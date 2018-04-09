@@ -1,7 +1,7 @@
 #include "Resource/Font/FreeType/Face.h"
-#include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "Resource/Font/FreeType/Library.h"
+#include "EverydayTools/Exception/CheckedCast.h"
 
 namespace keng::graphics::free_type
 {
@@ -12,8 +12,8 @@ namespace keng::graphics::free_type
                 FT_New_Memory_Face,
                 library.GetHandle(),
                 (const FT_Byte*)fileData.data(),
-                static_cast<FT_Long>(fileData.size()),
-                static_cast<FT_Long>(0),
+                edt::CheckedCast<FT_Long>(fileData.size()),
+                edt::CheckedCast<FT_Long>(0),
                 &m_face);
 
             m_fileData = std::move(fileData);
@@ -28,10 +28,10 @@ namespace keng::graphics::free_type
                 "FT_Set_Char_Size",
                 FT_Set_Char_Size,
                 m_face,                                         // Handle to face object
-                static_cast<FT_F26Dot6>(params.width_pt * 64),  // char width in 1/64th points; 0 means "same as height"
-                static_cast<FT_F26Dot6>(params.height_pt * 64), // char height in 1/64th points
-                static_cast<FT_UInt>(params.x_dpi),             // horizontal device resolution
-                static_cast<FT_UInt>(params.y_dpi)              // vertical device resolution
+                edt::CheckedCast<FT_F26Dot6>(params.width_pt * 64),  // char width in 1/64th points; 0 means "same as height"
+                edt::CheckedCast<FT_F26Dot6>(params.height_pt * 64), // char height in 1/64th points
+                edt::CheckedCast<FT_UInt>(params.x_dpi),             // horizontal device resolution
+                edt::CheckedCast<FT_UInt>(params.y_dpi)              // vertical device resolution
             );
 
             auto glyphIndex = FT_Get_Char_Index(m_face, params.unicode);

@@ -2,8 +2,8 @@
     "resource": {
         "type": "ShaderTemplate",
         "shader_template": {
-            "type": "Vertex",
-            "file": "Assets/hlsl/VertexShader.hlsl"
+            "type": "Fragment",
+            "file": "Assets/hlsl/TextFS.hlsl"
         }
     }
 }

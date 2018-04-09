@@ -18,5 +18,7 @@ namespace keng::graphics
     private:
         DevicePtr m_device;
         SwapChainPtr m_swapChain;
+
+        ComPtr<ID3D11BlendState> m_blendState;
     };
 }

@@ -1,0 +1,10 @@
+{
+    "resource" :
+    {
+        "type": "Shader",
+        "shader" : {
+            "template": "Assets/Shaders/TextFragmentShaderTemplate.json",
+            "entry_point": "PShader"
+        }
+    }
+}

@@ -55,17 +55,17 @@ namespace keng::graphics
     class VertexBufferAssignParameters
     {
     public:
-        uint32_t slot = 0;
-        uint32_t stride = 0;
-        uint32_t offset = 0;
+        size_t slot = 0;
+        size_t stride = 0;
+        size_t offset = 0;
     };
 
     class ConstantBufferAssignParameters
     {
     public:
-        uint32_t slot = 0;
-        uint32_t stride = 0;
-        uint32_t offset = 0;
+        size_t slot = 0;
+        size_t stride = 0;
+        size_t offset = 0;
         ShaderType shaderType = ShaderType::Vertex;
     };
 
