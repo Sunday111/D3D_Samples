@@ -1,6 +1,7 @@
 #include "DeviceBuffer.h"
 #include "Device.h"
 #include "WinWrappers/WinWrappers.h"
+#include "EverydayTools/Exception/CheckedCast.h"
 
 namespace keng::graphics
 {
@@ -67,7 +68,7 @@ namespace keng::graphics
         return CallAndRethrowM + [&] {
             D3D11_BUFFER_DESC desc{};
             desc.Usage = ConvertD3D(params.usage);
-            desc.ByteWidth = static_cast<UINT>(params.size);
+            desc.ByteWidth = edt::CheckedCast<UINT>(params.size);
             desc.BindFlags = ConvertD3D(params.bindFlags);
             desc.CPUAccessFlags = ConvertD3D(params.accessFlags);
             return desc;
@@ -139,7 +140,10 @@ namespace keng::graphics
         CallAndRethrowM + [&] {
             edt::ThrowIfFailed(params.stride != 0, "Tring to use buffer as vertex buffer with stride 0!");
             auto rawBuffer = m_buffer.Get();
-            m_device->GetContext()->IASetVertexBuffers(params.slot, 1, &rawBuffer, &params.stride, &params.offset);
+            auto stride = edt::CheckedCast<uint32_t>(params.stride);
+            auto offset = edt::CheckedCast<uint32_t>(params.offset);
+            m_device->GetContext()->IASetVertexBuffers(
+                edt::CheckedCast<uint32_t>(params.slot), 1, &rawBuffer, &stride, &offset);
         };
     }
 

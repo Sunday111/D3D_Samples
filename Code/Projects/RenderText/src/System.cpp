@@ -1,8 +1,11 @@
 #include "System.h"
+#include "EverydayTools/Delegate.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
-#include "EverydayTools/Geom/Vector.h"
+#include "EverydayTools/Exception/CheckedCast.h"
 #include "Keng/Core/IApplication.h"
-#include "Keng/Graphics/Resource/IFont.h"
+#include "Keng/Graphics/Resource/Font/IFont.h"
+#include "Keng/Graphics/Resource/Font/GlyphInfo.h"
+#include "Keng/Graphics/Resource/Font/GlyphParameters.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "Keng/Graphics/Resource/TextureParameters.h"
@@ -20,7 +23,6 @@
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
-#include "Keng/Graphics/IGraphicsSystem.h"
 #include "Keng/Graphics/IDevice.h"
 
 #include "stdlib.h"
@@ -30,11 +32,6 @@ namespace render_text_sample
 {
     namespace
     {
-        struct Vertex
-        {
-            edt::geom::Vector<float, 4> pos;
-            edt::geom::Vector<float, 2> tex;
-        };
 
         struct CB
         {
@@ -72,53 +69,81 @@ namespace render_text_sample
         using namespace graphics;
 
         return CallAndRethrowM + [&] {
-            return Annotate(m_annotation, "Frame", [&] {
+            return Annotate(m_annotation, L"Frame", [&] {
                 float clearColor[4]{
                     0.0f, 0.2f, 0.4f, 1.0f
                 };
 
                 static float angle = 0.f;
-                constexpr float delta_angle = 0.000f;
+                constexpr float delta_angle = 0.0003f;
                 angle += delta_angle;
 
-                Annotate(m_annotation, "Edit constant buffer", [&] {
-                    DeviceBufferMapper mapper;
-                    m_constantBuffer->MakeMapper(mapper);
-                    auto cbView = mapper.GetTypedView<CB>();
-                    edt::geom::Vector<float, 3> t{};
-                    t.rx() = std::sin(angle);
-                    t.ry() = std::sin(angle);
-                    cbView[0].transform = MakeTranslationMatrix(t);
-                });
 
-                Annotate(m_annotation, "Draw", [&] {
-                    Annotate(m_annotation, "Clear", [&] {
+                Annotate(m_annotation, L"Draw", [&] {
+                    Annotate(m_annotation, L"Clear", [&] {
                         m_windowRT->Clear(clearColor);
                         m_depthStencil->Clear(DepthStencilClearFlags::ClearDepth | DepthStencilClearFlags::ClearStencil, 1.0f, 0);
                         m_windowRT->AssignToPipeline(m_depthStencil);
                     });
 
-                    Annotate(m_annotation, "Assign buffers", [&] {
-                        VertexBufferAssignParameters vbAssignParams {};
-                        vbAssignParams.slot = 0;
-                        vbAssignParams.stride = sizeof(Vertex);
-                        m_vertexBuffer->AssignToPipeline(vbAssignParams);
+                    Annotate(m_annotation, L"Draw quad", [&] {
+                        Annotate(m_annotation, L"Edit constant buffer", [&] {
+                            DeviceBufferMapper mapper;
+                            m_constantBuffer->MakeMapper(mapper);
+                            auto cbView = mapper.GetTypedView<CB>();
+                            edt::geom::Vector<float, 3> t{};
+                            t.rx() = std::sin(angle);
+                            t.ry() = std::sin(angle);
+                            cbView[0].transform = MakeTranslationMatrix(t);
+                        });
 
-                        ConstantBufferAssignParameters cbAssignParams {};
-                        cbAssignParams.slot = 0;
-                        cbAssignParams.stride = sizeof(CB);
-                        cbAssignParams.shaderType = ShaderType::Vertex;
-                        m_constantBuffer->AssignToPipeline(cbAssignParams);
+                        Annotate(m_annotation, L"Assign buffers", [&] {
+                            m_containerQuad.AssignToPipeline(0, m_graphicsSystem);
+
+                            ConstantBufferAssignParameters cbAssignParams{};
+                            cbAssignParams.slot = 0;
+                            cbAssignParams.stride = sizeof(CB);
+                            cbAssignParams.shaderType = ShaderType::Vertex;
+                            m_constantBuffer->AssignToPipeline(cbAssignParams);
+                        });
+
+                        Annotate(m_annotation, L"Setup effect", [&] {
+                            m_texturedEffect->AssignToPipeline();
+                            m_containerSampler->AssignToPipeline(ShaderType::Fragment, 0);
+                            m_containerTexture->AssignToPipeline(ShaderType::Fragment, 0);
+                        });
+
+                        m_graphicsSystem->Draw(m_containerQuad.GetVerticesCount(), 0);
                     });
 
-                    Annotate(m_annotation, "Setup effect", [&] {
-                        m_effect->AssignToPipeline();
-                        m_graphicsSystem->SetTopology(PrimitiveTopology::TriangleStrip);
-                        m_sampler->AssignToPipeline(ShaderType::Fragment, 0);
-                        m_texture->AssignToPipeline(ShaderType::Fragment, 0);
-                    });
+                    m_depthStencil->Clear(DepthStencilClearFlags::ClearDepth | DepthStencilClearFlags::ClearStencil, 1.0f, 0);
 
-                    m_graphicsSystem->Draw(4, 0);
+                    Annotate(m_annotation, L"Draw text", [&] {
+                        Annotate(m_annotation, L"Edit constant buffer", [&] {
+                            DeviceBufferMapper mapper;
+                            m_constantBuffer->MakeMapper(mapper);
+                            auto cbView = mapper.GetTypedView<CB>();
+                            cbView[0].transform = MakeIdentityMatrix<float>();
+                        });
+
+                        Annotate(m_annotation, L"Assign buffers", [&] {
+                            m_textQuads.AssignToPipeline(0, m_graphicsSystem);
+
+                            ConstantBufferAssignParameters cbAssignParams{};
+                            cbAssignParams.slot = 0;
+                            cbAssignParams.stride = sizeof(CB);
+                            cbAssignParams.shaderType = ShaderType::Vertex;
+                            m_constantBuffer->AssignToPipeline(cbAssignParams);
+                        });
+
+                        Annotate(m_annotation, L"Setup effect", [&] {
+                            m_textEffect->AssignToPipeline();
+                            m_textSampler->AssignToPipeline(ShaderType::Fragment, 0);
+                            m_atlasTexture->AssignToPipeline(ShaderType::Fragment, 0);
+                        });
+
+                        m_graphicsSystem->Draw(m_textQuads.GetVerticesCount(), 0);
+                    });
                 });
 
                 m_windowRT->Present();
@@ -132,10 +157,10 @@ namespace render_text_sample
         return "RenderText";
     }
 
-    bool System::ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const {
-        if (pfn(keng::graphics::IGraphicsSystem::SystemName(), context)) return true;
-        if (pfn(keng::resource::IResourceSystem::SystemName(), context)) return true;
-        if (pfn(keng::window_system::IWindowSystem::SystemName(), context)) return true;
+    bool System::ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const {
+        if (delegate.Invoke(keng::graphics::IGraphicsSystem::SystemName())) return true;
+        if (delegate.Invoke(keng::resource::IResourceSystem::SystemName())) return true;
+        if (delegate.Invoke(keng::window_system::IWindowSystem::SystemName())) return true;
         return false;
     }
 
@@ -152,15 +177,15 @@ namespace render_text_sample
             m_annotation = m_graphicsSystem->CreateAnnotation();
 
             auto window = m_windowSystem->GetWindow();
-            uint32_t w, h;
+            size_t w, h;
             window->GetClientSize(&w, &h);
 
             {// Initialize viewport
                 ViewportParameters v{};
                 v.Position.rx() = 0.f;
                 v.Position.ry() = 0.f;
-                v.Size.rx() = static_cast<float>(w);
-                v.Size.ry() = static_cast<float>(h);
+                v.Size.rx() = edt::CheckedCast<float>(w);
+                v.Size.ry() = edt::CheckedCast<float>(h);
                 m_graphicsSystem->SetViewport(v);
             }
 
@@ -185,19 +210,23 @@ namespace render_text_sample
                 m_depthStencil = m_graphicsSystem->CreateDepthStencil(depthStencilParams);
             }
 
-            //m_texture = std::static_pointer_cast<ITexture>(m_resourceSystem->GetResource("Assets/Textures/container.json", m_graphicsSystem->GetDevice()));
+            m_containerTexture = std::static_pointer_cast<ITexture>(m_resourceSystem->GetResource("Assets/Textures/container.json", m_graphicsSystem->GetDevice()));
 
-            auto font = std::static_pointer_cast<IFont>(m_resourceSystem->GetResource("Assets/Fonts/OpenSans.json"));
-            font->Do(*m_graphicsSystem->GetDevice());
-            m_texture = font->GetTexture(*m_graphicsSystem->GetDevice());
+            m_font = std::static_pointer_cast<IFont>(m_resourceSystem->GetResource("Assets/Fonts/OpenSans.json"));
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Textured.json";
-                m_effect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName, m_graphicsSystem->GetDevice()));
-                m_effect->InitDefaultInputLayout();
+                m_texturedEffect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName, m_graphicsSystem->GetDevice()));
+                m_texturedEffect->InitDefaultInputLayout();
             }
 
-            {// Create vertex buffer
+            {// Read and compile shaders
+                std::string_view effectName = "Assets/Effects/Text.json";
+                m_textEffect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName, m_graphicsSystem->GetDevice()));
+                m_textEffect->InitDefaultInputLayout();
+            }
+
+            {// Create container vertex buffer
                 Vertex vertices[4];
 
                 //      POSITION               ////         TEXTURE COORDS       /**/
@@ -223,15 +252,109 @@ namespace render_text_sample
                 vertices[3].pos.rw() = +1.00f; /**/                              /**/
                 /////////////////////////////////////////////////////////////////////
 
-                graphics::DeviceBufferParams params;
-                params.size = sizeof(vertices);
+                PrimitiveBufferParameters params;
                 params.usage = graphics::DeviceBufferUsage::Dynamic;
                 params.bindFlags = graphics::DeviceBufferBindFlags::VertexBuffer;
                 params.accessFlags = graphics::DeviceAccessFlags::Write;
-                m_vertexBuffer = m_graphicsSystem->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
+                params.topology = PrimitiveTopology::TriangleStrip;
+                m_containerQuad.Initialize(*m_graphicsSystem, params, edt::MakeArrayView(vertices));
+            }
+            
+            {// Create text vertex buffer
+                GlyphParameters glyphParams{};
+                glyphParams.size = 20;
+                glyphParams.dpiX = 300;
+                glyphParams.dpiY = 300;
+
+                std::vector<uint32_t> unicodes;
+                for (char letter : "The quick brown fox jumps over the lazy dog") {
+                    unicodes.push_back(letter);
+                }
+
+                std::vector<Vertex> vertices;
+                vertices.reserve(unicodes.size());
+                
+                {// Generate triangles per symbol
+                    int currentX = - static_cast<int>(w);
+                    int currentY = 0;
+
+                    auto onRequest = [&](const AtlasGlyphInfo& info) {
+                        m_atlasTexture = info.texture;
+
+                        if (info.unicode == 'j') {
+                            assert(false);
+                        }
+
+                        auto x0 = edt::CheckedCast<float>(currentX) + info.horizontalBearingX;
+                        auto x1 = x0 + info.width;
+                        auto y0 = edt::CheckedCast<float>(currentY) - edt::CheckedCast<float>(info.height - info.horizontalBearingY);
+                        auto y1 = y0 + info.height;
+
+                        auto tx0 = edt::CheckedCast<float>(info.x);
+                        auto tx1 = tx0 + info.width;
+                        auto ty0 = edt::CheckedCast<float>(info.y);
+                        auto ty1 = ty0 + info.height;
+
+                        Vertex q[4];
+                        q[0].pos.rx() = x0;
+                        q[0].pos.ry() = y0;
+                        q[0].tex.rx() = tx0;
+                        q[0].tex.ry() = ty1;
+                        
+                        q[1].pos.rx() = x1;
+                        q[1].pos.ry() = y0;
+                        q[1].tex.rx() = tx1;
+                        q[1].tex.ry() = ty1;
+                        
+                        q[2].pos.rx() = x1;
+                        q[2].pos.ry() = y1;
+                        q[2].tex.rx() = tx1;
+                        q[2].tex.ry() = ty0;
+                        
+                        q[3].pos.rx() = x0;
+                        q[3].pos.ry() = y1;
+                        q[3].tex.rx() = tx0;
+                        q[3].tex.ry() = ty0;
+
+                        {// Normalize coordinates
+                            // Atlas size shortcuts
+                            auto aw = info.texture->GetWidth();
+                            auto ah = info.texture->GetHeight();
+
+                            for (auto& v : q) {
+                                v.pos.rx() /= w;
+                                v.pos.ry() /= h;
+                                v.pos.rz() = 1.0f;
+                                v.pos.rw() = 1.0f;
+                                v.tex.rx() /= aw;
+                                v.tex.ry() /= ah;
+                            }
+                        }
+
+                        vertices.push_back(q[1]);
+                        vertices.push_back(q[0]);
+                        vertices.push_back(q[3]);
+                        vertices.push_back(q[2]);
+                        vertices.push_back(q[1]);
+                        vertices.push_back(q[3]);
+
+                        currentX += edt::CheckedCast<int>(info.advanceX);
+                    };
+
+                    edt::Delegate<void(const AtlasGlyphInfo&)> delegate;
+                    delegate.Bind(onRequest);
+                    m_font->RequestGlyphsInfo(edt::MakeArrayView(unicodes), *m_graphicsSystem->GetDevice(), glyphParams, delegate);
+                }
+
+                PrimitiveBufferParameters params;
+                params.usage = graphics::DeviceBufferUsage::Dynamic;
+                params.bindFlags = graphics::DeviceBufferBindFlags::VertexBuffer;
+                params.accessFlags = graphics::DeviceAccessFlags::Write;
+                params.topology = PrimitiveTopology::TriangleList;
+                m_textQuads.Initialize(*m_graphicsSystem, params, edt::MakeArrayView(vertices));
             }
 
-            {// Create constant buffer
+            {// Create common constant buffer
                 CB constantBufferInitData;
                 edt::geom::Vector<float, 3> t {};
                 constantBufferInitData.transform = MakeTranslationMatrix(t);
@@ -244,13 +367,22 @@ namespace render_text_sample
                 m_constantBuffer = m_graphicsSystem->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
             }
 
-            {// Create sampler
+            {// Create container sampler
                 SamplerParameters samplerParams{};
                 samplerParams.addressU = TextureAddressMode::Clamp;
                 samplerParams.addressV = TextureAddressMode::Clamp;
                 samplerParams.addressW = TextureAddressMode::Clamp;
                 samplerParams.filter = FilteringMode::Anisotropic;
-                m_sampler = m_graphicsSystem->CreateSampler(samplerParams);
+                m_containerSampler = m_graphicsSystem->CreateSampler(samplerParams);
+            }
+
+            {// Create text sampler
+                SamplerParameters samplerParams{};
+                samplerParams.addressU = TextureAddressMode::Clamp;
+                samplerParams.addressV = TextureAddressMode::Clamp;
+                samplerParams.addressW = TextureAddressMode::Clamp;
+                samplerParams.filter = FilteringMode::Bilinear;
+                m_textSampler = m_graphicsSystem->CreateSampler(samplerParams);
             }
         };
     }

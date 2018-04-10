@@ -1,10 +1,8 @@
 #pragma once
 
 #include "Keng/ResourceSystem/FwdDecl.h"
-#include "Keng/Base/Serialization/Serialization.h"
 #include "Keng/Core/ISystem.h"
 #include "Keng/ResourceSystem/IResource.h"
-#include "yasli/Archive.h"
 #include <string_view>
 
 namespace keng::resource

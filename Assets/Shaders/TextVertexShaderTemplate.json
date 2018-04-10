@@ -1,0 +1,9 @@
+{
+    "resource": {
+        "type": "ShaderTemplate",
+        "shader_template": {
+            "type": "Vertex",
+            "file": "Assets/hlsl/TextVS.hlsl"
+        }
+    }
+}

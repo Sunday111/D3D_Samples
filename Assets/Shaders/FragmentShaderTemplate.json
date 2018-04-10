@@ -3,7 +3,7 @@
         "type": "ShaderTemplate",
         "shader_template": {
             "type": "Fragment",
-            "file": "Assets/Shaders/FragmentShader.hlsl"
+            "file": "Assets/hlsl/FragmentShader.hlsl"
         }
     }
 }

@@ -71,8 +71,8 @@ public:
         return "MemoryProfiling";
     }
 
-    virtual bool ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const override {
-        UnusedVar(pfn, context);
+    virtual bool ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const override {
+        UnusedVar(delegate);
         return false;
     }
 

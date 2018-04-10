@@ -62,4 +62,8 @@ namespace keng::graphics
 
     class IFont;
     using IFontPtr = core::Ptr<IFont>;
+
+    class GlyphParameters;
+    class GlyphInfo;
+    class AtlasGlyphInfo;
 }

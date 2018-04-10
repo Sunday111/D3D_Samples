@@ -8,6 +8,6 @@ namespace keng::graphics
     class ISampler : public core::IRefCountObject
     {
     public:
-        virtual void AssignToPipeline(ShaderType shaderType, uint32_t index) = 0;
+        virtual void AssignToPipeline(ShaderType shaderType, size_t index) = 0;
     };
 }

@@ -33,7 +33,7 @@ macro(symlink_to_dir dir)
 	add_custom_command(
 	    TARGET  Launcher
 	    POST_BUILD
-	    COMMAND "py" "${make_sym_link_script}" "${root_dir}/${dir}" "${bin_dir}/$<CONFIG>/${dir}"
+	    COMMAND "py" "${make_sym_link_script}" "${root_dir}/${dir}" "${bin_dir}/${dir}"
 	    COMMENT "Make symlink to '${dir}' folder")
 endmacro()
 

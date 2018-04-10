@@ -20,7 +20,12 @@ struct FragmentShaderInput
 float4 PShader(FragmentShaderInput input) : SV_TARGET
 {
     #ifdef USE_TEXTURE
-    return shaderTexture.Sample(SampleType, input.tex);
+        float4 col = shaderTexture.Sample(SampleType, input.tex);
+        #ifdef GRAYSACLE_TEXTURE
+            return float4(col.r, col.r, col.r, 1.f);
+        #else
+            return shaderTexture.Sample(SampleType, input.tex);
+        #endif /* GRAYSACLE_TEXTURE */
     #endif /*USE_TEXTURE*/
 
     #ifdef USE_COLOR

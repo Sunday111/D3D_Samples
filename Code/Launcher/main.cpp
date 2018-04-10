@@ -3,6 +3,8 @@
 #include "EverydayTools/UnusedVar.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
+#include "EverydayTools/Exception/CheckedCast.h"
+#include <algorithm>
 #include <string_view>
 #include <string>
 #include <sstream>
@@ -23,16 +25,7 @@ struct LocalFreeDeleter
 static std::string ConvertString(const std::wstring& wide) {
     std::string result;
     result.reserve(wide.size());
-    for (wchar_t letter : wide) {
-        edt::ThrowIfFailed(
-            letter <= std::numeric_limits<char>::max() &&
-            letter >= std::numeric_limits<char>::min(),
-            "Only ASCII names supported"
-        );
-
-        result.push_back(static_cast<char>(letter));
-    }
-
+    std::transform(wide.begin(), wide.end(), std::back_inserter(result), edt::CheckedCast<char, wchar_t>);
     return result;
 }
 
@@ -84,8 +77,11 @@ INT WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nC
 
             auto app = keng::core::CreateApplication(module);
 
+            std::string modulesToLoad[1];
+            modulesToLoad[0] = ConvertString(libraryName);
+
             keng::core::ApplicationStartupParameters params;
-            params.modulesToLoad.push_back(ConvertString(libraryName));
+            params.modulesToLoad = edt::MakeArrayView(modulesToLoad);
 
             app->Initialize(params);
             app->Run();

@@ -7,7 +7,7 @@
 #include "keng/Base/Serialization/SerializeMandatory.h"
 
 #include "EverydayTools/Exception/CallAndRethrow.h"
-#include "EverydayTools/Exception/ThrowIfFailed.h"
+#include "EverydayTools/Exception/CheckedCast.h"
 #include "EverydayTools/UnusedVar.h"
 
 #include <algorithm>
@@ -35,7 +35,7 @@ namespace keng::resource
             high_resolution_clock::time_point zero(0ms);
             auto dt = high_resolution_clock::now() - zero;
             auto now = duration_cast<milliseconds>(dt).count();
-            float nowMs = static_cast<float>(now);
+            float nowMs = edt::CheckedCast<float>(now);
 
             for (auto& deviceResources : m_devicesResources) {
                 deviceResources->Update(nowMs);
@@ -132,10 +132,10 @@ namespace keng::resource
         return SystemName();
     }
 
-    bool ResourceSystem::ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const {
+    bool ResourceSystem::ForEachDependency(const edt::Delegate<bool(std::string_view systemName)>& delegate) const {
         return CallAndRethrowM + [&]() -> bool {
             for (auto& systemName : m_dependencies) {
-                if (pfn(systemName, context)) {
+                if (delegate.Invoke(systemName)) {
                     return true;
                 }
             }

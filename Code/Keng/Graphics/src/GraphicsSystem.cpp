@@ -29,6 +29,7 @@
 
 #include "Sampler.h"
 
+#include "EverydayTools/Exception/CheckedCast.h"
 #include "EverydayTools/Geom/Vector.h"
 #include "DeviceBuffer.h"
 
@@ -159,8 +160,10 @@ namespace keng::graphics
         m_device->GetContext()->IASetPrimitiveTopology(d3d::ConvertTopology(topo));
     }
 
-    void GraphicsSystem::Draw(uint32_t vertices, uint32_t offset) {
-        m_device->GetContext()->Draw(vertices, offset);
+    void GraphicsSystem::Draw(size_t vertices, size_t offset) {
+        m_device->GetContext()->Draw(
+            edt::CheckedCast<uint32_t>(vertices),
+            edt::CheckedCast<uint32_t>(offset));
     }
 
     void GraphicsSystem::SetViewport(const ViewportParameters& p) {
@@ -180,10 +183,10 @@ namespace keng::graphics
         return SystemName();
     }
 
-    bool GraphicsSystem::ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const {
+    bool GraphicsSystem::ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const {
         return CallAndRethrowM + [&]() -> bool {
             for (auto& systemName : m_dependencies) {
-                if (pfn(systemName, context)) {
+                if (delegate.Invoke(systemName)) {
                     return true;
                 }
             }

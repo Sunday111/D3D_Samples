@@ -74,6 +74,7 @@ namespace keng::graphics::d3d
             }
         };
     }
+
     D3D_PRIMITIVE_TOPOLOGY ConvertTopology(PrimitiveTopology from) {
         return CallAndRethrowM + [&] {
             switch (from) {
@@ -82,5 +83,27 @@ namespace keng::graphics::d3d
             default: throw std::runtime_error("This topology is not implemented here");
             }
         };
+    }
+
+    CpuAccessFlags ConvertCpuAccessFlags(UINT flags) {
+        auto result = CpuAccessFlags::None;
+        if (flags & D3D10_CPU_ACCESS_READ) {
+            result |= CpuAccessFlags::Read;
+        }
+        if (flags & D3D10_CPU_ACCESS_WRITE) {
+            result |= CpuAccessFlags::Write;
+        }
+        return result;
+    }
+
+    UINT ConvertCpuAccessFlags(CpuAccessFlags flags) {
+        UINT result = 0;
+        if ((flags & CpuAccessFlags::Read) != CpuAccessFlags::None) {
+            result |= D3D10_CPU_ACCESS_READ;
+        }
+        if ((flags & CpuAccessFlags::Write) != CpuAccessFlags::None) {
+            result |= D3D10_CPU_ACCESS_WRITE;
+        }
+        return result;
     }
 }

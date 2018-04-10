@@ -12,6 +12,18 @@ namespace keng::graphics
     {
         m_device = &device;
         m_swapChain = SwapChainPtr::MakeInstance(device, params.swapChain);
+
+
+        D3D11_BLEND_DESC desc{};
+        desc.RenderTarget[0].BlendEnable = true;
+        desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+        desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+        desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+        desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+        desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+        WinAPI<char>::ThrowIfError(m_device->GetDevice()->CreateBlendState(&desc, m_blendState.Receive()));
     }
 
     void WindowRenderTarget::AssignToPipeline(const IDepthStencilPtr& depthStencil) {
@@ -23,6 +35,8 @@ namespace keng::graphics
             dsv = castedDepthStencil->GetView();
         }
         m_device->SetRenderTarget(*rtv, dsv.Get());
+
+        m_device->GetContext()->OMSetBlendState(m_blendState.Get(), 0, 0xFFFFFFFF);
     }
 
     void WindowRenderTarget::Clear(const float(&flatColor)[4]) {

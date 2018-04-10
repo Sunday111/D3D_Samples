@@ -73,10 +73,10 @@ namespace keng::window_system
         return SystemName();
     }
 
-    bool WindowSystem::ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const {
+    bool WindowSystem::ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const {
         return CallAndRethrowM + [&]() -> bool {
             for (auto& systemName : m_dependencies) {
-                if (pfn(systemName, context)) {
+                if (delegate.Invoke(systemName)) {
                     return true;
                 }
             }

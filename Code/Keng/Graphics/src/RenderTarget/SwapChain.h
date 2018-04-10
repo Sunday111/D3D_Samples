@@ -19,7 +19,7 @@ namespace keng::graphics
         void CopyFromTexture(const TexturePtr& texture);
 
     private:
-        ComPtr<ID3D11Texture2D> GetBackBuffer(uint32_t index);
+        ComPtr<ID3D11Texture2D> GetBackBuffer(size_t index);
 
         DevicePtr m_device;
         TexturePtr m_currentTexture;

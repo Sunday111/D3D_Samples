@@ -8,8 +8,8 @@ namespace keng::graphics
         m_annotation = m_device->CreateAnnotation();
     }
 
-    void Annotation::BeginEvent(std::string_view text) {
-        m_annotation->BeginEvent((LPCWSTR)text.data());
+    void Annotation::BeginEvent(std::basic_string_view<wchar_t> text) {
+        m_annotation->BeginEvent(text.data());
     }
 
     void Annotation::EndEvent() {

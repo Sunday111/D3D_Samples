@@ -47,7 +47,7 @@ namespace keng::window_system
         virtual void Unsubscribe(IWindowListener* listener) override {
             Observable<window_system::MainWindow<TChar>, IWindowListener>::Unsubscribe(listener);
         }
-        virtual void GetClientSize(uint32_t* w, uint32_t* h) override {
+        virtual void GetClientSize(size_t* w, size_t* h) override {
             GetWindowClientSize(w, h);
         }
         virtual int64_t* GetNativeHandle() override {

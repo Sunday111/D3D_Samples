@@ -1,5 +1,6 @@
 #include "SampleSystem.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
+#include "EverydayTools/Exception/CheckedCast.h"
 #include "EverydayTools/Geom/Vector.h"
 #include "Keng/Core/IApplication.h"
 #include "Keng/Graphics/Resource/ITexture.h"
@@ -70,7 +71,7 @@ namespace textured_quad_sample
         using namespace graphics;
 
         return CallAndRethrowM + [&] {
-            return Annotate(m_annotation, "Frame", [&] {
+            return Annotate(m_annotation, L"Frame", [&] {
                 float clearColor[4]{
                     0.0f, 0.2f, 0.4f, 1.0f
                 };
@@ -79,7 +80,7 @@ namespace textured_quad_sample
                 constexpr float delta_angle = 0.002f;
                 angle += delta_angle;
 
-                Annotate(m_annotation, "Move triangle", [&] {
+                Annotate(m_annotation, L"Move triangle", [&] {
                     DeviceBufferMapper mapper;
                     m_constantBuffer->MakeMapper(mapper);
                     auto cbView = mapper.GetTypedView<CB>();
@@ -89,7 +90,7 @@ namespace textured_quad_sample
                     cbView[0].transform = MakeTranslationMatrix(t);
                 });
 
-                Annotate(m_annotation, "Draw triangle", [&] {
+                Annotate(m_annotation, L"Draw triangle", [&] {
                     VertexBufferAssignParameters vbAssignParams{};
                     vbAssignParams.slot = 0;
                     vbAssignParams.stride = sizeof(Vertex);
@@ -111,7 +112,7 @@ namespace textured_quad_sample
                     m_graphicsSystem->Draw(4, 0);
                 });
 
-                Annotate(m_annotation, "Copy texture to swap chain texture", [&] {
+                Annotate(m_annotation, L"Copy texture to swap chain texture", [&] {
                     m_windowRT->CopyFrom(m_textureRT->GetTexture());
                 });
 
@@ -126,10 +127,10 @@ namespace textured_quad_sample
         return "TexturedQuad";
     }
 
-    bool SampleSystem::ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const {
-        if (pfn(keng::graphics::IGraphicsSystem::SystemName(), context)) return true;
-        if (pfn(keng::resource::IResourceSystem::SystemName(), context)) return true;
-        if (pfn(keng::window_system::IWindowSystem::SystemName(), context)) return true;
+    bool SampleSystem::ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const {
+        if (delegate.Invoke(keng::graphics::IGraphicsSystem::SystemName())) return true;
+        if (delegate.Invoke(keng::resource::IResourceSystem::SystemName())) return true;
+        if (delegate.Invoke(keng::window_system::IWindowSystem::SystemName())) return true;
         return false;
     }
 
@@ -146,15 +147,15 @@ namespace textured_quad_sample
             m_annotation = m_graphicsSystem->CreateAnnotation();
 
             auto window = m_windowSystem->GetWindow();
-            uint32_t w, h;
+            size_t w, h;
             window->GetClientSize(&w, &h);
 
             {// Initialize viewport
                 ViewportParameters v{};
                 v.Position.rx() = 0.f;
                 v.Position.ry() = 0.f;
-                v.Size.rx() = static_cast<float>(w);
-                v.Size.ry() = static_cast<float>(h);
+                v.Size.rx() = edt::CheckedCast<float>(w);
+                v.Size.ry() = edt::CheckedCast<float>(h);
                 m_graphicsSystem->SetViewport(v);
             }
 

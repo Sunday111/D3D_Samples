@@ -31,14 +31,20 @@ namespace keng::core
             addedNewSystem = false;
             for (auto& module : m_modules) {
                 auto& system = module->GetSystem();
-                addedNewSystem = system->ForEachSystemDependency([&](std::string_view dependencyName) {
+
+                auto onDependency = [&](std::string_view dependencyName) {
                     if (FindSystem(dependencyName)) {
                         return false;
                     }
 
                     LoadModule(dependencyName);
                     return true;
-                });
+                };
+
+                edt::Delegate<bool(std::string_view)> delegate;
+                delegate.Bind(onDependency);
+
+                addedNewSystem = system->ForEachDependency(delegate);
 
                 if (addedNewSystem) {
                     break;
@@ -51,8 +57,10 @@ namespace keng::core
         return CallAndRethrowM + [&] {
             bool finished = false;
             for (auto& module : m_modules) {
-                if (!module->GetSystem()->Update()) {
-                    finished = true;
+                if (auto& system = module->GetSystem()) {
+                    if (!system->Update()) {
+                        finished = true;
+                    }
                 }
             }
             return !finished;
@@ -82,7 +90,8 @@ namespace keng::core
             while (!dependencyFound && !walkQueue.empty()) {
                 auto current = walkQueue.back();
                 walkQueue.pop_back();
-                dependencyFound = current->ForEachSystemDependency([&](std::string_view name) {
+
+                auto onDependency = [&](std::string_view name) {
                     if (a_name == name) {
                         return true;
                     }
@@ -91,7 +100,12 @@ namespace keng::core
                     edt::ThrowIfFailed(system != nullptr, "Found dependency that was not registered as system");
                     walkQueue.push_back(system);
                     return false;
-                });
+                };
+
+                edt::Delegate<bool(std::string_view)> delegate;
+                delegate.Bind(onDependency);
+
+                dependencyFound = current->ForEachDependency(delegate);
             }
 
             return dependencyFound;

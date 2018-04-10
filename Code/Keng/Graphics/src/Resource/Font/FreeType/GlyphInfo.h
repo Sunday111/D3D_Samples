@@ -2,6 +2,9 @@
 
 #include <memory>
 
+#include "Keng/Graphics/Resource/Font/GlyphInfo.h"
+#include "EverydayTools/Exception/CheckedCast.h"
+
 namespace keng::graphics::free_type
 {
     class GlyphParameters
@@ -12,11 +15,11 @@ namespace keng::graphics::free_type
         static constexpr auto PointSize = 1.f / 72.f;
 
         inline size_t GetMaxWidthPx() const {
-            return static_cast<size_t>(width_pt * PointSize * x_dpi + 1);
+            return edt::CheckedCast<size_t>(width_pt * PointSize * x_dpi + 1);
         }
 
         inline size_t GetMaxHeightPx() const {
-            return static_cast<size_t>(height_pt * PointSize * y_dpi + 1);
+            return edt::CheckedCast<size_t>(height_pt * PointSize * y_dpi + 1);
         }
 
         uint32_t unicode = '?';
@@ -26,23 +29,9 @@ namespace keng::graphics::free_type
         size_t width_pt = 20;
     };
 
-    class GlyphData
+    class GlyphData : public graphics::GlyphInfo
     {
     public:
-        uint32_t unicode;
-
-        size_t horizontalBearingX;
-        size_t horizontalBearingY;
-
-        size_t verticalBearingX;
-        size_t verticalBearingY;
-
-        size_t width;
-        size_t height;
-
-        size_t advanceX;
-        size_t advanceY;
-
         std::unique_ptr<uint8_t[]> buffer;
     };
 }

@@ -16,7 +16,7 @@ namespace keng::graphics
 
         // ISystem
         virtual std::string_view GetSystemName() const override;
-        virtual bool ForEachSystemDependency(bool(*pfn)(std::string_view systemName, void* context), void* context) const override;
+        virtual bool ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const override;
         virtual void Initialize(const core::IApplicationPtr& app) override;
         virtual bool Update() override;
 
@@ -30,7 +30,7 @@ namespace keng::graphics
         virtual ITexturePtr CreateTexture(const TextureParameters& params) override;
         virtual ISamplerPtr CreateSampler(const SamplerParameters& params) override;
         virtual void SetTopology(PrimitiveTopology topo) override;
-        virtual void Draw(uint32_t vertices, uint32_t offset) override;
+        virtual void Draw(size_t vertices, size_t offset) override;
         virtual void SetViewport(const ViewportParameters&) override;
         virtual IAnnotationPtr CreateAnnotation() override;
 
