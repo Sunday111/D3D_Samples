@@ -11,6 +11,6 @@ namespace keng::graphics
     public:
         virtual std::string_view GetNodeName() const override;
         virtual std::string_view GetResourceType() const override;
-        virtual resource::IResourcePtr LoadResource(resource::IResourceSystem*, Archive& ar, const resource::IDevicePtr& device) const override;
+        virtual resource::IResourcePtr LoadResource(resource::IResourceSystem&, Archive& ar, const resource::IDevicePtr& device) const override;
     };
 }

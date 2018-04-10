@@ -73,7 +73,7 @@ namespace keng::graphics
         return "Shader";
     }
 
-    resource::IResourcePtr ShaderFabric::LoadResource(resource::IResourceSystem* resourceSystem,
+    resource::IResourcePtr ShaderFabric::LoadResource(resource::IResourceSystem& resourceSystem,
         Archive& ar, const resource::IDevicePtr& abstractDevice) const {
         return CallAndRethrowM + [&] {
             edt::ThrowIfFailed(abstractDevice != nullptr, "Can't create shader without device");
@@ -84,7 +84,7 @@ namespace keng::graphics
 
             ShaderCompiler shaderCompiler;
             shaderCompiler.device = device;
-            shaderCompiler.shaderTemplate = std::static_pointer_cast<ShaderTemplate>(resourceSystem->GetResource(info.shaderTemplate));
+            shaderCompiler.shaderTemplate = std::static_pointer_cast<ShaderTemplate>(resourceSystem.GetResource(info.shaderTemplate));
             shaderCompiler.entryPoint = info.entryPoint;
             shaderCompiler.definitions.reserve(info.definitions.size());
             for (auto& def : info.definitions) {

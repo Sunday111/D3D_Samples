@@ -28,15 +28,16 @@ namespace keng::resource
 
             }
 
+            void serialize(Archive& ar) {
+                SerializeMandatory(ar, type, ResourceTypeNodeName);
+                auto fabric = system.GetFabric(type);
+                resource = fabric->LoadResource(system, ar, device);
+            }
+
             ResourceSystem& system;
             IDevicePtr device;
             IResourcePtr resource;
             std::string type;
-            void serialize(Archive& ar) {
-                SerializeMandatory(ar, type, ResourceTypeNodeName);
-                auto fabric = system.GetFabric(type);
-                resource = fabric->LoadResource(&system, ar, device);
-            }
         };
 
         struct FileParseInfo

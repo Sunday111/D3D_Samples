@@ -5,11 +5,6 @@
 
 namespace keng::graphics::free_type
 {
-    Library& Library::Instance() {
-        static LibraryPtr instance = LibraryPtr::MakeInstance();
-        return *instance;
-    }
-
     Library::Library() {
         CallAndRethrowM + [&]() {
             FreeTypeCall("FT_Init_FreeType", FT_Init_FreeType, &m_library);

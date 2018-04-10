@@ -20,7 +20,7 @@ namespace keng::graphics
         return "Texture";
     }
 
-    resource::IResourcePtr TextureFabric::LoadResource(resource::IResourceSystem*,
+    resource::IResourcePtr TextureFabric::LoadResource(resource::IResourceSystem&,
         Archive& ar, const resource::IDevicePtr& abstractDevice) const {
         return CallAndRethrowM + [&] {
             edt::ThrowIfFailed(abstractDevice != nullptr, "Can't create texture without device");

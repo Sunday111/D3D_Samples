@@ -7,10 +7,18 @@
 #include "Keng/Base/Serialization/ReadFileToBuffer.h"
 #include "Keng/Graphics/Resource/TextureParameters.h"
 #include "Device.h"
-#include "Font.h"
+#include "Resource/Font/Font.h"
+#include "Resource/Font/FreeType/Library.h"
 
 namespace keng::graphics
 {
+    FontFabric::FontFabric() :
+        m_library(free_type::LibraryPtr::MakeInstance())
+    {
+    }
+
+    FontFabric::~FontFabric() = default;
+
     std::string_view FontFabric::GetNodeName() const {
         return "font";
     }
@@ -19,7 +27,7 @@ namespace keng::graphics
         return "Font";
     }
 
-    resource::IResourcePtr FontFabric::LoadResource(resource::IResourceSystem* system,
+    resource::IResourcePtr FontFabric::LoadResource(resource::IResourceSystem& system,
         Archive& ar, const resource::IDevicePtr& abstractDevice) const {
         return CallAndRethrowM + [&] {
             UnusedVar(abstractDevice);
@@ -37,7 +45,7 @@ namespace keng::graphics
             SerializeMandatory(ar, info, GetNodeName().data());
             auto buffer = keng::ReadFileToBuffer(info.file);
 
-            return FontPtr::MakeInstance(std::move(buffer), *system);
+            return FontPtr::MakeInstance(std::move(buffer), *m_library, system);
         };
     }
 }

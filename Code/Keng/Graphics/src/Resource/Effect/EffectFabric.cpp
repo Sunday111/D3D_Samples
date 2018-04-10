@@ -14,7 +14,7 @@ namespace keng::graphics
         return "Effect";
     }
 
-    resource::IResourcePtr EffectFabric::LoadResource(resource::IResourceSystem* resourceSystem,
+    resource::IResourcePtr EffectFabric::LoadResource(resource::IResourceSystem& resourceSystem,
         Archive& ar, const resource::IDevicePtr& abstractDevice) const {
         return CallAndRethrowM + [&] {
             edt::ThrowIfFailed(abstractDevice != nullptr, "Can't create effect without device");
@@ -41,14 +41,14 @@ namespace keng::graphics
 
             {
                 if (!effectInfo.vs.empty()) {
-                    result->vs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Vertex>>(resourceSystem->GetResource(effectInfo.vs, device));
+                    result->vs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Vertex>>(resourceSystem.GetResource(effectInfo.vs, device));
                     anyShader = true;
                 }
             }
 
             {
                 if (!effectInfo.fs.empty()) {
-                    result->fs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Pixel>>(resourceSystem->GetResource(effectInfo.fs, device));
+                    result->fs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Pixel>>(resourceSystem.GetResource(effectInfo.fs, device));
                     anyShader = true;
                 }
             }

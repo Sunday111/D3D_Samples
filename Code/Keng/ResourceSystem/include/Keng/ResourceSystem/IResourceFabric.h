@@ -22,7 +22,7 @@ namespace keng::resource
     public:
         virtual std::string_view GetResourceType() const = 0;
         virtual std::string_view GetNodeName() const = 0;
-        virtual IResourcePtr LoadResource(IResourceSystem*, Archive& ar, const IDevicePtr& device) const = 0;
+        virtual IResourcePtr LoadResource(IResourceSystem&, Archive& ar, const IDevicePtr& device) const = 0;
         virtual ~IResourceFabric() = default;
     };
 }

@@ -10,10 +10,10 @@
 
 namespace keng::graphics
 {
-    Font::Font(std::vector<uint8_t> fileData, resource::IResourceSystem& resourceSystem) {
+    Font::Font(std::vector<uint8_t> fileData, free_type::Library& library, resource::IResourceSystem& resourceSystem) {
         CallAndRethrowM + [&] {
             m_resourceSystem = &resourceSystem;
-            m_face = free_type::Library::Instance().LoadFace(std::move(fileData));
+            m_face = library.LoadFace(std::move(fileData));
         };
     }
 

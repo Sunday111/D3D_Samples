@@ -16,7 +16,7 @@ namespace keng::graphics
         return "ShaderTemplate";
     }
 
-    resource::IResourcePtr ShaderTemplateFabric::LoadResource(resource::IResourceSystem*,
+    resource::IResourcePtr ShaderTemplateFabric::LoadResource(resource::IResourceSystem&,
         Archive& ar, const resource::IDevicePtr&) const {
         return CallAndRethrowM + [&] {
             struct ShaderTemplateInfo {

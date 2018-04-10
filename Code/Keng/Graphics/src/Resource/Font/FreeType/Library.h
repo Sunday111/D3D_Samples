@@ -13,8 +13,6 @@ namespace keng::graphics::free_type
     class Library : public core::RefCountImpl<core::IRefCountObject>
     {
     public:
-        static Library& Instance();
-
         Library();
         ~Library();
 

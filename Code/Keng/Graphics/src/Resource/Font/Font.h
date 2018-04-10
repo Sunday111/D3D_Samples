@@ -13,7 +13,7 @@ namespace keng::graphics
     class Font : public core::RefCountImpl<IFont>
     {
     public:
-        Font(std::vector<uint8_t> fileData, resource::IResourceSystem& resourceSystem);
+        Font(std::vector<uint8_t> fileData, free_type::Library& library, resource::IResourceSystem& resourceSystem);
         ~Font();
 
         // IFont
