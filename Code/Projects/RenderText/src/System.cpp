@@ -281,10 +281,6 @@ namespace render_text_sample
                     auto onRequest = [&](const AtlasGlyphInfo& info) {
                         m_atlasTexture = info.texture;
 
-                        if (info.unicode == 'j') {
-                            assert(false);
-                        }
-
                         auto x0 = edt::CheckedCast<float>(currentX) + info.horizontalBearingX;
                         auto x1 = x0 + info.width;
                         auto y0 = edt::CheckedCast<float>(currentY) - edt::CheckedCast<float>(info.height - info.horizontalBearingY);
