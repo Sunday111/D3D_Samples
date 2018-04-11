@@ -11,7 +11,7 @@ namespace keng::window_system
 {
     namespace
     {
-        static WindowSystem::SystemParams ReadDefaultParams(filesystem::IFileSystem& filesystem) {
+        static WindowSystem::SystemParams ReadDefaultParams() {
             return CallAndRethrowM + [&] {
                 struct File
                 {
@@ -36,7 +36,7 @@ namespace keng::window_system
                     };
                     edt::Delegate<void(FileView)> delegate;
                     delegate.Bind(onFileRead);
-                    filesystem::HandleFileData(filesystem, filename, delegate);
+                    filesystem::HandleFileData(filename, delegate);
                 } catch (...) {
                 }
 
@@ -51,12 +51,8 @@ namespace keng::window_system
 
     void WindowSystem::Initialize(const core::IApplicationPtr& app) {
         CallAndRethrowM + [&] {
-            {// Find systems
-                m_filesystem = app->FindSystem<filesystem::IFileSystem>();
-            }
-
             UnusedVar(app);
-            auto params = ReadDefaultParams(*m_filesystem);
+            auto params = ReadDefaultParams();
             m_windowClass = std::make_unique<MainWindowClass<TChar>>(params.hInstance);
             m_window = m_windowClass->MakeWindow(params.WindowTitle.data());
             m_window->Show(params.nCmdShow);

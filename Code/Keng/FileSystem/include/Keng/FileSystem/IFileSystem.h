@@ -13,4 +13,6 @@ namespace keng::filesystem
         virtual IFilePtr GetFile(const std::string_view& filename, const OpenFileParameters& params) = 0;
         virtual ~IFileSystem() = default;
     };
+
+    KENG_FILESYSTEM_API IFileSystemPtr GetFileSystem();
 }

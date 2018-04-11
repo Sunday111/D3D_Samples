@@ -54,7 +54,7 @@ namespace keng::graphics
             };
             edt::Delegate<void(FileView)> delegate;
             delegate.Bind(onFileRead);
-            filesystem::HandleFileData(*system.GetFileSystem(), info.file, delegate);
+            filesystem::HandleFileData(info.file, delegate);
 
             return result;
         };

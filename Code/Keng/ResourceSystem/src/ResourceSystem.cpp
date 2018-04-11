@@ -105,10 +105,6 @@ namespace keng::resource
         return **it;
     }
 
-    filesystem::IFileSystemPtr ResourceSystem::GetFileSystem() const {
-        return m_filesystem;
-    }
-
     void SystemParams::serialize(Archive& ar) {
         ar(defaultResourceParams, "resource");
     }
@@ -136,7 +132,7 @@ namespace keng::resource
                 edt::Delegate<void(FileView)> delegate;
                 delegate.Bind(onFileRead);
 
-                filesystem::HandleFileData(*m_filesystem, filename, delegate);
+                filesystem::HandleFileData(filename, delegate);
             } catch (...) {
             }
 
@@ -150,9 +146,9 @@ namespace keng::resource
 
     bool ResourceSystem::ForEachDependency(const edt::Delegate<bool(std::string_view systemName)>& delegate) const {
         return CallAndRethrowM + [&]() -> bool {
-            const char* dependencies[] =
+            std::string_view dependencies[] =
             {
-                "KengFileSystem"
+                filesystem::IFileSystem::SystemName()
             };
 
             for (auto dependency : dependencies) {

@@ -115,7 +115,7 @@ namespace keng::resource
             };
             edt::Delegate<void(FileView)> delegate;
             delegate.Bind(onFileRead);
-            filesystem::HandleFileData(*system.GetFileSystem(), filename, delegate);
+            filesystem::HandleFileData(filename, delegate);
             return result;
         };
     }

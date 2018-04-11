@@ -21,6 +21,7 @@ generate_vs_filters(${target_sources})
 target_include_directories(${keng_module_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${keng_module_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(${keng_module_name} PUBLIC "${root_dir}/Code/Keng/Core/include")
+target_compile_definitions(${keng_module_name} PRIVATE "-DKENG_FILESYSTEM_DLL")
 target_link_libraries(${keng_module_name} PUBLIC EverydayTools)
 target_link_libraries(${keng_module_name} PUBLIC KengBase)
 

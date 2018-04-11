@@ -10,11 +10,11 @@
 
 namespace keng::filesystem
 {
-    inline std::pair<std::unique_ptr<uint8_t>, size_t> ReadFileToBuffer(IFileSystem& system, std::string_view filename) {
+    inline std::pair<std::unique_ptr<uint8_t>, size_t> ReadFileToBuffer(std::string_view filename) {
         return CallAndRethrowM + [&] {
             OpenFileParameters openFileParameters{};
             openFileParameters.accessFlags |= FileAccessFlags::Read;
-            auto file = system.GetFile(filename, openFileParameters);
+            auto file = GetFileSystem()->GetFile(filename, openFileParameters);
             std::pair<std::unique_ptr<uint8_t>, size_t> result;
             auto size = file->GetSize();
             edt::ThrowIfFailed(size > 0, "File \"", filename, "\" is empty");
@@ -25,12 +25,12 @@ namespace keng::filesystem
         };
     }
 
-    inline void HandleFileData(IFileSystem& system, std::string_view filename, edt::Delegate<void(edt::DenseArrayView<const uint8_t>)> delegate) {
+    inline void HandleFileData(std::string_view filename, edt::Delegate<void(edt::DenseArrayView<const uint8_t>)> delegate) {
         CallAndRethrowM + [&] {
             size_t size;
             std::unique_ptr<uint8_t> buffer;
 
-            std::tie(buffer, size) = ReadFileToBuffer(system, filename);
+            std::tie(buffer, size) = ReadFileToBuffer(filename);
             delegate.Invoke(edt::DenseArrayView<const uint8_t>(buffer.get(), size));
         };
     }

@@ -22,9 +22,9 @@ target_include_directories(${keng_module_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR
 target_include_directories(${keng_module_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(${keng_module_name} PUBLIC "${root_dir}/Code/Keng/Core/include")
 target_include_directories(${keng_module_name} PUBLIC "${root_dir}/Code/Keng/Memory/include")
-target_include_directories(${keng_module_name} PUBLIC "${root_dir}/Code/Keng/FileSystem/include")
 target_link_libraries(${keng_module_name} PUBLIC EverydayTools)
 target_link_libraries(${keng_module_name} PUBLIC KengBase)
+target_link_libraries(${keng_module_name} PUBLIC KengFileSystem)
 target_link_libraries(${keng_module_name} PRIVATE WinWrappers)
 
 if(${KENG_KengMemory})

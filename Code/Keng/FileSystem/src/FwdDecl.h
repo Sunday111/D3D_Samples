@@ -4,7 +4,7 @@
 namespace keng::filesystem
 {
     class FileSystem;
-    using FileSystemPtr = core::Ptr<IFileSystem>;
+    using FileSystemPtr = core::Ptr<FileSystem>;
 
     class File;
     using FilePtr = core::Ptr<File>;

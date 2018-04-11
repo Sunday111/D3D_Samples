@@ -18,7 +18,6 @@ namespace keng::resource
         virtual void AddRuntimeResource(const IResourcePtr& resource, const IDevicePtr& deivce) = 0;
         virtual void RegisterResourceFabric(const IResourceFabricPtr& fabric) = 0;
         virtual void UnregisterFabric(const IResourceFabricPtr& fabric) = 0;
-        virtual filesystem::IFileSystemPtr GetFileSystem() const = 0;
         virtual ~IResourceSystem() = default;
     };
 }

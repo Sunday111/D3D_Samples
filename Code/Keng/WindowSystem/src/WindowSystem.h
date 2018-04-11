@@ -52,6 +52,5 @@ namespace keng::window_system
     private:
         std::unique_ptr<MainWindowClass<TChar>> m_windowClass;
         std::unique_ptr<MainWindow<TChar>> m_window;
-        filesystem::IFileSystemPtr m_filesystem;
     };
 }

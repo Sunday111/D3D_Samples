@@ -1,3 +1,6 @@
+#pragma once
+
+#include "Keng/FileSystem/Common.h"
 #include "Keng/Core/Ptr.h"
 
 namespace keng::filesystem
