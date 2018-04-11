@@ -7,8 +7,8 @@ namespace keng::graphics
     enum class CpuAccessFlags
     {
         None = 0,
-        Read = (1 << 1),
-        Write = (1 << 2)
+        Read = (1 << 0),
+        Write = (1 << 1)
     };
 
     EDT_ENUM_FLAG_OPERATORS(CpuAccessFlags);

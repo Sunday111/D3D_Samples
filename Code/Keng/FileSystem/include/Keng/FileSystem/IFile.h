@@ -1,7 +1,6 @@
 #pragma once
 
 #include "EverydayTools/Array/ArrayView.h"
-#include "EverydayTools/EnumFlag.h"
 #include "Keng/FileSystem/FwdDecl.h"
 
 namespace keng::filesystem

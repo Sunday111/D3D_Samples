@@ -44,8 +44,8 @@ namespace keng::graphics
         enum StateFlag
         {
             None = 0,
-            Updating = (1 << 1),
-            NeedsFlush = (1 << 2)
+            Updating = (1 << 0),
+            NeedsFlush = (1 << 1)
         };
 
         template<typename StateFlag flag>

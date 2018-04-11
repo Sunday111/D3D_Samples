@@ -9,11 +9,11 @@ namespace keng::graphics
     namespace
     {
         template<TextureUsage flag>
-        static bool FlagIsSet(TextureUsage flags) {
+        bool FlagIsSet(TextureUsage flags) {
             return (flags & flag) != TextureUsage::None;
         }
 
-        static UINT MakeBindFlags(TextureUsage flags) {
+        UINT MakeBindFlags(TextureUsage flags) {
             return CallAndRethrowM + [&] {
                 // Check for confilected flags:
                 if (FlagIsSet<TextureUsage::RenderTarget>(flags) &&
@@ -34,7 +34,7 @@ namespace keng::graphics
             };
         }
 
-        static D3D11_TEXTURE2D_DESC MakeTextureDescription(size_t w, size_t h, FragmentFormat format, TextureUsage usage, CpuAccessFlags cpuAccess) {
+        D3D11_TEXTURE2D_DESC MakeTextureDescription(size_t w, size_t h, FragmentFormat format, TextureUsage usage, CpuAccessFlags cpuAccess) {
             return CallAndRethrowM + [&] {
                 D3D11_TEXTURE2D_DESC d{};
                 d.Width = edt::CheckedCast<uint32_t>(w);
@@ -55,7 +55,7 @@ namespace keng::graphics
             };
         }
 
-        static size_t ComputeBytesPerPixel(FragmentFormat format) {
+        size_t ComputeBytesPerPixel(FragmentFormat format) {
             return CallAndRethrowM + [&] {
                 switch (format) {
                 case FragmentFormat::R8_G8_B8_A8_UNORM:

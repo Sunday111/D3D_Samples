@@ -12,21 +12,24 @@
 #include "Keng/Core/IApplication.h"
 #include "Keng/Core/CreateApplication.h"
 
-template<typename T>
-struct LocalFreeDeleter
-{
-    void operator()(T* ptr) {
-        if (ptr) {
-            LocalFree(ptr);
+namespace {
+    template<typename T>
+    class LocalFreeDeleter
+    {
+    public:
+        void operator()(T* ptr) {
+            if (ptr) {
+                LocalFree(ptr);
+            }
         }
+    };
+    
+    std::string ConvertString(const std::wstring& wide) {
+        std::string result;
+        result.reserve(wide.size());
+        std::transform(wide.begin(), wide.end(), std::back_inserter(result), edt::CheckedCast<char, wchar_t>);
+        return result;
     }
-};
-
-static std::string ConvertString(const std::wstring& wide) {
-    std::string result;
-    result.reserve(wide.size());
-    std::transform(wide.begin(), wide.end(), std::back_inserter(result), edt::CheckedCast<char, wchar_t>);
-    return result;
 }
 
 template<typename T>

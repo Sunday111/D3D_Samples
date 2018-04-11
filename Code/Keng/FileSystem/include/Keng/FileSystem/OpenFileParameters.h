@@ -8,8 +8,8 @@ namespace keng::filesystem
     enum class FileAccessFlags
     {
         None,
-        Read = (1 << 1),
-        Write = (1 << 2)
+        Read = (1 << 0),
+        Write = (1 << 1)
     };
 
     EDT_ENUM_FLAG_OPERATORS(FileAccessFlags);
