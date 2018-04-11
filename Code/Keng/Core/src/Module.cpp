@@ -1,7 +1,9 @@
 #include "Module.h"
 #include "Keng/Core/ISystem.h"
+#include "Keng/Core/IGlobalSystem.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
+#include "GlobalEnvironment.h"
 
 namespace keng::core
 {
@@ -43,6 +45,9 @@ namespace keng::core
             createSystem(&ptr);
             edt::ThrowIfFailed(ptr != nullptr, "Failed to create system");
             m_system = ISystemPtr(reinterpret_cast<ISystem*>(ptr));
+            if (auto globalSystem = std::dynamic_pointer_cast<IGlobalSystem>(m_system)) {
+                GlobalEnvironment::PrivateInstance().RegisterSystem(globalSystem);
+            }
         };
     }
 

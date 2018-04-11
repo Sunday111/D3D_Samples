@@ -2,6 +2,7 @@
 #include "EverydayTools/Delegate.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
+#include "Keng/Core/IGlobalEnvironment.h"
 #include "Keng/FileSystem/IFile.h"
 #include "Keng/FileSystem/IFileSystem.h"
 #include "Keng/FileSystem/OpenFileParameters.h"
@@ -14,7 +15,8 @@ namespace keng::filesystem
         return CallAndRethrowM + [&] {
             OpenFileParameters openFileParameters{};
             openFileParameters.accessFlags |= FileAccessFlags::Read;
-            auto file = GetFileSystem()->GetFile(filename, openFileParameters);
+            auto& filesystem = core::IGlobalEnvironment::Instance().GetGlobalSystem<filesystem::IFileSystem>();
+            auto file = filesystem.GetFile(filename, openFileParameters);
             std::pair<std::unique_ptr<uint8_t>, size_t> result;
             auto size = file->GetSize();
             edt::ThrowIfFailed(size > 0, "File \"", filename, "\" is empty");
