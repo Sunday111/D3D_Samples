@@ -1,5 +1,6 @@
 #include "DeviceResources.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
+#include "EverydayTools/Array/ArrayViewVector.h"
 #include "Keng/ResourceSystem/IDevice.h"
 #include "Keng/ResourceSystem/IResource.h"
 #include "Keng/ResourceSystem/IResourceFabric.h"
@@ -9,8 +10,8 @@
 #include "yasli/JSONIArchive.h"
 #include "yasli/STL.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
-#include "Keng/Base/Serialization/ReadFileToBuffer.h"
 #include "Keng/Base/Serialization/OpenArchiveJSON.h"
+#include "Keng/FileSystem/ReadFileToBuffer.h"
 
 namespace keng::resource
 {
@@ -98,17 +99,24 @@ namespace keng::resource
                 return resource_it->second.resource;
             }
 
-            auto buffer = ReadFileToBuffer(filename);
+            using FileView = edt::DenseArrayView<const uint8_t>;
+            IResourcePtr result;
+            auto onFileRead = [&](FileView fileView) {
 
-            yasli::JSONIArchive ar;
-            OpenArchiveJSON(buffer, ar);
+                yasli::JSONIArchive ar;
+                OpenArchiveJSON(fileView, ar);
 
-            FileParseInfo fileParseInfo(system, device);
-            SerializeMandatory(ar, fileParseInfo);
+                FileParseInfo fileParseInfo(system, device);
+                SerializeMandatory(ar, fileParseInfo);
 
-            ResourceInfo info;
-            info.resource = fileParseInfo.GetResource();
-            return InsertResource(std::move(filename_copy), std::move(info));
+                ResourceInfo info;
+                info.resource = fileParseInfo.GetResource();
+                result = InsertResource(std::move(filename_copy), std::move(info));
+            };
+            edt::Delegate<void(FileView)> delegate;
+            delegate.Bind(onFileRead);
+            filesystem::HandleFileData(*system.GetFileSystem(), filename, delegate);
+            return result;
         };
     }
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Keng/FileSystem/FwdDecl.h"
 #include "Keng/Graphics/FwdDecl.h"
 #include "Keng/Graphics/IGraphicsListener.h"
 #include "Keng/Graphics/PrimitiveTopology.h"
@@ -38,8 +39,8 @@ namespace keng::graphics
     private:
         bool m_fullscreen = false;
         core::IApplicationPtr m_app;
-        resource::IResourceSystemPtr m_resourceSystem;
         core::Ptr<Device> m_device;
-        std::vector<std::string> m_dependencies;
+
+        resource::IResourceSystemPtr m_resourceSystem;
     };
 }

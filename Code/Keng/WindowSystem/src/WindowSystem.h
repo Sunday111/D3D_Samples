@@ -6,6 +6,7 @@
 #include "WinWrappers/WinWrappers.h"
 #include "Keng/Core/ISystem.h"
 #include "Keng/Base/Serialization/Serialization.h"
+#include "Keng/FileSystem/IFileSystem.h"
 
 namespace yasli
 {
@@ -30,8 +31,11 @@ namespace keng::window_system
             unsigned Height = 720;
         };
 
+    public:
+        WindowSystem();
+        ~WindowSystem();
+
         MainWindow<TChar>* GetWindow() const;
-        static SystemParams ReadDefaultParams();
 
         // IWindowSystem
         virtual IWindow* GetWindow() override;
@@ -48,5 +52,6 @@ namespace keng::window_system
     private:
         std::unique_ptr<MainWindowClass<TChar>> m_windowClass;
         std::unique_ptr<MainWindow<TChar>> m_window;
+        filesystem::IFileSystemPtr m_filesystem;
     };
 }

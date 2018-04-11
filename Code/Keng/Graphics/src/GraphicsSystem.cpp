@@ -2,7 +2,7 @@
 
 #include "Keng/Base/Serialization/OpenArchiveJSON.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
-#include "Keng/Base/Serialization/ReadFileToBuffer.h"
+#include "Keng/FileSystem/ReadFileToBuffer.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
@@ -29,6 +29,7 @@
 
 #include "Sampler.h"
 
+#include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 #include "EverydayTools/Geom/Vector.h"
 #include "DeviceBuffer.h"
@@ -60,7 +61,7 @@ namespace keng::graphics
             bool deviceMultithreading = false;
         };
 
-        SystemParams ReadDefaultParams() {
+        SystemParams ReadDefaultParams(filesystem::IFileSystem& filesystem) {
             return CallAndRethrowM + [&] {
                 struct ConfigFile
                 {
@@ -76,10 +77,16 @@ namespace keng::graphics
 #endif
 
                 try {
-                    auto buffer = ReadFileToBuffer("Configs/graphics_system.json");
-                    yasli::JSONIArchive ar;
-                    OpenArchiveJSON(buffer, ar);
-                    ar(file);
+                    auto filename = "Configs/graphics_system.json";
+                    using FileView = edt::DenseArrayView<const uint8_t>;
+                    auto onFileRead = [&](FileView fileView) {
+                        yasli::JSONIArchive ar;
+                        OpenArchiveJSON(fileView, ar);
+                        ar(file);
+                    };
+                    edt::Delegate<void(FileView)> delegate;
+                    delegate.Bind(onFileRead);
+                    filesystem::HandleFileData(filesystem, filename, delegate);
                 } catch (...) {
                 }
 
@@ -88,21 +95,21 @@ namespace keng::graphics
         }
     }
 
-    GraphicsSystem::GraphicsSystem() {
-        m_dependencies.emplace_back(resource::IResourceSystem::SystemName());
-        m_dependencies.emplace_back(window_system::IWindowSystem::SystemName());
-    }
+    GraphicsSystem::GraphicsSystem() = default;
 
     GraphicsSystem::~GraphicsSystem() = default;
 
     void GraphicsSystem::Initialize(const core::IApplicationPtr& app) {
         CallAndRethrowM + [&] {
             m_app = app;
-            edt::ThrowIfFailed(m_app != nullptr, "Failed to cast IApplication to keng::Application");
-            auto params = ReadDefaultParams();
+
+            {// Find systems
+                m_resourceSystem = m_app->FindSystem<resource::IResourceSystem>();
+            }
+
+            auto params = ReadDefaultParams(*m_resourceSystem->GetFileSystem());
 
             {// Register resource fabrics
-                m_resourceSystem = m_app->FindSystem<resource::IResourceSystem>();
                 ResourceFabricRegisterer fabricRegisterer;
                 fabricRegisterer.Register(m_resourceSystem);
             }
@@ -185,7 +192,13 @@ namespace keng::graphics
 
     bool GraphicsSystem::ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const {
         return CallAndRethrowM + [&]() -> bool {
-            for (auto& systemName : m_dependencies) {
+            std::string_view dependencies[] =
+            {
+                resource::IResourceSystem::SystemName(),
+                window_system::IWindowSystem::SystemName()
+            };
+
+            for (auto& systemName : dependencies) {
                 if (delegate.Invoke(systemName)) {
                     return true;
                 }

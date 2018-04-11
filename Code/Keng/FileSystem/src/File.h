@@ -14,6 +14,7 @@ namespace keng::filesystem
 
         // IFile
         virtual size_t TryRead(size_t offset, size_t bytes, edt::DenseArrayView<uint8_t> destination) override;
+        virtual void Read(size_t offset, size_t bytes, edt::DenseArrayView<uint8_t> destination) override;
         virtual const OpenFileParameters& GetParameters() const override;
         virtual size_t GetSize() const override;
 

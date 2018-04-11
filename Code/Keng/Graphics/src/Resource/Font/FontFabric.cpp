@@ -4,7 +4,7 @@
 #include "Resource/Texture/Texture.h"
 #include "yasli/STL.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
-#include "Keng/Base/Serialization/ReadFileToBuffer.h"
+#include "Keng/FileSystem/ReadFileToBuffer.h"
 #include "Keng/Graphics/Resource/TextureParameters.h"
 #include "Device.h"
 #include "Resource/Font/Font.h"
@@ -43,9 +43,20 @@ namespace keng::graphics
 
             FileInfo info;
             SerializeMandatory(ar, info, GetNodeName().data());
-            auto buffer = keng::ReadFileToBuffer(info.file);
 
-            return FontPtr::MakeInstance(std::move(buffer), *m_library, system);
+            using FileView = edt::DenseArrayView<const uint8_t>;
+            FontPtr result;
+            auto onFileRead = [&](FileView fileView) {
+                std::vector<uint8_t> buffer;
+                buffer.resize(fileView.GetSize());
+                std::memcpy(buffer.data(), fileView.GetData(), fileView.GetSize());
+                result = FontPtr::MakeInstance(std::move(buffer), *m_library, system);
+            };
+            edt::Delegate<void(FileView)> delegate;
+            delegate.Bind(onFileRead);
+            filesystem::HandleFileData(*system.GetFileSystem(), info.file, delegate);
+
+            return result;
         };
     }
 }

@@ -23,6 +23,7 @@ target_include_directories(${keng_module_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DI
 target_include_directories(${keng_module_name} PUBLIC "${root_dir}/Code/Keng/Core/include")
 target_include_directories(${keng_module_name} PUBLIC "${root_dir}/Code/Keng/ResourceSystem/include")
 target_include_directories(${keng_module_name} PUBLIC "${root_dir}/Code/Keng/WindowSystem/include")
+target_include_directories(${keng_module_name} PUBLIC "${root_dir}/Code/Keng/FileSystem/include")
 target_link_libraries(${keng_module_name} PRIVATE D3D_Tools)
 target_link_libraries(${keng_module_name} PRIVATE WinWrappers)
 target_link_libraries(${keng_module_name} PUBLIC EverydayTools)

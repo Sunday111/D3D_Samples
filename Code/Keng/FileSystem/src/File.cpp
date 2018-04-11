@@ -17,9 +17,8 @@ namespace keng::filesystem
             edt::ThrowIfFailed(file.is_open(), "Could not open file \"", name, "\"");
             std::streamsize size = file.tellg();
             file.seekg(0, std::ios::beg);
-            std::vector<uint8_t> m_data(size);
+            m_data.resize(size);
             file.read((char*)m_data.data(), size);
-            return m_data;
         };
     }
 
@@ -37,6 +36,13 @@ namespace keng::filesystem
             auto end = begin + std::min(m_data.size(), offset + std::min(bytes, dest.GetSize()));
             std::copy(begin, end, dest.begin());
             return static_cast<size_t>(std::distance(begin, end));
+        };
+    }
+
+    void File::Read(size_t offset, size_t bytes, edt::DenseArrayView<uint8_t> destination) {
+        CallAndRethrowM + [&] {
+            auto readSize = TryRead(offset, bytes, destination);
+            edt::ThrowIfFailed(readSize == bytes, "Failed to read ", bytes, " bytes from \"", m_name, "\" with offset ", offset);
         };
     }
 

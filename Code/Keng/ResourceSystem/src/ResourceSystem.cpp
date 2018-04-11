@@ -2,10 +2,12 @@
 #include "Keng/ResourceSystem/IResource.h"
 #include "Keng/ResourceSystem/IResourceFabric.h"
 #include "Keng/ResourceSystem/IDevice.h"
-#include "keng/Base/Serialization/OpenArchiveJSON.h"
-#include "keng/Base/Serialization/ReadFileToBuffer.h"
-#include "keng/Base/Serialization/SerializeMandatory.h"
+#include "Keng/Base/Serialization/OpenArchiveJSON.h"
+#include "Keng/Base/Serialization/SerializeMandatory.h"
+#include "Keng/FileSystem/ReadFileToBuffer.h"
+#include "Keng/Core/IApplication.h"
 
+#include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 #include "EverydayTools/UnusedVar.h"
@@ -24,8 +26,11 @@ namespace keng::resource
     ResourceSystem::~ResourceSystem() = default;
 
     void ResourceSystem::Initialize(const core::IApplicationPtr& app) {
-        UnusedVar(app);
-        m_parameters = ReadDefaultParams();
+        CallAndRethrowM + [&] {
+            m_filesystem = app->FindSystem<filesystem::IFileSystem>();
+            edt::ThrowIfFailed(m_filesystem != nullptr, "Resource system needs filesystem!");
+            m_parameters = ReadDefaultParams();
+        };
     }
 
     bool ResourceSystem::Update() {
@@ -100,6 +105,10 @@ namespace keng::resource
         return **it;
     }
 
+    filesystem::IFileSystemPtr ResourceSystem::GetFileSystem() const {
+        return m_filesystem;
+    }
+
     void SystemParams::serialize(Archive& ar) {
         ar(defaultResourceParams, "resource");
     }
@@ -113,18 +122,25 @@ namespace keng::resource
                 SystemParams params;
             };
 
-            ConfigFile file {};
+            ConfigFile config {};
 
             try {
-                auto buffer = ReadFileToBuffer("Configs/resource_system.json");
+                auto filename = "Configs/resource_system.json";
 
-                yasli::JSONIArchive ar;
-                OpenArchiveJSON(buffer, ar);
-                SerializeMandatory(ar, file);
+                using FileView = edt::DenseArrayView<const uint8_t>;
+                auto onFileRead = [&](FileView fileView) {
+                    yasli::JSONIArchive ar;
+                    OpenArchiveJSON(fileView, ar);
+                    SerializeMandatory(ar, config);
+                };
+                edt::Delegate<void(FileView)> delegate;
+                delegate.Bind(onFileRead);
+
+                filesystem::HandleFileData(*m_filesystem, filename, delegate);
             } catch (...) {
             }
 
-            return file.params;
+            return config.params;
         };
     }
 
@@ -134,10 +150,13 @@ namespace keng::resource
 
     bool ResourceSystem::ForEachDependency(const edt::Delegate<bool(std::string_view systemName)>& delegate) const {
         return CallAndRethrowM + [&]() -> bool {
-            for (auto& systemName : m_dependencies) {
-                if (delegate.Invoke(systemName)) {
-                    return true;
-                }
+            const char* dependencies[] =
+            {
+                "KengFileSystem"
+            };
+
+            for (auto dependency : dependencies) {
+                if (delegate.Invoke(dependency)) return true;
             }
 
             return false;

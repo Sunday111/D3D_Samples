@@ -7,6 +7,7 @@
 #include "DeviceResources.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/Base/Serialization/Serialization.h"
+#include "Keng/FileSystem/FwdDecl.h"
 
 namespace keng::resource
 {
@@ -41,19 +42,19 @@ namespace keng::resource
         virtual void AddRuntimeResource(const IResourcePtr& resource, const IDevicePtr& device) override;
         virtual void RegisterResourceFabric(const IResourceFabricPtr& fabric) override;
         virtual void UnregisterFabric(const IResourceFabricPtr& fabric) override;
+        virtual filesystem::IFileSystemPtr GetFileSystem() const override;
+
         IResourceFabricPtr GetFabric(const std::string& resourceType);
         DeviceResources& GetDeviceResources(const IDevicePtr& device);
 
     protected:
         SystemParams ReadDefaultParams();
 
-    protected:
-        std::vector<std::string> m_dependencies;
-
     private:
         SystemParams m_parameters;
 
         std::vector<DeviceResourcesPtr> m_devicesResources;
         std::unordered_map<std::string, IResourceFabricPtr> m_fabrics;
+        filesystem::IFileSystemPtr m_filesystem;
     };
 }

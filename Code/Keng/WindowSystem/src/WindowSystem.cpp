@@ -1,16 +1,62 @@
 #include "WindowSystem.h"
+#include "EverydayTools/Array/ArrayViewVector.h"
+#include "Keng/Core/IApplication.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
-#include "keng/Base/Serialization/ReadFileToBuffer.h"
 #include "keng/Base/Serialization/OpenArchiveJSON.h"
+#include "Keng/FileSystem/ReadFileToBuffer.h"
 #include "yasli/JSONIArchive.h"
 #include "yasli/STL.h"
 
 namespace keng::window_system
 {
+    namespace
+    {
+        static WindowSystem::SystemParams ReadDefaultParams(filesystem::IFileSystem& filesystem) {
+            return CallAndRethrowM + [&] {
+                struct File
+                {
+                    void serialize(Archive& ar) {
+                        SerializeMandatory(ar, params, "window_system");
+                    }
+                    WindowSystem::SystemParams params;
+                };
+
+                File file{};
+                file.params.hInstance = GetModuleHandle(NULL);
+                file.params.WindowTitle = "MainWindow";
+
+                try {
+
+                    auto filename = "Configs/window_system.json";
+                    using FileView = edt::DenseArrayView<const uint8_t>;
+                    auto onFileRead = [&](FileView fileView) {
+                        yasli::JSONIArchive ar;
+                        OpenArchiveJSON(fileView, ar);
+                        ar(file);
+                    };
+                    edt::Delegate<void(FileView)> delegate;
+                    delegate.Bind(onFileRead);
+                    filesystem::HandleFileData(filesystem, filename, delegate);
+                } catch (...) {
+                }
+
+                return file.params;
+            };
+        }
+    }
+
+    WindowSystem::WindowSystem() = default;
+
+    WindowSystem::~WindowSystem() = default;
+
     void WindowSystem::Initialize(const core::IApplicationPtr& app) {
         CallAndRethrowM + [&] {
+            {// Find systems
+                m_filesystem = app->FindSystem<filesystem::IFileSystem>();
+            }
+
             UnusedVar(app);
-            auto params = ReadDefaultParams();
+            auto params = ReadDefaultParams(*m_filesystem);
             m_windowClass = std::make_unique<MainWindowClass<TChar>>(params.hInstance);
             m_window = m_windowClass->MakeWindow(params.WindowTitle.data());
             m_window->Show(params.nCmdShow);
@@ -44,38 +90,18 @@ namespace keng::window_system
         ar(WindowTitle, "title");
     }
 
-    WindowSystem::SystemParams WindowSystem::ReadDefaultParams() {
-        return CallAndRethrowM + [&] {
-            struct File {
-                void serialize(Archive& ar) {
-                    SerializeMandatory(ar, params, "window_system");
-                }
-                SystemParams params;
-            };
-
-            File file {};
-            file.params.hInstance = GetModuleHandle(NULL);
-            file.params.WindowTitle = "MainWindow";
-
-            try {
-                auto buffer = ReadFileToBuffer("Configs/window_system.json");
-                yasli::JSONIArchive configArchive;
-                OpenArchiveJSON(buffer, configArchive);
-                configArchive(file);
-            } catch (...) {
-            }
-
-            return file.params;
-        };
-    }
-
     std::string_view WindowSystem::GetSystemName() const {
         return SystemName();
     }
 
     bool WindowSystem::ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const {
         return CallAndRethrowM + [&]() -> bool {
-            for (auto& systemName : m_dependencies) {
+            std::string_view dependencies[] =
+            {
+                filesystem::IFileSystem::SystemName()
+            };
+
+            for (auto& systemName : dependencies) {
                 if (delegate.Invoke(systemName)) {
                     return true;
                 }
