@@ -6,6 +6,7 @@ mem_prof_opts.append("-DKENG_KengResourceSystem=OFF")
 mem_prof_opts.append("-DKENG_KengWindowSystem=OFF")
 mem_prof_opts.append("-DPROJECT_SimpleQuad=OFF")
 mem_prof_opts.append("-DPROJECT_TexturedQuad=OFF")
+mem_prof_opts.append("-DPROJECT_RenderText=OFF")
 mem_prof_opts.append("-DPROJECT_MemoryProfiling=ON")
 
 delete_build()

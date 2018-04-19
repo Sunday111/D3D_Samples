@@ -11,60 +11,76 @@
 
 namespace keng::memory
 {
-    template<size_t pageSize = 80>
-    struct VirtualMemoryChunk
+    class VirtualMemoryChunk
     {
-        VirtualMemoryChunk(size_t bytes) {
-            pagesCount = BytesToPages(bytes);
-            data = VirtualAlloc(nullptr, pageSize * pagesCount, MEM_RESERVE, PAGE_NOACCESS);
+    public:
+        VirtualMemoryChunk(size_t bytes, size_t pageSize) :
+            m_pageSize(pageSize),
+            m_reservedPages(BytesToPages(bytes)),
+            m_data(VirtualAlloc(nullptr, m_pageSize * m_reservedPages, MEM_RESERVE, PAGE_NOACCESS))
+        {
+            assert(m_data);
         }
 
+        VirtualMemoryChunk(const VirtualMemoryChunk&) = delete;
+
         ~VirtualMemoryChunk() {
-            if (!data) {
-                VirtualFree(data, 0, MEM_RELEASE);
-                data = nullptr;
+            if (!m_data) {
+                VirtualFree(m_data, 0, MEM_RELEASE);
+                m_data = nullptr;
             }
-            pagesCount = 0;
-            commitedPages = 0;
+            m_reservedPages = 0;
+            m_usedPages = 0;
         }
 
         void Commit(size_t bytes) {
-            assert(bytes < pageSize * pagesCount);
             auto pages = BytesToPages(bytes);
-            if (pages > commitedPages) {
-                auto startAddress = reinterpret_cast<size_t>(data);
-                auto commitAddress = reinterpret_cast<void*>(startAddress + commitedPages * pageSize);
-                auto pagesToCommit = pages - commitedPages;
-                auto bytesToCommit = pagesToCommit * pageSize;
+            assert(pages <= m_reservedPages);
+            if (pages > m_usedPages) {
+                auto startAddress = reinterpret_cast<size_t>(m_data);
+                auto commitAddress = reinterpret_cast<void*>(startAddress + m_usedPages * m_pageSize);
+                auto pagesToCommit = pages - m_usedPages;
+                auto bytesToCommit = pagesToCommit * m_pageSize;
                 VirtualAlloc(commitAddress, bytesToCommit, MEM_COMMIT, PAGE_READWRITE);
-                commitedPages = pages;
+                m_usedPages = pages;
             }
         }
 
-        static size_t BytesToPages(size_t bytes) {
-            return (bytes / pageSize) + 1;
+        void* GetData() const
+        {
+            assert(m_usedPages > 0);
+            return m_data;
         }
 
-        size_t pagesCount = 0;
-        size_t commitedPages = 0;
-        void* data = nullptr;
+    protected:
+        size_t BytesToPages(size_t bytes) const {
+            return (bytes / m_pageSize) + 1;
+        }
+
+    private:
+        size_t m_pageSize = 100;
+        size_t m_usedPages = 0;
+        size_t m_reservedPages = 0;
+        void* m_data = nullptr;
     };
 
-    template<typename T, size_t resizeValue, size_t Capacity>
+    template<typename T>
     class VirtualVector
     {
     public:
-        VirtualVector() :
-            m_memory(Capacity * sizeof(T))
+        VirtualVector(size_t capacity, size_t resizeValue = 1) :
+            m_resizeValue(resizeValue),
+            m_capacity(capacity),
+            m_memory(m_capacity * sizeof(T), m_resizeValue * sizeof(T))
         {}
 
         T& operator[](size_t index) {
             assert(index < m_size);
-            return ((T*)m_memory.data)[index];
+            return ((T*)m_memory.GetData())[index];
         }
 
         bool OwnsThisPointer(void* pointer) const {
-            auto poolAddress = reinterpret_cast<size_t>(m_memory.data);
+            auto poolAddress = reinterpret_cast<size_t>(m_memory.GetData());
             auto pointerAddress = reinterpret_cast<size_t>(pointer);
             if (pointerAddress < poolAddress) {
                 return false;
@@ -75,11 +91,11 @@ namespace keng::memory
         }
 
         size_t GetSize() const { return m_size; }
-        size_t GetStartAddress() const { return (size_t)m_memory.data; }
+        size_t GetStartAddress() const { return (size_t)m_memory.GetData(); }
 
         bool Resize(size_t size) {
             if (size > m_size) {
-                if (size > Capacity) {
+                if (size > m_capacity) {
                     return false;
                 }
                 m_memory.Commit(size * sizeof(T));
@@ -90,30 +106,48 @@ namespace keng::memory
 
     private:
         size_t m_size = 0;
-        VirtualMemoryChunk<resizeValue * sizeof(T)> m_memory;
+        size_t m_resizeValue = 1;
+        size_t m_capacity;
+        VirtualMemoryChunk m_memory;
     };
 
     template<size_t bytes>
-    union MemoryChunkData
-    {
-        uint8_t data[bytes];
-        MemoryChunkData* nextFree;
-    };
-
-    template<size_t bytes, size_t resizeValue, size_t Capacity>
     class SmallChunkPool
     {
+    private:
+        struct Chunk
+        {
+            struct Header
+            {
+                Chunk* nextFree;
+            };
+
+            struct Data
+            {
+                uint8_t mem[bytes];
+            };
+
+            union Body
+            {
+                Header header;
+                Data data;
+            };
+
+            Body body;
+        };
     public:
-        using Chunk = MemoryChunkData<bytes>;
-        using ChunkLayout = std::aligned_storage_t<sizeof(Chunk), sizeof(void*)>;
+        SmallChunkPool(size_t resize, size_t capacity) :
+            m_vector(capacity, resize)
+        {
+        }
 
         void* Allocate() {
             if (m_nextFree == nullptr && (!Expand())) {
                 return nullptr;
             }
 
-            void* result = &(m_nextFree->data[0]);
-            m_nextFree = m_nextFree->nextFree;
+            void* result = &(m_nextFree->body.data.mem[0]);
+            m_nextFree = m_nextFree->body.header.nextFree;
             return result;
         }
 
@@ -122,7 +156,7 @@ namespace keng::memory
                 return false;
             }
             auto p = (Chunk*)pointer;
-            p->nextFree = m_nextFree;
+            p->body.header.nextFree = m_nextFree;
             m_nextFree = p;
             return true;
         }
@@ -133,7 +167,7 @@ namespace keng::memory
                 return false;
             }
             m_nextFree = (Chunk*)&m_vector[size];
-            m_nextFree->nextFree = nullptr;
+            m_nextFree->body.header.nextFree = nullptr;
             return true;
         }
 
@@ -144,27 +178,24 @@ namespace keng::memory
             return (Chunk&)m_vector[index];
         }
 
-        VirtualVector<ChunkLayout, resizeValue, Capacity> m_vector;
+        VirtualVector<Chunk> m_vector;
         Chunk* m_nextFree = nullptr;
     };
 
     class MemoryManager
     {
     public:
-
         void* Allocate(std::size_t size);
         void Deallocate(void* pointer);
         static MemoryManager& Instance();
 
     private:
         MemoryManager();
+        ~MemoryManager();
 
-        SmallChunkPool< 8, 10, 100000>  m8;
-        SmallChunkPool<16, 10, 100000> m16;
-        SmallChunkPool<32, 10, 100000> m32;
-        SmallChunkPool<64, 10, 100000> m64;
-
-        std::ofstream m_log;
-        //std::map<size_t, size_t> m_stats;
+        SmallChunkPool< 8>  m8;
+        SmallChunkPool<16> m16;
+        SmallChunkPool<32> m32;
+        SmallChunkPool<64> m64;
     };
 }

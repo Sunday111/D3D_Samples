@@ -51,9 +51,9 @@ def build_project(target="ALL_BUILD", config="Release"):
     command.extend(["--config", config])
     call_in_directory(build_dir, subprocess.check_call, command, stderr=subprocess.STDOUT, shell=True)
 
-def run_launcher(args, config="Release"):
+def run_launcher(args):
     subprocess_args = ['Launcher']
     subprocess_args.extend(args)
     stmt_str = "subprocess.check_call({0}, stderr=subprocess.STDOUT, shell=True)".format(subprocess_args)
-    runtime_dir = os.path.join(bin_dir, config)
+    runtime_dir = bin_dir
     return call_in_directory(runtime_dir, timeit, stmt = stmt_str, setup = "import subprocess", number=1)
