@@ -45,6 +45,7 @@ namespace keng::window_system
         virtual bool ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const override;
         virtual void Initialize(const core::IApplicationPtr& app) override;
         virtual bool Update() override;
+        virtual void Shutdown() override;
 
     protected:
         std::vector<std::string> m_dependencies;

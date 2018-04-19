@@ -78,14 +78,27 @@ namespace keng::core
         LoadDependencies();
 
         std::vector<ISystemPtr> walkQueue;
-        std::vector<ISystemPtr> initQueue;
+        std::vector<ISystemPtr> systems;
 
         for (auto& module : m_modules) {
-            initQueue.push_back(module->GetSystem());
+            systems.push_back(module->GetSystem());
         }
 
-        std::stable_sort(initQueue.begin(), initQueue.end(), [&](const ISystemPtr& a, const ISystemPtr& b) {
+        auto findSystem = [&systems](std::string_view name) -> ISystemPtr {
+            for (auto& system : systems) {
+                if (system->GetSystemName() == name) {
+                    return system;
+                }
+            }
+
+            return nullptr;
+        };
+
+        std::stable_sort(m_modules.begin(), m_modules.end(), [&](const ModulePtr& ma, const ModulePtr& mb) {
             walkQueue.clear();
+
+            auto a = ma->GetSystem();
+            auto b = mb->GetSystem();
 
             auto a_name = a->GetSystemName();
             bool dependencyFound = false;
@@ -99,7 +112,7 @@ namespace keng::core
                         return true;
                     }
 
-                    auto system = FindSystem(name);
+                    auto system = findSystem(name);
                     edt::ThrowIfFailed(system != nullptr, "Found dependency that was not registered as system");
                     walkQueue.push_back(system);
                     return false;
@@ -115,8 +128,8 @@ namespace keng::core
         });
 
         IApplicationPtr thisPtr(this);
-        for (auto& system : initQueue) {
-            system->Initialize(thisPtr);
+        for (auto& module : m_modules) {
+            module->GetSystem()->Initialize(thisPtr);
         }
     }
 
@@ -130,7 +143,7 @@ namespace keng::core
                 auto average = m_fpsCounter.CalcAverageTick(t1 - t0);
                 auto sleep = TFrameRateCounter::GetDesiredFrameDuration(DesiredFPS) - average;
                 if (sleep.count() > 0) {
-                    //std::this_thread::sleep_for(sleep);
+                    //std::this_thread::sleep_for(sleep); <-- so slow!
                     Sleep(sleep);
                 }
                 return retVal;
@@ -160,7 +173,15 @@ namespace keng::core
 
     void Application::Shutdown() {
         GlobalEnvironment::Destroy();
-        m_modules.clear();
+
+        for(auto it = m_modules.rbegin(); it != m_modules.rend(); ++it) {
+            (*it)->GetSystem()->Shutdown();
+        }
+
+        while (!m_modules.empty()) {
+            assert(m_modules.back()->GetSystem()->GetReferencesCount() == 1);
+            m_modules.pop_back();
+        }
     }
 
 }

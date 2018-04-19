@@ -1,38 +1,10 @@
 #pragma once
 
 #include "VirtualVector.h"
-
-#include <bitset>
-#include <vector>
+#include "EverydayTools/Bitset.h"
 
 namespace keng::memory
 {
-    class Bitset
-    {
-    public:
-        static constexpr auto partSizeBytes = sizeof(void*);
-        static constexpr auto partSizeBits = partSizeBytes * 8;
-        using Part = std::bitset<partSizeBits>;
-
-        Bitset(size_t size) {
-            m_parts.resize(size / partSizeBits + 1);
-        }
-
-        void Set(size_t index, bool value = true) {
-            auto partIndex = index / partSizeBits;
-            auto indexInPart = index % partSizeBits;
-            m_parts[partIndex].set(indexInPart, value);
-        }
-
-        bool IsSet(size_t index) const {
-            auto partIndex = index / partSizeBits;
-            auto indexInPart = index % partSizeBits;
-            return m_parts[partIndex].test(indexInPart);
-        }
-
-        std::vector<Part> m_parts;
-    };
-
     template<size_t bytes>
     class VirtualPool
     {
@@ -67,23 +39,31 @@ namespace keng::memory
         }
 
         ~VirtualPool() {
-            size_t freeCount = 0;
             auto head = m_nextFree;
-            Bitset visited(m_vector.GetSize());
+            edt::Bitset visited(m_vector.GetSize());
+
             while (head)
             {
-                ++freeCount;
-            
                 auto startAddress = m_vector.GetStartAddress();
-                auto thisAddress = (size_t)head;
-                assert(thisAddress >= startAddress);
-                assert(((thisAddress - startAddress) % bytes) == 0);
-                auto index = (thisAddress - startAddress) / bytes;
+                auto headAddress = (size_t)head;
+
+                // Address does not belong to this pool
+                assert(headAddress >= startAddress);
+
+                // Invalid address
+                assert(((headAddress - startAddress) % bytes) == 0);
+
+                auto index = (headAddress - startAddress) / bytes;
+
+                // Circle in free objects list check
                 assert(!visited.IsSet(index));
+
                 visited.Set(index);
                 head = head->body.header.nextFree;
             }
-            assert(freeCount == m_vector.GetSize());
+
+            // Memory leak (or static object keeps reference...)
+            assert(visited.All());
         }
 
         void* Allocate() {
@@ -93,12 +73,6 @@ namespace keng::memory
 
             void* result = &(m_nextFree->body.data.mem[0]);
             m_nextFree = m_nextFree->body.header.nextFree;
-
-            //if constexpr (bytes == 64) {
-            //    if ((size_t)result == m_vector.GetStartAddress() + 31 * bytes) {
-            //        assert(false);
-            //    }
-            //}
 
             return result;
         }

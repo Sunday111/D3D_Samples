@@ -1,7 +1,7 @@
 #pragma once
 
+#include "FwdDecl.h"
 #include "Keng/FileSystem/FwdDecl.h"
-#include "Keng/Graphics/FwdDecl.h"
 #include "Keng/Graphics/IGraphicsListener.h"
 #include "Keng/Graphics/PrimitiveTopology.h"
 #include "Keng/Graphics/IGraphicsSystem.h"
@@ -20,6 +20,7 @@ namespace keng::graphics
         virtual bool ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const override;
         virtual void Initialize(const core::IApplicationPtr& app) override;
         virtual bool Update() override;
+        virtual void Shutdown() override;
 
         // IGraphicsSystem
         virtual IWindowRenderTargetPtr CreateWindowRenderTarget(const WindowRenderTargetParameters& params) override;

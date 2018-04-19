@@ -118,6 +118,10 @@ namespace simple_quad_sample
         };
     }
 
+    void SampleSystem::Shutdown() {
+
+    }
+
     std::string_view SampleSystem::GetSystemName() const {
         return "SimpleQuad";
     }

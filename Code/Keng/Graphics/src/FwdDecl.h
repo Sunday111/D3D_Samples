@@ -62,4 +62,6 @@ namespace keng::graphics
 
     class GlyphAtlas;
     using GlyphAtlasPtr = core::Ptr<GlyphAtlas>;
+
+    class ResourceFabricRegisterer;
 }

@@ -26,6 +26,10 @@ namespace keng::filesystem
         return true;
     }
 
+    void FileSystem::Shutdown() {
+
+    }
+
     std::string_view FileSystem::GetSystemName() const {
         return SystemName();
     }

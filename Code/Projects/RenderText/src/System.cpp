@@ -153,6 +153,10 @@ namespace render_text_sample
         };
     }
 
+    void System::Shutdown() {
+
+    }
+
     std::string_view System::GetSystemName() const {
         return "RenderText";
     }

@@ -14,6 +14,7 @@ namespace keng::graphics
     public:
         Texture(Device& device, const TextureParameters& params);
         Texture(Device& device, ComPtr<ID3D11Texture2D> texture);
+        ~Texture();
 
         // ITexture
         virtual FragmentFormat GetFormat() const override;

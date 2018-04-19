@@ -27,6 +27,11 @@ if(MSVC)
     set_target_properties(${target_name} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)")
 endif()
 
+if(${KENG_KengMemory})
+    target_link_libraries(${target_name} PRIVATE KengMemory)
+    target_compile_definitions(${target_name} PRIVATE "-DUSE_KENG_MEMORY")
+endif()
+
 set(make_sym_link_script "${root_dir}/BuildTools/Python/make_sym_link.py")
 
 macro(symlink_to_dir dir)

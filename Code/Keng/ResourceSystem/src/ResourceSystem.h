@@ -34,6 +34,7 @@ namespace keng::resource
         virtual bool ForEachDependency(const edt::Delegate<bool(std::string_view systemName)>& delegate) const override;
         virtual void Initialize(const core::IApplicationPtr& app) override;
         virtual bool Update() override;
+        virtual void Shutdown() override;
 
         // IResource system
         virtual IResourcePtr GetResource(std::string_view filename) override;

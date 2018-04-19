@@ -71,7 +71,7 @@ namespace keng::graphics
         void FlushTexture();
 
         TexturePtr m_texture;
-        FontPtr m_font;
+        Font* m_font;
         std::unique_ptr<uint8_t[]> m_cpuTexture;
 
         size_t next_x = 0;

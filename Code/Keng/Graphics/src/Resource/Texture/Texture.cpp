@@ -112,6 +112,8 @@ namespace keng::graphics
         };
     }
 
+    Texture::~Texture() = default;
+
     FragmentFormat Texture::GetFormat() const {
         return m_params.format;
     }

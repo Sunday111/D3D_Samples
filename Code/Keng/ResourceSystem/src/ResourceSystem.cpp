@@ -22,7 +22,7 @@
 namespace keng::resource
 {
     ResourceSystem::ResourceSystem() = default;
-
+    
     ResourceSystem::~ResourceSystem() = default;
 
     void ResourceSystem::Initialize(const core::IApplicationPtr& app) {
@@ -48,6 +48,11 @@ namespace keng::resource
 
             return true;
         };
+    }
+
+    void ResourceSystem::Shutdown() {
+        m_devicesResources.clear();
+        m_fabrics.clear();
     }
 
     IResourcePtr ResourceSystem::GetResource(std::string_view filename) {
@@ -78,7 +83,7 @@ namespace keng::resource
         CallAndRethrowM + [&] {
             auto resourceTypeName = fabric->GetResourceType();
             auto eraseCount = m_fabrics.erase(std::string(resourceTypeName));
-            edt::ThrowIfFailed(eraseCount < 1, "Fabric \"", resourceTypeName, "\" not found");
+            edt::ThrowIfFailed(eraseCount > 0, "Fabric \"", resourceTypeName, "\" not found");
         };
     }
 

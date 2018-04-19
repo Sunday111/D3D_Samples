@@ -76,6 +76,10 @@ namespace keng::window_system
         };
     }
 
+    void WindowSystem::Shutdown() {
+
+    }
+
     MainWindow<WindowSystem::TChar>* WindowSystem::GetWindow() const {
         return m_window.get();
     }

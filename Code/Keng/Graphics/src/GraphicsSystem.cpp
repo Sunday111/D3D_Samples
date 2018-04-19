@@ -127,6 +127,9 @@ namespace keng::graphics
         return true;
     }
 
+    void GraphicsSystem::Shutdown() {
+    }
+
     IWindowRenderTargetPtr GraphicsSystem::CreateWindowRenderTarget(const WindowRenderTargetParameters& params) {
         return WindowRenderTargetPtr::MakeInstance(*m_device, params);
     }

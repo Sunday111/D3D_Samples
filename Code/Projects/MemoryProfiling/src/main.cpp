@@ -67,6 +67,10 @@ public:
         };
     }
 
+    virtual void Shutdown() override {
+
+    }
+
     virtual std::string_view GetSystemName() const override {
         return "MemoryProfiling";
     }
