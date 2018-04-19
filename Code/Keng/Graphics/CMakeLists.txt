@@ -12,8 +12,8 @@ set(sources_exts "h" "cpp")
 set(target_sources)
 
 foreach(entry ${sources_exts})
-	file(GLOB_RECURSE sources_by_ext "${sources_dir}/*.${entry}")
-	list(APPEND target_sources "${sources_by_ext}")
+    file(GLOB_RECURSE sources_by_ext "${sources_dir}/*.${entry}")
+    list(APPEND target_sources "${sources_by_ext}")
 endforeach()
 
 add_library(${keng_module_name} SHARED "${target_sources}")
@@ -32,8 +32,8 @@ target_link_libraries(${keng_module_name} PUBLIC FreeType)
 target_link_libraries(${keng_module_name} PUBLIC KengFileSystem)
 
 if(${KENG_KengMemory})
-	target_link_libraries(${keng_module_name} PRIVATE KengMemory)
-	target_compile_definitions(${keng_module_name} PRIVATE "-DUSE_KENG_MEMORY")
+    target_link_libraries(${keng_module_name} PRIVATE KengMemory)
+    target_compile_definitions(${keng_module_name} PRIVATE "-DUSE_KENG_MEMORY")
 endif()
 
 set(added_target_name ${keng_module_name} PARENT_SCOPE)

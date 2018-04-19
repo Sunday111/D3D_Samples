@@ -21,6 +21,7 @@ namespace keng::core
         virtual bool Update() = 0;
         virtual void Run() = 0;
         virtual void Initialize(const ApplicationStartupParameters& params) = 0;
+        virtual void Shutdown() = 0;
         virtual ISystemPtr FindSystem(std::string_view name) const = 0;
 
         template<typename T, typename Enable = std::enable_if_t<std::is_base_of_v<ISystem, T>>>

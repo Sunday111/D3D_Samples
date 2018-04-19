@@ -6,6 +6,7 @@
 #include <algorithm>
 #include "WinWrappers/WinWrappers.h"
 #include "Keng/Core/ISystem.h"
+#include "GlobalEnvironment.h"
 
 namespace keng::core
 {
@@ -15,7 +16,9 @@ namespace keng::core
         m_vSync = value;
     }
 
-    Application::~Application() = default;
+    Application::Application() {
+        GlobalEnvironment::Initialize();
+    }
 
     void Application::LoadModule(std::string_view name) {
         CallAndRethrowM + [&] {
@@ -153,6 +156,11 @@ namespace keng::core
         }
 
         return nullptr;
+    }
+
+    void Application::Shutdown() {
+        GlobalEnvironment::Destroy();
+        m_modules.clear();
     }
 
 }

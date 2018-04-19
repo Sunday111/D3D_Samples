@@ -88,6 +88,7 @@ INT WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nC
 
             app->Initialize(params);
             app->Run();
+            app->Shutdown();
 
             return 0;
         };

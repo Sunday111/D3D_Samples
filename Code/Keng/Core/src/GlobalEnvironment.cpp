@@ -2,9 +2,15 @@
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "Keng/Core/IGlobalSystem.h"
+#include <memory>
 
 namespace keng::core
 {
+    namespace
+    {
+        static std::unique_ptr<GlobalEnvironment> globalInstance;
+    }
+
     IGlobalSystem& GlobalEnvironment::GetGlobalSystem(size_t id) {
         return CallAndRethrowM + [&] () -> IGlobalSystem& {
             edt::ThrowIfFailed(id < m_systems.size());
@@ -20,8 +26,15 @@ namespace keng::core
     }
 
     GlobalEnvironment& GlobalEnvironment::PrivateInstance() {
-        static GlobalEnvironment instance;
-        return instance;
+        return *globalInstance;
+    }
+
+    void GlobalEnvironment::Destroy() {
+        globalInstance = nullptr;
+    }
+
+    void GlobalEnvironment::Initialize() {
+        globalInstance = std::make_unique<GlobalEnvironment>();
     }
 
     IGlobalEnvironment& IGlobalEnvironment::Instance() {

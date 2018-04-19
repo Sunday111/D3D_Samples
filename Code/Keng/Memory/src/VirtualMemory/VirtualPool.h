@@ -2,14 +2,45 @@
 
 #include "VirtualVector.h"
 
+#include <bitset>
+#include <vector>
+
 namespace keng::memory
 {
+    class Bitset
+    {
+    public:
+        static constexpr auto partSizeBytes = sizeof(void*);
+        static constexpr auto partSizeBits = partSizeBytes * 8;
+        using Part = std::bitset<partSizeBits>;
+
+        Bitset(size_t size) {
+            m_parts.resize(size / partSizeBits + 1);
+        }
+
+        void Set(size_t index, bool value = true) {
+            auto partIndex = index / partSizeBits;
+            auto indexInPart = index % partSizeBits;
+            m_parts[partIndex].set(indexInPart, value);
+        }
+
+        bool IsSet(size_t index) const {
+            auto partIndex = index / partSizeBits;
+            auto indexInPart = index % partSizeBits;
+            return m_parts[partIndex].test(indexInPart);
+        }
+
+        std::vector<Part> m_parts;
+    };
+
     template<size_t bytes>
     class VirtualPool
     {
     private:
         struct Chunk
         {
+            static volatile size_t csz;
+
             struct Header
             {
                 Chunk* nextFree;
@@ -35,6 +66,26 @@ namespace keng::memory
         {
         }
 
+        ~VirtualPool() {
+            size_t freeCount = 0;
+            auto head = m_nextFree;
+            Bitset visited(m_vector.GetSize());
+            while (head)
+            {
+                ++freeCount;
+            
+                auto startAddress = m_vector.GetStartAddress();
+                auto thisAddress = (size_t)head;
+                assert(thisAddress >= startAddress);
+                assert(((thisAddress - startAddress) % bytes) == 0);
+                auto index = (thisAddress - startAddress) / bytes;
+                assert(!visited.IsSet(index));
+                visited.Set(index);
+                head = head->body.header.nextFree;
+            }
+            assert(freeCount == m_vector.GetSize());
+        }
+
         void* Allocate() {
             if (m_nextFree == nullptr && (!Expand())) {
                 return nullptr;
@@ -42,6 +93,13 @@ namespace keng::memory
 
             void* result = &(m_nextFree->body.data.mem[0]);
             m_nextFree = m_nextFree->body.header.nextFree;
+
+            //if constexpr (bytes == 64) {
+            //    if ((size_t)result == m_vector.GetStartAddress() + 31 * bytes) {
+            //        assert(false);
+            //    }
+            //}
+
             return result;
         }
 
@@ -64,8 +122,6 @@ namespace keng::memory
             m_nextFree->body.header.nextFree = nullptr;
             return true;
         }
-
-        constexpr size_t GetElementSize() const { return bytes; }
 
     private:
         Chunk& ChunckAt(size_t index) {

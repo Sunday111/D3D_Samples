@@ -13,9 +13,8 @@ namespace keng::core {
     class Application : public RefCountImpl<IApplication>
     {
     public:
-        Application() = default;
+        Application();
         Application(const Application&) = delete;
-        ~Application();
 
         using Period = std::chrono::nanoseconds;
         static constexpr auto FpsSamplesCount = 100;
@@ -26,6 +25,7 @@ namespace keng::core {
         virtual bool Update() override;
         virtual void Initialize(const ApplicationStartupParameters& params) override;
         virtual void Run() override;
+        virtual void Shutdown() override;
         virtual ISystemPtr FindSystem(std::string_view name) const override;
 
         void SetVSync(bool value);

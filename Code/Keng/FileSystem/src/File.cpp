@@ -11,7 +11,7 @@ namespace keng::filesystem
             m_parameters = parameters;
             m_name = name;
             edt::ThrowIfFailed(
-				(parameters.accessFlags & FileAccessFlags::Write) == FileAccessFlags::None, 
+                (parameters.accessFlags & FileAccessFlags::Write) == FileAccessFlags::None, 
                 "Reading files is not implemented yet");
 
             std::ifstream file(name.data(), std::ios::binary | std::ios::ate);

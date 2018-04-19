@@ -11,7 +11,9 @@ namespace keng::memory
     {
     }
 
-    MemoryManager::~MemoryManager() = default;
+    MemoryManager::~MemoryManager()
+    {
+    }
 
     void* MemoryManager::Allocate(size_t size) {
         void* result = nullptr;
