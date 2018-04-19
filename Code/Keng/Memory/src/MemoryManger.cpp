@@ -1,4 +1,5 @@
 #include "MemoryManager.h"
+#include <cassert>
 
 namespace keng::memory
 {

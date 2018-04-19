@@ -10,7 +10,8 @@ namespace keng::filesystem
         CallAndRethrowM + [&]() {
             m_parameters = parameters;
             m_name = name;
-            edt::ThrowIfFailed((parameters.accessFlags & FileAccessFlags::Write) == FileAccessFlags::None, 
+            edt::ThrowIfFailed(
+				(parameters.accessFlags & FileAccessFlags::Write) == FileAccessFlags::None, 
                 "Reading files is not implemented yet");
 
             std::ifstream file(name.data(), std::ios::binary | std::ios::ate);
@@ -32,10 +33,12 @@ namespace keng::filesystem
                 return 0;
             }
 
-            auto begin = m_data.begin();
-            auto end = begin + std::min(m_data.size(), offset + std::min(bytes, dest.GetSize()));
-            std::copy(begin, end, dest.begin());
-            return static_cast<size_t>(std::distance(begin, end));
+            auto maxCopy = dest.GetSize() - offset;
+            auto copyCount = std::min(bytes, maxCopy);
+            if(copyCount) {
+                std::memcpy(dest.GetData(), m_data.data() + offset, copyCount);
+            }
+            return static_cast<size_t>(copyCount);
         };
     }
 
