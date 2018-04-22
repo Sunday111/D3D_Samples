@@ -17,9 +17,8 @@ namespace keng::memory
         MemoryManager();
         ~MemoryManager();
 
-        VirtualPool< 8>  m8;
-        VirtualPool<16> m16;
-        VirtualPool<32> m32;
-        VirtualPool<64> m64;
+        std::vector<VirtualPool> m_pools;
+        std::vector<VirtualPool*> m_sortedBySize;
+        std::vector<VirtualPool*> m_sortedByStartAddress;
     };
 }

@@ -3,12 +3,30 @@
 
 namespace keng::memory
 {
-    MemoryManager::MemoryManager() :
-        m8(10, 100000),
-        m16(10, 100000),
-        m32(10, 100000),
-        m64(10, 100000)
-    {
+    MemoryManager::MemoryManager() {
+        m_pools.emplace_back( 8, 10, 100000);
+        m_pools.emplace_back(16, 10, 100000);
+        m_pools.emplace_back(24, 10, 100000);
+        m_pools.emplace_back(32, 10, 100000);
+        m_pools.emplace_back(40, 10, 100000);
+        m_pools.emplace_back(48, 10, 100000);
+        m_pools.emplace_back(56, 10, 100000);
+        m_pools.emplace_back(64, 10, 100000);
+
+        m_sortedBySize.reserve(m_pools.size());
+        m_sortedByStartAddress.reserve(m_pools.size());
+        for (auto& pool : m_pools) {
+            m_sortedBySize.push_back(&pool);
+            m_sortedByStartAddress.push_back(&pool);
+        }
+
+        std::sort(m_sortedBySize.begin(), m_sortedBySize.end(), [](VirtualPool* a, VirtualPool* b) {
+            return a->GetElementSize() < b->GetElementSize();
+        });
+
+        std::sort(m_sortedByStartAddress.begin(), m_sortedByStartAddress.end(), [](VirtualPool* a, VirtualPool* b) {
+            return a->GetBeginAddress() < b->GetBeginAddress();
+        });
     }
 
     MemoryManager::~MemoryManager()
@@ -16,33 +34,45 @@ namespace keng::memory
     }
 
     void* MemoryManager::Allocate(size_t size) {
+        auto it = std::lower_bound(
+            m_sortedBySize.begin(), m_sortedBySize.end(), size,
+            [](VirtualPool* b, size_t val) {
+            return b->GetElementSize() < val;
+        });
+
         void* result = nullptr;
+        if (m_sortedBySize.end() != it) {
+            assert((*it)->GetElementSize() >= size);
+            result = (*it)->Allocate();
+        }
 
-             if (size <=   8) result =  m8.Allocate();
-        else if (size <=  16) result = m16.Allocate();
-        else if (size <=  32) result = m32.Allocate();
-        else if (size <=  64) result = m64.Allocate();
-
-        if (!result) {
+        if (result == nullptr) {
             result = malloc(size);
         }
 
-        assert(result);
         return result;
     }
 
     void MemoryManager::Deallocate(void* pointer) {
-        assert(pointer);
+        assert(pointer != nullptr);
+        auto address = (size_t)pointer;
 
-        auto ok =
-            m8.TryDeallocate(pointer) ||
-            m16.TryDeallocate(pointer) ||
-            m32.TryDeallocate(pointer) ||
-            m64.TryDeallocate(pointer);
+        auto it = std::upper_bound(
+            m_sortedByStartAddress.rbegin(), m_sortedByStartAddress.rend(), address,
+            [](size_t address, VirtualPool* b) {
+            return address >= b->GetBeginAddress();
+        });
 
-        if (!ok) {
-            free(pointer);
+        if (it != m_sortedByStartAddress.rend()) {
+            auto& pool = **it;
+            assert(pool.GetBeginAddress() <= address);
+            if (pool.GetEndAddress() > address) {
+                pool.Deallocate(pointer);
+                return;
+            }
         }
+
+        free(pointer);
     }
 
     MemoryManager& MemoryManager::Instance() {
