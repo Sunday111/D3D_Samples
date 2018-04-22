@@ -32,7 +32,7 @@ public:
             for (int frame = 0; frame < 50000; ++frame)
             {
                 for (int i = 0; i < 100; ++i) {
-                    int size = rand() % 256;
+                    int size = rand() % 64;
                     std::vector<uint8_t> arr;
                     arr.reserve(size);
                     for (int j = 0; j < size; ++j) {

@@ -12,12 +12,13 @@ namespace keng::memory
         m_pools.emplace_back(48, 10, 100000);
         m_pools.emplace_back(56, 10, 100000);
         m_pools.emplace_back(64, 10, 100000);
-
+        
         m_sortedBySize.reserve(m_pools.size());
         m_sortedByStartAddress.reserve(m_pools.size());
         for (auto& pool : m_pools) {
             m_sortedBySize.push_back(&pool);
             m_sortedByStartAddress.push_back(&pool);
+            m_biggestPoolSize = std::max(pool.GetElementSize(), m_biggestPoolSize);
         }
 
         std::sort(m_sortedBySize.begin(), m_sortedBySize.end(), [](VirtualPool* a, VirtualPool* b) {
@@ -34,23 +35,22 @@ namespace keng::memory
     }
 
     void* MemoryManager::Allocate(size_t size) {
-        auto it = std::lower_bound(
-            m_sortedBySize.begin(), m_sortedBySize.end(), size,
-            [](VirtualPool* b, size_t val) {
-            return b->GetElementSize() < val;
-        });
-
-        void* result = nullptr;
-        if (m_sortedBySize.end() != it) {
-            assert((*it)->GetElementSize() >= size);
-            result = (*it)->Allocate();
+        if(size <= m_biggestPoolSize) {
+            auto it = std::lower_bound(
+                m_sortedBySize.begin(), m_sortedBySize.end(), size,
+                [](VirtualPool* b, size_t val) {
+                return b->GetElementSize() < val;
+            });
+    
+            if (m_sortedBySize.end() != it) {
+                assert((*it)->GetElementSize() >= size);
+                if(auto result = (*it)->Allocate()) {
+                    return result;
+                }
+            }
         }
 
-        if (result == nullptr) {
-            result = malloc(size);
-        }
-
-        return result;
+        return malloc(size);
     }
 
     void MemoryManager::Deallocate(void* pointer) {

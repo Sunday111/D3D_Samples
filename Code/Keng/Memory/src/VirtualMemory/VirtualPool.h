@@ -72,6 +72,14 @@ namespace keng::memory
             return m_elementSize;
         }
 
+        VirtualPool& operator=(VirtualPool&& that) {
+            Release();
+            MoveFrom(that);
+            return *this;
+        }
+
+        VirtualPool& operator=(const VirtualPool&) = delete;
+
     protected:
         bool IsValid() const {
             return m_elementSize != 0;

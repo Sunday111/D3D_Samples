@@ -3,6 +3,8 @@
 #include <new>
 #include <memory>
 #include "VirtualMemory/VirtualPool.h"
+#include <vector>
+#include <unordered_map>
 
 namespace keng::memory
 {
@@ -17,6 +19,9 @@ namespace keng::memory
         MemoryManager();
         ~MemoryManager();
 
+        void RegisterAllocation(size_t size);
+
+        size_t m_biggestPoolSize = 0;
         std::vector<VirtualPool> m_pools;
         std::vector<VirtualPool*> m_sortedBySize;
         std::vector<VirtualPool*> m_sortedByStartAddress;
