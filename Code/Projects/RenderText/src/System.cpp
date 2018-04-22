@@ -157,11 +157,11 @@ namespace render_text_sample
 
     }
 
-    std::string_view System::GetSystemName() const {
+    const char* System::GetSystemName() const {
         return "RenderText";
     }
 
-    bool System::ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const {
+    bool System::ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const {
         if (delegate.Invoke(keng::graphics::IGraphicsSystem::SystemName())) return true;
         if (delegate.Invoke(keng::resource::IResourceSystem::SystemName())) return true;
         if (delegate.Invoke(keng::window_system::IWindowSystem::SystemName())) return true;
@@ -220,13 +220,13 @@ namespace render_text_sample
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Textured.json";
-                m_texturedEffect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName, m_graphicsSystem->GetDevice()));
+                m_texturedEffect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName.data(), m_graphicsSystem->GetDevice()));
                 m_texturedEffect->InitDefaultInputLayout();
             }
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Text.json";
-                m_textEffect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName, m_graphicsSystem->GetDevice()));
+                m_textEffect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName.data(), m_graphicsSystem->GetDevice()));
                 m_textEffect->InitDefaultInputLayout();
             }
 

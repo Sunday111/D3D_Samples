@@ -12,11 +12,11 @@
 
 namespace keng::graphics
 {
-    std::string_view TextureFabric::GetNodeName() const {
+    const char* TextureFabric::GetNodeName() const {
         return "texture";
     }
 
-    std::string_view TextureFabric::GetResourceType() const {
+    const char* TextureFabric::GetResourceType() const {
         return "Texture";
     }
 
@@ -35,7 +35,7 @@ namespace keng::graphics
             };
 
             FileInfo info;
-            SerializeMandatory(ar, info, GetNodeName().data());
+            SerializeMandatory(ar, info, GetNodeName());
 
 
             std::unique_ptr<stbi_uc[]> img_data;

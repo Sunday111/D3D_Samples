@@ -30,15 +30,15 @@ namespace keng::resource
         ~ResourceSystem();
 
         // ISystem
-        virtual std::string_view GetSystemName() const override;
-        virtual bool ForEachDependency(const edt::Delegate<bool(std::string_view systemName)>& delegate) const override;
+        virtual const char* GetSystemName() const override;
+        virtual bool ForEachDependency(const edt::Delegate<bool(const char* systemName)>& delegate) const override;
         virtual void Initialize(const core::IApplicationPtr& app) override;
         virtual bool Update() override;
         virtual void Shutdown() override;
 
         // IResource system
-        virtual IResourcePtr GetResource(std::string_view filename) override;
-        virtual IResourcePtr GetResource(std::string_view filename, const IDevicePtr& device) override;
+        virtual IResourcePtr GetResource(const char* filename) override;
+        virtual IResourcePtr GetResource(const char* filename, const IDevicePtr& device) override;
         virtual void AddRuntimeResource(const IResourcePtr& resource) override;
         virtual void AddRuntimeResource(const IResourcePtr& resource, const IDevicePtr& device) override;
         virtual void RegisterResourceFabric(const IResourceFabricPtr& fabric) override;

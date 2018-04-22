@@ -11,7 +11,7 @@ namespace keng::graphics
     {
     public:
         Annotation(Device& device);
-        virtual void BeginEvent(std::basic_string_view<wchar_t>) override;
+        virtual void BeginEvent(const wchar_t*) override;
         virtual void EndEvent() override;
 
     private:

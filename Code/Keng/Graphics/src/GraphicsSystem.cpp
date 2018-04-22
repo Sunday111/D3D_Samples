@@ -189,11 +189,11 @@ namespace keng::graphics
         return AnnotationPtr::MakeInstance(*m_device);
     }
 
-    std::string_view GraphicsSystem::GetSystemName() const {
+    const char* GraphicsSystem::GetSystemName() const {
         return SystemName();
     }
 
-    bool GraphicsSystem::ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const {
+    bool GraphicsSystem::ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const {
         return CallAndRethrowM + [&]() -> bool {
             std::string_view dependencies[] =
             {
@@ -202,7 +202,7 @@ namespace keng::graphics
             };
 
             for (auto& systemName : dependencies) {
-                if (delegate.Invoke(systemName)) {
+                if (delegate.Invoke(systemName.data())) {
                     return true;
                 }
             }

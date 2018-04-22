@@ -127,11 +127,11 @@ namespace textured_quad_sample
 
     }
 
-    std::string_view SampleSystem::GetSystemName() const {
+    const char* SampleSystem::GetSystemName() const {
         return "TexturedQuad";
     }
 
-    bool SampleSystem::ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const {
+    bool SampleSystem::ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const {
         if (delegate.Invoke(keng::graphics::IGraphicsSystem::SystemName())) return true;
         if (delegate.Invoke(keng::resource::IResourceSystem::SystemName())) return true;
         if (delegate.Invoke(keng::window_system::IWindowSystem::SystemName())) return true;
@@ -199,7 +199,7 @@ namespace textured_quad_sample
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Textured.json";
-                m_effect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName, m_graphicsSystem->GetDevice()));
+                m_effect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName.data(), m_graphicsSystem->GetDevice()));
                 m_effect->InitDefaultInputLayout();
             }
 

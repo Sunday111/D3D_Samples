@@ -65,11 +65,11 @@ namespace keng::graphics
         }
     };
 
-    std::string_view ShaderFabric::GetNodeName() const {
+    const char* ShaderFabric::GetNodeName() const {
         return "shader";
     }
 
-    std::string_view ShaderFabric::GetResourceType() const {
+    const char* ShaderFabric::GetResourceType() const {
         return "Shader";
     }
 
@@ -80,11 +80,11 @@ namespace keng::graphics
             auto device = std::dynamic_pointer_cast<Device>(abstractDevice);
 
             ShaderInfo info;
-            SerializeMandatory(ar, info, GetNodeName().data());
+            SerializeMandatory(ar, info, GetNodeName());
 
             ShaderCompiler shaderCompiler;
             shaderCompiler.device = device;
-            shaderCompiler.shaderTemplate = std::static_pointer_cast<ShaderTemplate>(resourceSystem.GetResource(info.shaderTemplate));
+            shaderCompiler.shaderTemplate = std::static_pointer_cast<ShaderTemplate>(resourceSystem.GetResource(info.shaderTemplate.data()));
             shaderCompiler.entryPoint = info.entryPoint;
             shaderCompiler.definitions.reserve(info.definitions.size());
             for (auto& def : info.definitions) {

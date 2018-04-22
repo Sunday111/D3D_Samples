@@ -4,16 +4,15 @@
 #include "Keng/FileSystem/FwdDecl.h"
 #include "Keng/ResourceSystem/FwdDecl.h"
 #include "Keng/ResourceSystem/IResource.h"
-#include <string_view>
 
 namespace keng::resource
 {
     class IResourceSystem : public core::ISystem
     {
     public:
-        static std::string_view SystemName() { return "KengResourceSystem"; }
-        virtual IResourcePtr GetResource(std::string_view filename) = 0;
-        virtual IResourcePtr GetResource(std::string_view filename, const IDevicePtr& deivce) = 0;
+        static const char* SystemName() { return "KengResourceSystem"; }
+        virtual IResourcePtr GetResource(const char* filename) = 0;
+        virtual IResourcePtr GetResource(const char* filename, const IDevicePtr& deivce) = 0;
         virtual void AddRuntimeResource(const IResourcePtr& resource) = 0;
         virtual void AddRuntimeResource(const IResourcePtr& resource, const IDevicePtr& deivce) = 0;
         virtual void RegisterResourceFabric(const IResourceFabricPtr& fabric) = 0;

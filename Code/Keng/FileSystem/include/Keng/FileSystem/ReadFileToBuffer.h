@@ -11,7 +11,7 @@
 
 namespace keng::filesystem
 {
-    inline std::pair<std::unique_ptr<uint8_t>, size_t> ReadFileToBuffer(std::string_view filename) {
+    inline std::pair<std::unique_ptr<uint8_t>, size_t> ReadFileToBuffer(const char* filename) {
         return CallAndRethrowM + [&] {
             OpenFileParameters openFileParameters{};
             openFileParameters.accessFlags |= FileAccessFlags::Read;
@@ -27,7 +27,7 @@ namespace keng::filesystem
         };
     }
 
-    inline void HandleFileData(std::string_view filename, edt::Delegate<void(edt::DenseArrayView<const uint8_t>)> delegate) {
+    inline void HandleFileData(const char* filename, edt::Delegate<void(edt::DenseArrayView<const uint8_t>)> delegate) {
         CallAndRethrowM + [&] {
             size_t size;
             std::unique_ptr<uint8_t> buffer;

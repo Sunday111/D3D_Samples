@@ -8,7 +8,7 @@ namespace keng::window_system
     class IWindowSystem : public core::ISystem
     {
     public:
-        static std::string_view SystemName() { return "KengWindowSystem"; }
+        static const char* SystemName() { return "KengWindowSystem"; }
         virtual IWindow* GetWindow() = 0;
     };
 }

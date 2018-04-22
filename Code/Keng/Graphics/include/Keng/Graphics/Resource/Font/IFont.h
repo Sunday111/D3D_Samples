@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string_view>
 #include "Keng/Graphics/FwdDecl.h"
 #include "Keng/ResourceSystem/IResource.h"
 #include "EverydayTools/Array/ArrayView.h"

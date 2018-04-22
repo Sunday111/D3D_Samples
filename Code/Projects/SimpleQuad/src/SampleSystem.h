@@ -15,8 +15,8 @@ namespace simple_quad_sample
         virtual void Initialize(const keng::core::IApplicationPtr& app) override;
         virtual bool Update() override;
         virtual void Shutdown() override;
-        virtual std::string_view GetSystemName() const override;
-        virtual bool ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const override;
+        virtual const char* GetSystemName() const override;
+        virtual bool ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const override;
 
     protected:
         keng::graphics::IEffectPtr m_effect;

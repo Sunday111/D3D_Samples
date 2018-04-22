@@ -55,7 +55,7 @@ namespace keng::resource
         m_fabrics.clear();
     }
 
-    IResourcePtr ResourceSystem::GetResource(std::string_view filename) {
+    IResourcePtr ResourceSystem::GetResource(const char* filename) {
         return GetResource(filename, nullptr);
     }
 
@@ -63,7 +63,7 @@ namespace keng::resource
         AddRuntimeResource(resource, nullptr);
     }
 
-    IResourcePtr ResourceSystem::GetResource(std::string_view filename, const IDevicePtr& device) {
+    IResourcePtr ResourceSystem::GetResource(const char* filename, const IDevicePtr& device) {
         return GetDeviceResources(device).GetResource(*this, filename);
     }
 
@@ -145,11 +145,11 @@ namespace keng::resource
         };
     }
 
-    std::string_view ResourceSystem::GetSystemName() const {
+    const char* ResourceSystem::GetSystemName() const {
         return SystemName();
     }
 
-    bool ResourceSystem::ForEachDependency(const edt::Delegate<bool(std::string_view systemName)>& delegate) const {
+    bool ResourceSystem::ForEachDependency(const edt::Delegate<bool(const char* systemName)>& delegate) const {
         return CallAndRethrowM + [&]() -> bool {
             std::string_view dependencies[] =
             {
@@ -157,7 +157,7 @@ namespace keng::resource
             };
 
             for (auto dependency : dependencies) {
-                if (delegate.Invoke(dependency)) return true;
+                if (delegate.Invoke(dependency.data())) return true;
             }
 
             return false;

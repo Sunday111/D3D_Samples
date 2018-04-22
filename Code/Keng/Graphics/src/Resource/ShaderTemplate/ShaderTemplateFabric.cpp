@@ -8,11 +8,11 @@
 
 namespace keng::graphics
 {
-    std::string_view ShaderTemplateFabric::GetNodeName() const {
+    const char* ShaderTemplateFabric::GetNodeName() const {
         return "shader_template";
     }
 
-    std::string_view ShaderTemplateFabric::GetResourceType() const {
+    const char* ShaderTemplateFabric::GetResourceType() const {
         return "ShaderTemplate";
     }
 
@@ -29,7 +29,7 @@ namespace keng::graphics
             };
 
             ShaderTemplateInfo info;
-            SerializeMandatory(ar, info, GetNodeName().data());
+            SerializeMandatory(ar, info, GetNodeName());
 
             std::ifstream shaderFile;
             shaderFile.open(info.filename.data());

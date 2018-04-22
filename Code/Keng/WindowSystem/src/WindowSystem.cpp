@@ -90,11 +90,11 @@ namespace keng::window_system
         ar(WindowTitle, "title");
     }
 
-    std::string_view WindowSystem::GetSystemName() const {
+    const char* WindowSystem::GetSystemName() const {
         return SystemName();
     }
 
-    bool WindowSystem::ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const {
+    bool WindowSystem::ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const {
         return CallAndRethrowM + [&]() -> bool {
             std::string_view dependencies[] =
             {
@@ -102,7 +102,7 @@ namespace keng::window_system
             };
 
             for (auto& systemName : dependencies) {
-                if (delegate.Invoke(systemName)) {
+                if (delegate.Invoke(systemName.data())) {
                     return true;
                 }
             }

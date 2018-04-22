@@ -35,7 +35,7 @@ namespace keng::core
             for (auto& module : m_modules) {
                 auto& system = module->GetSystem();
 
-                auto onDependency = [&](std::string_view dependencyName) {
+                auto onDependency = [&](const char* dependencyName) {
                     if (FindSystem(dependencyName)) {
                         return false;
                     }
@@ -44,7 +44,7 @@ namespace keng::core
                     return true;
                 };
 
-                edt::Delegate<bool(std::string_view)> delegate;
+                edt::Delegate<bool(const char*)> delegate;
                 delegate.Bind(onDependency);
 
                 addedNewSystem = system->ForEachDependency(delegate);
@@ -118,7 +118,7 @@ namespace keng::core
                     return false;
                 };
 
-                edt::Delegate<bool(std::string_view)> delegate;
+                edt::Delegate<bool(const char*)> delegate;
                 delegate.Bind(onDependency);
 
                 dependencyFound = current->ForEachDependency(delegate);
@@ -159,11 +159,12 @@ namespace keng::core
         };
     }
 
-    ISystemPtr Application::FindSystem(std::string_view name) const
+    ISystemPtr Application::FindSystem(const char* name) const
     {
+        std::string_view view(name);
         for (auto& module: m_modules) {
             auto& system = module->GetSystem();
-            if (system->GetSystemName() == name) {
+            if (system->GetSystemName() == view) {
                 return system;
             }
         }

@@ -19,11 +19,11 @@ namespace keng::graphics
 
     FontFabric::~FontFabric() = default;
 
-    std::string_view FontFabric::GetNodeName() const {
+    const char* FontFabric::GetNodeName() const {
         return "font";
     }
 
-    std::string_view FontFabric::GetResourceType() const {
+    const char* FontFabric::GetResourceType() const {
         return "Font";
     }
 
@@ -42,7 +42,7 @@ namespace keng::graphics
             };
 
             FileInfo info;
-            SerializeMandatory(ar, info, GetNodeName().data());
+            SerializeMandatory(ar, info, GetNodeName());
 
             using FileView = edt::DenseArrayView<const uint8_t>;
             FontPtr result;
@@ -54,7 +54,7 @@ namespace keng::graphics
             };
             edt::Delegate<void(FileView)> delegate;
             delegate.Bind(onFileRead);
-            filesystem::HandleFileData(info.file, delegate);
+            filesystem::HandleFileData(info.file.data(), delegate);
 
             return result;
         };

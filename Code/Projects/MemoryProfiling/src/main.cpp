@@ -71,11 +71,11 @@ public:
 
     }
 
-    virtual std::string_view GetSystemName() const override {
+    virtual const char* GetSystemName() const override {
         return "MemoryProfiling";
     }
 
-    virtual bool ForEachDependency(const edt::Delegate<bool(std::string_view)>& delegate) const override {
+    virtual bool ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const override {
         UnusedVar(delegate);
         return false;
     }

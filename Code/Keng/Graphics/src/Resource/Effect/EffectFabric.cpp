@@ -6,11 +6,11 @@
 
 namespace keng::graphics
 {
-    std::string_view EffectFabric::GetNodeName() const {
+    const char* EffectFabric::GetNodeName() const {
         return "effect";
     }
 
-    std::string_view EffectFabric::GetResourceType() const {
+    const char* EffectFabric::GetResourceType() const {
         return "Effect";
     }
 
@@ -35,20 +35,20 @@ namespace keng::graphics
             };
 
             EffectInfo effectInfo;
-            SerializeMandatory(ar, effectInfo, GetNodeName().data());
+            SerializeMandatory(ar, effectInfo, GetNodeName());
 
             bool anyShader = false;
 
             {
                 if (!effectInfo.vs.empty()) {
-                    result->vs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Vertex>>(resourceSystem.GetResource(effectInfo.vs, device));
+                    result->vs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Vertex>>(resourceSystem.GetResource(effectInfo.vs.data(), device));
                     anyShader = true;
                 }
             }
 
             {
                 if (!effectInfo.fs.empty()) {
-                    result->fs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Pixel>>(resourceSystem.GetResource(effectInfo.fs, device));
+                    result->fs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Pixel>>(resourceSystem.GetResource(effectInfo.fs.data(), device));
                     anyShader = true;
                 }
             }

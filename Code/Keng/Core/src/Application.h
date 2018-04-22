@@ -26,7 +26,7 @@ namespace keng::core {
         virtual void Initialize(const ApplicationStartupParameters& params) override;
         virtual void Run() override;
         virtual void Shutdown() override;
-        virtual ISystemPtr FindSystem(std::string_view name) const override;
+        virtual ISystemPtr FindSystem(const char* name) const override;
 
         void SetVSync(bool value);
 

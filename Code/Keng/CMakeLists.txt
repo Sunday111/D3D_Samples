@@ -8,7 +8,12 @@ function(add_keng_module module_name)
     list(APPEND added_subdirectories ${added_target_name})
 endfunction()
 
-add_keng_module(Base)
+function(add_interface_module module_name)
+    add_subdirectory(${module_name})
+    list(APPEND added_subdirectories ${added_target_name})
+endfunction()
+
+add_interface_module(Base)
 add_keng_module(Memory)
 add_keng_module(Core)
 add_keng_module(Filesystem)
