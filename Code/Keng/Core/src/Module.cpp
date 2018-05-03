@@ -25,6 +25,10 @@ namespace keng::core
     const ISystemPtr& Module::GetSystem() const {
         return m_system;
     }
+    bool Module::IsGlobalModule() const {
+        auto globalSystem = std::dynamic_pointer_cast<IGlobalSystem>(m_system);
+        return globalSystem != nullptr;
+    }
 
     void Module::Check() const {
         edt::ThrowIfFailed(m_handle != nullptr, "Trying to call Module method when handle is null!");
@@ -45,9 +49,6 @@ namespace keng::core
             createSystem(&ptr);
             edt::ThrowIfFailed(ptr != nullptr, "Failed to create system");
             m_system = ISystemPtr(reinterpret_cast<ISystem*>(ptr));
-            if (auto globalSystem = std::dynamic_pointer_cast<IGlobalSystem>(m_system)) {
-                GlobalEnvironment::PrivateInstance().RegisterSystem(globalSystem);
-            }
         };
     }
 

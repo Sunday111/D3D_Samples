@@ -15,6 +15,7 @@ namespace keng::core
         ~Module();
 
         const ISystemPtr& GetSystem() const;
+        bool IsGlobalModule() const;
 
     private:
         static HMODULE Load(std::string_view name);

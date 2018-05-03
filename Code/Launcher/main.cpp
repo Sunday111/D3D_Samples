@@ -96,6 +96,7 @@ namespace {
                 app->Initialize(params);
                 app->Run();
                 app->Shutdown();
+                
 
                 return 0;
             };

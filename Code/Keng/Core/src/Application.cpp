@@ -17,12 +17,17 @@ namespace keng::core
     }
 
     Application::Application() {
-        GlobalEnvironment::Initialize();
     }
 
     void Application::LoadModule(std::string_view name) {
         CallAndRethrowM + [&] {
-            m_modules.push_back(ModulePtr::MakeInstance(name));
+
+            auto module = ModulePtr::MakeInstance(name);
+            if (module->IsGlobalModule()) {
+                GlobalEnvironment::PrivateInstance().RegisterModule(module);
+            } else {
+                m_modules.push_back(ModulePtr::MakeInstance(name));
+            }
         };
     }
 
@@ -89,6 +94,12 @@ namespace keng::core
                 if (system->GetSystemName() == name) {
                     return system;
                 }
+            }
+
+            auto& gEnv = GlobalEnvironment::PrivateInstance();
+            auto system = gEnv.TryGetSystem(name);
+            if (system) {
+                return system;
             }
 
             return nullptr;
@@ -169,20 +180,26 @@ namespace keng::core
             }
         }
 
+        auto& gEnv = GlobalEnvironment::PrivateInstance();
+        auto system = gEnv.TryGetSystem(name);
+        if (system) {
+            return system;
+        }
+
         return nullptr;
     }
 
     void Application::Shutdown() {
-        GlobalEnvironment::Destroy();
-
         for(auto it = m_modules.rbegin(); it != m_modules.rend(); ++it) {
             (*it)->GetSystem()->Shutdown();
         }
 
         while (!m_modules.empty()) {
-            assert(m_modules.back()->GetSystem()->GetReferencesCount() == 1);
+            //assert(m_modules.back()->GetSystem()->GetReferencesCount() == 1);
             m_modules.pop_back();
         }
+
+        GlobalEnvironment::PrivateInstance().DestroyApplication(this);
     }
 
 }

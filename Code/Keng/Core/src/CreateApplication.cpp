@@ -1,8 +1,9 @@
-#include "Application.h"
+#include "GlobalEnvironment.h"
 
 extern "C"
 {
     void __declspec(dllexport) __cdecl CreateApplication(void** result) {
-        *result = new keng::core::Application();
+        using namespace keng::core;
+        *result = GlobalEnvironment::PrivateInstance().CreateApplication();
     }
 }
