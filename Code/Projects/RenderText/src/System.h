@@ -84,6 +84,8 @@ namespace render_text_sample
         virtual bool ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const override;
 
     protected:
+        void LoadParameters(const keng::core::IApplicationPtr& app);
+
         keng::graphics::IDeviceBufferPtr m_constantBuffer;
 
         keng::graphics::IEffectPtr m_texturedEffect;

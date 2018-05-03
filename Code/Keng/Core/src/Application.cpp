@@ -34,8 +34,7 @@ namespace keng::core
     void Application::LoadDependencies() {
         bool addedNewSystem;
 
-        do
-        {
+        do {
             addedNewSystem = false;
             for (auto& module : m_modules) {
                 auto& system = module->GetSystem();
@@ -76,7 +75,7 @@ namespace keng::core
     }
 
     void Application::Initialize(const ApplicationStartupParameters& params) {
-        for (auto& moduleToLoad: params.modulesToLoad) {
+        for (auto& moduleToLoad : params.modulesToLoad) {
             LoadModule(moduleToLoad);
         }
 
@@ -152,7 +151,7 @@ namespace keng::core
                 auto retVal = UpdateSystems();
                 auto t1 = high_resolution_clock::now();
                 auto average = m_fpsCounter.CalcAverageTick(t1 - t0);
-                auto sleep = TFrameRateCounter::GetDesiredFrameDuration(DesiredFPS) - average;
+                auto sleep = m_fpsCounter.GetDesiredFrameDuration() - average;
                 if (sleep.count() > 0) {
                     //std::this_thread::sleep_for(sleep); <-- so slow!
                     Sleep(sleep);
@@ -170,10 +169,9 @@ namespace keng::core
         };
     }
 
-    ISystemPtr Application::FindSystem(const char* name) const
-    {
+    ISystemPtr Application::FindSystem(const char* name) const {
         std::string_view view(name);
-        for (auto& module: m_modules) {
+        for (auto& module : m_modules) {
             auto& system = module->GetSystem();
             if (system->GetSystemName() == view) {
                 return system;
@@ -190,7 +188,7 @@ namespace keng::core
     }
 
     void Application::Shutdown() {
-        for(auto it = m_modules.rbegin(); it != m_modules.rend(); ++it) {
+        for (auto it = m_modules.rbegin(); it != m_modules.rend(); ++it) {
             (*it)->GetSystem()->Shutdown();
         }
 

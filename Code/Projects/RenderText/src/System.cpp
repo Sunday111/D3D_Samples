@@ -24,9 +24,10 @@
 #include "Keng/WindowSystem/IWindowSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
 #include "Keng/Graphics/IDevice.h"
-
-#include "stdlib.h"
-
+#include "Keng/Base/Serialization/SerializeMandatory.h"
+#include "Keng/FileSystem/OpenFileParameters.h"
+#include "Keng/FileSystem/ReadFileToBuffer.h"
+#include "Keng/Base/Serialization/openarchivejson.h"
 
 namespace render_text_sample
 {
@@ -384,7 +385,39 @@ namespace render_text_sample
                 samplerParams.filter = FilteringMode::Bilinear;
                 m_textSampler = m_graphicsSystem->CreateSampler(samplerParams);
             }
+
+            LoadParameters(app);
         };
     }
 
+    class SystemParams
+    {
+    public:
+        void serialize(yasli::Archive& ar) {
+            ar(vSync, "vSync");
+        }
+
+        bool vSync = false;
+    };
+
+    void System::LoadParameters(const keng::core::IApplicationPtr& app) {
+        CallAndRethrowM + [&] {
+            using namespace keng;
+            using namespace filesystem;
+
+            SystemParams params;
+            try {
+                filesystem::OpenFileParameters fileParams;
+                fileParams.accessFlags = FileAccessFlags::Read;
+                std::string filename = "Configs/";
+                filename += GetSystemName();
+                filename += ".json";
+                auto buffer = ReadFileToBuffer(filename.data());
+                yasli::JSONIArchive ar;
+                OpenArchiveJSON(edt::DenseArrayView<uint8_t>(buffer.first.get(), buffer.second), ar);
+                SerializeMandatory(ar, params, "");
+            } catch (...) {}
+            app->SetVSync(params.vSync);
+        };
+    }
 }

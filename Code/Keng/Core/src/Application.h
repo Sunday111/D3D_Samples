@@ -17,9 +17,6 @@ namespace keng::core {
         Application(const Application&) = delete;
 
         using Period = std::chrono::nanoseconds;
-        static constexpr auto FpsSamplesCount = 100;
-        static constexpr auto DesiredFPS = 60;
-        using TFrameRateCounter = FrameRateCounter<Period, FpsSamplesCount>;
 
         // IApplication
         virtual bool Update() override;
@@ -27,8 +24,7 @@ namespace keng::core {
         virtual void Run() override;
         virtual void Shutdown() override;
         virtual ISystemPtr FindSystem(const char* name) const override;
-
-        void SetVSync(bool value);
+        virtual void SetVSync(bool value) override;
 
     private:
         void LoadModule(std::string_view name);
@@ -37,7 +33,7 @@ namespace keng::core {
 
     private:
         bool m_vSync = false;
-        TFrameRateCounter m_fpsCounter;
+        FrameRateCounter<Period> m_fpsCounter;
         std::vector<ModulePtr> m_modules;
     };
 }

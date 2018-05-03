@@ -23,8 +23,6 @@
 #include "Keng/Graphics/IGraphicsSystem.h"
 #include "Keng/Graphics/IDevice.h"
 
-#include "stdlib.h"
-
 namespace textured_quad_sample
 {
     namespace

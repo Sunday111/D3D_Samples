@@ -10,6 +10,7 @@ namespace keng::core
     class ApplicationStartupParameters
     {
     public:
+        const char* configFileName = nullptr;
         edt::SparseArrayView<const char*> modulesToLoad;
     };
 
@@ -21,6 +22,7 @@ namespace keng::core
         virtual void Initialize(const ApplicationStartupParameters& params) = 0;
         virtual void Shutdown() = 0;
         virtual ISystemPtr FindSystem(const char* name) const = 0;
+        virtual void SetVSync(bool value) = 0;
 
         template<typename T, typename Enable = std::enable_if_t<std::is_base_of_v<ISystem, T>>>
         core::Ptr<T> FindSystem() const {
