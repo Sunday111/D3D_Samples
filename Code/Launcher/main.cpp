@@ -116,11 +116,12 @@ namespace {
 INT WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nCmdShow) {
     UnusedVar(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 
-    std::future<int> a = std::async(std::launch::async, main);
-    std::future<int> b = std::async(std::launch::async, main);
-
-    auto result_a = a.get();
-    auto result_b = b.get();
-
-    return result_a + result_b;
+    //std::future<int> a = std::async(std::launch::async, main);
+    //std::future<int> b = std::async(std::launch::async, main);
+    //
+    //auto result_a = a.get();
+    //auto result_b = b.get();
+    //
+    //return result_a + result_b;
+    return main();
 }
