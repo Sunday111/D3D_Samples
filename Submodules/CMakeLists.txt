@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.5.1)
 
-file(GLOB submodules "${CMAKE_CURRENT_SOURCE_DIR}/*")
-foreach(submodule ${submodules})
-    if(IS_DIRECTORY ${submodule})
-        set(module_header_file "${submodule}/CMakeLists.txt")
-        if(EXISTS ${module_header_file})
-            add_subdirectory(${submodule})
-        endif()
-    endif()
-endforeach()
+add_subdirectory(Yasli)
+add_subdirectory(WinWrappers)
+add_subdirectory(D3D_Tools)
+
+set(gtest_force_shared_crt ON CACHE BOOL "")
+add_subdirectory(googletest)
+
+add_subdirectory(EverydayTools)
+add_subdirectory(EverydayToolsTests)
+add_subdirectory(FreeType)

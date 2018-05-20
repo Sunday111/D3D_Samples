@@ -16,3 +16,9 @@
 [submodule "Submodules/WindowSystem"]
 	path = Submodules/WindowSystem
 	url = https://github.com/Sunday111/SystemsApp-WindowSystem
+[submodule "Submodules/googletest"]
+	path = Submodules/googletest
+	url = https://github.com/google/googletest
+[submodule "Submodules/EverydayToolsTests"]
+	path = Submodules/EverydayToolsTests
+	url = https://github.com/Sunday111/EverydayToolsTests
