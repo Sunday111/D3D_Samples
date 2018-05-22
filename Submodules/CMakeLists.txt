@@ -20,7 +20,7 @@ add_subdirectory(EverydayTools)
 ####################################################
 # Everyday tools library tests
 add_subdirectory(EverydayToolsTests)
-set_target_properties(EverydayToolsTest PROPERTIES FOLDER "Tests")
+set_target_properties(EverydayToolsTests PROPERTIES FOLDER "Tests")
 
 ####################################################
 # FreeType fonts library
