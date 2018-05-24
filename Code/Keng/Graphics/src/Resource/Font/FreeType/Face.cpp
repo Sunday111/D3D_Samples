@@ -2,6 +2,7 @@
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "Resource/Font/FreeType/Library.h"
 #include "EverydayTools/Exception/CheckedCast.h"
+#include "EverydayTools/UnusedVar.h"
 
 namespace keng::graphics::free_type
 {
@@ -92,5 +93,6 @@ namespace keng::graphics::free_type
     Face::~Face() {
         auto err = FT_Done_Face(m_face);
         assert(err == 0);
+        UnusedVar(err);
     }
 }
