@@ -28,7 +28,7 @@ namespace keng::graphics
 
     void Sampler::AssignToPipeline(ShaderType shaderType, size_t index) {
         CallAndRethrowM + [&] {
-            m_device->SetSampler(edt::CheckedCast<uint32_t>(index), m_sampler.Get(), (d3d_tools::ShaderType)shaderType);
+            m_device->SetSampler(edt::CheckedCast<uint32_t>(index), m_sampler.Get(), shaderType);
         };
     }
 }

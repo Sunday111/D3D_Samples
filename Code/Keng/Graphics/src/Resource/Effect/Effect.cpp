@@ -14,8 +14,10 @@ namespace keng::graphics
 
     void Effect::AssignToPipeline() {
         CallAndRethrowM + [&] {
-            device->SetShader(vs->m_impl);
-            device->SetShader(fs->m_impl);
+            if (vs)
+                device->SetShader(*vs);
+            if (fs)
+                device->SetShader(*fs);
             device->GetContext()->IASetInputLayout(layout.Get());
         };
     }

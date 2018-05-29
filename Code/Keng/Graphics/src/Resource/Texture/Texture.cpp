@@ -120,7 +120,7 @@ namespace keng::graphics
 
     void Texture::AssignToPipeline(ShaderType shaderType, size_t slot) {
         auto srv = GetView<ResourceViewType::ShaderResource>();
-        m_device->SetShaderResource(edt::CheckedCast<uint32_t>(slot), (d3d_tools::ShaderType)shaderType, srv->GetView());
+        m_device->SetShaderResource(edt::CheckedCast<uint32_t>(slot), shaderType, srv->GetView());
     }
 
     void Texture::CopyTo(ITexturePtr abstract){

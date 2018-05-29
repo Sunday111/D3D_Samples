@@ -3,6 +3,7 @@
 #include "Resource/Effect/Effect.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
 #include "yasli/STL.h"
+#include "EverydayTools/Exception/ThrowIfFailed.h"
 
 namespace keng::graphics
 {
@@ -41,14 +42,14 @@ namespace keng::graphics
 
             {
                 if (!effectInfo.vs.empty()) {
-                    result->vs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Vertex>>(resourceSystem.GetResource(effectInfo.vs.data(), device));
+                    result->vs = std::dynamic_pointer_cast<Shader<ShaderType::Vertex>>(resourceSystem.GetResource(effectInfo.vs.data(), device));
                     anyShader = true;
                 }
             }
 
             {
                 if (!effectInfo.fs.empty()) {
-                    result->fs = std::dynamic_pointer_cast<Shader<d3d_tools::ShaderType::Pixel>>(resourceSystem.GetResource(effectInfo.fs.data(), device));
+                    result->fs = std::dynamic_pointer_cast<Shader<ShaderType::Fragment>>(resourceSystem.GetResource(effectInfo.fs.data(), device));
                     anyShader = true;
                 }
             }

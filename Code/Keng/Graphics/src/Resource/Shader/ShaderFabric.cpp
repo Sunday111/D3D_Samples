@@ -1,5 +1,5 @@
 #include "ShaderFabric.h"
-#include "Resource/Shader/Shader.h"
+#include "Resource/Shader/CreateShader.h"
 #include "Resource/ShaderTemplate/ShaderTemplate.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include <vector>
@@ -42,25 +42,21 @@ namespace keng::graphics
         resource::IResourcePtr Compile() {
             switch (shaderTemplate->type) {
             case ShaderType::Vertex:
-                return Compile<d3d_tools::ShaderType::Vertex>();
+                return Compile<ShaderType::Vertex>();
 
             case ShaderType::Fragment:
-                return Compile<d3d_tools::ShaderType::Pixel>();
+                return Compile<ShaderType::Fragment>();
 
             default:
                 throw std::runtime_error("Not implemented for this shader type here");
             }
         }
 
-        template<d3d_tools::ShaderType st>
+        template<ShaderType st>
         core::Ptr<Shader<st>> Compile() {
             auto result = core::Ptr<Shader<st>>::MakeInstance();
-            auto view =
-                result->m_impl = device->CreateShader<st>(
-                    shaderTemplate->code.c_str(),
-                    entryPoint.data(),
-                    d3d_tools::ShaderVersion::_5_0,
-                    edt::MakeArrayView(definitions));
+            result->m_impl.Compile(shaderTemplate->code.data(), entryPoint.data(), ShaderVersion::_5_0, edt::MakeArrayView(definitions));
+            result->m_impl.Create(device->GetDevice().Get());
             return result;
         }
     };

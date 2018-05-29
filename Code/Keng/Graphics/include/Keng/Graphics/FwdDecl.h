@@ -66,4 +66,5 @@ namespace keng::graphics
     class GlyphParameters;
     class GlyphInfo;
     class AtlasGlyphInfo;
+    class DeviceParameters;
 }

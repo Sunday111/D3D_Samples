@@ -7,6 +7,7 @@
 #include "Keng/WindowSystem/IWindow.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 
+#include "keng/Graphics/DeviceParameters.h"
 #include "keng/Graphics/Resource/TextureParameters.h"
 #include "Resource/Texture/Texture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
@@ -115,7 +116,7 @@ namespace keng::graphics
             }
 
             {// Initialize device
-                Device::CreateParams deviceParams;
+                DeviceParameters deviceParams;
                 deviceParams.debugDevice = params.debugDevice;
                 deviceParams.noDeviceMultithreading = !params.deviceMultithreading;
                 m_device = DevicePtr::MakeInstance(deviceParams);

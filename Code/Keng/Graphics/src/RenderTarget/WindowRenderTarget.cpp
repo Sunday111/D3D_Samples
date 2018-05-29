@@ -5,6 +5,7 @@
 #include "DepthStencil.h"
 #include "Keng/Graphics/RenderTarget/WindowRenderTargetParameters.h"
 #include "RenderTarget/WindowRenderTarget.h"
+#include "EverydayTools/Exception/ThrowIfFailed.h"
 
 namespace keng::graphics
 {
