@@ -1,22 +1,29 @@
 #pragma once
 
 #include "FwdDecl.h"
+#include "EverydayTools/Array/ArrayView.h"
+#include "Keng/Graphics/ShaderType.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/ResourceSystem/IResource.h"
-#include "D3D_Tools/Shader.h"
+#include "d3d11_1.h"
+#include "d3dcompiler.h"
 #include "Keng/Graphics/ShaderType.h"
+#include "WinWrappers/ComPtr.h"
 
 namespace keng::graphics
 {
-    using ShaderVersion = d3d_tools::ShaderVersion;
-
-    template<ShaderType shaderType>
-    class Shader : public core::RefCountImpl<resource::IResource>
+    enum class ShaderVersion
     {
-    public:
-        d3d_tools::Shader<(d3d_tools::ShaderType)shaderType> m_impl;
+        _5_0,
+        _4_1,
+        _4_0,
     };
 
+    struct ShaderMacro
+    {
+        std::string_view name;
+        std::string_view value;
+    };
 
     namespace shader_details {
         template<typename Interface>
@@ -103,6 +110,115 @@ namespace keng::graphics
             &ID3D11DeviceContext::CSSetShader>
         {
         };
-
     }
+
+    const char* ShaderTypeToShaderTarget(ShaderType shaderType, ShaderVersion shaderVersion);
+    ComPtr<ID3DBlob> CompileShaderToBlob(const char* code, const char* entryPoint, ShaderType shaderType, ShaderVersion shaderVersion, edt::SparseArrayView<const ShaderMacro> definitionsView = edt::SparseArrayView<const ShaderMacro>());
+
+    template
+    <
+        ShaderType shaderType,
+        template<ShaderType> typename Derived,
+        typename Enable = void
+    >
+    class ShaderReflectionMixin
+    {
+    };
+
+    template
+    <
+        ShaderType shaderType,
+        template<ShaderType> typename Derived
+    >
+    class ShaderReflectionMixin<shaderType, Derived, std::enable_if_t<shaderType == ShaderType::Vertex>>
+    {
+    public:
+        void ReflectInputLayout(std::vector<D3D11_INPUT_ELEMENT_DESC>& layouts) {
+            CallAndRethrowM + [&] {
+                auto& this_ = static_cast<Derived<shaderType>&>(*this);
+                auto& bytecode = this_.bytecode;
+
+                edt::ThrowIfFailed<std::logic_error>(bytecode != nullptr, "Bytecode is nullptr!");
+                ComPtr<ID3D11ShaderReflection> pShaderReflector;
+                WinAPI<char>::ThrowIfError(
+                    D3DReflect(bytecode->GetBufferPointer(), bytecode->GetBufferSize(),
+                        __uuidof(ID3D11ShaderReflection), (void**)pShaderReflector.Receive()));
+
+                D3D11_SHADER_DESC shaderDesc;
+                pShaderReflector->GetDesc(&shaderDesc);
+
+                for (uint32_t i = 0; i < shaderDesc.InputParameters; ++i) {
+                    D3D11_SIGNATURE_PARAMETER_DESC paramDesc;
+                    pShaderReflector->GetInputParameterDesc(i, &paramDesc);
+
+                    // fill out input element desc
+                    D3D11_INPUT_ELEMENT_DESC elementDesc;
+                    elementDesc.SemanticName = paramDesc.SemanticName;
+                    elementDesc.SemanticIndex = paramDesc.SemanticIndex;
+                    elementDesc.InputSlot = 0;
+                    elementDesc.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+                    elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+                    elementDesc.InstanceDataStepRate = 0;
+
+                    // determine DXGI format
+                    if (paramDesc.Mask == 1) {
+                        switch (paramDesc.ComponentType) {
+                        case D3D_REGISTER_COMPONENT_UINT32:  elementDesc.Format = DXGI_FORMAT_R32_UINT;  break;
+                        case D3D_REGISTER_COMPONENT_SINT32:  elementDesc.Format = DXGI_FORMAT_R32_SINT;  break;
+                        case D3D_REGISTER_COMPONENT_FLOAT32: elementDesc.Format = DXGI_FORMAT_R32_FLOAT; break;
+                        }
+                    } else if (paramDesc.Mask <= 3) {
+                        switch (paramDesc.ComponentType) {
+                        case D3D_REGISTER_COMPONENT_UINT32:  elementDesc.Format = DXGI_FORMAT_R32G32_UINT;  break;
+                        case D3D_REGISTER_COMPONENT_SINT32:  elementDesc.Format = DXGI_FORMAT_R32G32_SINT;  break;
+                        case D3D_REGISTER_COMPONENT_FLOAT32: elementDesc.Format = DXGI_FORMAT_R32G32_FLOAT; break;
+                        }
+                    } else if (paramDesc.Mask <= 7) {
+                        switch (paramDesc.ComponentType) {
+                        case D3D_REGISTER_COMPONENT_UINT32:  elementDesc.Format = DXGI_FORMAT_R32G32B32_UINT;  break;
+                        case D3D_REGISTER_COMPONENT_SINT32:  elementDesc.Format = DXGI_FORMAT_R32G32B32_SINT;  break;
+                        case D3D_REGISTER_COMPONENT_FLOAT32: elementDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT; break;
+                        }
+                    } else if (paramDesc.Mask <= 15) {
+                        switch (paramDesc.ComponentType) {
+                        case D3D_REGISTER_COMPONENT_UINT32:  elementDesc.Format = DXGI_FORMAT_R32G32B32A32_UINT;  break;
+                        case D3D_REGISTER_COMPONENT_SINT32:  elementDesc.Format = DXGI_FORMAT_R32G32B32A32_SINT;  break;
+                        case D3D_REGISTER_COMPONENT_FLOAT32: elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; break;
+                        }
+                    }
+
+                    layouts.push_back(elementDesc);
+                }
+            };
+        }
+    };
+
+    template<ShaderType shaderType>
+    class Shader :
+        public core::RefCountImpl<resource::IResource>,
+        public ShaderReflectionMixin<shaderType, ::keng::graphics::Shader>
+    {
+    public:
+        using Traits = shader_details::ShaderTraits<shaderType>;
+        using Interface = typename Traits::Interface;
+
+        void Compile(const char* code, const char* entryPoint, ShaderVersion shaderVersion, edt::SparseArrayView<const ShaderMacro> definitions =
+            edt::SparseArrayView<const ShaderMacro>()) {
+            CallAndRethrowM + [&] {
+                bytecode = CompileShaderToBlob(code, entryPoint, shaderType, shaderVersion, definitions);
+            };
+        }
+
+        void Create(ID3D11Device* device) {
+            CallAndRethrowM + [&] {
+                shader = Traits::Create(device,
+                    bytecode->GetBufferPointer(),
+                    bytecode->GetBufferSize(),
+                    nullptr);
+            };
+        }
+
+        ComPtr<ID3D10Blob> bytecode;
+        ComPtr<Interface> shader;
+    };
 }

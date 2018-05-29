@@ -26,8 +26,8 @@ namespace keng::graphics
         CallAndRethrowM + [&] {
             std::vector<D3D11_INPUT_ELEMENT_DESC> layouts;
             edt::ThrowIfFailed(vs != nullptr, "vertex shader is not initialized");
-            vs->m_impl.ReflectInputLayout(layouts);
-            layout = device->CreateInputLayout(edt::MakeArrayView(layouts), vs->m_impl.bytecode.Get());
+            vs->ReflectInputLayout(layouts);
+            layout = device->CreateInputLayout(edt::MakeArrayView(layouts), vs->bytecode.Get());
         };
     }
 }

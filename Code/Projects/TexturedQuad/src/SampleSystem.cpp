@@ -39,18 +39,8 @@ namespace textured_quad_sample
         };
 
         template<typename T>
-        edt::geom::Matrix<T, 4, 4> MakeIdentityMatrix() {
-            edt::geom::Matrix<T, 4, 4> m{};
-            m.At(0, 0) = T(1);
-            m.At(1, 1) = T(1);
-            m.At(2, 2) = T(1);
-            m.At(3, 3) = T(1);
-            return m;
-        }
-
-        template<typename T>
         edt::geom::Matrix<T, 4, 4> MakeTranslationMatrix(edt::geom::Vector<T, 3> vec) {
-            auto m = MakeIdentityMatrix<T>();
+            auto m = edt::geom::Matrix<T, 4, 4>::Identity();
 
             m.At(3, 0) = vec.Elem(0);
             m.At(3, 1) = vec.Elem(1);

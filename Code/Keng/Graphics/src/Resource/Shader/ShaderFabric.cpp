@@ -36,7 +36,7 @@ namespace keng::graphics
         DevicePtr device;
         ShaderTemplatePtr shaderTemplate;
         std::string_view entryPoint;
-        std::vector<d3d_tools::ShaderMacro> definitions;
+        std::vector<ShaderMacro> definitions;
 
         resource::IResourcePtr Compile() {
             switch (shaderTemplate->type) {
@@ -54,8 +54,8 @@ namespace keng::graphics
         template<ShaderType st>
         core::Ptr<Shader<st>> Compile() {
             auto result = core::Ptr<Shader<st>>::MakeInstance();
-            result->m_impl.Compile(shaderTemplate->code.data(), entryPoint.data(), ShaderVersion::_5_0, edt::MakeArrayView(definitions));
-            result->m_impl.Create(device->GetDevice().Get());
+            result->Compile(shaderTemplate->code.data(), entryPoint.data(), ShaderVersion::_5_0, edt::MakeArrayView(definitions));
+            result->Create(device->GetDevice().Get());
             return result;
         }
     };
@@ -83,7 +83,7 @@ namespace keng::graphics
             shaderCompiler.entryPoint = info.entryPoint;
             shaderCompiler.definitions.reserve(info.definitions.size());
             for (auto& def : info.definitions) {
-                shaderCompiler.definitions.push_back(d3d_tools::ShaderMacro {
+                shaderCompiler.definitions.push_back(ShaderMacro {
                     def.name, def.value
                 });
             }

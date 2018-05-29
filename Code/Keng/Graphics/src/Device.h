@@ -31,7 +31,7 @@ namespace keng::graphics
                 using Traits = shader_details::ShaderTraits<shaderType>;
                 Traits::Set(
                     m_deviceContext.Get(),
-                    shader.m_impl.shader.Get(),
+                    shader.shader.Get(),
                     nullptr,
                     0);
             };
