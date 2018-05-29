@@ -1,21 +1,12 @@
-[submodule "Submodules/WinWrappers"]
-	path = Submodules/WinWrappers
-	url = https://github.com/Sunday111/WinWrappers-WinWrappers
-[submodule "Submodules/EverydayTools"]
-	path = Submodules/EverydayTools
-	url = https://github.com/Sunday111/EverydayTools
-[submodule "Submodules/SystemsApp"]
-	path = Submodules/SystemsApp
-	url = https://github.com/Sunday111/SystemsApp
-[submodule "Submodules/ResourceSystem"]
-	path = Submodules/ResourceSystem
-	url = https://github.com/Sunday111/SystemsApp-ResourceSystem
-[submodule "Submodules/WindowSystem"]
-	path = Submodules/WindowSystem
-	url = https://github.com/Sunday111/SystemsApp-WindowSystem
 [submodule "Submodules/googletest"]
 	path = Submodules/googletest
 	url = https://github.com/google/googletest
+[submodule "Submodules/EverydayTools"]
+	path = Submodules/EverydayTools
+	url = https://github.com/Sunday111/EverydayTools
 [submodule "Submodules/EverydayToolsTests"]
 	path = Submodules/EverydayToolsTests
 	url = https://github.com/Sunday111/EverydayToolsTests
+[submodule "Submodules/WinWrappers"]
+	path = Submodules/WinWrappers
+	url = https://github.com/Sunday111/WinWrappers-WinWrappers
