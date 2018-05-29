@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Keng/Graphics/FragmentFormat.h"
-#include "Keng/Graphics/Resource/ITexture.h"
+#include "Keng/GraphicsAPI/FragmentFormat.h"
+#include "Keng/GraphicsAPI/Resource/ITexture.h"
 
 namespace keng::graphics_api
 {

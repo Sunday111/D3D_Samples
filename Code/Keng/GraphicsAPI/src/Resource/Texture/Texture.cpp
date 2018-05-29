@@ -1,7 +1,7 @@
 #include "Resource/Texture/Texture.h"
 #include "Device.h"
 #include "D3D_11/EnumConverter.h"
-#include "Keng/Graphics/Resource/TextureParameters.h"
+#include "Keng/GraphicsAPI/Resource/TextureParameters.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 
 namespace keng::graphics_api

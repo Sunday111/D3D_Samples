@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keng/Graphics/FwdDecl.h"
+#include "Keng/GraphicsAPI/FwdDecl.h"
 
 namespace keng::graphics_api
 {

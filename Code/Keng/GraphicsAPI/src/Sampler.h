@@ -3,7 +3,7 @@
 #include "d3d11.h"
 #include "WinWrappers/ComPtr.h"
 #include "FwdDecl.h"
-#include "Keng/Graphics/ISampler.h"
+#include "Keng/GraphicsAPI/ISampler.h"
 
 namespace keng::graphics_api
 {

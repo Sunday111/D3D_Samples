@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Keng/Graphics/FwdDecl.h"
-#include "Keng/Graphics/IAnnotation.h"
+#include "Keng/GraphicsAPI/FwdDecl.h"
+#include "Keng/GraphicsAPI/IAnnotation.h"
 
 namespace keng::graphics_api
 {

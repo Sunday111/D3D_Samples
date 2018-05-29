@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Keng/Graphics/FwdDecl.h"
+#include "Keng/GraphicsAPI/FwdDecl.h"
 #include "EverydayTools/EnumFlag.h"
 #include "EverydayTools/Array/ArrayView.h"
-#include "Keng/Graphics/ShaderType.h"
+#include "Keng/GraphicsAPI/ShaderType.h"
 
 namespace keng::graphics_api
 {

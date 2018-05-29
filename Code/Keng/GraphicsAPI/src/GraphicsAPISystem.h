@@ -2,9 +2,9 @@
 
 #include "FwdDecl.h"
 #include "Keng/FileSystem/FwdDecl.h"
-#include "Keng/Graphics/IGraphicsListener.h"
-#include "Keng/Graphics/PrimitiveTopology.h"
-#include "Keng/Graphics/IGraphicsAPISystem.h"
+#include "Keng/GraphicsAPI/IGraphicsListener.h"
+#include "Keng/GraphicsAPI/PrimitiveTopology.h"
+#include "Keng/GraphicsAPI/IGraphicsAPISystem.h"
 #include "Device.h"
 
 namespace keng::graphics_api

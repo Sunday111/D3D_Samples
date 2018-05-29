@@ -1,5 +1,5 @@
 #include "Device.h"
-#include "Keng/Graphics/DeviceParameters.h"
+#include "Keng/GraphicsAPI/DeviceParameters.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "d3d11shader.h"

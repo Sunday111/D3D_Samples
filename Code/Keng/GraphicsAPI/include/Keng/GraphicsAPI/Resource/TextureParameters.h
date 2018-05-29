@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Keng/Graphics/TextureUsage.h"
-#include "Keng/Graphics/FragmentFormat.h"
-#include "Keng/Graphics/CpuAccessFlags.h"
+#include "Keng/GraphicsAPI/TextureUsage.h"
+#include "Keng/GraphicsAPI/FragmentFormat.h"
+#include "Keng/GraphicsAPI/CpuAccessFlags.h"
 
 namespace keng::graphics_api
 {

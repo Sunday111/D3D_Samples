@@ -57,7 +57,7 @@ namespace keng::graphics_api
     using IDevicePtr = core::Ptr<IDevice>;
 
     class IGraphicsAPISystem;
-    using IGraphicsSystemPtr = core::Ptr<IGraphicsAPISystem>;
+    using IGraphicsAPISystemPtr = core::Ptr<IGraphicsAPISystem>;
 
     class IFont;
     using IFontPtr = core::Ptr<IFont>;

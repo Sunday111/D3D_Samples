@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Keng/Graphics/FwdDecl.h"
-#include "Keng/Graphics/RenderTarget/SwapChainParameters.h"
+#include "Keng/GraphicsAPI/FwdDecl.h"
+#include "Keng/GraphicsAPI/RenderTarget/SwapChainParameters.h"
 
 namespace keng::graphics_api
 {

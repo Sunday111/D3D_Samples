@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Keng/Graphics/FwdDecl.h"
+#include "Keng/GraphicsAPI/FwdDecl.h"
 #include "Keng/Core/IRefCountObject.h"
-#include "Keng/Graphics/IDevice.h"
+#include "Keng/GraphicsAPI/IDevice.h"
 #include "WinWrappers/ComPtr.h"
 #include "WinWrappers/WinWrappers.h"
 #include "d3d11_1.h"

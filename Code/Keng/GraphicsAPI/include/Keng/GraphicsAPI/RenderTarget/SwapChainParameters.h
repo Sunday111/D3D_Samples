@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Keng/Graphics/FwdDecl.h"
-#include "Keng/Graphics/FragmentFormat.h"
+#include "Keng/GraphicsAPI/FwdDecl.h"
+#include "Keng/GraphicsAPI/FragmentFormat.h"
 #include <cstdint>
 
 namespace keng::graphics_api

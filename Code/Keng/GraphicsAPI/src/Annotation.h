@@ -1,7 +1,7 @@
 #pragma once
 
 #include "FwdDecl.h"
-#include "Keng/Graphics/IAnnotation.h"
+#include "Keng/GraphicsAPI/IAnnotation.h"
 #include "WinWrappers/ComPtr.h"
 #include "d3d11_1.h"
 

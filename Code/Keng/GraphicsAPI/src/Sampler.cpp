@@ -4,7 +4,7 @@
 #include "Device.h"
 #include "WinWrappers/WinWrappers.h"
 #include "D3D_11/EnumConverter.h"
-#include "Keng/Graphics/SamplerParameters.h"
+#include "Keng/GraphicsAPI/SamplerParameters.h"
 
 namespace keng::graphics_api
 {

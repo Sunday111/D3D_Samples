@@ -2,9 +2,9 @@
 
 #include "FwdDecl.h"
 #include <algorithm>
-#include "Keng/Graphics/Resource/ITexture.h"
+#include "Keng/GraphicsAPI/Resource/ITexture.h"
 #include "Resource/Texture/TextureView.h"
-#include "Keng/Graphics/Resource/TextureParameters.h"
+#include "Keng/GraphicsAPI/Resource/TextureParameters.h"
 
 namespace keng::graphics_api
 {

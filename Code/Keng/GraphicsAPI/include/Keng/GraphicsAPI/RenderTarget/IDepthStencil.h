@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keng/Graphics/FwdDecl.h"
+#include "Keng/GraphicsAPI/FwdDecl.h"
 #include "EverydayTools/EnumFlag.h"
 #include <cstdint>
 

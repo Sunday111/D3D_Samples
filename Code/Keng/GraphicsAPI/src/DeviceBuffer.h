@@ -1,6 +1,6 @@
 #include "FwdDecl.h"
-#include "Keng/Graphics/IDeviceBuffer.h"
-#include "Keng/Graphics/DeviceBufferMapper.h"
+#include "Keng/GraphicsAPI/IDeviceBuffer.h"
+#include "Keng/GraphicsAPI/DeviceBufferMapper.h"
 #include "d3d11.h"
 #include "WinWrappers/ComPtr.h"
 

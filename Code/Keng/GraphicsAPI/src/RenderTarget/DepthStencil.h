@@ -1,8 +1,8 @@
 #pragma once
 
 #include "FwdDecl.h"
-#include "Keng/Graphics/RenderTarget/IDepthStencil.h"
-#include "Keng/Graphics/Resource/ITexture.h"
+#include "Keng/GraphicsAPI/RenderTarget/IDepthStencil.h"
+#include "Keng/GraphicsAPI/Resource/ITexture.h"
 #include "Resource/Texture/TextureView.h"
 
 namespace keng::graphics_api

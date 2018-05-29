@@ -3,7 +3,7 @@
 #include "Keng/WindowSystem/IWindow.h"
 #include "D3D_11/EnumConverter.h"
 #include "Resource/Texture/Texture.h"
-#include "Keng/Graphics/RenderTarget/SwapChainParameters.h"
+#include "Keng/GraphicsAPI/RenderTarget/SwapChainParameters.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 
 namespace keng::graphics_api

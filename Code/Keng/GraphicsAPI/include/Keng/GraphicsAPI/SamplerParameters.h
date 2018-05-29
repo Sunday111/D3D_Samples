@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Keng/Graphics/FilteringMode.h"
-#include "Keng/Graphics/TextureAddressMode.h"
+#include "Keng/GraphicsAPI/FilteringMode.h"
+#include "Keng/GraphicsAPI/TextureAddressMode.h"
 
 namespace keng::graphics_api
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keng/Graphics/RenderTarget/ITextureRenderTarget.h"
+#include "Keng/GraphicsAPI/RenderTarget/ITextureRenderTarget.h"
 
 namespace keng::graphics_api
 {

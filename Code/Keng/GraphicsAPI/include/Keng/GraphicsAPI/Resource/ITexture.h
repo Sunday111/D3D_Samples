@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Keng/Graphics/FwdDecl.h"
-#include "Keng/Graphics/FragmentFormat.h"
-#include "Keng/Graphics/ShaderType.h"
+#include "Keng/GraphicsAPI/FwdDecl.h"
+#include "Keng/GraphicsAPI/FragmentFormat.h"
+#include "Keng/GraphicsAPI/ShaderType.h"
 
 namespace keng::graphics_api
 {

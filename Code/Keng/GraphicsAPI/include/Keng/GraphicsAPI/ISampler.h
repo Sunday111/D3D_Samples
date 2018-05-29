@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Keng/Core/IRefCountObject.h"
-#include "Keng/Graphics/ShaderType.h"
+#include "Keng/GraphicsAPI/ShaderType.h"
 
 namespace keng::graphics_api
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "FwdDecl.h"
-#include "Keng/Graphics/RenderTarget/IWindowRenderTarget.h"
+#include "Keng/GraphicsAPI/RenderTarget/IWindowRenderTarget.h"
 
 namespace keng::graphics_api
 {

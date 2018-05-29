@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Keng/Graphics/FwdDecl.h"
-#include "Keng/Graphics/IDeviceBuffer.h"
+#include "Keng/GraphicsAPI/FwdDecl.h"
+#include "Keng/GraphicsAPI/IDeviceBuffer.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 

@@ -2,11 +2,11 @@
 
 #include "FwdDecl.h"
 #include "d3d11.h"
-#include "Keng/Graphics/FragmentFormat.h"
-#include "Keng/Graphics/TextureAddressMode.h"
-#include "Keng/Graphics/FilteringMode.h"
-#include "Keng/Graphics/PrimitiveTopology.h"
-#include "Keng/Graphics/CpuAccessFlags.h"
+#include "Keng/GraphicsAPI/FragmentFormat.h"
+#include "Keng/GraphicsAPI/TextureAddressMode.h"
+#include "Keng/GraphicsAPI/FilteringMode.h"
+#include "Keng/GraphicsAPI/PrimitiveTopology.h"
+#include "Keng/GraphicsAPI/CpuAccessFlags.h"
 
 namespace keng::graphics_api::d3d
 {

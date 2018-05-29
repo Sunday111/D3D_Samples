@@ -3,7 +3,7 @@
 #include "FwdDecl.h"
 #include "d3d11.h"
 #include "WinWrappers/ComPtr.h"
-#include "Keng/Graphics/RenderTarget/ISwapChain.h"
+#include "Keng/GraphicsAPI/RenderTarget/ISwapChain.h"
 
 namespace keng::graphics_api
 {

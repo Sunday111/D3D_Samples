@@ -2,10 +2,10 @@
 
 #include "FwdDecl.h"
 #include "EverydayTools/Array/ArrayView.h"
-#include "Keng/Graphics/ShaderType.h"
+#include "Keng/GraphicsAPI/ShaderType.h"
 #include "d3d11_1.h"
 #include "d3dcompiler.h"
-#include "Keng/Graphics/ShaderType.h"
+#include "Keng/GraphicsAPI/ShaderType.h"
 #include "WinWrappers/ComPtr.h"
 
 namespace keng::graphics_api

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Keng/Graphics/FwdDecl.h"
+#include "Keng/GraphicsAPI/FwdDecl.h"
+#include "Keng/GraphicsAPI/PrimitiveTopology.h"
 #include "Keng/Core/ISystem.h"
-#include "Keng/Graphics/PrimitiveTopology.h"
 #include "EverydayTools/Array/ArrayView.h"
 
 namespace keng::graphics_api
