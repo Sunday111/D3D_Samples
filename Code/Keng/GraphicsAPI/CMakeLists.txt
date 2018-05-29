@@ -28,7 +28,6 @@ target_link_libraries(${keng_module_name} PUBLIC KengCore)
 target_link_libraries(${keng_module_name} PUBLIC KengFileSystem)
 target_link_libraries(${keng_module_name} PRIVATE d3d11.lib DXGI.lib D3DCompiler.lib)
 target_link_libraries(${keng_module_name} PRIVATE WinWrappers)
-target_link_libraries(${keng_module_name} PRIVATE FreeType)
 
 if(${KENG_KengMemory})
     target_link_libraries(${keng_module_name} PRIVATE KengMemory)
