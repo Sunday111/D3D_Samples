@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.5.1)
 
 add_subdirectory(Yasli)
 add_subdirectory(WinWrappers)
-add_subdirectory(D3D_Tools)
 
 ####################################################
 # Google tests

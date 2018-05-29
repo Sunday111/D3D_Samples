@@ -2,8 +2,9 @@
 
 Dependencies:
  - [EverydayTools](https://github.com/Sunday111/EverydayTools)
+ - [EverydayToolsTests](https://github.com/Sunday111/EverydayToolsTests)
  - [WinWrappers](https://github.com/Sunday111/WinWrappers-WinWrappers)
- - [D3D_Tools](https://github.com/Sunday111/D3D_Tools)
+ - [Google Tests](https://github.com/google/googletest)
  
  Cloning project:
 ```
