@@ -45,7 +45,7 @@ namespace keng::graphics
                     return *it;
                 }
 
-                auto result = core::Ptr<TextureView<type>>::MakeInstance(m_device->GetDevice().Get(), m_texture.Get(), (d3d_tools::TextureFormat)format);
+                auto result = core::Ptr<TextureView<type>>::MakeInstance(m_device->GetDevice().Get(), m_texture.Get(), format);
                 views.insert(it, result);
                 return result;
             };

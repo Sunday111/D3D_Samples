@@ -2,7 +2,7 @@
 
 #include "FwdDecl.h"
 #include "d3d11.h"
-#include "D3D_Tools/Texture.h"
+#include "WinWrappers/ComPtr.h"
 #include "Keng/Graphics/RenderTarget/ISwapChain.h"
 
 namespace keng::graphics

@@ -14,12 +14,12 @@ namespace keng::graphics
         DepthStencil(Device& device, const DepthStencilParameters&);
         ~DepthStencil();
         virtual void Clear(DepthStencilClearFlags flags, float depth, uint8_t stencil) override;
-        core::Ptr<TextureView<d3d_tools::ResourceViewType::DepthStencil>> GetView() const;
+        core::Ptr<TextureView<ResourceViewType::DepthStencil>> GetView() const;
 
     private:
         DevicePtr m_device;
         TexturePtr m_texture;
-        core::Ptr<TextureView<d3d_tools::ResourceViewType::DepthStencil>> m_dsv;
+        core::Ptr<TextureView<ResourceViewType::DepthStencil>> m_dsv;
     };
 }
 
