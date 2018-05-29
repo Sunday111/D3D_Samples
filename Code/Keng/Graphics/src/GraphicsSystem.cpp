@@ -106,6 +106,7 @@ namespace keng::graphics
 
             {// Find systems
                 m_resourceSystem = m_app->FindSystem<resource::IResourceSystem>();
+                m_api = m_app->FindSystem<graphics_api::IGraphicsAPISystem>();
             }
 
             auto params = ReadDefaultParams();
@@ -199,7 +200,8 @@ namespace keng::graphics
             std::string_view dependencies[] =
             {
                 resource::IResourceSystem::SystemName(),
-                window_system::IWindowSystem::SystemName()
+                window_system::IWindowSystem::SystemName(),
+                graphics_api::IGraphicsAPISystem::SystemName()
             };
 
             for (auto& systemName : dependencies) {

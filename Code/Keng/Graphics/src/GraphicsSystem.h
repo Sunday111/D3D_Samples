@@ -5,6 +5,7 @@
 #include "Keng/Graphics/IGraphicsListener.h"
 #include "Keng/Graphics/PrimitiveTopology.h"
 #include "Keng/Graphics/IGraphicsSystem.h"
+#include "Keng/GraphicsAPI/IGraphicsAPISystem.h"
 #include "Device.h"
 
 namespace keng::graphics
@@ -43,5 +44,6 @@ namespace keng::graphics
         core::Ptr<Device> m_device;
 
         resource::IResourceSystemPtr m_resourceSystem;
+        graphics_api::IGraphicsAPISystemPtr m_api;
     };
 }
