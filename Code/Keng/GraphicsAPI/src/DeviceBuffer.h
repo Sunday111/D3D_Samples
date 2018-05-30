@@ -9,7 +9,7 @@ namespace keng::graphics_api
     class DeviceBuffer : public core::RefCountImpl<IDeviceBuffer>
     {
     public:
-        DeviceBuffer(Device& device, const DeviceBufferParams& createParams, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
+        DeviceBuffer(Device& device, const DeviceBufferParameters& createParams, edt::DenseArrayView<const uint8_t> data = edt::DenseArrayView<const uint8_t>());
 
         // IDeviceBuffer
         virtual void SetBufferData(edt::DenseArrayView<const uint8_t> data) override;
@@ -25,6 +25,6 @@ namespace keng::graphics_api
     private:
         DevicePtr m_device;
         ComPtr<ID3D11Buffer> m_buffer;
-        DeviceBufferParams m_params;
+        DeviceBufferParameters m_params;
     };
 }

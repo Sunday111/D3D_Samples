@@ -3,10 +3,10 @@
 #include "FwdDecl.h"
 #include "Keng/FileSystem/FwdDecl.h"
 #include "Keng/Graphics/IGraphicsListener.h"
-#include "Keng/Graphics/PrimitiveTopology.h"
+#include "Keng/GraphicsAPI/PrimitiveTopology.h"
 #include "Keng/Graphics/IGraphicsSystem.h"
 #include "Keng/GraphicsAPI/IGraphicsAPISystem.h"
-#include "Device.h"
+#include "Keng/GraphicsAPI/IDevice.h"
 
 namespace keng::graphics
 {
@@ -24,24 +24,24 @@ namespace keng::graphics
         virtual void Shutdown() override;
 
         // IGraphicsSystem
-        virtual IWindowRenderTargetPtr CreateWindowRenderTarget(const WindowRenderTargetParameters& params) override;
-        virtual ITextureRenderTargetPtr CreateTextureRenderTarget(const TextureRenderTargetParameters& params) override;
-        virtual IDepthStencilPtr CreateDepthStencil(const DepthStencilParameters& params) override;
-        virtual IDeviceBufferPtr CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data) override;
+        virtual graphics_api::IWindowRenderTargetPtr CreateWindowRenderTarget(const graphics_api::WindowRenderTargetParameters& params) override;
+        virtual graphics_api::ITextureRenderTargetPtr CreateTextureRenderTarget(const graphics_api::TextureRenderTargetParameters& params) override;
+        virtual graphics_api::IDepthStencilPtr CreateDepthStencil(const graphics_api::DepthStencilParameters& params) override;
+        virtual graphics_api::IDeviceBufferPtr CreateDeviceBuffer(const graphics_api::DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) override;
         virtual IDevicePtr GetDevice() override;
-        virtual ISwapChainPtr CreateSwapChain(const SwapChainParameters& params) override;
-        virtual ITexturePtr CreateTexture(const TextureParameters& params) override;
-        virtual ISamplerPtr CreateSampler(const SamplerParameters& params) override;
-        virtual void SetTopology(PrimitiveTopology topo) override;
+        virtual graphics_api::ISwapChainPtr CreateSwapChain(const graphics_api::SwapChainParameters& params) override;
+        virtual ITexturePtr CreateTexture(const graphics_api::TextureParameters& params) override;
+        virtual graphics_api::ISamplerPtr CreateSampler(const graphics_api::SamplerParameters& params) override;
+        virtual void SetTopology(graphics_api::PrimitiveTopology topo) override;
         virtual void Draw(size_t vertices, size_t offset) override;
-        virtual void SetViewport(const ViewportParameters&) override;
-        virtual IAnnotationPtr CreateAnnotation() override;
+        virtual void SetViewport(const graphics_api::ViewportParameters&) override;
+        virtual graphics_api::IAnnotationPtr CreateAnnotation() override;
 
 
     private:
         bool m_fullscreen = false;
         core::IApplicationPtr m_app;
-        core::Ptr<Device> m_device;
+        DevicePtr m_device;
 
         resource::IResourceSystemPtr m_resourceSystem;
         graphics_api::IGraphicsAPISystemPtr m_api;

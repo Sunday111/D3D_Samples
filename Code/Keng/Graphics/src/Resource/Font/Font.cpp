@@ -6,7 +6,7 @@
 #include "Resource/Font/FreeType/Face.h"
 #include "GlyphAtlas.h"
 #include "Resource/Texture/Texture.h"
-#include "Keng/Graphics/IDeviceBuffer.h"
+#include "Keng/GraphicsAPI/IDeviceBuffer.h"
 
 namespace keng::graphics
 {
@@ -66,10 +66,10 @@ namespace keng::graphics
 
     GlyphAtlasPtr Font::FindAtlas(IDevice& device) const {
         return CallAndRethrowM + [&]() -> GlyphAtlasPtr {
-            IDevicePtr devicePtr = &device;
+            auto api_device = device.GetApiDevice();
             for (auto& atlas : m_atlases) {
                 auto tex = atlas->GetTexture();
-                if (devicePtr == tex->GetDevice()) {
+                if (api_device == tex->GetApiTexture()->GetDevice()) {
                     return atlas;
                 }
             }

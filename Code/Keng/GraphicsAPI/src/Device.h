@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Keng/GraphicsAPI/FwdDecl.h"
-#include "Keng/Core/IRefCountObject.h"
+#include "Keng/GraphicsAPI/Shader/ShaderType.h"
 #include "Keng/GraphicsAPI/IDevice.h"
+#include "Keng/Core/IRefCountObject.h"
 #include "WinWrappers/ComPtr.h"
 #include "WinWrappers/WinWrappers.h"
 #include "d3d11_1.h"
-#include "Resource/Shader/Shader.h"
 #include "Resource/Texture/TextureView.h"
 #include "EverydayTools/Array/ArrayView.h"
 
@@ -18,23 +18,15 @@ namespace keng::graphics_api
     public:
         Device(const DeviceParameters& parameters);
 
+        // IDevice
+        virtual ITexturePtr CreateTexture(const TextureParameters& params) override;
+        virtual IShaderPtr CreateShader(ShaderType type, const ShaderParameters& parameters) override;
         void* GetNativeDevice() const override;
         void* GetNativeContext() const override;
+        // ~IDevice
 
         const ComPtr<ID3D11Device>& GetDevice() const;
         const ComPtr<ID3D11DeviceContext>& GetContext() const;
-
-        template<ShaderType shaderType>
-        void SetShader(Shader<shaderType>& shader) {
-            CallAndRethrowM + [&] {
-                using Traits = shader_details::ShaderTraits<shaderType>;
-                Traits::Set(
-                    m_deviceContext.Get(),
-                    shader.shader.Get(),
-                    nullptr,
-                    0);
-            };
-        }
 
         void SetRenderTarget(TextureView<ResourceViewType::RenderTarget>& rtv, TextureView<ResourceViewType::DepthStencil>* dsv = nullptr);
         void SetViewports(edt::DenseArrayView<const D3D11_VIEWPORT> viewports);

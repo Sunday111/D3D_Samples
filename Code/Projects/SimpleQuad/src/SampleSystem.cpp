@@ -5,16 +5,16 @@
 #include "Keng/Core/IApplication.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
-#include "Keng/Graphics/Resource/TextureParameters.h"
-#include "Keng/Graphics/RenderTarget/IWindowRenderTarget.h"
-#include "Keng/Graphics/RenderTarget/WindowRenderTargetParameters.h"
-#include "Keng/Graphics/RenderTarget/ITextureRenderTarget.h"
-#include "Keng/Graphics/RenderTarget/TextureRenderTargetParameters.h"
-#include "Keng/Graphics/RenderTarget/IDepthStencil.h"
-#include "Keng/Graphics/RenderTarget/DepthStencilParameters.h"
-#include "Keng/Graphics/DeviceBufferMapper.h"
-#include "Keng/Graphics/ViewportParameters.h"
-#include "Keng/Graphics/ScopedAnnotation.h"
+#include "Keng/GraphicsAPI/Resource/TextureParameters.h"
+#include "Keng/GraphicsAPI/RenderTarget/IWindowRenderTarget.h"
+#include "Keng/GraphicsAPI/RenderTarget/WindowRenderTargetParameters.h"
+#include "Keng/GraphicsAPI/RenderTarget/ITextureRenderTarget.h"
+#include "Keng/GraphicsAPI/RenderTarget/TextureRenderTargetParameters.h"
+#include "Keng/GraphicsAPI/RenderTarget/IDepthStencil.h"
+#include "Keng/GraphicsAPI/RenderTarget/DepthStencilParameters.h"
+#include "Keng/GraphicsAPI/DeviceBufferMapper.h"
+#include "Keng/GraphicsAPI/ViewportParameters.h"
+#include "Keng/GraphicsAPI/ScopedAnnotation.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
@@ -77,7 +77,7 @@ namespace simple_quad_sample
                 angle += delta_angle;
 
                 Annotate(m_annotation, L"Move triangle", [&] {
-                    DeviceBufferMapper mapper;
+                    graphics_api::DeviceBufferMapper mapper;
                     m_constantBuffer->MakeMapper(mapper);
                     auto cbView = mapper.GetTypedView<CB>();
                     edt::geom::Vector<float, 3> t;
@@ -88,21 +88,21 @@ namespace simple_quad_sample
                 });
 
                 Annotate(m_annotation, L"Draw triangle", [&] {
-                    VertexBufferAssignParameters vbAssignParams{};
+                    graphics_api::VertexBufferAssignParameters vbAssignParams{};
                     vbAssignParams.slot = 0;
                     vbAssignParams.stride = sizeof(Vertex);
 
-                    ConstantBufferAssignParameters cbAssignParams{};
+                    graphics_api::ConstantBufferAssignParameters cbAssignParams{};
                     cbAssignParams.slot = 0;
                     cbAssignParams.stride = sizeof(CB);
-                    cbAssignParams.shaderType = ShaderType::Vertex;
+                    cbAssignParams.shaderType = graphics_api::ShaderType::Vertex;
 
                     m_textureRT->Clear(clearColor);
-                    m_depthStencil->Clear(DepthStencilClearFlags::ClearDepth | DepthStencilClearFlags::ClearStencil, 1.0f, 0);
+                    m_depthStencil->Clear(graphics_api::DepthStencilClearFlags::ClearDepth | graphics_api::DepthStencilClearFlags::ClearStencil, 1.0f, 0);
                     m_textureRT->AssignToPipeline(m_depthStencil);
                     m_effect->AssignToPipeline();
                     m_vertexBuffer->AssignToPipeline(vbAssignParams);
-                    m_graphicsSystem->SetTopology(PrimitiveTopology::TriangleStrip);
+                    m_graphicsSystem->SetTopology(graphics_api::PrimitiveTopology::TriangleStrip);
                     m_constantBuffer->AssignToPipeline(cbAssignParams);
                     m_graphicsSystem->Draw(4, 0);
                 });
@@ -150,7 +150,7 @@ namespace simple_quad_sample
             window->GetClientSize(&w, &h);
 
             {// Initialize viewport
-                ViewportParameters v{};
+                graphics_api::ViewportParameters v{};
                 v.Position.rx() = 0.f;
                 v.Position.ry() = 0.f;
                 v.Size.rx() = edt::CheckedCast<float>(w);
@@ -159,34 +159,34 @@ namespace simple_quad_sample
             }
 
             {// Create window render target
-                WindowRenderTargetParameters window_rt_params;
-                window_rt_params.swapChain.format = FragmentFormat::R8_G8_B8_A8_UNORM;
+                graphics_api::WindowRenderTargetParameters window_rt_params;
+                window_rt_params.swapChain.format = graphics_api::FragmentFormat::R8_G8_B8_A8_UNORM;
                 window_rt_params.swapChain.window = window;
                 window_rt_params.swapChain.buffers = 2;
                 m_windowRT = m_graphicsSystem->CreateWindowRenderTarget(window_rt_params);
             }
 
             {// Create texture render target
-                TextureRenderTargetParameters texture_rt_params{};
-                TextureParameters rtTextureParams{};
-                rtTextureParams.format = FragmentFormat::R8_G8_B8_A8_UNORM;
+                graphics_api::TextureRenderTargetParameters texture_rt_params{};
+                graphics_api::TextureParameters rtTextureParams{};
+                rtTextureParams.format = graphics_api::FragmentFormat::R8_G8_B8_A8_UNORM;
                 rtTextureParams.width = w;
                 rtTextureParams.height = h;
-                rtTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::RenderTarget;
-                texture_rt_params.renderTarget = m_graphicsSystem->CreateTexture(rtTextureParams);
+                rtTextureParams.usage = graphics_api::TextureUsage::ShaderResource | graphics_api::TextureUsage::RenderTarget;
+                texture_rt_params.renderTarget = m_graphicsSystem->CreateTexture(rtTextureParams)->GetApiTexture();
                 m_textureRT = m_graphicsSystem->CreateTextureRenderTarget(texture_rt_params);
             }
 
             {// Create depth stencil
-                DepthStencilParameters depthStencilParams{};
-                TextureParameters dsTextureParams{};
-                dsTextureParams.format = FragmentFormat::R24_G8_TYPELESS;
+                graphics_api::DepthStencilParameters depthStencilParams{};
+                graphics_api::TextureParameters dsTextureParams{};
+                dsTextureParams.format = graphics_api::FragmentFormat::R24_G8_TYPELESS;
                 dsTextureParams.width = w;
                 dsTextureParams.height = h;
-                dsTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::DepthStencil;
+                dsTextureParams.usage = graphics_api::TextureUsage::ShaderResource | graphics_api::TextureUsage::DepthStencil;
 
-                depthStencilParams.format = FragmentFormat::D24_UNORM_S8_UINT;
-                depthStencilParams.texture = m_graphicsSystem->CreateTexture(dsTextureParams);
+                depthStencilParams.format = graphics_api::FragmentFormat::D24_UNORM_S8_UINT;
+                depthStencilParams.texture = m_graphicsSystem->CreateTexture(dsTextureParams)->GetApiTexture();
                 m_depthStencil = m_graphicsSystem->CreateDepthStencil(depthStencilParams);
             }
 
@@ -222,11 +222,11 @@ namespace simple_quad_sample
                 vertices[3].pos.rw() = +1.00f; /**/ vertices[3].col.rw() = 1.0f; /**/
                 /////////////////////////////////////////////////////////////////////
 
-                graphics::DeviceBufferParams params;
+                graphics_api::DeviceBufferParameters params;
                 params.size = sizeof(vertices);
-                params.usage = graphics::DeviceBufferUsage::Dynamic;
-                params.bindFlags = graphics::DeviceBufferBindFlags::VertexBuffer;
-                params.accessFlags = graphics::DeviceAccessFlags::Write;
+                params.usage = graphics_api::DeviceBufferUsage::Dynamic;
+                params.bindFlags = graphics_api::DeviceBufferBindFlags::VertexBuffer;
+                params.accessFlags = graphics_api::DeviceAccessFlags::Write;
                 m_vertexBuffer = m_graphicsSystem->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
             }
 
@@ -235,11 +235,11 @@ namespace simple_quad_sample
                 edt::geom::Vector<float, 3> t {};
                 constantBufferInitData.transform = MakeTranslationMatrix(t);
 
-                graphics::DeviceBufferParams params;
+                graphics_api::DeviceBufferParameters params;
                 params.size = sizeof(constantBufferInitData);
-                params.usage = graphics::DeviceBufferUsage::Dynamic;
-                params.bindFlags = graphics::DeviceBufferBindFlags::ConstantBuffer;
-                params.accessFlags = graphics::DeviceAccessFlags::Write;
+                params.usage = graphics_api::DeviceBufferUsage::Dynamic;
+                params.bindFlags = graphics_api::DeviceBufferBindFlags::ConstantBuffer;
+                params.accessFlags = graphics_api::DeviceAccessFlags::Write;
                 m_constantBuffer = m_graphicsSystem->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
             }
         };

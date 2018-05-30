@@ -42,20 +42,21 @@ namespace keng::graphics
 
             {
                 if (!effectInfo.vs.empty()) {
-                    result->vs = std::dynamic_pointer_cast<Shader<ShaderType::Vertex>>(resourceSystem.GetResource(effectInfo.vs.data(), device));
+                    auto base = resourceSystem.GetResource(effectInfo.vs.data(), device);
+                    result->vs = std::dynamic_pointer_cast<Shader<graphics_api::ShaderType::Vertex>>(base);
                     anyShader = true;
                 }
             }
 
             {
                 if (!effectInfo.fs.empty()) {
-                    result->fs = std::dynamic_pointer_cast<Shader<ShaderType::Fragment>>(resourceSystem.GetResource(effectInfo.fs.data(), device));
+                    auto base = resourceSystem.GetResource(effectInfo.fs.data(), device);
+                    result->fs = std::dynamic_pointer_cast<Shader<graphics_api::ShaderType::Fragment>>(base);
                     anyShader = true;
                 }
             }
 
             edt::ThrowIfFailed(anyShader, "Invalid effect file (0 shaders)");
-            result->device = device;
             return result;
         };
     }

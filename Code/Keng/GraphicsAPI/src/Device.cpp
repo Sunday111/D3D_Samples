@@ -4,6 +4,8 @@
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "d3d11shader.h"
 #include "d3dcompiler.h"
+#include "Resource/Texture/Texture.h"
+#include "Shader/Shader.h"
 
 namespace keng::graphics_api
 {
@@ -28,6 +30,30 @@ namespace keng::graphics_api
                 m_device.Receive(),
                 nullptr,
                 m_deviceContext.Receive()));
+        };
+    }
+
+    ITexturePtr Device::CreateTexture(const TextureParameters& params) {
+        return CallAndRethrowM + [&] {
+            return TexturePtr::MakeInstance(*this, params);
+        };
+    }
+
+    IShaderPtr Device::CreateShader(ShaderType type, const ShaderParameters & parameters) {
+        return CallAndRethrowM + [&] {
+            auto ver = ShaderVersion::_5_0;
+            IShaderPtr result;
+            switch (type) {
+            case ShaderType::Vertex:
+                result = core::Ptr<Shader<ShaderType::Vertex>>::MakeInstance(*this, ver, parameters);
+                break;
+            case ShaderType::Fragment:
+                result = core::Ptr<Shader<ShaderType::Fragment>>::MakeInstance(*this, ver, parameters);
+                break;
+            }
+
+            edt::ThrowIfFailed(result != nullptr, "Not implemented for this shader type");
+            return result;
         };
     }
 

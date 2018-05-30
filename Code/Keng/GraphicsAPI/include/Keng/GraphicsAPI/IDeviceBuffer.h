@@ -3,7 +3,7 @@
 #include "Keng/GraphicsAPI/FwdDecl.h"
 #include "EverydayTools/EnumFlag.h"
 #include "EverydayTools/Array/ArrayView.h"
-#include "Keng/GraphicsAPI/ShaderType.h"
+#include "Keng/GraphicsAPI/Shader/ShaderType.h"
 
 namespace keng::graphics_api
 {
@@ -43,7 +43,7 @@ namespace keng::graphics_api
 
     EDT_ENUM_FLAG_OPERATORS(DeviceAccessFlags);
 
-    class DeviceBufferParams
+    class DeviceBufferParameters
     {
     public:
         size_t size = 0;

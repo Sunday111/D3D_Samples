@@ -7,38 +7,40 @@
 #include "Keng/WindowSystem/IWindow.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 
-#include "keng/Graphics/DeviceParameters.h"
-#include "keng/Graphics/Resource/TextureParameters.h"
+#include "keng/GraphicsAPI/DeviceParameters.h"
+#include "keng/GraphicsAPI/Resource/TextureParameters.h"
 #include "Resource/Texture/Texture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "Resource/Effect/Effect.h"
 #include "Resource/ResourceFabricRegisterer.h"
 
-#include "Keng/Graphics/RenderTarget/WindowRenderTargetParameters.h"
-#include "RenderTarget/WindowRenderTarget.h"
-#include "Keng/Graphics/RenderTarget/TextureRenderTargetParameters.h"
-#include "RenderTarget/TextureRenderTarget.h"
-#include "Keng/Graphics/RenderTarget/DepthStencilParameters.h"
-#include "RenderTarget/DepthStencil.h"
-#include "Keng/Graphics/RenderTarget/DepthStencilParameters.h"
-#include "RenderTarget/DepthStencil.h"
-#include "Keng/Graphics/RenderTarget/SwapChainParameters.h"
-#include "RenderTarget/SwapChain.h"
-#include "Keng/Graphics/ViewportParameters.h"
+#include "Keng/GraphicsAPI/RenderTarget/WindowRenderTargetParameters.h"
+#include "Keng/GraphicsAPI/RenderTarget/IWindowRenderTarget.h"
+#include "Keng/GraphicsAPI/RenderTarget/TextureRenderTargetParameters.h"
+#include "Keng/GraphicsAPI/RenderTarget/ITextureRenderTarget.h"
+#include "Keng/GraphicsAPI/RenderTarget/DepthStencilParameters.h"
+#include "Keng/GraphicsAPI/RenderTarget/IDepthStencil.h"
+#include "Keng/GraphicsAPI/RenderTarget/DepthStencilParameters.h"
+#include "Keng/GraphicsAPI/RenderTarget/IDepthStencil.h"
+#include "Keng/GraphicsAPI/RenderTarget/SwapChainParameters.h"
+#include "Keng/GraphicsAPI/RenderTarget/ISwapChain.h"
+#include "Keng/GraphicsAPI/ViewportParameters.h"
 
-#include "Annotation.h"
+#include "Keng/GraphicsAPI/IAnnotation.h"
 
-#include "Sampler.h"
+#include "Keng/GraphicsAPI/ISampler.h"
+
+#include "Device.h"
+#include "Resource/Texture/Texture.h"
 
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 #include "EverydayTools/Geom/Vector.h"
-#include "DeviceBuffer.h"
+#include "Keng/GraphicsAPI/IDeviceBuffer.h"
 
 #include <algorithm>
 
 #include "yasli/JSONIArchive.h"
-#include "D3D_11/EnumConverter.h"
 #include "Keng/Core/IApplication.h"
 
 namespace keng::graphics
@@ -116,12 +118,8 @@ namespace keng::graphics
                 fabricRegisterer.Register(m_resourceSystem);
             }
 
-            {// Initialize device
-                DeviceParameters deviceParams;
-                deviceParams.debugDevice = params.debugDevice;
-                deviceParams.noDeviceMultithreading = !params.deviceMultithreading;
-                m_device = DevicePtr::MakeInstance(deviceParams);
-            }
+            auto apiDevice = m_api->GetDevice();
+            m_device = DevicePtr::MakeInstance(*apiDevice);
         };
     }
 
@@ -132,63 +130,52 @@ namespace keng::graphics
     void GraphicsSystem::Shutdown() {
     }
 
-    IWindowRenderTargetPtr GraphicsSystem::CreateWindowRenderTarget(const WindowRenderTargetParameters& params) {
-        return WindowRenderTargetPtr::MakeInstance(*m_device, params);
+    graphics_api::IWindowRenderTargetPtr GraphicsSystem::CreateWindowRenderTarget(const graphics_api::WindowRenderTargetParameters& params) {
+        return m_api->CreateWindowRenderTarget(params);
     }
 
-    ITextureRenderTargetPtr GraphicsSystem::CreateTextureRenderTarget(const TextureRenderTargetParameters& params) {
-        return TextureRenderTargetPtr::MakeInstance(*m_device, params);
+    graphics_api::ITextureRenderTargetPtr GraphicsSystem::CreateTextureRenderTarget(const graphics_api::TextureRenderTargetParameters& params) {
+        return m_api->CreateTextureRenderTarget(params);
     }
 
-    IDepthStencilPtr GraphicsSystem::CreateDepthStencil(const DepthStencilParameters& params) {
-        return DepthStencilPtr::MakeInstance(*m_device, params);
+    graphics_api::IDepthStencilPtr GraphicsSystem::CreateDepthStencil(const graphics_api::DepthStencilParameters& params) {
+        return m_api->CreateDepthStencil(params);
     }
 
-    core::Ptr<IDevice> GraphicsSystem::GetDevice() {
+    IDevicePtr GraphicsSystem::GetDevice() {
         return m_device;
     }
 
-    IDeviceBufferPtr GraphicsSystem::CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data) {
-        return CallAndRethrowM + [&] {
-            return DeviceBufferPtr::MakeInstance(*m_device, params, data);
-        };
+    graphics_api::IDeviceBufferPtr GraphicsSystem::CreateDeviceBuffer(const graphics_api::DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) {
+        return m_api->CreateDeviceBuffer(params, data);
     }
 
-    ISwapChainPtr GraphicsSystem::CreateSwapChain(const SwapChainParameters& params) {
-        return SwapChainPtr::MakeInstance(*m_device, params);
+    graphics_api::ISwapChainPtr GraphicsSystem::CreateSwapChain(const graphics_api::SwapChainParameters& params) {
+        return m_api->CreateSwapChain(params);
     }
 
-    ITexturePtr GraphicsSystem::CreateTexture(const TextureParameters& params) {
-        auto tex = TexturePtr::MakeInstance(*m_device, params);
-        m_resourceSystem->AddRuntimeResource(tex, m_device);
-        return tex;
+    ITexturePtr GraphicsSystem::CreateTexture(const graphics_api::TextureParameters& params) {
+        return m_device->CreateRuntimeTexture(params, *m_resourceSystem);
     }
 
-    ISamplerPtr GraphicsSystem::CreateSampler(const SamplerParameters& params) {
-        return SamplerPtr::MakeInstance(*m_device, params);
+    graphics_api::ISamplerPtr GraphicsSystem::CreateSampler(const graphics_api::SamplerParameters& params) {
+        return m_api->CreateSampler(params);
     }
 
-    void GraphicsSystem::SetTopology(PrimitiveTopology topo) {
-        m_device->GetContext()->IASetPrimitiveTopology(d3d::ConvertTopology(topo));
+    void GraphicsSystem::SetTopology(graphics_api::PrimitiveTopology topo) {
+        m_api->SetTopology(topo);
     }
 
     void GraphicsSystem::Draw(size_t vertices, size_t offset) {
-        m_device->GetContext()->Draw(
-            edt::CheckedCast<uint32_t>(vertices),
-            edt::CheckedCast<uint32_t>(offset));
+        m_api->Draw(vertices, offset);
     }
 
-    void GraphicsSystem::SetViewport(const ViewportParameters& p) {
-        D3D11_VIEWPORT v[1]{};
-        v[0].TopLeftX = p.Position.x();
-        v[0].TopLeftY = p.Position.y();
-        v[0].Width = p.Size.x();
-        v[0].Height = p.Size.y();
-        m_device->SetViewports(edt::MakeArrayView(v));
+    void GraphicsSystem::SetViewport(const graphics_api::ViewportParameters& p) {
+        m_api->SetViewport(p);
     }
 
-    IAnnotationPtr GraphicsSystem::CreateAnnotation() {
-        return AnnotationPtr::MakeInstance(*m_device);
+    graphics_api::IAnnotationPtr GraphicsSystem::CreateAnnotation() {
+        return m_api->CreateAnnotation();
     }
 
     const char* GraphicsSystem::GetSystemName() const {

@@ -14,20 +14,15 @@ namespace keng::graphics
 
     void Effect::AssignToPipeline() {
         CallAndRethrowM + [&] {
-            if (vs)
-                device->SetShader(*vs);
-            if (fs)
-                device->SetShader(*fs);
-            device->GetContext()->IASetInputLayout(layout.Get());
+            vs->m_impl->AssignToPipeline();
+            fs->m_impl->AssignToPipeline();
+            m_inputLayout->AssignToPipeline();
         };
     }
 
     void Effect::InitDefaultInputLayout() {
         CallAndRethrowM + [&] {
-            std::vector<D3D11_INPUT_ELEMENT_DESC> layouts;
-            edt::ThrowIfFailed(vs != nullptr, "vertex shader is not initialized");
-            vs->ReflectInputLayout(layouts);
-            layout = device->CreateInputLayout(edt::MakeArrayView(layouts), vs->bytecode.Get());
+            m_inputLayout = vs->m_impl->MakeDefaultInputLayout();
         };
     }
 }

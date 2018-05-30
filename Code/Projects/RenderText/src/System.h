@@ -3,8 +3,8 @@
 #include "EverydayTools/Geom/Vector.h"
 #include "Keng/Graphics/FwdDecl.h"
 #include "Keng/Core/ISystem.h"
-#include "Keng/Graphics/PrimitiveTopology.h"
-#include "Keng/Graphics/IDeviceBuffer.h"
+#include "Keng/GraphicsAPI/PrimitiveTopology.h"
+#include "Keng/GraphicsAPI/IDeviceBuffer.h"
 #include "Keng/Graphics/IGraphicsSystem.h"
 
 namespace render_text_sample
@@ -18,10 +18,10 @@ namespace render_text_sample
     class PrimitiveBufferParameters
     {
     public:
-        keng::graphics::PrimitiveTopology topology = keng::graphics::PrimitiveTopology::TriangleList;
-        keng::graphics::DeviceBufferUsage usage = keng::graphics::DeviceBufferUsage::Default;
-        keng::graphics::DeviceBufferBindFlags bindFlags = keng::graphics::DeviceBufferBindFlags::None;
-        keng::graphics::DeviceAccessFlags accessFlags = keng::graphics::DeviceAccessFlags::None;
+        keng::graphics_api::PrimitiveTopology topology = keng::graphics_api::PrimitiveTopology::TriangleList;
+        keng::graphics_api::DeviceBufferUsage usage = keng::graphics_api::DeviceBufferUsage::Default;
+        keng::graphics_api::DeviceBufferBindFlags bindFlags = keng::graphics_api::DeviceBufferBindFlags::None;
+        keng::graphics_api::DeviceAccessFlags accessFlags = keng::graphics_api::DeviceAccessFlags::None;
     };
 
     template<typename T>
@@ -35,7 +35,7 @@ namespace render_text_sample
             m_topo = params.topology;
             m_verticesCount = data.GetSize();
 
-            DeviceBufferParams deviceBufferParams;
+            graphics_api::DeviceBufferParameters deviceBufferParams;
             deviceBufferParams.size = GetBytesCount();
             deviceBufferParams.usage = params.usage;
             deviceBufferParams.bindFlags = params.bindFlags;
@@ -45,7 +45,7 @@ namespace render_text_sample
         }
 
         void AssignToPipeline(size_t slot, keng::graphics::IGraphicsSystemPtr system) {
-            keng::graphics::VertexBufferAssignParameters vbAssignParams{};
+            keng::graphics_api::VertexBufferAssignParameters vbAssignParams{};
             vbAssignParams.slot = 0;
             vbAssignParams.stride = sizeof(T);
             m_vertices->AssignToPipeline(vbAssignParams);
@@ -66,8 +66,8 @@ namespace render_text_sample
 
     private:
         size_t m_verticesCount;
-        keng::graphics::PrimitiveTopology m_topo;
-        keng::graphics::IDeviceBufferPtr m_vertices;
+        keng::graphics_api::PrimitiveTopology m_topo;
+        keng::graphics_api::IDeviceBufferPtr m_vertices;
     };
 
     class System : public keng::core::RefCountImpl<keng::core::ISystem>
@@ -86,22 +86,22 @@ namespace render_text_sample
     protected:
         void LoadParameters(const keng::core::IApplicationPtr& app);
 
-        keng::graphics::IDeviceBufferPtr m_constantBuffer;
+        keng::graphics_api::IDeviceBufferPtr m_constantBuffer;
 
         keng::graphics::IEffectPtr m_texturedEffect;
         PrimitiveBuffer<Vertex> m_containerQuad;
         keng::graphics::ITexturePtr m_containerTexture;
-        keng::graphics::ISamplerPtr m_containerSampler;
+        keng::graphics_api::ISamplerPtr m_containerSampler;
 
         keng::graphics::IEffectPtr m_textEffect;
         PrimitiveBuffer<Vertex> m_textQuads;
         keng::graphics::ITexturePtr m_atlasTexture;
-        keng::graphics::ISamplerPtr m_textSampler;
+        keng::graphics_api::ISamplerPtr m_textSampler;
         keng::graphics::IFontPtr m_font;
 
-        keng::graphics::IDepthStencilPtr m_depthStencil;
-        keng::graphics::IWindowRenderTargetPtr m_windowRT;
-        keng::graphics::IAnnotationPtr m_annotation;
+        keng::graphics_api::IDepthStencilPtr m_depthStencil;
+        keng::graphics_api::IWindowRenderTargetPtr m_windowRT;
+        keng::graphics_api::IAnnotationPtr m_annotation;
 
         keng::resource::IResourceSystemPtr m_resourceSystem;
         keng::graphics::IGraphicsSystemPtr m_graphicsSystem;

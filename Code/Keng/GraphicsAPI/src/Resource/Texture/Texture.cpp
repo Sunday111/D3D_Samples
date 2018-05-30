@@ -75,7 +75,11 @@ namespace keng::graphics_api
         }
     }
 
-    DevicePtr Texture::GetDevice() const {
+    IDevicePtr Texture::GetDevice() const {
+        return GetDevicePrivate();
+    }
+
+    DevicePtr Texture::GetDevicePrivate() const {
         return m_device;
     }
 
@@ -129,6 +133,20 @@ namespace keng::graphics_api
             CopyTo(to->m_texture);
         };
     }
+
+    void Texture::SetData(edt::DenseArrayView<const uint8_t> data) {
+        CallAndRethrowM + [&] {
+            auto fragmentsCount = GetWidth() * GetHeight();
+            auto bytesCount = fragmentsCount * ComputeBytesPerPixel(m_params.format);
+            edt::ThrowIfFailed(bytesCount == data.GetSize());
+
+            D3D11_MAPPED_SUBRESOURCE subres;
+            WinAPI<char>::ThrowIfError(m_device->GetContext()->Map(m_texture.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &subres));
+            memcpy(subres.pData, data.GetData(), bytesCount);
+            m_device->GetContext()->Unmap(m_texture.Get(), 0);
+        };
+    }
+
     void Texture::CopyTo(const ComPtr<ID3D11Texture2D>& to) {
         CallAndRethrowM + [&] {
             m_device->GetContext()->CopyResource(to.Get(), m_texture.Get());

@@ -1,6 +1,6 @@
 #include "GlyphAtlas.h"
 #include "Device.h"
-#include "Keng/Graphics/Resource/TextureParameters.h"
+#include "Keng/GraphicsAPI/Resource/TextureParameters.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Resource/Texture/Texture.h"
@@ -21,15 +21,14 @@ namespace keng::graphics
             m_cpuTexture.reset(new uint8_t[textureSize]);
             std::memset(m_cpuTexture.get(), 0, textureSize);
 
-            TextureParameters texureParameters{};
-            texureParameters.width = m_parameters.width;
-            texureParameters.height = m_parameters.height;
-            texureParameters.usage = TextureUsage::ShaderResource;
-            texureParameters.format = FragmentFormat::R8_UNORM;
-            texureParameters.cpuAccessFlags = CpuAccessFlags::Write;
+            graphics_api::TextureParameters textureParameters{};
+            textureParameters.width = m_parameters.width;
+            textureParameters.height = m_parameters.height;
+            textureParameters.usage = graphics_api::TextureUsage::ShaderResource;
+            textureParameters.format = graphics_api::FragmentFormat::R8_UNORM;
+            textureParameters.cpuAccessFlags = graphics_api::CpuAccessFlags::Write;
 
-            m_texture = TexturePtr::MakeInstance(device, texureParameters);
-            resourceSystem->AddRuntimeResource(m_texture, &device);
+            m_texture = device.CreateRuntimeTexture(textureParameters, *font.GetResourceSystem());
         };
     }
 
@@ -116,11 +115,7 @@ namespace keng::graphics
         CallAndRethrowM + [&] {
             if (GetFlagState<StateFlag::NeedsFlush>()) {
                 SetFlagState<StateFlag::NeedsFlush, false>();
-                auto texture = m_texture->GetTexture();
-                D3D11_MAPPED_SUBRESOURCE subres;
-                WinAPI<char>::ThrowIfError(m_texture->GetDevice()->GetContext()->Map(texture.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &subres));
-                memcpy(subres.pData, m_cpuTexture.get(), m_parameters.width * m_parameters.height);
-                m_texture->GetDevice()->GetContext()->Unmap(texture.Get(), 0);
+                m_texture->GetApiTexture()->SetData(edt::DenseArrayView<uint8_t>(m_cpuTexture.get(), m_parameters.width * m_parameters.height));
             }
         };
     }

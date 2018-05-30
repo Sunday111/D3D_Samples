@@ -20,12 +20,12 @@ namespace simple_quad_sample
 
     protected:
         keng::graphics::IEffectPtr m_effect;
-        keng::graphics::IDeviceBufferPtr m_constantBuffer;
-        keng::graphics::IDeviceBufferPtr m_vertexBuffer;
-        keng::graphics::ITextureRenderTargetPtr m_textureRT;
-        keng::graphics::IDepthStencilPtr m_depthStencil;
-        keng::graphics::IWindowRenderTargetPtr m_windowRT;
-        keng::graphics::IAnnotationPtr m_annotation;
+        keng::graphics_api::IDeviceBufferPtr m_constantBuffer;
+        keng::graphics_api::IDeviceBufferPtr m_vertexBuffer;
+        keng::graphics_api::ITextureRenderTargetPtr m_textureRT;
+        keng::graphics_api::IDepthStencilPtr m_depthStencil;
+        keng::graphics_api::IWindowRenderTargetPtr m_windowRT;
+        keng::graphics_api::IAnnotationPtr m_annotation;
 
         keng::resource::IResourceSystemPtr m_resourceSystem;
         keng::graphics::IGraphicsSystemPtr m_graphicsSystem;

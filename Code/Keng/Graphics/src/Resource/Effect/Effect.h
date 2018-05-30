@@ -3,6 +3,8 @@
 #include "FwdDecl.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "Resource/Shader/Shader.h"
+#include "Keng/GraphicsAPI/IInputLayout.h"
+#include "Keng/GraphicsAPI/Shader/IShader.h"
 
 namespace keng::graphics
 {
@@ -19,10 +21,9 @@ namespace keng::graphics
         virtual void InitDefaultInputLayout() override;
         virtual void AssignToPipeline() override;
 
-        DevicePtr device;
-        ComPtr<ID3D11InputLayout> layout;
-        core::Ptr<Shader<ShaderType::Vertex>> vs;
-        core::Ptr<Shader<ShaderType::Fragment>> fs;
+        graphics_api::IInputLayoutPtr m_inputLayout;
+        core::Ptr<Shader<graphics_api::ShaderType::Vertex>> vs;
+        core::Ptr<Shader<graphics_api::ShaderType::Fragment>> fs;
     };
 
 }

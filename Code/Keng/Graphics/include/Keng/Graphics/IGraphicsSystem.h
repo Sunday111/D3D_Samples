@@ -2,7 +2,7 @@
 
 #include "Keng/Graphics/FwdDecl.h"
 #include "Keng/Core/ISystem.h"
-#include "Keng/Graphics/PrimitiveTopology.h"
+#include "Keng/GraphicsAPI/PrimitiveTopology.h"
 #include "EverydayTools/Array/ArrayView.h"
 
 namespace keng::graphics
@@ -11,17 +11,17 @@ namespace keng::graphics
     {
     public:
         static const char* SystemName() { return "KengGraphics"; }
-        virtual IWindowRenderTargetPtr CreateWindowRenderTarget(const WindowRenderTargetParameters& params) = 0;
-        virtual ITextureRenderTargetPtr CreateTextureRenderTarget(const TextureRenderTargetParameters& params) = 0;
-        virtual IDepthStencilPtr CreateDepthStencil(const DepthStencilParameters& params) = 0;
-        virtual IDeviceBufferPtr CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data) = 0;
-        virtual core::Ptr<IDevice> GetDevice() = 0;
-        virtual ISwapChainPtr CreateSwapChain(const SwapChainParameters& params) = 0;
-        virtual ITexturePtr CreateTexture(const TextureParameters& params) = 0;
-        virtual ISamplerPtr CreateSampler(const SamplerParameters& params) = 0;
-        virtual void SetTopology(PrimitiveTopology topo) = 0;
+        virtual graphics_api::IWindowRenderTargetPtr CreateWindowRenderTarget(const graphics_api::WindowRenderTargetParameters& params) = 0;
+        virtual graphics_api::ITextureRenderTargetPtr CreateTextureRenderTarget(const graphics_api::TextureRenderTargetParameters& params) = 0;
+        virtual graphics_api::IDepthStencilPtr CreateDepthStencil(const graphics_api::DepthStencilParameters& params) = 0;
+        virtual graphics_api::IDeviceBufferPtr CreateDeviceBuffer(const graphics_api::DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) = 0;
+        virtual IDevicePtr GetDevice() = 0;
+        virtual graphics_api::ISwapChainPtr CreateSwapChain(const graphics_api::SwapChainParameters& params) = 0;
+        virtual ITexturePtr CreateTexture(const graphics_api::TextureParameters& params) = 0;
+        virtual graphics_api::ISamplerPtr CreateSampler(const graphics_api::SamplerParameters& params) = 0;
+        virtual void SetTopology(graphics_api::PrimitiveTopology topo) = 0;
         virtual void Draw(size_t vertices, size_t offset) = 0;
-        virtual void SetViewport(const ViewportParameters&) = 0;
-        virtual IAnnotationPtr CreateAnnotation() = 0;
+        virtual void SetViewport(const graphics_api::ViewportParameters&) = 0;
+        virtual graphics_api::IAnnotationPtr CreateAnnotation() = 0;
     };
 }

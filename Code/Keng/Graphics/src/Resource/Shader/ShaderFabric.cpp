@@ -7,6 +7,7 @@
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "Device.h"
+#include "Keng/GraphicsAPI/Shader/ShaderParameters.h"
 
 namespace keng::graphics
 {
@@ -36,26 +37,29 @@ namespace keng::graphics
         DevicePtr device;
         ShaderTemplatePtr shaderTemplate;
         std::string_view entryPoint;
-        std::vector<ShaderMacro> definitions;
+        std::vector<graphics_api::ShaderDefinition> definitions;
 
         resource::IResourcePtr Compile() {
             switch (shaderTemplate->type) {
-            case ShaderType::Vertex:
-                return Compile<ShaderType::Vertex>();
+            case graphics_api::ShaderType::Vertex:
+                return Compile<graphics_api::ShaderType::Vertex>();
 
-            case ShaderType::Fragment:
-                return Compile<ShaderType::Fragment>();
+            case graphics_api::ShaderType::Fragment:
+                return Compile<graphics_api::ShaderType::Fragment>();
 
             default:
                 throw std::runtime_error("Not implemented for this shader type here");
             }
         }
 
-        template<ShaderType st>
+        template<graphics_api::ShaderType st>
         core::Ptr<Shader<st>> Compile() {
             auto result = core::Ptr<Shader<st>>::MakeInstance();
-            result->Compile(shaderTemplate->code.data(), entryPoint.data(), ShaderVersion::_5_0, edt::MakeArrayView(definitions));
-            result->Create(device->GetDevice().Get());
+            graphics_api::ShaderParameters sp;
+            sp.code = shaderTemplate->code.data();
+            sp.definitions = edt::MakeArrayView(definitions);
+            sp.entry_point = entryPoint.data();
+            result->m_impl = std::dynamic_pointer_cast<graphics_api::IShaderT<st>>(device->GetApiDevice()->CreateShader(st, sp));
             return result;
         }
     };
@@ -83,8 +87,8 @@ namespace keng::graphics
             shaderCompiler.entryPoint = info.entryPoint;
             shaderCompiler.definitions.reserve(info.definitions.size());
             for (auto& def : info.definitions) {
-                shaderCompiler.definitions.push_back(ShaderMacro {
-                    def.name, def.value
+                shaderCompiler.definitions.push_back(graphics_api::ShaderDefinition {
+                    def.name.data(), def.value.data()
                 });
             }
 

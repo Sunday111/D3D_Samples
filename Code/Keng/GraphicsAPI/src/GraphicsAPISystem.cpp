@@ -22,14 +22,16 @@
 #include "RenderTarget/SwapChain.h"
 #include "Keng/GraphicsAPI/ViewportParameters.h"
 
-#include "Annotation.h"
+#include "Shader/Shader.h"
 
-#include "Sampler.h"
+#include "Annotation.h"
 
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 #include "EverydayTools/Geom/Vector.h"
 #include "DeviceBuffer.h"
+
+#include "Sampler.h"
 
 #include <algorithm>
 
@@ -134,7 +136,7 @@ namespace keng::graphics_api
         return m_device;
     }
 
-    IDeviceBufferPtr GraphicsAPISystem::CreateDeviceBuffer(const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data) {
+    IDeviceBufferPtr GraphicsAPISystem::CreateDeviceBuffer(const DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) {
         return CallAndRethrowM + [&] {
             return DeviceBufferPtr::MakeInstance(*m_device, params, data);
         };
@@ -142,10 +144,6 @@ namespace keng::graphics_api
 
     ISwapChainPtr GraphicsAPISystem::CreateSwapChain(const SwapChainParameters& params) {
         return SwapChainPtr::MakeInstance(*m_device, params);
-    }
-
-    ITexturePtr GraphicsAPISystem::CreateTexture(const TextureParameters& params) {
-        return TexturePtr::MakeInstance(*m_device, params);
     }
 
     ISamplerPtr GraphicsAPISystem::CreateSampler(const SamplerParameters& params) {

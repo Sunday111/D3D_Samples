@@ -66,7 +66,7 @@ namespace keng::graphics_api
             };
         }
         
-        D3D11_BUFFER_DESC MakeDescription(const DeviceBufferParams& params) {
+        D3D11_BUFFER_DESC MakeDescription(const DeviceBufferParameters& params) {
             return CallAndRethrowM + [&] {
                 D3D11_BUFFER_DESC desc{};
                 desc.Usage = ConvertD3D(params.usage);
@@ -94,7 +94,7 @@ namespace keng::graphics_api
         }
     }
 
-    DeviceBuffer::DeviceBuffer(Device& device, const DeviceBufferParams& params, edt::DenseArrayView<const uint8_t> data) :
+    DeviceBuffer::DeviceBuffer(Device& device, const DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) :
         m_params(params) {
         CallAndRethrowM + [&] {
             if (data.GetSize() > 0) {

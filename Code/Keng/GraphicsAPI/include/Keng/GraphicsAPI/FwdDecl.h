@@ -4,45 +4,36 @@
 
 namespace keng::graphics_api
 {
+    class DepthStencilParameters;
     class IDepthStencil;
     using IDepthStencilPtr = core::Ptr<IDepthStencil>;
 
-    class DepthStencilParameters;
-
+    class SwapChainParameters;
     class ISwapChain;
     using ISwapChainPtr = core::Ptr<ISwapChain>;
 
     class IRenderTarget;
     using IRenderTargetPtr = core::Ptr<IRenderTarget>;
 
+    class TextureRenderTargetParameters;
     class ITextureRenderTarget;
     using ITextureRenderTargetPtr = core::Ptr<ITextureRenderTarget>;
 
+    class WindowRenderTargetParameters;
     class IWindowRenderTarget;
     using IWindowRenderTargetPtr = core::Ptr<IWindowRenderTarget>;
 
-    class TextureRenderTargetParameters;
-
-    class WindowRenderTargetParameters;
-
-    class SwapChainParameters;
-
-    class IEffect;
-    using IEffectPtr = core::Ptr<IEffect>;
-
+    class TextureParameters;
     class ITexture;
     using ITexturePtr = core::Ptr<ITexture>;
 
+    class DeviceBufferParameters;
     class IDeviceBuffer;
     using IDeviceBufferPtr = core::Ptr<IDeviceBuffer>;
 
     class DeviceBufferMapper;
 
-    class DeviceBufferParams;
-
     class IGraphicsListener;
-
-    class TextureParameters;
 
     class ISampler;
     using ISamplerPtr = core::Ptr<ISampler>;
@@ -53,17 +44,17 @@ namespace keng::graphics_api
     class IAnnotation;
     using IAnnotationPtr = core::Ptr<IAnnotation>;
 
+    class DeviceParameters;
     class IDevice;
     using IDevicePtr = core::Ptr<IDevice>;
 
     class IGraphicsAPISystem;
     using IGraphicsAPISystemPtr = core::Ptr<IGraphicsAPISystem>;
 
-    class IFont;
-    using IFontPtr = core::Ptr<IFont>;
+    class IInputLayout;
+    using IInputLayoutPtr = core::Ptr<IInputLayout>;
 
-    class GlyphParameters;
-    class GlyphInfo;
-    class AtlasGlyphInfo;
-    class DeviceParameters;
+    class ShaderParameters;
+    class IShader;
+    using IShaderPtr = core::Ptr<IShader>;
 }
