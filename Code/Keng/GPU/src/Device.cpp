@@ -4,6 +4,7 @@
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "d3d11shader.h"
 #include "d3dcompiler.h"
+#include "Resource/Buffer/DeviceBuffer.h"
 #include "Resource/Texture/Texture.h"
 #include "Shader/Shader.h"
 
@@ -54,6 +55,12 @@ namespace keng::gpu
 
             edt::ThrowIfFailed(result != nullptr, "Not implemented for this shader type");
             return result;
+        };
+    }
+
+    IDeviceBufferPtr Device::CreateDeviceBuffer(const DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) {
+        return CallAndRethrowM + [&] {
+            return DeviceBufferPtr::MakeInstance(*this, params, data);
         };
     }
 

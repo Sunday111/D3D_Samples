@@ -40,7 +40,7 @@ namespace render_text_sample
             deviceBufferParams.usage = params.usage;
             deviceBufferParams.bindFlags = params.bindFlags;
             deviceBufferParams.accessFlags = params.accessFlags;
-            m_vertices = system.CreateDeviceBuffer(deviceBufferParams,
+            m_vertices = system.GetDevice()->GetApiDevice()->CreateDeviceBuffer(deviceBufferParams,
                 edt::DenseArrayView<uint8_t>((uint8_t*)data.GetData(), deviceBufferParams.size));
         }
 

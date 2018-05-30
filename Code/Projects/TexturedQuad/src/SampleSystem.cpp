@@ -222,7 +222,7 @@ namespace textured_quad_sample
                 params.usage = gpu::DeviceBufferUsage::Dynamic;
                 params.bindFlags = gpu::DeviceBufferBindFlags::VertexBuffer;
                 params.accessFlags = gpu::DeviceAccessFlags::Write;
-                m_vertexBuffer = m_graphicsSystem->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
+                m_vertexBuffer = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
             }
 
             {// Create constant buffer
@@ -235,7 +235,7 @@ namespace textured_quad_sample
                 params.usage = gpu::DeviceBufferUsage::Dynamic;
                 params.bindFlags = gpu::DeviceBufferBindFlags::ConstantBuffer;
                 params.accessFlags = gpu::DeviceAccessFlags::Write;
-                m_constantBuffer = m_graphicsSystem->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
+                m_constantBuffer = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
             }
 
             {// Create sampler

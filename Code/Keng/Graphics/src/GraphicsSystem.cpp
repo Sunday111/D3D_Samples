@@ -146,10 +146,6 @@ namespace keng::graphics
         return m_device;
     }
 
-    gpu::IDeviceBufferPtr GraphicsSystem::CreateDeviceBuffer(const gpu::DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) {
-        return m_api->CreateDeviceBuffer(params, data);
-    }
-
     gpu::ISwapChainPtr GraphicsSystem::CreateSwapChain(const gpu::SwapChainParameters& params) {
         return m_api->CreateSwapChain(params);
     }

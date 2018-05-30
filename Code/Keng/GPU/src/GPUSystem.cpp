@@ -29,7 +29,6 @@
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 #include "EverydayTools/Geom/Vector.h"
-#include "DeviceBuffer.h"
 
 #include "Sampler.h"
 
@@ -134,12 +133,6 @@ namespace keng::gpu
 
     core::Ptr<IDevice> GPUSystem::GetDevice() {
         return m_device;
-    }
-
-    IDeviceBufferPtr GPUSystem::CreateDeviceBuffer(const DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) {
-        return CallAndRethrowM + [&] {
-            return DeviceBufferPtr::MakeInstance(*m_device, params, data);
-        };
     }
 
     ISwapChainPtr GPUSystem::CreateSwapChain(const SwapChainParameters& params) {

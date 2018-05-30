@@ -21,6 +21,7 @@ namespace keng::gpu
         // IDevice
         virtual ITexturePtr CreateTexture(const TextureParameters& params) override;
         virtual IShaderPtr CreateShader(ShaderType type, const ShaderParameters& parameters) override;
+        virtual IDeviceBufferPtr CreateDeviceBuffer(const DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) override;
         void* GetNativeDevice() const override;
         void* GetNativeContext() const override;
         // ~IDevice

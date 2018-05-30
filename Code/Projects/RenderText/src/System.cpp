@@ -365,7 +365,7 @@ namespace render_text_sample
                 params.usage = gpu::DeviceBufferUsage::Dynamic;
                 params.bindFlags = gpu::DeviceBufferBindFlags::ConstantBuffer;
                 params.accessFlags = gpu::DeviceAccessFlags::Write;
-                m_constantBuffer = m_graphicsSystem->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
+                m_constantBuffer = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
             }
 
             {// Create container sampler
