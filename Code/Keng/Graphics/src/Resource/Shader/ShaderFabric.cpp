@@ -7,7 +7,7 @@
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "Device.h"
-#include "Keng/GraphicsAPI/Shader/ShaderParameters.h"
+#include "Keng/GPU/Shader/ShaderParameters.h"
 
 namespace keng::graphics
 {
@@ -37,29 +37,29 @@ namespace keng::graphics
         DevicePtr device;
         ShaderTemplatePtr shaderTemplate;
         std::string_view entryPoint;
-        std::vector<graphics_api::ShaderDefinition> definitions;
+        std::vector<gpu::ShaderDefinition> definitions;
 
         resource::IResourcePtr Compile() {
             switch (shaderTemplate->type) {
-            case graphics_api::ShaderType::Vertex:
-                return Compile<graphics_api::ShaderType::Vertex>();
+            case gpu::ShaderType::Vertex:
+                return Compile<gpu::ShaderType::Vertex>();
 
-            case graphics_api::ShaderType::Fragment:
-                return Compile<graphics_api::ShaderType::Fragment>();
+            case gpu::ShaderType::Fragment:
+                return Compile<gpu::ShaderType::Fragment>();
 
             default:
                 throw std::runtime_error("Not implemented for this shader type here");
             }
         }
 
-        template<graphics_api::ShaderType st>
+        template<gpu::ShaderType st>
         core::Ptr<Shader<st>> Compile() {
             auto result = core::Ptr<Shader<st>>::MakeInstance();
-            graphics_api::ShaderParameters sp;
+            gpu::ShaderParameters sp;
             sp.code = shaderTemplate->code.data();
             sp.definitions = edt::MakeArrayView(definitions);
             sp.entry_point = entryPoint.data();
-            result->m_impl = std::dynamic_pointer_cast<graphics_api::IShaderT<st>>(device->GetApiDevice()->CreateShader(st, sp));
+            result->m_impl = std::dynamic_pointer_cast<gpu::IShaderT<st>>(device->GetApiDevice()->CreateShader(st, sp));
             return result;
         }
     };
@@ -87,7 +87,7 @@ namespace keng::graphics
             shaderCompiler.entryPoint = info.entryPoint;
             shaderCompiler.definitions.reserve(info.definitions.size());
             for (auto& def : info.definitions) {
-                shaderCompiler.definitions.push_back(graphics_api::ShaderDefinition {
+                shaderCompiler.definitions.push_back(gpu::ShaderDefinition {
                     def.name.data(), def.value.data()
                 });
             }

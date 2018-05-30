@@ -2,7 +2,7 @@
 
 #include "FwdDecl.h"
 #include "Keng/Graphics/IDevice.h"
-#include "Keng/GraphicsAPI/IDevice.h"
+#include "Keng/GPU/IDevice.h"
 #include "Resource/Texture/Texture.h"
 
 namespace keng::graphics
@@ -12,16 +12,16 @@ namespace keng::graphics
         public core::RefCountImpl<IDevice>
     {
     public:
-        Device(graphics_api::IDevice& impl);
+        Device(gpu::IDevice& impl);
         ~Device();
 
         // IDevice
-        virtual graphics_api::IDevicePtr GetApiDevice() override;
+        virtual gpu::IDevicePtr GetApiDevice() override;
         // ~IDevice
 
-        TexturePtr CreateTexture(const graphics_api::TextureParameters& parameters);
-        TexturePtr CreateRuntimeTexture(const graphics_api::TextureParameters& parameters, resource::IResourceSystem& resourceSystem);
+        TexturePtr CreateTexture(const gpu::TextureParameters& parameters);
+        TexturePtr CreateRuntimeTexture(const gpu::TextureParameters& parameters, resource::IResourceSystem& resourceSystem);
 
-        graphics_api::IDevicePtr m_impl;
+        gpu::IDevicePtr m_impl;
     };
 }

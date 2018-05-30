@@ -3,10 +3,10 @@
 #include "FwdDecl.h"
 #include "Keng/FileSystem/FwdDecl.h"
 #include "Keng/Graphics/IGraphicsListener.h"
-#include "Keng/GraphicsAPI/PrimitiveTopology.h"
+#include "Keng/GPU/PrimitiveTopology.h"
 #include "Keng/Graphics/IGraphicsSystem.h"
-#include "Keng/GraphicsAPI/IGraphicsAPISystem.h"
-#include "Keng/GraphicsAPI/IDevice.h"
+#include "Keng/GPU/IGPUSystem.h"
+#include "Keng/GPU/IDevice.h"
 
 namespace keng::graphics
 {
@@ -24,18 +24,18 @@ namespace keng::graphics
         virtual void Shutdown() override;
 
         // IGraphicsSystem
-        virtual graphics_api::IWindowRenderTargetPtr CreateWindowRenderTarget(const graphics_api::WindowRenderTargetParameters& params) override;
-        virtual graphics_api::ITextureRenderTargetPtr CreateTextureRenderTarget(const graphics_api::TextureRenderTargetParameters& params) override;
-        virtual graphics_api::IDepthStencilPtr CreateDepthStencil(const graphics_api::DepthStencilParameters& params) override;
-        virtual graphics_api::IDeviceBufferPtr CreateDeviceBuffer(const graphics_api::DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) override;
+        virtual gpu::IWindowRenderTargetPtr CreateWindowRenderTarget(const gpu::WindowRenderTargetParameters& params) override;
+        virtual gpu::ITextureRenderTargetPtr CreateTextureRenderTarget(const gpu::TextureRenderTargetParameters& params) override;
+        virtual gpu::IDepthStencilPtr CreateDepthStencil(const gpu::DepthStencilParameters& params) override;
+        virtual gpu::IDeviceBufferPtr CreateDeviceBuffer(const gpu::DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) override;
         virtual IDevicePtr GetDevice() override;
-        virtual graphics_api::ISwapChainPtr CreateSwapChain(const graphics_api::SwapChainParameters& params) override;
-        virtual ITexturePtr CreateTexture(const graphics_api::TextureParameters& params) override;
-        virtual graphics_api::ISamplerPtr CreateSampler(const graphics_api::SamplerParameters& params) override;
-        virtual void SetTopology(graphics_api::PrimitiveTopology topo) override;
+        virtual gpu::ISwapChainPtr CreateSwapChain(const gpu::SwapChainParameters& params) override;
+        virtual ITexturePtr CreateTexture(const gpu::TextureParameters& params) override;
+        virtual gpu::ISamplerPtr CreateSampler(const gpu::SamplerParameters& params) override;
+        virtual void SetTopology(gpu::PrimitiveTopology topo) override;
         virtual void Draw(size_t vertices, size_t offset) override;
-        virtual void SetViewport(const graphics_api::ViewportParameters&) override;
-        virtual graphics_api::IAnnotationPtr CreateAnnotation() override;
+        virtual void SetViewport(const gpu::ViewportParameters&) override;
+        virtual gpu::IAnnotationPtr CreateAnnotation() override;
 
 
     private:
@@ -44,6 +44,6 @@ namespace keng::graphics
         DevicePtr m_device;
 
         resource::IResourceSystemPtr m_resourceSystem;
-        graphics_api::IGraphicsAPISystemPtr m_api;
+        gpu::IGPUSystemPtr m_api;
     };
 }

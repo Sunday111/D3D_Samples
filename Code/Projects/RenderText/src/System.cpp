@@ -8,18 +8,18 @@
 #include "Keng/Graphics/Resource/Font/GlyphParameters.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
-#include "Keng/GraphicsAPI/Resource/TextureParameters.h"
-#include "Keng/GraphicsAPI/RenderTarget/IWindowRenderTarget.h"
-#include "Keng/GraphicsAPI/RenderTarget/WindowRenderTargetParameters.h"
-#include "Keng/GraphicsAPI/RenderTarget/ITextureRenderTarget.h"
-#include "Keng/GraphicsAPI/RenderTarget/TextureRenderTargetParameters.h"
-#include "Keng/GraphicsAPI/RenderTarget/IDepthStencil.h"
-#include "Keng/GraphicsAPI/RenderTarget/DepthStencilParameters.h"
-#include "Keng/GraphicsAPI/DeviceBufferMapper.h"
-#include "Keng/GraphicsAPI/ViewportParameters.h"
-#include "Keng/GraphicsAPI/SamplerParameters.h"
-#include "Keng/GraphicsAPI/ISampler.h"
-#include "Keng/GraphicsAPI/ScopedAnnotation.h"
+#include "Keng/GPU/Resource/TextureParameters.h"
+#include "Keng/GPU/RenderTarget/IWindowRenderTarget.h"
+#include "Keng/GPU/RenderTarget/WindowRenderTargetParameters.h"
+#include "Keng/GPU/RenderTarget/ITextureRenderTarget.h"
+#include "Keng/GPU/RenderTarget/TextureRenderTargetParameters.h"
+#include "Keng/GPU/RenderTarget/IDepthStencil.h"
+#include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
+#include "Keng/GPU/DeviceBufferMapper.h"
+#include "Keng/GPU/ViewportParameters.h"
+#include "Keng/GPU/SamplerParameters.h"
+#include "Keng/GPU/ISampler.h"
+#include "Keng/GPU/ScopedAnnotation.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
@@ -83,13 +83,13 @@ namespace render_text_sample
                 Annotate(m_annotation, L"Draw", [&] {
                     Annotate(m_annotation, L"Clear", [&] {
                         m_windowRT->Clear(clearColor);
-                        m_depthStencil->Clear(graphics_api::DepthStencilClearFlags::ClearDepth | graphics_api::DepthStencilClearFlags::ClearStencil, 1.0f, 0);
+                        m_depthStencil->Clear(gpu::DepthStencilClearFlags::ClearDepth | gpu::DepthStencilClearFlags::ClearStencil, 1.0f, 0);
                         m_windowRT->AssignToPipeline(m_depthStencil);
                     });
 
                     Annotate(m_annotation, L"Draw quad", [&] {
                         Annotate(m_annotation, L"Edit constant buffer", [&] {
-                            graphics_api::DeviceBufferMapper mapper;
+                            gpu::DeviceBufferMapper mapper;
                             m_constantBuffer->MakeMapper(mapper);
                             auto cbView = mapper.GetTypedView<CB>();
                             edt::geom::Vector<float, 3> t{};
@@ -101,27 +101,27 @@ namespace render_text_sample
                         Annotate(m_annotation, L"Assign buffers", [&] {
                             m_containerQuad.AssignToPipeline(0, m_graphicsSystem);
 
-                            graphics_api::ConstantBufferAssignParameters cbAssignParams{};
+                            gpu::ConstantBufferAssignParameters cbAssignParams{};
                             cbAssignParams.slot = 0;
                             cbAssignParams.stride = sizeof(CB);
-                            cbAssignParams.shaderType = graphics_api::ShaderType::Vertex;
+                            cbAssignParams.shaderType = gpu::ShaderType::Vertex;
                             m_constantBuffer->AssignToPipeline(cbAssignParams);
                         });
 
                         Annotate(m_annotation, L"Setup effect", [&] {
                             m_texturedEffect->AssignToPipeline();
-                            m_containerSampler->AssignToPipeline(graphics_api::ShaderType::Fragment, 0);
-                            m_containerTexture->GetApiTexture()->AssignToPipeline(graphics_api::ShaderType::Fragment, 0);
+                            m_containerSampler->AssignToPipeline(gpu::ShaderType::Fragment, 0);
+                            m_containerTexture->GetApiTexture()->AssignToPipeline(gpu::ShaderType::Fragment, 0);
                         });
 
                         m_graphicsSystem->Draw(m_containerQuad.GetVerticesCount(), 0);
                     });
 
-                    m_depthStencil->Clear(graphics_api::DepthStencilClearFlags::ClearDepth | graphics_api::DepthStencilClearFlags::ClearStencil, 1.0f, 0);
+                    m_depthStencil->Clear(gpu::DepthStencilClearFlags::ClearDepth | gpu::DepthStencilClearFlags::ClearStencil, 1.0f, 0);
 
                     Annotate(m_annotation, L"Draw text", [&] {
                         Annotate(m_annotation, L"Edit constant buffer", [&] {
-                            graphics_api::DeviceBufferMapper mapper;
+                            gpu::DeviceBufferMapper mapper;
                             m_constantBuffer->MakeMapper(mapper);
                             auto cbView = mapper.GetTypedView<CB>();
                             cbView[0].transform = MakeIdentityMatrix<float>();
@@ -130,17 +130,17 @@ namespace render_text_sample
                         Annotate(m_annotation, L"Assign buffers", [&] {
                             m_textQuads.AssignToPipeline(0, m_graphicsSystem);
 
-                            graphics_api::ConstantBufferAssignParameters cbAssignParams{};
+                            gpu::ConstantBufferAssignParameters cbAssignParams{};
                             cbAssignParams.slot = 0;
                             cbAssignParams.stride = sizeof(CB);
-                            cbAssignParams.shaderType = graphics_api::ShaderType::Vertex;
+                            cbAssignParams.shaderType = gpu::ShaderType::Vertex;
                             m_constantBuffer->AssignToPipeline(cbAssignParams);
                         });
 
                         Annotate(m_annotation, L"Setup effect", [&] {
                             m_textEffect->AssignToPipeline();
-                            m_textSampler->AssignToPipeline(graphics_api::ShaderType::Fragment, 0);
-                            m_atlasTexture->GetApiTexture()->AssignToPipeline(graphics_api::ShaderType::Fragment, 0);
+                            m_textSampler->AssignToPipeline(gpu::ShaderType::Fragment, 0);
+                            m_atlasTexture->GetApiTexture()->AssignToPipeline(gpu::ShaderType::Fragment, 0);
                         });
 
                         m_graphicsSystem->Draw(m_textQuads.GetVerticesCount(), 0);
@@ -186,7 +186,7 @@ namespace render_text_sample
             window->GetClientSize(&w, &h);
 
             {// Initialize viewport
-                graphics_api::ViewportParameters v{};
+                gpu::ViewportParameters v{};
                 v.Position.rx() = 0.f;
                 v.Position.ry() = 0.f;
                 v.Size.rx() = edt::CheckedCast<float>(w);
@@ -195,22 +195,22 @@ namespace render_text_sample
             }
 
             {// Create window render target
-                graphics_api::WindowRenderTargetParameters window_rt_params;
-                window_rt_params.swapChain.format = graphics_api::FragmentFormat::R8_G8_B8_A8_UNORM;
+                gpu::WindowRenderTargetParameters window_rt_params;
+                window_rt_params.swapChain.format = gpu::FragmentFormat::R8_G8_B8_A8_UNORM;
                 window_rt_params.swapChain.window = window;
                 window_rt_params.swapChain.buffers = 2;
                 m_windowRT = m_graphicsSystem->CreateWindowRenderTarget(window_rt_params);
             }
 
             {// Create depth stencil
-                graphics_api::DepthStencilParameters depthStencilParams{};
-                graphics_api::TextureParameters dsTextureParams{};
-                dsTextureParams.format = graphics_api::FragmentFormat::R24_G8_TYPELESS;
+                gpu::DepthStencilParameters depthStencilParams{};
+                gpu::TextureParameters dsTextureParams{};
+                dsTextureParams.format = gpu::FragmentFormat::R24_G8_TYPELESS;
                 dsTextureParams.width = w;
                 dsTextureParams.height = h;
-                dsTextureParams.usage = graphics_api::TextureUsage::ShaderResource | graphics_api::TextureUsage::DepthStencil;
+                dsTextureParams.usage = gpu::TextureUsage::ShaderResource | gpu::TextureUsage::DepthStencil;
 
-                depthStencilParams.format = graphics_api::FragmentFormat::D24_UNORM_S8_UINT;
+                depthStencilParams.format = gpu::FragmentFormat::D24_UNORM_S8_UINT;
                 depthStencilParams.texture = m_graphicsSystem->CreateTexture(dsTextureParams)->GetApiTexture();
                 m_depthStencil = m_graphicsSystem->CreateDepthStencil(depthStencilParams);
             }
@@ -258,10 +258,10 @@ namespace render_text_sample
                 /////////////////////////////////////////////////////////////////////
 
                 PrimitiveBufferParameters params;
-                params.usage = graphics_api::DeviceBufferUsage::Dynamic;
-                params.bindFlags = graphics_api::DeviceBufferBindFlags::VertexBuffer;
-                params.accessFlags = graphics_api::DeviceAccessFlags::Write;
-                params.topology = graphics_api::PrimitiveTopology::TriangleStrip;
+                params.usage = gpu::DeviceBufferUsage::Dynamic;
+                params.bindFlags = gpu::DeviceBufferBindFlags::VertexBuffer;
+                params.accessFlags = gpu::DeviceAccessFlags::Write;
+                params.topology = gpu::PrimitiveTopology::TriangleStrip;
                 m_containerQuad.Initialize(*m_graphicsSystem, params, edt::MakeArrayView(vertices));
             }
             
@@ -348,10 +348,10 @@ namespace render_text_sample
                 }
 
                 PrimitiveBufferParameters params;
-                params.usage = graphics_api::DeviceBufferUsage::Dynamic;
-                params.bindFlags = graphics_api::DeviceBufferBindFlags::VertexBuffer;
-                params.accessFlags = graphics_api::DeviceAccessFlags::Write;
-                params.topology = graphics_api::PrimitiveTopology::TriangleList;
+                params.usage = gpu::DeviceBufferUsage::Dynamic;
+                params.bindFlags = gpu::DeviceBufferBindFlags::VertexBuffer;
+                params.accessFlags = gpu::DeviceAccessFlags::Write;
+                params.topology = gpu::PrimitiveTopology::TriangleList;
                 m_textQuads.Initialize(*m_graphicsSystem, params, edt::MakeArrayView(vertices));
             }
 
@@ -360,29 +360,29 @@ namespace render_text_sample
                 edt::geom::Vector<float, 3> t {};
                 constantBufferInitData.transform = MakeTranslationMatrix(t);
 
-                graphics_api::DeviceBufferParameters params;
+                gpu::DeviceBufferParameters params;
                 params.size = sizeof(constantBufferInitData);
-                params.usage = graphics_api::DeviceBufferUsage::Dynamic;
-                params.bindFlags = graphics_api::DeviceBufferBindFlags::ConstantBuffer;
-                params.accessFlags = graphics_api::DeviceAccessFlags::Write;
+                params.usage = gpu::DeviceBufferUsage::Dynamic;
+                params.bindFlags = gpu::DeviceBufferBindFlags::ConstantBuffer;
+                params.accessFlags = gpu::DeviceAccessFlags::Write;
                 m_constantBuffer = m_graphicsSystem->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
             }
 
             {// Create container sampler
-                graphics_api::SamplerParameters samplerParams{};
-                samplerParams.addressU = graphics_api::TextureAddressMode::Clamp;
-                samplerParams.addressV = graphics_api::TextureAddressMode::Clamp;
-                samplerParams.addressW = graphics_api::TextureAddressMode::Clamp;
-                samplerParams.filter = graphics_api::FilteringMode::Anisotropic;
+                gpu::SamplerParameters samplerParams{};
+                samplerParams.addressU = gpu::TextureAddressMode::Clamp;
+                samplerParams.addressV = gpu::TextureAddressMode::Clamp;
+                samplerParams.addressW = gpu::TextureAddressMode::Clamp;
+                samplerParams.filter = gpu::FilteringMode::Anisotropic;
                 m_containerSampler = m_graphicsSystem->CreateSampler(samplerParams);
             }
 
             {// Create text sampler
-                graphics_api::SamplerParameters samplerParams{};
-                samplerParams.addressU = graphics_api::TextureAddressMode::Clamp;
-                samplerParams.addressV = graphics_api::TextureAddressMode::Clamp;
-                samplerParams.addressW = graphics_api::TextureAddressMode::Clamp;
-                samplerParams.filter = graphics_api::FilteringMode::Bilinear;
+                gpu::SamplerParameters samplerParams{};
+                samplerParams.addressU = gpu::TextureAddressMode::Clamp;
+                samplerParams.addressV = gpu::TextureAddressMode::Clamp;
+                samplerParams.addressW = gpu::TextureAddressMode::Clamp;
+                samplerParams.filter = gpu::FilteringMode::Bilinear;
                 m_textSampler = m_graphicsSystem->CreateSampler(samplerParams);
             }
 

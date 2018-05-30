@@ -11,7 +11,7 @@ namespace keng::graphics
     public:
         ShaderTemplate();
 
-        graphics_api::ShaderType type;
+        gpu::ShaderType type;
         std::string code;
     };
 }

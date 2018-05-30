@@ -5,7 +5,7 @@
 #include "yasli/STL.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
 #include "Keng/FileSystem/ReadFileToBuffer.h"
-#include "Keng/GraphicsAPI/Resource/TextureParameters.h"
+#include "Keng/GPU/Resource/TextureParameters.h"
 #include "Device.h"
 #include "Resource/Font/Font.h"
 #include "Resource/Font/FreeType/Library.h"

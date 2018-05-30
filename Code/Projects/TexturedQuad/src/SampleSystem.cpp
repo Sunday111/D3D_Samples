@@ -5,18 +5,18 @@
 #include "Keng/Core/IApplication.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
-#include "Keng/GraphicsAPI/Resource/TextureParameters.h"
-#include "Keng/GraphicsAPI/RenderTarget/IWindowRenderTarget.h"
-#include "Keng/GraphicsAPI/RenderTarget/WindowRenderTargetParameters.h"
-#include "Keng/GraphicsAPI/RenderTarget/ITextureRenderTarget.h"
-#include "Keng/GraphicsAPI/RenderTarget/TextureRenderTargetParameters.h"
-#include "Keng/GraphicsAPI/RenderTarget/IDepthStencil.h"
-#include "Keng/GraphicsAPI/RenderTarget/DepthStencilParameters.h"
-#include "Keng/GraphicsAPI/DeviceBufferMapper.h"
-#include "Keng/GraphicsAPI/ViewportParameters.h"
-#include "Keng/GraphicsAPI/SamplerParameters.h"
-#include "Keng/GraphicsAPI/ISampler.h"
-#include "Keng/GraphicsAPI/ScopedAnnotation.h"
+#include "Keng/GPU/Resource/TextureParameters.h"
+#include "Keng/GPU/RenderTarget/IWindowRenderTarget.h"
+#include "Keng/GPU/RenderTarget/WindowRenderTargetParameters.h"
+#include "Keng/GPU/RenderTarget/ITextureRenderTarget.h"
+#include "Keng/GPU/RenderTarget/TextureRenderTargetParameters.h"
+#include "Keng/GPU/RenderTarget/IDepthStencil.h"
+#include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
+#include "Keng/GPU/DeviceBufferMapper.h"
+#include "Keng/GPU/ViewportParameters.h"
+#include "Keng/GPU/SamplerParameters.h"
+#include "Keng/GPU/ISampler.h"
+#include "Keng/GPU/ScopedAnnotation.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
@@ -69,7 +69,7 @@ namespace textured_quad_sample
                 angle += delta_angle;
 
                 Annotate(m_annotation, L"Move triangle", [&] {
-                    graphics_api::DeviceBufferMapper mapper;
+                    gpu::DeviceBufferMapper mapper;
                     m_constantBuffer->MakeMapper(mapper);
                     auto cbView = mapper.GetTypedView<CB>();
                     edt::geom::Vector<float, 3> t{};
@@ -79,24 +79,24 @@ namespace textured_quad_sample
                 });
 
                 Annotate(m_annotation, L"Draw triangle", [&] {
-                    graphics_api::VertexBufferAssignParameters vbAssignParams{};
+                    gpu::VertexBufferAssignParameters vbAssignParams{};
                     vbAssignParams.slot = 0;
                     vbAssignParams.stride = sizeof(Vertex);
 
-                    graphics_api::ConstantBufferAssignParameters cbAssignParams{};
+                    gpu::ConstantBufferAssignParameters cbAssignParams{};
                     cbAssignParams.slot = 0;
                     cbAssignParams.stride = sizeof(CB);
-                    cbAssignParams.shaderType = graphics_api::ShaderType::Vertex;
+                    cbAssignParams.shaderType = gpu::ShaderType::Vertex;
 
                     m_textureRT->Clear(clearColor);
-                    m_depthStencil->Clear(graphics_api::DepthStencilClearFlags::ClearDepth | graphics_api::DepthStencilClearFlags::ClearStencil, 1.0f, 0);
+                    m_depthStencil->Clear(gpu::DepthStencilClearFlags::ClearDepth | gpu::DepthStencilClearFlags::ClearStencil, 1.0f, 0);
                     m_textureRT->AssignToPipeline(m_depthStencil);
                     m_effect->AssignToPipeline();
                     m_vertexBuffer->AssignToPipeline(vbAssignParams);
-                    m_graphicsSystem->SetTopology(graphics_api::PrimitiveTopology::TriangleStrip);
+                    m_graphicsSystem->SetTopology(gpu::PrimitiveTopology::TriangleStrip);
                     m_constantBuffer->AssignToPipeline(cbAssignParams);
-                    m_sampler->AssignToPipeline(graphics_api::ShaderType::Fragment, 0);
-                    m_texture->GetApiTexture()->AssignToPipeline(graphics_api::ShaderType::Fragment, 0);
+                    m_sampler->AssignToPipeline(gpu::ShaderType::Fragment, 0);
+                    m_texture->GetApiTexture()->AssignToPipeline(gpu::ShaderType::Fragment, 0);
                     m_graphicsSystem->Draw(4, 0);
                 });
 
@@ -143,7 +143,7 @@ namespace textured_quad_sample
             window->GetClientSize(&w, &h);
 
             {// Initialize viewport
-                graphics_api::ViewportParameters v{};
+                gpu::ViewportParameters v{};
                 v.Position.rx() = 0.f;
                 v.Position.ry() = 0.f;
                 v.Size.rx() = edt::CheckedCast<float>(w);
@@ -152,33 +152,33 @@ namespace textured_quad_sample
             }
 
             {// Create window render target
-                graphics_api::WindowRenderTargetParameters window_rt_params;
-                window_rt_params.swapChain.format = graphics_api::FragmentFormat::R8_G8_B8_A8_UNORM;
+                gpu::WindowRenderTargetParameters window_rt_params;
+                window_rt_params.swapChain.format = gpu::FragmentFormat::R8_G8_B8_A8_UNORM;
                 window_rt_params.swapChain.window = window;
                 window_rt_params.swapChain.buffers = 2;
                 m_windowRT = m_graphicsSystem->CreateWindowRenderTarget(window_rt_params);
             }
 
             {// Create texture render target
-                graphics_api::TextureRenderTargetParameters texture_rt_params{};
-                graphics_api::TextureParameters rtTextureParams{};
-                rtTextureParams.format = graphics_api::FragmentFormat::R8_G8_B8_A8_UNORM;
+                gpu::TextureRenderTargetParameters texture_rt_params{};
+                gpu::TextureParameters rtTextureParams{};
+                rtTextureParams.format = gpu::FragmentFormat::R8_G8_B8_A8_UNORM;
                 rtTextureParams.width = w;
                 rtTextureParams.height = h;
-                rtTextureParams.usage = graphics_api::TextureUsage::ShaderResource | graphics_api::TextureUsage::RenderTarget;
+                rtTextureParams.usage = gpu::TextureUsage::ShaderResource | gpu::TextureUsage::RenderTarget;
                 texture_rt_params.renderTarget = m_graphicsSystem->CreateTexture(rtTextureParams)->GetApiTexture();
                 m_textureRT = m_graphicsSystem->CreateTextureRenderTarget(texture_rt_params);
             }
 
             {// Create depth stencil
-                graphics_api::DepthStencilParameters depthStencilParams{};
-                graphics_api::TextureParameters dsTextureParams{};
-                dsTextureParams.format = graphics_api::FragmentFormat::R24_G8_TYPELESS;
+                gpu::DepthStencilParameters depthStencilParams{};
+                gpu::TextureParameters dsTextureParams{};
+                dsTextureParams.format = gpu::FragmentFormat::R24_G8_TYPELESS;
                 dsTextureParams.width = w;
                 dsTextureParams.height = h;
-                dsTextureParams.usage = graphics_api::TextureUsage::ShaderResource | graphics_api::TextureUsage::DepthStencil;
+                dsTextureParams.usage = gpu::TextureUsage::ShaderResource | gpu::TextureUsage::DepthStencil;
 
-                depthStencilParams.format = graphics_api::FragmentFormat::D24_UNORM_S8_UINT;
+                depthStencilParams.format = gpu::FragmentFormat::D24_UNORM_S8_UINT;
                 depthStencilParams.texture = m_graphicsSystem->CreateTexture(dsTextureParams)->GetApiTexture();
                 m_depthStencil = m_graphicsSystem->CreateDepthStencil(depthStencilParams);
             }
@@ -217,11 +217,11 @@ namespace textured_quad_sample
                 vertices[3].pos.rw() = +1.00f; /**/                              /**/
                 /////////////////////////////////////////////////////////////////////
 
-                graphics_api::DeviceBufferParameters params;
+                gpu::DeviceBufferParameters params;
                 params.size = sizeof(vertices);
-                params.usage = graphics_api::DeviceBufferUsage::Dynamic;
-                params.bindFlags = graphics_api::DeviceBufferBindFlags::VertexBuffer;
-                params.accessFlags = graphics_api::DeviceAccessFlags::Write;
+                params.usage = gpu::DeviceBufferUsage::Dynamic;
+                params.bindFlags = gpu::DeviceBufferBindFlags::VertexBuffer;
+                params.accessFlags = gpu::DeviceAccessFlags::Write;
                 m_vertexBuffer = m_graphicsSystem->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
             }
 
@@ -230,20 +230,20 @@ namespace textured_quad_sample
                 edt::geom::Vector<float, 3> t {};
                 constantBufferInitData.transform = MakeTranslationMatrix(t);
 
-                graphics_api::DeviceBufferParameters params;
+                gpu::DeviceBufferParameters params;
                 params.size = sizeof(constantBufferInitData);
-                params.usage = graphics_api::DeviceBufferUsage::Dynamic;
-                params.bindFlags = graphics_api::DeviceBufferBindFlags::ConstantBuffer;
-                params.accessFlags = graphics_api::DeviceAccessFlags::Write;
+                params.usage = gpu::DeviceBufferUsage::Dynamic;
+                params.bindFlags = gpu::DeviceBufferBindFlags::ConstantBuffer;
+                params.accessFlags = gpu::DeviceAccessFlags::Write;
                 m_constantBuffer = m_graphicsSystem->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
             }
 
             {// Create sampler
-                graphics_api::SamplerParameters samplerParams{};
-                samplerParams.addressU = graphics_api::TextureAddressMode::Clamp;
-                samplerParams.addressV = graphics_api::TextureAddressMode::Clamp;
-                samplerParams.addressW = graphics_api::TextureAddressMode::Clamp;
-                samplerParams.filter = graphics_api::FilteringMode::Anisotropic;
+                gpu::SamplerParameters samplerParams{};
+                samplerParams.addressU = gpu::TextureAddressMode::Clamp;
+                samplerParams.addressV = gpu::TextureAddressMode::Clamp;
+                samplerParams.addressW = gpu::TextureAddressMode::Clamp;
+                samplerParams.filter = gpu::FilteringMode::Anisotropic;
                 m_sampler = m_graphicsSystem->CreateSampler(samplerParams);
             }
         };

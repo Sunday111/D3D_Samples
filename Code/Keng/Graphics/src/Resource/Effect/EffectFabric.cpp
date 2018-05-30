@@ -43,7 +43,7 @@ namespace keng::graphics
             {
                 if (!effectInfo.vs.empty()) {
                     auto base = resourceSystem.GetResource(effectInfo.vs.data(), device);
-                    result->vs = std::dynamic_pointer_cast<Shader<graphics_api::ShaderType::Vertex>>(base);
+                    result->vs = std::dynamic_pointer_cast<Shader<gpu::ShaderType::Vertex>>(base);
                     anyShader = true;
                 }
             }
@@ -51,7 +51,7 @@ namespace keng::graphics
             {
                 if (!effectInfo.fs.empty()) {
                     auto base = resourceSystem.GetResource(effectInfo.fs.data(), device);
-                    result->fs = std::dynamic_pointer_cast<Shader<graphics_api::ShaderType::Fragment>>(base);
+                    result->fs = std::dynamic_pointer_cast<Shader<gpu::ShaderType::Fragment>>(base);
                     anyShader = true;
                 }
             }

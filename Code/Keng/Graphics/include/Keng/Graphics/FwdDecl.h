@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keng/GraphicsAPI/FwdDecl.h"
+#include "Keng/GPU/FwdDecl.h"
 #include "Keng/ResourceSystem/FwdDecl.h"
 #include "Keng/WindowSystem/FwdDecl.h"
 

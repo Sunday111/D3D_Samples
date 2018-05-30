@@ -2,7 +2,7 @@
 
 #include "FwdDecl.h"
 #include "Keng/Graphics/Resource/ITexture.h"
-#include "Keng/GraphicsAPI/Resource/ITexture.h"
+#include "Keng/GPU/Resource/ITexture.h"
 
 namespace keng::graphics
 {
@@ -10,11 +10,11 @@ namespace keng::graphics
         public core::RefCountImpl<ITexture>
     {
     public:
-        Texture(graphics_api::ITexture& impl);
+        Texture(gpu::ITexture& impl);
         ~Texture();
 
-        virtual graphics_api::ITexturePtr GetApiTexture() override;
+        virtual gpu::ITexturePtr GetApiTexture() override;
 
-        graphics_api::ITexturePtr m_impl;
+        gpu::ITexturePtr m_impl;
     };
 }

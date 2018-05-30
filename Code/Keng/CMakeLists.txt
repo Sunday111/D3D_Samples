@@ -18,7 +18,7 @@ add_keng_module(Memory)
 add_keng_module(Core)
 add_keng_module(Filesystem)
 add_keng_module(ResourceSystem)
-add_keng_module(GraphicsAPI)
+add_keng_module(GPU)
 add_keng_module(Graphics)
 add_keng_module(WindowSystem)
 
