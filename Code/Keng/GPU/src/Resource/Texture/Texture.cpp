@@ -1,6 +1,6 @@
 #include "Resource/Texture/Texture.h"
 #include "Device.h"
-#include "D3D_11/EnumConverter.h"
+#include "EnumConverter.h"
 #include "Keng/GPU/Resource/TextureParameters.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 
@@ -41,11 +41,11 @@ namespace keng::gpu
                 d.Height = edt::CheckedCast<uint32_t>(h);
                 d.MipLevels = 1;
                 d.ArraySize = 1;
-                d.Format = d3d::ConvertTextureFormat(format);
+                d.Format = ConvertTextureFormat(format);
                 d.SampleDesc.Count = 1;
                 d.Usage = D3D11_USAGE_DEFAULT;
                 d.BindFlags = MakeBindFlags(usage);
-                d.CPUAccessFlags = d3d::ConvertCpuAccessFlags(cpuAccess);
+                d.CPUAccessFlags = ConvertCpuAccessFlags(cpuAccess);
 
                 if ((cpuAccess & CpuAccessFlags::Write) != CpuAccessFlags::None) {
                     d.Usage = D3D11_USAGE_DYNAMIC;

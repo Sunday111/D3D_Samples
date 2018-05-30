@@ -1,7 +1,7 @@
 #include "EnumConverter.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 
-namespace keng::gpu::d3d
+namespace keng::gpu
 {
     DXGI_FORMAT ConvertTextureFormat(FragmentFormat from) {
         return CallAndRethrowM + [&] {

@@ -1,7 +1,7 @@
 #include "SwapChain.h"
 #include "Device.h"
 #include "Keng/WindowSystem/IWindow.h"
-#include "D3D_11/EnumConverter.h"
+#include "EnumConverter.h"
 #include "Resource/Texture/Texture.h"
 #include "Keng/GPU/RenderTarget/SwapChainParameters.h"
 #include "EverydayTools/Exception/CheckedCast.h"
@@ -16,7 +16,7 @@ namespace keng::gpu
 
             DXGI_SWAP_CHAIN_DESC scd{};
             scd.BufferCount = edt::CheckedCast<uint32_t>(params.buffers);                           // one back buffer
-            scd.BufferDesc.Format = d3d::ConvertTextureFormat(params.format);
+            scd.BufferDesc.Format = ConvertTextureFormat(params.format);
             scd.BufferDesc.Width = edt::CheckedCast<uint32_t>(params.width);
             scd.BufferDesc.Height = edt::CheckedCast<uint32_t>(params.height);
             scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;                                      // how swap chain is to be used

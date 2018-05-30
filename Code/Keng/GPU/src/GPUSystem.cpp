@@ -36,7 +36,7 @@
 #include <algorithm>
 
 #include "yasli/JSONIArchive.h"
-#include "D3D_11/EnumConverter.h"
+#include "EnumConverter.h"
 #include "Keng/Core/IApplication.h"
 
 namespace keng::gpu
@@ -151,7 +151,7 @@ namespace keng::gpu
     }
 
     void GPUSystem::SetTopology(PrimitiveTopology topo) {
-        m_device->GetContext()->IASetPrimitiveTopology(d3d::ConvertTopology(topo));
+        m_device->GetContext()->IASetPrimitiveTopology(ConvertTopology(topo));
     }
 
     void GPUSystem::Draw(size_t vertices, size_t offset) {

@@ -8,7 +8,7 @@
 #include "Keng/GPU/PrimitiveTopology.h"
 #include "Keng/GPU/CpuAccessFlags.h"
 
-namespace keng::gpu::d3d
+namespace keng::gpu
 {
     DXGI_FORMAT ConvertTextureFormat(FragmentFormat);
     FragmentFormat ConvertTextureFormat(DXGI_FORMAT);

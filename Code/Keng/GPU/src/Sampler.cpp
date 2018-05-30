@@ -3,7 +3,7 @@
 #include "EverydayTools/Exception/CheckedCast.h"
 #include "Device.h"
 #include "WinWrappers/WinWrappers.h"
-#include "D3D_11/EnumConverter.h"
+#include "EnumConverter.h"
 #include "Keng/GPU/SamplerParameters.h"
 
 namespace keng::gpu
@@ -12,11 +12,11 @@ namespace keng::gpu
         CallAndRethrowM + [&] {
             m_device = &device;
             CD3D11_SAMPLER_DESC desc(D3D11_DEFAULT);
-            desc.AddressU = d3d::ConvertAddressMode(params.addressU);
-            desc.AddressV = d3d::ConvertAddressMode(params.addressV);
-            desc.AddressW = d3d::ConvertAddressMode(params.addressW);
+            desc.AddressU = ConvertAddressMode(params.addressU);
+            desc.AddressV = ConvertAddressMode(params.addressV);
+            desc.AddressW = ConvertAddressMode(params.addressW);
             std::copy(params.borderColor, params.borderColor + 4, desc.BorderColor);
-            desc.Filter = d3d::ConvertFilteringMode(params.filter);
+            desc.Filter = ConvertFilteringMode(params.filter);
 
             if (params.filter == FilteringMode::Anisotropic) {
                 desc.MaxAnisotropy = 16;

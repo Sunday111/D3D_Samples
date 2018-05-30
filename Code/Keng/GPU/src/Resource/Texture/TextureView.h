@@ -6,7 +6,7 @@
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "WinWrappers/ComPtr.h"
 #include "WinWrappers/WinWrappers.h"
-#include "D3D_11/EnumConverter.h"
+#include "EnumConverter.h"
 
 namespace keng::gpu
 {
@@ -43,7 +43,7 @@ namespace keng::gpu
             static Description CreateBaseDescription(FragmentFormat format) {
                 return CallAndRethrowM + [&] {
                     Description desc{};
-                    desc.Format = d3d::ConvertTextureFormat(format);
+                    desc.Format = ConvertTextureFormat(format);
                     desc.ViewDimension = viewDimension;
                     return desc;
                 };
@@ -163,7 +163,7 @@ namespace keng::gpu
             CallAndRethrowM + [&] {
                 m_view = Traits::MakeInstance(device, tex, nullptr);
                 auto desc = Traits::GetDescription(m_view.Get());
-                m_format = texture_details::d3d::ConvertTextureFormat(desc.Format);
+                m_format = ConvertTextureFormat(desc.Format);
             };
         }
 
