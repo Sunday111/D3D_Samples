@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keng/GPU/IInputLayout.h"
+#include "Keng/GPU/PipelineInput/IInputLayout.h"
 #include "d3d11_1.h"
 #include "WinWrappers/ComPtr.h"
 #include "Device.h"

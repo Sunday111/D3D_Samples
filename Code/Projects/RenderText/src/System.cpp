@@ -18,7 +18,7 @@
 #include "Keng/GPU/DeviceBufferMapper.h"
 #include "Keng/GPU/ViewportParameters.h"
 #include "Keng/GPU/SamplerParameters.h"
-#include "Keng/GPU/ISampler.h"
+#include "Keng/GPU/PipelineInput/ISampler.h"
 #include "Keng/GPU/ScopedAnnotation.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindowSystem.h"

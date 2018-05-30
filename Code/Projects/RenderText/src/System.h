@@ -4,7 +4,7 @@
 #include "Keng/Graphics/FwdDecl.h"
 #include "Keng/Core/ISystem.h"
 #include "Keng/GPU/PrimitiveTopology.h"
-#include "Keng/GPU/IDeviceBuffer.h"
+#include "Keng/GPU/Resource/IDeviceBuffer.h"
 #include "Keng/Graphics/IGraphicsSystem.h"
 
 namespace render_text_sample

@@ -28,7 +28,7 @@
 
 #include "Keng/GPU/IAnnotation.h"
 
-#include "Keng/GPU/ISampler.h"
+#include "Keng/GPU/PipelineInput/ISampler.h"
 
 #include "Device.h"
 #include "Resource/Texture/Texture.h"
@@ -36,7 +36,7 @@
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 #include "EverydayTools/Geom/Vector.h"
-#include "Keng/GPU/IDeviceBuffer.h"
+#include "Keng/GPU/Resource/IDeviceBuffer.h"
 
 #include <algorithm>
 

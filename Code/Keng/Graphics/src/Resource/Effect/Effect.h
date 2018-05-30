@@ -3,7 +3,7 @@
 #include "FwdDecl.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "Resource/Shader/Shader.h"
-#include "Keng/GPU/IInputLayout.h"
+#include "Keng/GPU/PipelineInput/IInputLayout.h"
 #include "Keng/GPU/Shader/IShader.h"
 
 namespace keng::graphics

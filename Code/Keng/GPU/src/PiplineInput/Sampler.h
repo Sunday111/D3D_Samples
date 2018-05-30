@@ -3,7 +3,7 @@
 #include "d3d11.h"
 #include "WinWrappers/ComPtr.h"
 #include "FwdDecl.h"
-#include "Keng/GPU/ISampler.h"
+#include "Keng/GPU/PipelineInput/ISampler.h"
 
 namespace keng::gpu
 {

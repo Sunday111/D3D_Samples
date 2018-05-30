@@ -30,7 +30,7 @@
 #include "EverydayTools/Exception/CheckedCast.h"
 #include "EverydayTools/Geom/Vector.h"
 
-#include "Sampler.h"
+#include "PiplineInput/Sampler.h"
 
 #include <algorithm>
 

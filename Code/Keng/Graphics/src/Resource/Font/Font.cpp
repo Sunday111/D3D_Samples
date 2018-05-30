@@ -6,7 +6,7 @@
 #include "Resource/Font/FreeType/Face.h"
 #include "GlyphAtlas.h"
 #include "Resource/Texture/Texture.h"
-#include "Keng/GPU/IDeviceBuffer.h"
+#include "Keng/GPU/Resource/IDeviceBuffer.h"
 
 namespace keng::graphics
 {

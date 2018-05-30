@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Keng/GPU/FwdDecl.h"
-#include "Keng/GPU/IDeviceBuffer.h"
+#include "Keng/GPU/Resource/IDeviceBuffer.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 
