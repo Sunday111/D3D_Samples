@@ -143,10 +143,6 @@ namespace keng::gpu
         return SamplerPtr::MakeInstance(*m_device, params);
     }
 
-    void GPUSystem::SetTopology(PrimitiveTopology topo) {
-        m_device->GetContext()->IASetPrimitiveTopology(ConvertTopology(topo));
-    }
-
     void GPUSystem::Draw(size_t vertices, size_t offset) {
         m_device->GetContext()->Draw(
             edt::CheckedCast<uint32_t>(vertices),

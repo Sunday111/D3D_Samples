@@ -63,6 +63,10 @@ namespace keng::gpu
             return DeviceBufferPtr::MakeInstance(*this, params, data);
         };
     }
+    
+    void Device::SetTopology(PrimitiveTopology topo) {
+        GetContext()->IASetPrimitiveTopology(ConvertTopology(topo));
+    }
 
     void* Device::GetNativeDevice() const {
         return GetDevice().Get();

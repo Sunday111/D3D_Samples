@@ -49,7 +49,7 @@ namespace render_text_sample
             vbAssignParams.slot = 0;
             vbAssignParams.stride = sizeof(T);
             m_vertices->AssignToPipeline(vbAssignParams);
-            system->SetTopology(m_topo);
+            system->GetDevice()->GetApiDevice()->SetTopology(m_topo);
         }
 
         size_t GetVerticesCount() const {

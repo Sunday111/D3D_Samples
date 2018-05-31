@@ -158,10 +158,6 @@ namespace keng::graphics
         return m_api->CreateSampler(params);
     }
 
-    void GraphicsSystem::SetTopology(gpu::PrimitiveTopology topo) {
-        m_api->SetTopology(topo);
-    }
-
     void GraphicsSystem::Draw(size_t vertices, size_t offset) {
         m_api->Draw(vertices, offset);
     }

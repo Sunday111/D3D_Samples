@@ -28,7 +28,6 @@ namespace keng::gpu
         virtual IDevicePtr GetDevice() override;
         virtual ISwapChainPtr CreateSwapChain(const SwapChainParameters& params) override;
         virtual ISamplerPtr CreateSampler(const SamplerParameters& params) override;
-        virtual void SetTopology(PrimitiveTopology topo) override;
         virtual void Draw(size_t vertices, size_t offset) override;
         virtual void SetViewport(const ViewportParameters&) override;
         virtual IAnnotationPtr CreateAnnotation() override;
