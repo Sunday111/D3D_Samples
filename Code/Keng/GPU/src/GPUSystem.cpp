@@ -10,14 +10,6 @@
 #include "keng/GPU/Resource/TextureParameters.h"
 #include "Resource/Texture/Texture.h"
 
-#include "Keng/GPU/RenderTarget/WindowRenderTargetParameters.h"
-#include "RenderTarget/WindowRenderTarget.h"
-#include "Keng/GPU/RenderTarget/TextureRenderTargetParameters.h"
-#include "RenderTarget/TextureRenderTarget.h"
-#include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
-#include "RenderTarget/DepthStencil.h"
-#include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
-#include "RenderTarget/DepthStencil.h"
 #include "Keng/GPU/RenderTarget/SwapChainParameters.h"
 #include "RenderTarget/SwapChain.h"
 #include "Keng/GPU/ViewportParameters.h"
@@ -117,18 +109,6 @@ namespace keng::gpu
     }
 
     void GPUSystem::Shutdown() {
-    }
-
-    IWindowRenderTargetPtr GPUSystem::CreateWindowRenderTarget(const WindowRenderTargetParameters& params) {
-        return WindowRenderTargetPtr::MakeInstance(*m_device, params);
-    }
-
-    ITextureRenderTargetPtr GPUSystem::CreateTextureRenderTarget(const TextureRenderTargetParameters& params) {
-        return TextureRenderTargetPtr::MakeInstance(*m_device, params);
-    }
-
-    IDepthStencilPtr GPUSystem::CreateDepthStencil(const DepthStencilParameters& params) {
-        return DepthStencilPtr::MakeInstance(*m_device, params);
     }
 
     core::Ptr<IDevice> GPUSystem::GetDevice() {

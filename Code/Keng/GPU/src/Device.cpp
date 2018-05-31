@@ -7,6 +7,12 @@
 #include "Resource/Buffer/DeviceBuffer.h"
 #include "Resource/Texture/Texture.h"
 #include "Shader/Shader.h"
+#include "Keng/GPU/RenderTarget/WindowRenderTargetParameters.h"
+#include "RenderTarget/WindowRenderTarget.h"
+#include "Keng/GPU/RenderTarget/TextureRenderTargetParameters.h"
+#include "RenderTarget/TextureRenderTarget.h"
+#include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
+#include "RenderTarget/DepthStencil.h"
 
 namespace keng::gpu
 {
@@ -32,6 +38,18 @@ namespace keng::gpu
                 nullptr,
                 m_deviceContext.Receive()));
         };
+    }
+
+    IWindowRenderTargetPtr Device::CreateWindowRenderTarget(const WindowRenderTargetParameters& params) {
+        return WindowRenderTargetPtr::MakeInstance(*this, params);
+    }
+
+    ITextureRenderTargetPtr Device::CreateTextureRenderTarget(const TextureRenderTargetParameters& params) {
+        return TextureRenderTargetPtr::MakeInstance(*this, params);
+    }
+
+    IDepthStencilPtr Device::CreateDepthStencil(const DepthStencilParameters& params) {
+        return DepthStencilPtr::MakeInstance(*this, params);
     }
 
     ITexturePtr Device::CreateTexture(const TextureParameters& params) {

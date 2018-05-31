@@ -68,6 +68,8 @@ namespace simple_quad_sample
 
         return CallAndRethrowM + [&] {
             return Annotate(m_annotation, L"Frame", [&] {
+                auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
+
                 float clearColor[4]{
                     0.0f, 0.2f, 0.4f, 1.0f
                 };
@@ -102,7 +104,7 @@ namespace simple_quad_sample
                     m_textureRT->AssignToPipeline(m_depthStencil);
                     m_effect->AssignToPipeline();
                     m_vertexBuffer->AssignToPipeline(vbAssignParams);
-                    m_graphicsSystem->SetTopology(gpu::PrimitiveTopology::TriangleStrip);
+                    api_device->SetTopology(gpu::PrimitiveTopology::TriangleStrip);
                     m_constantBuffer->AssignToPipeline(cbAssignParams);
                     m_graphicsSystem->Draw(4, 0);
                 });
@@ -140,6 +142,7 @@ namespace simple_quad_sample
         using namespace window_system;
 
         CallAndRethrowM + [&] {
+            auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
             m_resourceSystem = app->FindSystem<resource::IResourceSystem>();
             m_graphicsSystem = app->FindSystem<graphics::IGraphicsSystem>();
             m_windowSystem = app->FindSystem<window_system::IWindowSystem>();
@@ -163,7 +166,7 @@ namespace simple_quad_sample
                 window_rt_params.swapChain.format = gpu::FragmentFormat::R8_G8_B8_A8_UNORM;
                 window_rt_params.swapChain.window = window;
                 window_rt_params.swapChain.buffers = 2;
-                m_windowRT = m_graphicsSystem->CreateWindowRenderTarget(window_rt_params);
+                m_windowRT = api_device->CreateWindowRenderTarget(window_rt_params);
             }
 
             {// Create texture render target
@@ -174,7 +177,7 @@ namespace simple_quad_sample
                 rtTextureParams.height = h;
                 rtTextureParams.usage = gpu::TextureUsage::ShaderResource | gpu::TextureUsage::RenderTarget;
                 texture_rt_params.renderTarget = m_graphicsSystem->CreateTexture(rtTextureParams)->GetApiTexture();
-                m_textureRT = m_graphicsSystem->CreateTextureRenderTarget(texture_rt_params);
+                m_textureRT = api_device->CreateTextureRenderTarget(texture_rt_params);
             }
 
             {// Create depth stencil
@@ -187,7 +190,7 @@ namespace simple_quad_sample
 
                 depthStencilParams.format = gpu::FragmentFormat::D24_UNORM_S8_UINT;
                 depthStencilParams.texture = m_graphicsSystem->CreateTexture(dsTextureParams)->GetApiTexture();
-                m_depthStencil = m_graphicsSystem->CreateDepthStencil(depthStencilParams);
+                m_depthStencil = api_device->CreateDepthStencil(depthStencilParams);
             }
 
             {// Read and compile shaders

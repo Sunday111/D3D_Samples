@@ -130,18 +130,6 @@ namespace keng::graphics
     void GraphicsSystem::Shutdown() {
     }
 
-    gpu::IWindowRenderTargetPtr GraphicsSystem::CreateWindowRenderTarget(const gpu::WindowRenderTargetParameters& params) {
-        return m_api->CreateWindowRenderTarget(params);
-    }
-
-    gpu::ITextureRenderTargetPtr GraphicsSystem::CreateTextureRenderTarget(const gpu::TextureRenderTargetParameters& params) {
-        return m_api->CreateTextureRenderTarget(params);
-    }
-
-    gpu::IDepthStencilPtr GraphicsSystem::CreateDepthStencil(const gpu::DepthStencilParameters& params) {
-        return m_api->CreateDepthStencil(params);
-    }
-
     IDevicePtr GraphicsSystem::GetDevice() {
         return m_device;
     }

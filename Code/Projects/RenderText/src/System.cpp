@@ -180,6 +180,7 @@ namespace render_text_sample
             m_graphicsSystem = app->FindSystem<IGraphicsSystem>();
             m_windowSystem = app->FindSystem<IWindowSystem>();
             m_annotation = m_graphicsSystem->CreateAnnotation();
+            auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
 
             auto window = m_windowSystem->GetWindow();
             size_t w, h;
@@ -199,7 +200,7 @@ namespace render_text_sample
                 window_rt_params.swapChain.format = gpu::FragmentFormat::R8_G8_B8_A8_UNORM;
                 window_rt_params.swapChain.window = window;
                 window_rt_params.swapChain.buffers = 2;
-                m_windowRT = m_graphicsSystem->CreateWindowRenderTarget(window_rt_params);
+                m_windowRT = api_device->CreateWindowRenderTarget(window_rt_params);
             }
 
             {// Create depth stencil
@@ -212,7 +213,7 @@ namespace render_text_sample
 
                 depthStencilParams.format = gpu::FragmentFormat::D24_UNORM_S8_UINT;
                 depthStencilParams.texture = m_graphicsSystem->CreateTexture(dsTextureParams)->GetApiTexture();
-                m_depthStencil = m_graphicsSystem->CreateDepthStencil(depthStencilParams);
+                m_depthStencil = api_device->CreateDepthStencil(depthStencilParams);
             }
 
             m_containerTexture = std::static_pointer_cast<ITexture>(m_resourceSystem->GetResource("Assets/Textures/container.json", m_graphicsSystem->GetDevice()));

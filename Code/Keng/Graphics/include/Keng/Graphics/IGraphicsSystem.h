@@ -11,9 +11,6 @@ namespace keng::graphics
     {
     public:
         static const char* SystemName() { return "KengGraphics"; }
-        virtual gpu::IWindowRenderTargetPtr CreateWindowRenderTarget(const gpu::WindowRenderTargetParameters& params) = 0;
-        virtual gpu::ITextureRenderTargetPtr CreateTextureRenderTarget(const gpu::TextureRenderTargetParameters& params) = 0;
-        virtual gpu::IDepthStencilPtr CreateDepthStencil(const gpu::DepthStencilParameters& params) = 0;
         virtual IDevicePtr GetDevice() = 0;
         virtual gpu::ISwapChainPtr CreateSwapChain(const gpu::SwapChainParameters& params) = 0;
         virtual ITexturePtr CreateTexture(const gpu::TextureParameters& params) = 0;

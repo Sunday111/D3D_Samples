@@ -24,9 +24,6 @@ namespace keng::graphics
         virtual void Shutdown() override;
 
         // IGraphicsSystem
-        virtual gpu::IWindowRenderTargetPtr CreateWindowRenderTarget(const gpu::WindowRenderTargetParameters& params) override;
-        virtual gpu::ITextureRenderTargetPtr CreateTextureRenderTarget(const gpu::TextureRenderTargetParameters& params) override;
-        virtual gpu::IDepthStencilPtr CreateDepthStencil(const gpu::DepthStencilParameters& params) override;
         virtual IDevicePtr GetDevice() override;
         virtual gpu::ISwapChainPtr CreateSwapChain(const gpu::SwapChainParameters& params) override;
         virtual ITexturePtr CreateTexture(const gpu::TextureParameters& params) override;
