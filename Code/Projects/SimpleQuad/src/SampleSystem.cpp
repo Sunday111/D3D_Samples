@@ -142,9 +142,9 @@ namespace simple_quad_sample
         using namespace window_system;
 
         CallAndRethrowM + [&] {
-            auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
             m_resourceSystem = app->FindSystem<resource::IResourceSystem>();
             m_graphicsSystem = app->FindSystem<graphics::IGraphicsSystem>();
+            auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
             m_windowSystem = app->FindSystem<window_system::IWindowSystem>();
             m_annotation = api_device->CreateAnnotation();
 

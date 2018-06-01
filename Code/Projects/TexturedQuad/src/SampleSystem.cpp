@@ -134,11 +134,10 @@ namespace textured_quad_sample
         using namespace window_system;
 
         CallAndRethrowM + [&] {
-            auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
-
             m_resourceSystem = app->FindSystem<IResourceSystem>();
             m_graphicsSystem = app->FindSystem<IGraphicsSystem>();
             m_windowSystem = app->FindSystem<IWindowSystem>();
+            auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
             m_annotation = api_device->CreateAnnotation();
 
             auto window = m_windowSystem->GetWindow();
