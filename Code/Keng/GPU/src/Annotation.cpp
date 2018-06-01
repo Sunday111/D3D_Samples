@@ -5,7 +5,13 @@ namespace keng::gpu
 {
     Annotation::Annotation(Device& device) {
         m_device = &device;
-        m_annotation = m_device->CreateAnnotation();
+        CallAndRethrowM + [&] {
+            ComPtr<ID3DUserDefinedAnnotation> annotation;
+            WinAPI<char>::ThrowIfError(device.GetContext()->QueryInterface(
+                __uuidof(ID3DUserDefinedAnnotation),
+                reinterpret_cast<void**>(annotation.Receive())));
+            return annotation;
+        };
     }
 
     void Annotation::BeginEvent(const wchar_t* text) {

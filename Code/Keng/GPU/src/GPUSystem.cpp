@@ -113,25 +113,6 @@ namespace keng::gpu
         return m_device;
     }
 
-    void GPUSystem::Draw(size_t vertices, size_t offset) {
-        m_device->GetContext()->Draw(
-            edt::CheckedCast<uint32_t>(vertices),
-            edt::CheckedCast<uint32_t>(offset));
-    }
-
-    void GPUSystem::SetViewport(const ViewportParameters& p) {
-        D3D11_VIEWPORT v[1]{};
-        v[0].TopLeftX = p.Position.x();
-        v[0].TopLeftY = p.Position.y();
-        v[0].Width = p.Size.x();
-        v[0].Height = p.Size.y();
-        m_device->SetViewports(edt::MakeArrayView(v));
-    }
-
-    IAnnotationPtr GPUSystem::CreateAnnotation() {
-        return AnnotationPtr::MakeInstance(*m_device);
-    }
-
     const char* GPUSystem::GetSystemName() const {
         return SystemName();
     }

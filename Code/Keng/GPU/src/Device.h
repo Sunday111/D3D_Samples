@@ -28,6 +28,9 @@ namespace keng::gpu
         virtual IShaderPtr CreateShader(ShaderType type, const ShaderParameters& parameters) override;
         virtual IDeviceBufferPtr CreateDeviceBuffer(const DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) override;
         virtual void SetTopology(PrimitiveTopology topo) override;
+        virtual void Draw(size_t vertices, size_t offset) override;
+        virtual void SetViewport(const ViewportParameters&) override;
+        virtual IAnnotationPtr CreateAnnotation() override;
         void* GetNativeDevice() const override;
         void* GetNativeContext() const override;
         // ~IDevice
@@ -44,7 +47,6 @@ namespace keng::gpu
         void SetVertexBuffer(ID3D11Buffer* buffer, unsigned stride, unsigned offset);
         void SetConstantBuffer(ID3D11Buffer* buffer, ShaderType shaderType);
         void SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY topo);
-        ComPtr<ID3DUserDefinedAnnotation> Device::CreateAnnotation() const;
         ComPtr<ID3D11InputLayout> Device::CreateInputLayout(edt::DenseArrayView<const D3D11_INPUT_ELEMENT_DESC> descriptors, ID3D10Blob* shader);
         ComPtr<ID3D11InputLayout> Device::CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC* elementDescriptor, uint32_t elementsCount, ID3D10Blob* shader);
         ComPtr<ID3D11Buffer> Device::CreateBuffer(D3D11_BUFFER_DESC desc, const void* initialData = nullptr);

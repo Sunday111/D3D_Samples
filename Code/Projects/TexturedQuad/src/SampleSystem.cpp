@@ -60,6 +60,7 @@ namespace textured_quad_sample
 
         return CallAndRethrowM + [&] {
             return Annotate(m_annotation, L"Frame", [&] {
+                auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
                 float clearColor[4]{
                     0.0f, 0.2f, 0.4f, 1.0f
                 };
@@ -97,7 +98,7 @@ namespace textured_quad_sample
                     m_constantBuffer->AssignToPipeline(cbAssignParams);
                     m_sampler->AssignToPipeline(gpu::ShaderType::Fragment, 0);
                     m_texture->GetApiTexture()->AssignToPipeline(gpu::ShaderType::Fragment, 0);
-                    m_graphicsSystem->Draw(4, 0);
+                    api_device->Draw(4, 0);
                 });
 
                 Annotate(m_annotation, L"Copy texture to swap chain texture", [&] {
@@ -138,7 +139,7 @@ namespace textured_quad_sample
             m_resourceSystem = app->FindSystem<IResourceSystem>();
             m_graphicsSystem = app->FindSystem<IGraphicsSystem>();
             m_windowSystem = app->FindSystem<IWindowSystem>();
-            m_annotation = m_graphicsSystem->CreateAnnotation();
+            m_annotation = api_device->CreateAnnotation();
 
             auto window = m_windowSystem->GetWindow();
             size_t w, h;
@@ -150,7 +151,7 @@ namespace textured_quad_sample
                 v.Position.ry() = 0.f;
                 v.Size.rx() = edt::CheckedCast<float>(w);
                 v.Size.ry() = edt::CheckedCast<float>(h);
-                m_graphicsSystem->SetViewport(v);
+                api_device->SetViewport(v);
             }
 
             {// Create window render target

@@ -71,6 +71,8 @@ namespace render_text_sample
 
         return CallAndRethrowM + [&] {
             return Annotate(m_annotation, L"Frame", [&] {
+                auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
+
                 float clearColor[4]{
                     0.0f, 0.2f, 0.4f, 1.0f
                 };
@@ -78,7 +80,6 @@ namespace render_text_sample
                 static float angle = 0.f;
                 constexpr float delta_angle = 0.0003f;
                 angle += delta_angle;
-
 
                 Annotate(m_annotation, L"Draw", [&] {
                     Annotate(m_annotation, L"Clear", [&] {
@@ -114,7 +115,7 @@ namespace render_text_sample
                             m_containerTexture->GetApiTexture()->AssignToPipeline(gpu::ShaderType::Fragment, 0);
                         });
 
-                        m_graphicsSystem->Draw(m_containerQuad.GetVerticesCount(), 0);
+                        api_device->Draw(m_containerQuad.GetVerticesCount(), 0);
                     });
 
                     m_depthStencil->Clear(gpu::DepthStencilClearFlags::ClearDepth | gpu::DepthStencilClearFlags::ClearStencil, 1.0f, 0);
@@ -143,7 +144,7 @@ namespace render_text_sample
                             m_atlasTexture->GetApiTexture()->AssignToPipeline(gpu::ShaderType::Fragment, 0);
                         });
 
-                        m_graphicsSystem->Draw(m_textQuads.GetVerticesCount(), 0);
+                        api_device->Draw(m_textQuads.GetVerticesCount(), 0);
                     });
                 });
 
@@ -176,11 +177,11 @@ namespace render_text_sample
         using namespace window_system;
 
         CallAndRethrowM + [&] {
+            auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
             m_resourceSystem = app->FindSystem<IResourceSystem>();
             m_graphicsSystem = app->FindSystem<IGraphicsSystem>();
             m_windowSystem = app->FindSystem<IWindowSystem>();
-            m_annotation = m_graphicsSystem->CreateAnnotation();
-            auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
+            m_annotation = api_device->CreateAnnotation();
 
             auto window = m_windowSystem->GetWindow();
             size_t w, h;
@@ -192,7 +193,7 @@ namespace render_text_sample
                 v.Position.ry() = 0.f;
                 v.Size.rx() = edt::CheckedCast<float>(w);
                 v.Size.ry() = edt::CheckedCast<float>(h);
-                m_graphicsSystem->SetViewport(v);
+                api_device->SetViewport(v);
             }
 
             {// Create window render target

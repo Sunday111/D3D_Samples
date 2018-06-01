@@ -13,8 +13,5 @@ namespace keng::gpu
     public:
         static const char* SystemName() { return "KengGPU"; }
         virtual core::Ptr<IDevice> GetDevice() = 0;
-        virtual void Draw(size_t vertices, size_t offset) = 0;
-        virtual void SetViewport(const ViewportParameters&) = 0;
-        virtual IAnnotationPtr CreateAnnotation() = 0;
     };
 }

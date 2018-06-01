@@ -19,6 +19,9 @@ namespace keng::gpu
         virtual ITexturePtr CreateTexture(const TextureParameters& params) = 0;
         virtual IShaderPtr CreateShader(ShaderType type, const ShaderParameters& parameters) = 0;
         virtual IDeviceBufferPtr CreateDeviceBuffer(const DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) = 0;
+        virtual void Draw(size_t vertices, size_t offset) = 0;
+        virtual void SetViewport(const ViewportParameters&) = 0;
+        virtual IAnnotationPtr CreateAnnotation() = 0;
         virtual void SetTopology(PrimitiveTopology topo) = 0;
         virtual void* GetNativeDevice() const = 0;
         virtual void* GetNativeContext() const = 0;
