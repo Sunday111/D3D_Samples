@@ -13,6 +13,7 @@
 #include "RenderTarget/TextureRenderTarget.h"
 #include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
 #include "RenderTarget/DepthStencil.h"
+#include "RenderTarget/SwapChain.h"
 
 namespace keng::gpu
 {
@@ -50,6 +51,10 @@ namespace keng::gpu
 
     IDepthStencilPtr Device::CreateDepthStencil(const DepthStencilParameters& params) {
         return DepthStencilPtr::MakeInstance(*this, params);
+    }
+
+    ISwapChainPtr Device::CreateSwapChain(const SwapChainParameters& params) {
+        return SwapChainPtr::MakeInstance(*this, params);
     }
 
     ITexturePtr Device::CreateTexture(const TextureParameters& params) {

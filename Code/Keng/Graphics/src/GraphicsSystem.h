@@ -25,7 +25,6 @@ namespace keng::graphics
 
         // IGraphicsSystem
         virtual IDevicePtr GetDevice() override;
-        virtual gpu::ISwapChainPtr CreateSwapChain(const gpu::SwapChainParameters& params) override;
         virtual ITexturePtr CreateTexture(const gpu::TextureParameters& params) override;
         virtual gpu::ISamplerPtr CreateSampler(const gpu::SamplerParameters& params) override;
         virtual void Draw(size_t vertices, size_t offset) override;

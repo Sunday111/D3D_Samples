@@ -14,16 +14,6 @@
 #include "Resource/Effect/Effect.h"
 #include "Resource/ResourceFabricRegisterer.h"
 
-#include "Keng/GPU/RenderTarget/WindowRenderTargetParameters.h"
-#include "Keng/GPU/RenderTarget/IWindowRenderTarget.h"
-#include "Keng/GPU/RenderTarget/TextureRenderTargetParameters.h"
-#include "Keng/GPU/RenderTarget/ITextureRenderTarget.h"
-#include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
-#include "Keng/GPU/RenderTarget/IDepthStencil.h"
-#include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
-#include "Keng/GPU/RenderTarget/IDepthStencil.h"
-#include "Keng/GPU/RenderTarget/SwapChainParameters.h"
-#include "Keng/GPU/RenderTarget/ISwapChain.h"
 #include "Keng/GPU/ViewportParameters.h"
 
 #include "Keng/GPU/IAnnotation.h"
@@ -132,10 +122,6 @@ namespace keng::graphics
 
     IDevicePtr GraphicsSystem::GetDevice() {
         return m_device;
-    }
-
-    gpu::ISwapChainPtr GraphicsSystem::CreateSwapChain(const gpu::SwapChainParameters& params) {
-        return m_api->CreateSwapChain(params);
     }
 
     ITexturePtr GraphicsSystem::CreateTexture(const gpu::TextureParameters& params) {

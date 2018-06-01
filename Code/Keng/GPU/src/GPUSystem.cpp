@@ -115,10 +115,6 @@ namespace keng::gpu
         return m_device;
     }
 
-    ISwapChainPtr GPUSystem::CreateSwapChain(const SwapChainParameters& params) {
-        return SwapChainPtr::MakeInstance(*m_device, params);
-    }
-
     ISamplerPtr GPUSystem::CreateSampler(const SamplerParameters& params) {
         return SamplerPtr::MakeInstance(*m_device, params);
     }
