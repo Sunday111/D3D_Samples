@@ -23,7 +23,6 @@ namespace keng::gpu
 
         // IGPUSystem
         virtual IDevicePtr GetDevice() override;
-        virtual ISamplerPtr CreateSampler(const SamplerParameters& params) override;
         virtual void Draw(size_t vertices, size_t offset) override;
         virtual void SetViewport(const ViewportParameters&) override;
         virtual IAnnotationPtr CreateAnnotation() override;

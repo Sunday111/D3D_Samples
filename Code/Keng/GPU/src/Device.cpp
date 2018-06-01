@@ -14,6 +14,7 @@
 #include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
 #include "RenderTarget/DepthStencil.h"
 #include "RenderTarget/SwapChain.h"
+#include "PiplineInput/Sampler.h"
 
 namespace keng::gpu
 {
@@ -55,6 +56,10 @@ namespace keng::gpu
 
     ISwapChainPtr Device::CreateSwapChain(const SwapChainParameters& params) {
         return SwapChainPtr::MakeInstance(*this, params);
+    }
+
+    ISamplerPtr Device::CreateSampler(const SamplerParameters& params) {
+        return SamplerPtr::MakeInstance(*this, params);
     }
 
     ITexturePtr Device::CreateTexture(const TextureParameters& params) {

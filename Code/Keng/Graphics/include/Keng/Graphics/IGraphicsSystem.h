@@ -13,7 +13,6 @@ namespace keng::graphics
         static const char* SystemName() { return "KengGraphics"; }
         virtual IDevicePtr GetDevice() = 0;
         virtual ITexturePtr CreateTexture(const gpu::TextureParameters& params) = 0;
-        virtual gpu::ISamplerPtr CreateSampler(const gpu::SamplerParameters& params) = 0;
         virtual void Draw(size_t vertices, size_t offset) = 0;
         virtual void SetViewport(const gpu::ViewportParameters&) = 0;
         virtual gpu::IAnnotationPtr CreateAnnotation() = 0;

@@ -246,7 +246,7 @@ namespace textured_quad_sample
                 samplerParams.addressV = gpu::TextureAddressMode::Clamp;
                 samplerParams.addressW = gpu::TextureAddressMode::Clamp;
                 samplerParams.filter = gpu::FilteringMode::Anisotropic;
-                m_sampler = m_graphicsSystem->CreateSampler(samplerParams);
+                m_sampler = api_device->CreateSampler(samplerParams);
             }
         };
     }

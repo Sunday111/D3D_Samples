@@ -375,7 +375,7 @@ namespace render_text_sample
                 samplerParams.addressV = gpu::TextureAddressMode::Clamp;
                 samplerParams.addressW = gpu::TextureAddressMode::Clamp;
                 samplerParams.filter = gpu::FilteringMode::Anisotropic;
-                m_containerSampler = m_graphicsSystem->CreateSampler(samplerParams);
+                m_containerSampler = api_device->CreateSampler(samplerParams);
             }
 
             {// Create text sampler
@@ -384,7 +384,7 @@ namespace render_text_sample
                 samplerParams.addressV = gpu::TextureAddressMode::Clamp;
                 samplerParams.addressW = gpu::TextureAddressMode::Clamp;
                 samplerParams.filter = gpu::FilteringMode::Bilinear;
-                m_textSampler = m_graphicsSystem->CreateSampler(samplerParams);
+                m_textSampler = api_device->CreateSampler(samplerParams);
             }
 
             LoadParameters(app);

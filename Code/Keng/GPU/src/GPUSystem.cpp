@@ -22,8 +22,6 @@
 #include "EverydayTools/Exception/CheckedCast.h"
 #include "EverydayTools/Geom/Vector.h"
 
-#include "PiplineInput/Sampler.h"
-
 #include <algorithm>
 
 #include "yasli/JSONIArchive.h"
@@ -113,10 +111,6 @@ namespace keng::gpu
 
     core::Ptr<IDevice> GPUSystem::GetDevice() {
         return m_device;
-    }
-
-    ISamplerPtr GPUSystem::CreateSampler(const SamplerParameters& params) {
-        return SamplerPtr::MakeInstance(*m_device, params);
     }
 
     void GPUSystem::Draw(size_t vertices, size_t offset) {

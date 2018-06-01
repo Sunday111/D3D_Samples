@@ -18,8 +18,6 @@
 
 #include "Keng/GPU/IAnnotation.h"
 
-#include "Keng/GPU/PipelineInput/ISampler.h"
-
 #include "Device.h"
 #include "Resource/Texture/Texture.h"
 
@@ -126,10 +124,6 @@ namespace keng::graphics
 
     ITexturePtr GraphicsSystem::CreateTexture(const gpu::TextureParameters& params) {
         return m_device->CreateRuntimeTexture(params, *m_resourceSystem);
-    }
-
-    gpu::ISamplerPtr GraphicsSystem::CreateSampler(const gpu::SamplerParameters& params) {
-        return m_api->CreateSampler(params);
     }
 
     void GraphicsSystem::Draw(size_t vertices, size_t offset) {
