@@ -95,13 +95,18 @@ namespace keng::graphics
 
             auto params = ReadDefaultParams();
 
+            {// Initialize device
+                gpu::DeviceParameters deviceParams;
+                deviceParams.debugDevice = params.debugDevice;
+                deviceParams.noDeviceMultithreading = !params.deviceMultithreading;
+                auto apiDevice = m_api->CreateDevice(deviceParams);
+                m_device = DevicePtr::MakeInstance(*apiDevice);
+            }
+
             {// Register resource fabrics
                 ResourceFabricRegisterer fabricRegisterer;
                 fabricRegisterer.Register(m_resourceSystem);
             }
-
-            auto apiDevice = m_api->GetDevice();
-            m_device = DevicePtr::MakeInstance(*apiDevice);
         };
     }
 

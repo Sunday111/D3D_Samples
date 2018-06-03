@@ -22,11 +22,9 @@ namespace keng::gpu
         virtual void Shutdown() override;
 
         // IGPUSystem
-        virtual IDevicePtr GetDevice() override;
+        virtual core::Ptr<IDevice> CreateDevice(const DeviceParameters&) override;
 
     private:
-        bool m_fullscreen = false;
-        core::IApplicationPtr m_app;
         core::Ptr<Device> m_device;
     };
 }

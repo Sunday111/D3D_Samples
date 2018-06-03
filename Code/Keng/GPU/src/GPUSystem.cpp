@@ -48,39 +48,6 @@ namespace keng::gpu
             bool debugDevice = false;
             bool deviceMultithreading = false;
         };
-
-        SystemParams ReadDefaultParams() {
-            return CallAndRethrowM + [&] {
-                struct ConfigFile
-                {
-                    void serialize(Archive& ar) { ar(params, "graphics_api_system"); }
-                    SystemParams params;
-                };
-
-                ConfigFile file;
-
-#ifdef _DEBUG
-                file.params.deviceMultithreading = true;
-                file.params.debugDevice = true;
-#endif
-
-                try {
-                    auto filename = "Configs/graphics_api_system.json";
-                    using FileView = edt::DenseArrayView<const uint8_t>;
-                    auto onFileRead = [&](FileView fileView) {
-                        yasli::JSONIArchive ar;
-                        OpenArchiveJSON(fileView, ar);
-                        ar(file);
-                    };
-                    edt::Delegate<void(FileView)> delegate;
-                    delegate.Bind(onFileRead);
-                    filesystem::HandleFileData(filename, delegate);
-                } catch (...) {
-                }
-
-                return file.params;
-            };
-        }
     }
 
     GPUSystem::GPUSystem() = default;
@@ -88,18 +55,7 @@ namespace keng::gpu
     GPUSystem::~GPUSystem() = default;
 
     void GPUSystem::Initialize(const core::IApplicationPtr& app) {
-        CallAndRethrowM + [&] {
-            m_app = app;
-
-            auto params = ReadDefaultParams();
-
-            {// Initialize device
-                DeviceParameters deviceParams;
-                deviceParams.debugDevice = params.debugDevice;
-                deviceParams.noDeviceMultithreading = !params.deviceMultithreading;
-                m_device = DevicePtr::MakeInstance(deviceParams);
-            }
-        };
+        UnusedVar(app);
     }
 
     bool GPUSystem::Update() {
@@ -109,8 +65,9 @@ namespace keng::gpu
     void GPUSystem::Shutdown() {
     }
 
-    core::Ptr<IDevice> GPUSystem::GetDevice() {
-        return m_device;
+    core::Ptr<IDevice> GPUSystem::CreateDevice(const DeviceParameters& parameters)
+    {
+        return DevicePtr::MakeInstance(parameters);
     }
 
     const char* GPUSystem::GetSystemName() const {

@@ -12,6 +12,6 @@ namespace keng::gpu
     {
     public:
         static const char* SystemName() { return "KengGPU"; }
-        virtual core::Ptr<IDevice> GetDevice() = 0;
+        virtual core::Ptr<IDevice> CreateDevice(const DeviceParameters&) = 0;
     };
 }
