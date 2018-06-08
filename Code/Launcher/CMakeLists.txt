@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.5.1)
+include(cxx_version)
 
 set(PROJECT_Launcher true CACHE BOOL "Launcher")
 
@@ -48,3 +49,6 @@ symlink_to_dir(Configs)
 foreach(project ${found_projects})
     add_dependencies(Launcher ${project})
 endforeach()
+
+require_cxx_version(${target_name} 17)
+disable_cxx_extensions(${target_name})

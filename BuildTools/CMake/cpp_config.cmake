@@ -22,7 +22,6 @@ endif()
 
 #compile options
 if(MSVC)
-  add_compile_options("/std:c++latest")
   add_definitions("-D_CRT_SECURE_NO_WARNINGS")
   add_definitions("-DNOMINMAX")
 else()

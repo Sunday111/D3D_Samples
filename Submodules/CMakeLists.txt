@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.5.1)
 
+add_subdirectory(CMakeModules)
+message(STATUS "modules paths: ${CMAKE_MODULE_PATH}")
+
 add_subdirectory(Yasli)
 add_subdirectory(WinWrappers)
 

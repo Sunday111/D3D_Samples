@@ -10,3 +10,6 @@
 [submodule "Submodules/WinWrappers"]
 	path = Submodules/WinWrappers
 	url = https://github.com/Sunday111/WinWrappers-WinWrappers
+[submodule "Submodules/CMakeModules"]
+	path = Submodules/CMakeModules
+	url = https://github.com/Sunday111/CMakeModules

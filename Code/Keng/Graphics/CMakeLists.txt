@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5.1)
 include(generate_vs_filters)
+include(cxx_version)
 
 set(keng_module_name KengGraphics)
 set(KENG_${keng_module_name} true CACHE BOOL "Graphics")
@@ -38,3 +39,5 @@ if(${KENG_KengMemory})
 endif()
 
 set(added_target_name ${keng_module_name} PARENT_SCOPE)
+require_cxx_version(${keng_module_name} 17)
+disable_cxx_extensions(${keng_module_name})

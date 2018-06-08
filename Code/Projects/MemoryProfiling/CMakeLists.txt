@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5.1)
 include(generate_vs_filters)
+include(cxx_version)
 
 set(target_name MemoryProfiling)
 set(target_desc "The place to check memory manager speed")
@@ -30,3 +31,5 @@ if(${KENG_KengMemory})
 endif()
 
 set(added_target_name ${target_name} PARENT_SCOPE)
+require_cxx_version(${target_name} 17)
+disable_cxx_extensions(${target_name})

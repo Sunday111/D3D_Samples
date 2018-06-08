@@ -5,6 +5,7 @@ Dependencies:
  - [EverydayTools](https://github.com/Sunday111/EverydayTools)
  - [EverydayToolsTests](https://github.com/Sunday111/EverydayToolsTests)
  - [WinWrappers](https://github.com/Sunday111/WinWrappers-WinWrappers)
+ - [CMakeModules](https://github.com/Sunday111/CMakeModules)
  
  Cloning project:
 ```
