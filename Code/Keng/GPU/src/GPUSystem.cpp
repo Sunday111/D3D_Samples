@@ -22,8 +22,6 @@
 #include "EverydayTools/Exception/CheckedCast.h"
 #include "EverydayTools/Geom/Vector.h"
 
-#include "PiplineInput/Sampler.h"
-
 #include <algorithm>
 
 #include "yasli/JSONIArchive.h"
@@ -50,39 +48,6 @@ namespace keng::gpu
             bool debugDevice = false;
             bool deviceMultithreading = false;
         };
-
-        SystemParams ReadDefaultParams() {
-            return CallAndRethrowM + [&] {
-                struct ConfigFile
-                {
-                    void serialize(Archive& ar) { ar(params, "graphics_api_system"); }
-                    SystemParams params;
-                };
-
-                ConfigFile file;
-
-#ifdef _DEBUG
-                file.params.deviceMultithreading = true;
-                file.params.debugDevice = true;
-#endif
-
-                try {
-                    auto filename = "Configs/graphics_api_system.json";
-                    using FileView = edt::DenseArrayView<const uint8_t>;
-                    auto onFileRead = [&](FileView fileView) {
-                        yasli::JSONIArchive ar;
-                        OpenArchiveJSON(fileView, ar);
-                        ar(file);
-                    };
-                    edt::Delegate<void(FileView)> delegate;
-                    delegate.Bind(onFileRead);
-                    filesystem::HandleFileData(filename, delegate);
-                } catch (...) {
-                }
-
-                return file.params;
-            };
-        }
     }
 
     GPUSystem::GPUSystem() = default;
@@ -90,18 +55,7 @@ namespace keng::gpu
     GPUSystem::~GPUSystem() = default;
 
     void GPUSystem::Initialize(const core::IApplicationPtr& app) {
-        CallAndRethrowM + [&] {
-            m_app = app;
-
-            auto params = ReadDefaultParams();
-
-            {// Initialize device
-                DeviceParameters deviceParams;
-                deviceParams.debugDevice = params.debugDevice;
-                deviceParams.noDeviceMultithreading = !params.deviceMultithreading;
-                m_device = DevicePtr::MakeInstance(deviceParams);
-            }
-        };
+        UnusedVar(app);
     }
 
     bool GPUSystem::Update() {
@@ -111,35 +65,9 @@ namespace keng::gpu
     void GPUSystem::Shutdown() {
     }
 
-    core::Ptr<IDevice> GPUSystem::GetDevice() {
-        return m_device;
-    }
-
-    ISwapChainPtr GPUSystem::CreateSwapChain(const SwapChainParameters& params) {
-        return SwapChainPtr::MakeInstance(*m_device, params);
-    }
-
-    ISamplerPtr GPUSystem::CreateSampler(const SamplerParameters& params) {
-        return SamplerPtr::MakeInstance(*m_device, params);
-    }
-
-    void GPUSystem::Draw(size_t vertices, size_t offset) {
-        m_device->GetContext()->Draw(
-            edt::CheckedCast<uint32_t>(vertices),
-            edt::CheckedCast<uint32_t>(offset));
-    }
-
-    void GPUSystem::SetViewport(const ViewportParameters& p) {
-        D3D11_VIEWPORT v[1]{};
-        v[0].TopLeftX = p.Position.x();
-        v[0].TopLeftY = p.Position.y();
-        v[0].Width = p.Size.x();
-        v[0].Height = p.Size.y();
-        m_device->SetViewports(edt::MakeArrayView(v));
-    }
-
-    IAnnotationPtr GPUSystem::CreateAnnotation() {
-        return AnnotationPtr::MakeInstance(*m_device);
+    core::Ptr<IDevice> GPUSystem::CreateDevice(const DeviceParameters& parameters)
+    {
+        return DevicePtr::MakeInstance(parameters);
     }
 
     const char* GPUSystem::GetSystemName() const {

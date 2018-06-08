@@ -1,47 +1,29 @@
 #include "GraphicsSystem.h"
 
+#include "EverydayTools/Array/ArrayViewVector.h"
+#include "EverydayTools/Exception/CheckedCast.h"
+#include "EverydayTools/Geom/Vector.h"
+
 #include "Keng/Base/Serialization/OpenArchiveJSON.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
+#include "Keng/Core/IApplication.h"
 #include "Keng/FileSystem/ReadFileToBuffer.h"
+#include "Keng/GPU/DeviceParameters.h"
+#include "Keng/GPU/Resource/TextureParameters.h"
+#include "Keng/Graphics/Resource/IEffect.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 
-#include "keng/GPU/DeviceParameters.h"
-#include "keng/GPU/Resource/TextureParameters.h"
-#include "Resource/Texture/Texture.h"
-#include "Keng/Graphics/Resource/IEffect.h"
 #include "Resource/Effect/Effect.h"
+#include "Resource/Texture/Texture.h"
 #include "Resource/ResourceFabricRegisterer.h"
 
-#include "Keng/GPU/RenderTarget/WindowRenderTargetParameters.h"
-#include "Keng/GPU/RenderTarget/IWindowRenderTarget.h"
-#include "Keng/GPU/RenderTarget/TextureRenderTargetParameters.h"
-#include "Keng/GPU/RenderTarget/ITextureRenderTarget.h"
-#include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
-#include "Keng/GPU/RenderTarget/IDepthStencil.h"
-#include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
-#include "Keng/GPU/RenderTarget/IDepthStencil.h"
-#include "Keng/GPU/RenderTarget/SwapChainParameters.h"
-#include "Keng/GPU/RenderTarget/ISwapChain.h"
-#include "Keng/GPU/ViewportParameters.h"
-
-#include "Keng/GPU/IAnnotation.h"
-
-#include "Keng/GPU/PipelineInput/ISampler.h"
-
 #include "Device.h"
-#include "Resource/Texture/Texture.h"
-
-#include "EverydayTools/Array/ArrayViewVector.h"
-#include "EverydayTools/Exception/CheckedCast.h"
-#include "EverydayTools/Geom/Vector.h"
-#include "Keng/GPU/Resource/IDeviceBuffer.h"
 
 #include <algorithm>
 
 #include "yasli/JSONIArchive.h"
-#include "Keng/Core/IApplication.h"
 
 namespace keng::graphics
 {
@@ -113,13 +95,18 @@ namespace keng::graphics
 
             auto params = ReadDefaultParams();
 
+            {// Initialize device
+                gpu::DeviceParameters deviceParams;
+                deviceParams.debugDevice = params.debugDevice;
+                deviceParams.noDeviceMultithreading = !params.deviceMultithreading;
+                auto apiDevice = m_api->CreateDevice(deviceParams);
+                m_device = DevicePtr::MakeInstance(*apiDevice);
+            }
+
             {// Register resource fabrics
                 ResourceFabricRegisterer fabricRegisterer;
                 fabricRegisterer.Register(m_resourceSystem);
             }
-
-            auto apiDevice = m_api->GetDevice();
-            m_device = DevicePtr::MakeInstance(*apiDevice);
         };
     }
 
@@ -134,28 +121,8 @@ namespace keng::graphics
         return m_device;
     }
 
-    gpu::ISwapChainPtr GraphicsSystem::CreateSwapChain(const gpu::SwapChainParameters& params) {
-        return m_api->CreateSwapChain(params);
-    }
-
     ITexturePtr GraphicsSystem::CreateTexture(const gpu::TextureParameters& params) {
         return m_device->CreateRuntimeTexture(params, *m_resourceSystem);
-    }
-
-    gpu::ISamplerPtr GraphicsSystem::CreateSampler(const gpu::SamplerParameters& params) {
-        return m_api->CreateSampler(params);
-    }
-
-    void GraphicsSystem::Draw(size_t vertices, size_t offset) {
-        m_api->Draw(vertices, offset);
-    }
-
-    void GraphicsSystem::SetViewport(const gpu::ViewportParameters& p) {
-        m_api->SetViewport(p);
-    }
-
-    gpu::IAnnotationPtr GraphicsSystem::CreateAnnotation() {
-        return m_api->CreateAnnotation();
     }
 
     const char* GraphicsSystem::GetSystemName() const {

@@ -106,7 +106,7 @@ namespace simple_quad_sample
                     m_vertexBuffer->AssignToPipeline(vbAssignParams);
                     api_device->SetTopology(gpu::PrimitiveTopology::TriangleStrip);
                     m_constantBuffer->AssignToPipeline(cbAssignParams);
-                    m_graphicsSystem->Draw(4, 0);
+                    api_device->Draw(4, 0);
                 });
 
                 Annotate(m_annotation, L"Copy texture to swap chain texture", [&] {
@@ -142,11 +142,11 @@ namespace simple_quad_sample
         using namespace window_system;
 
         CallAndRethrowM + [&] {
-            auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
             m_resourceSystem = app->FindSystem<resource::IResourceSystem>();
             m_graphicsSystem = app->FindSystem<graphics::IGraphicsSystem>();
+            auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
             m_windowSystem = app->FindSystem<window_system::IWindowSystem>();
-            m_annotation = m_graphicsSystem->CreateAnnotation();
+            m_annotation = api_device->CreateAnnotation();
 
             auto window = m_windowSystem->GetWindow();
             size_t w, h;
@@ -158,7 +158,7 @@ namespace simple_quad_sample
                 v.Position.ry() = 0.f;
                 v.Size.rx() = edt::CheckedCast<float>(w);
                 v.Size.ry() = edt::CheckedCast<float>(h);
-                m_graphicsSystem->SetViewport(v);
+                api_device->SetViewport(v);
             }
 
             {// Create window render target

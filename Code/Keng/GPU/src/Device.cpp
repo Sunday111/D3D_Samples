@@ -1,18 +1,21 @@
 #include "Device.h"
 #include "Keng/GPU/DeviceParameters.h"
+#include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
+#include "Keng/GPU/RenderTarget/TextureRenderTargetParameters.h"
+#include "Keng/GPU/RenderTarget/WindowRenderTargetParameters.h"
+#include "Keng/GPU/ViewportParameters.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
-#include "d3d11shader.h"
-#include "d3dcompiler.h"
+#include "EverydayTools/Exception/CheckedCast.h"
+#include "Annotation.h"
+#include "PiplineInput/Sampler.h"
+#include "RenderTarget/WindowRenderTarget.h"
+#include "RenderTarget/TextureRenderTarget.h"
+#include "RenderTarget/DepthStencil.h"
+#include "RenderTarget/SwapChain.h"
 #include "Resource/Buffer/DeviceBuffer.h"
 #include "Resource/Texture/Texture.h"
 #include "Shader/Shader.h"
-#include "Keng/GPU/RenderTarget/WindowRenderTargetParameters.h"
-#include "RenderTarget/WindowRenderTarget.h"
-#include "Keng/GPU/RenderTarget/TextureRenderTargetParameters.h"
-#include "RenderTarget/TextureRenderTarget.h"
-#include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
-#include "RenderTarget/DepthStencil.h"
 
 namespace keng::gpu
 {
@@ -50,6 +53,14 @@ namespace keng::gpu
 
     IDepthStencilPtr Device::CreateDepthStencil(const DepthStencilParameters& params) {
         return DepthStencilPtr::MakeInstance(*this, params);
+    }
+
+    ISwapChainPtr Device::CreateSwapChain(const SwapChainParameters& params) {
+        return SwapChainPtr::MakeInstance(*this, params);
+    }
+
+    ISamplerPtr Device::CreateSampler(const SamplerParameters& params) {
+        return SamplerPtr::MakeInstance(*this, params);
     }
 
     ITexturePtr Device::CreateTexture(const TextureParameters& params) {
@@ -218,18 +229,27 @@ namespace keng::gpu
           (*m_deviceContext.*method)(0, 1, &buffer);
      }
 
-     void Device::SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY topo) {
-          m_deviceContext->IASetPrimitiveTopology(topo);
+     void Device::Draw(size_t vertices, size_t offset) {
+         GetContext()->Draw(
+             edt::CheckedCast<uint32_t>(vertices),
+             edt::CheckedCast<uint32_t>(offset));
      }
 
-     ComPtr<ID3DUserDefinedAnnotation> Device::CreateAnnotation() const {
-          return CallAndRethrowM + [&] {
-               ComPtr<ID3DUserDefinedAnnotation> annotation;
-               WinAPI<char>::ThrowIfError(m_deviceContext->QueryInterface(
-                    __uuidof(ID3DUserDefinedAnnotation),
-                    reinterpret_cast<void**>(annotation.Receive())));
-               return annotation;
-          };
+     void Device::SetViewport(const ViewportParameters& p) {
+         D3D11_VIEWPORT v[1]{};
+         v[0].TopLeftX = p.Position.x();
+         v[0].TopLeftY = p.Position.y();
+         v[0].Width = p.Size.x();
+         v[0].Height = p.Size.y();
+         SetViewports(edt::MakeArrayView(v));
+     }
+
+     IAnnotationPtr Device::CreateAnnotation() {
+         return AnnotationPtr::MakeInstance(*this);
+     }
+
+     void Device::SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY topo) {
+          m_deviceContext->IASetPrimitiveTopology(topo);
      }
 
      ComPtr<ID3D11InputLayout> Device::CreateInputLayout(edt::DenseArrayView<const D3D11_INPUT_ELEMENT_DESC> descriptors, ID3D10Blob* shader) {
