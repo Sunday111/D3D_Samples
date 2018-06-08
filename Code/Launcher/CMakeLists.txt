@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5.1)
 include(cxx_version)
+include(glob_cxx_sources)
 
 set(PROJECT_Launcher true CACHE BOOL "Launcher")
 
@@ -7,16 +8,8 @@ if(NOT ${PROJECT_Launcher})
     return()
 endif()
 
+glob_cxx_sources(${CMAKE_CURRENT_SOURCE_DIR} target_sources)
 set(target_name Launcher)
-set(sources_dir ${CMAKE_CURRENT_SOURCE_DIR})
-set(sources_exts "h" "cpp")
-set(target_sources)
-
-foreach(entry ${sources_exts})
-    file(GLOB_RECURSE sources_by_ext "${sources_dir}/*.${entry}")
-    list(APPEND target_sources ${sources_by_ext})
-endforeach()
-
 add_executable(${target_name} WIN32 ${target_sources})
 target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${target_name} PRIVATE EverydayTools)

@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5.1)
 include(generate_vs_filters)
+include(glob_cxx_sources)
 include(cxx_version)
 
 set(keng_module_name KengGraphics)
@@ -8,17 +9,10 @@ if(NOT ${KENG_${keng_module_name}})
     return()
 endif()
 
-set(sources_dir ${CMAKE_CURRENT_SOURCE_DIR})
-set(sources_exts "h" "cpp")
-set(target_sources)
-
-foreach(entry ${sources_exts})
-    file(GLOB_RECURSE sources_by_ext "${sources_dir}/*.${entry}")
-    list(APPEND target_sources "${sources_by_ext}")
-endforeach()
-
+glob_cxx_sources(${CMAKE_CURRENT_SOURCE_DIR} target_sources)
 add_library(${keng_module_name} SHARED "${target_sources}")
 generate_vs_filters(${target_sources})
+
 target_include_directories(${keng_module_name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(${keng_module_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(${keng_module_name} PUBLIC "${root_dir}/Code/Keng/GPU/include")

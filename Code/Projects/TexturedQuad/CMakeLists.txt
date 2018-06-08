@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5.1)
 include(generate_vs_filters)
+include(glob_cxx_sources)
 include(cxx_version)
 
 set(target_name TexturedQuad)
@@ -9,15 +10,7 @@ if(NOT ${PROJECT_${target_name}})
     return()
 endif()
 
-set(sources_dir ${CMAKE_CURRENT_SOURCE_DIR})
-set(sources_exts "h" "cpp")
-set(target_sources)
-
-foreach(entry ${sources_exts})
-    file(GLOB_RECURSE sources_by_ext "${sources_dir}/*.${entry}")
-    list(APPEND target_sources ${sources_by_ext})
-endforeach()
-
+glob_cxx_sources(${CMAKE_CURRENT_SOURCE_DIR} target_sources)
 add_library(${target_name} MODULE ${target_sources})
 generate_vs_filters(${target_sources})
 target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
