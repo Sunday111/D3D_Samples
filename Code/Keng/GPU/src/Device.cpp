@@ -3,7 +3,7 @@
 #include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
 #include "Keng/GPU/RenderTarget/TextureRenderTargetParameters.h"
 #include "Keng/GPU/RenderTarget/WindowRenderTargetParameters.h"
-#include "Keng/GPU/ViewportParameters.h"
+#include "Keng/Graphics/ViewportParameters.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/CheckedCast.h"

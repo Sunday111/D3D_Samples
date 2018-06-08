@@ -2,7 +2,6 @@
 
 #include "Keng/Base/Serialization/OpenArchiveJSON.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
-#include "Keng/FileSystem/ReadFileToBuffer.h"
 #include "Keng/WindowSystem/IWindow.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 
@@ -12,7 +11,7 @@
 
 #include "Keng/GPU/RenderTarget/SwapChainParameters.h"
 #include "RenderTarget/SwapChain.h"
-#include "Keng/GPU/ViewportParameters.h"
+#include "Keng/Graphics/ViewportParameters.h"
 
 #include "Shader/Shader.h"
 

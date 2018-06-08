@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Keng/GPU/FilteringMode.h"
-#include "Keng/GPU/TextureAddressMode.h"
+#include "Keng/Graphics/TextureAddressMode.h"
 
 namespace keng::gpu
 {

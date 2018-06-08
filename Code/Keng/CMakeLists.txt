@@ -20,6 +20,7 @@ add_keng_module(Filesystem)
 add_keng_module(ResourceSystem)
 add_keng_module(GPU)
 add_keng_module(Graphics)
+add_keng_module(GraphicsCommon)
 add_keng_module(WindowSystem)
 
 set(found_projects ${added_subdirectories} PARENT_SCOPE)

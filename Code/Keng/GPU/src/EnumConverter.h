@@ -3,7 +3,7 @@
 #include "FwdDecl.h"
 #include "d3d11.h"
 #include "Keng/GPU/FragmentFormat.h"
-#include "Keng/GPU/TextureAddressMode.h"
+#include "Keng/Graphics/TextureAddressMode.h"
 #include "Keng/GPU/FilteringMode.h"
 #include "Keng/GPU/PrimitiveTopology.h"
 #include "Keng/GPU/CpuAccessFlags.h"

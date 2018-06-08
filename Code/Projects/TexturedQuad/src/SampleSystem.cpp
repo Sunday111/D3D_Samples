@@ -13,7 +13,7 @@
 #include "Keng/GPU/RenderTarget/IDepthStencil.h"
 #include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
 #include "Keng/GPU/DeviceBufferMapper.h"
-#include "Keng/GPU/ViewportParameters.h"
+#include "Keng/Graphics/ViewportParameters.h"
 #include "Keng/GPU/SamplerParameters.h"
 #include "Keng/GPU/PipelineInput/ISampler.h"
 #include "Keng/GPU/ScopedAnnotation.h"

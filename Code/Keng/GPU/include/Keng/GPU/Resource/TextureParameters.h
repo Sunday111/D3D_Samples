@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keng/GPU/TextureUsage.h"
+#include "Keng/Graphics/TextureUsage.h"
 #include "Keng/GPU/FragmentFormat.h"
 #include "Keng/GPU/CpuAccessFlags.h"
 
