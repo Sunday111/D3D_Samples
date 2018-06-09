@@ -8,12 +8,7 @@ if(NOT ${KENG_${keng_module_name}})
     return()
 endif()
 
-add_library(${keng_module_name} INTERFACE)
-
-target_include_directories(${keng_module_name} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
 glob_cxx_sources(${CMAKE_CURRENT_SOURCE_DIR} target_sources)
-set(custom_target_name ${keng_module_name}_)
-add_custom_target(${custom_target_name} SOURCES ${target_sources})
+add_custom_target(${keng_module_name} SOURCES ${target_sources})
 generate_vs_filters(${target_sources})
-set(added_target_name ${keng_module_name}_ PARENT_SCOPE)
+set(added_target_name ${keng_module_name} PARENT_SCOPE)

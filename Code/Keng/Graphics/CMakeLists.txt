@@ -18,12 +18,12 @@ target_include_directories(${keng_module_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DI
 target_include_directories(${keng_module_name} PUBLIC "${root_dir}/Code/Keng/GPU/include")
 target_include_directories(${keng_module_name} PUBLIC "${root_dir}/Code/Keng/ResourceSystem/include")
 target_include_directories(${keng_module_name} PUBLIC "${root_dir}/Code/Keng/WindowSystem/include")
+target_include_directories(${keng_module_name} PUBLIC "${root_dir}/Code/Keng/GraphicsCommon/include")
 target_link_libraries(${keng_module_name} PUBLIC EverydayTools)
 target_link_libraries(${keng_module_name} PUBLIC Yasli)
 target_link_libraries(${keng_module_name} PUBLIC KengBase)
 target_link_libraries(${keng_module_name} PUBLIC KengCore)
 target_link_libraries(${keng_module_name} PUBLIC KengFileSystem)
-target_link_libraries(${keng_module_name} PUBLIC KengGraphicsCommon)
 target_link_libraries(${keng_module_name} PRIVATE WinWrappers)
 target_link_libraries(${keng_module_name} PRIVATE FreeType)
 
