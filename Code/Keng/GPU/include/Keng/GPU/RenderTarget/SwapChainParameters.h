@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Keng/GPU/FwdDecl.h"
-#include "Keng/GPU/FragmentFormat.h"
+#include "Keng/GraphicsCommon/FragmentFormat.h"
 #include <cstdint>
 
 namespace keng::graphics::gpu

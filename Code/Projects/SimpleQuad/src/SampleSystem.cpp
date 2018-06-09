@@ -163,7 +163,7 @@ namespace simple_quad_sample
 
             {// Create window render target
                 gpu::WindowRenderTargetParameters window_rt_params;
-                window_rt_params.swapChain.format = gpu::FragmentFormat::R8_G8_B8_A8_UNORM;
+                window_rt_params.swapChain.format = FragmentFormat::R8_G8_B8_A8_UNORM;
                 window_rt_params.swapChain.window = window;
                 window_rt_params.swapChain.buffers = 2;
                 m_windowRT = api_device->CreateWindowRenderTarget(window_rt_params);
@@ -172,7 +172,7 @@ namespace simple_quad_sample
             {// Create texture render target
                 gpu::TextureRenderTargetParameters texture_rt_params{};
                 gpu::TextureParameters rtTextureParams{};
-                rtTextureParams.format = gpu::FragmentFormat::R8_G8_B8_A8_UNORM;
+                rtTextureParams.format = FragmentFormat::R8_G8_B8_A8_UNORM;
                 rtTextureParams.width = w;
                 rtTextureParams.height = h;
                 rtTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::RenderTarget;
@@ -183,12 +183,12 @@ namespace simple_quad_sample
             {// Create depth stencil
                 gpu::DepthStencilParameters depthStencilParams{};
                 gpu::TextureParameters dsTextureParams{};
-                dsTextureParams.format = gpu::FragmentFormat::R24_G8_TYPELESS;
+                dsTextureParams.format = FragmentFormat::R24_G8_TYPELESS;
                 dsTextureParams.width = w;
                 dsTextureParams.height = h;
                 dsTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::DepthStencil;
 
-                depthStencilParams.format = gpu::FragmentFormat::D24_UNORM_S8_UINT;
+                depthStencilParams.format = FragmentFormat::D24_UNORM_S8_UINT;
                 depthStencilParams.texture = m_graphicsSystem->CreateTexture(dsTextureParams)->GetApiTexture();
                 m_depthStencil = api_device->CreateDepthStencil(depthStencilParams);
             }

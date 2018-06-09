@@ -46,7 +46,7 @@ namespace keng::graphics
             params.width = edt::CheckedCast<size_t>(w);
             params.height = edt::CheckedCast<size_t>(h);
             params.usage = TextureUsage::ShaderResource;
-            params.format = gpu::FragmentFormat::R8_G8_B8_A8_UNORM;
+            params.format = FragmentFormat::R8_G8_B8_A8_UNORM;
             params.data = img_data.get();
             return device->CreateTexture(params);
         };

@@ -25,7 +25,7 @@ namespace keng::graphics
             textureParameters.width = m_parameters.width;
             textureParameters.height = m_parameters.height;
             textureParameters.usage = TextureUsage::ShaderResource;
-            textureParameters.format = gpu::FragmentFormat::R8_UNORM;
+            textureParameters.format = FragmentFormat::R8_UNORM;
             textureParameters.cpuAccessFlags = gpu::CpuAccessFlags::Write;
 
             m_texture = device.CreateRuntimeTexture(textureParameters, *font.GetResourceSystem());

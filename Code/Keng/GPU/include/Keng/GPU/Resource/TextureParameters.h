@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Keng/GraphicsCommon/TextureUsage.h"
-#include "Keng/GPU/FragmentFormat.h"
+#include "Keng/GraphicsCommon/FragmentFormat.h"
 #include "Keng/GPU/CpuAccessFlags.h"
 
 namespace keng::graphics::gpu

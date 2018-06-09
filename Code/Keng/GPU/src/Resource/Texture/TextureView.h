@@ -1,7 +1,7 @@
 #pragma once
 
 #include "d3d11_1.h"
-#include "Keng/GPU/FragmentFormat.h"
+#include "Keng/GraphicsCommon/FragmentFormat.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "WinWrappers/ComPtr.h"
