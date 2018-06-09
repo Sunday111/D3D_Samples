@@ -16,8 +16,8 @@ namespace keng::graphics::gpu
     class WindowRenderTarget;
     using WindowRenderTargetPtr = core::Ptr<WindowRenderTarget>;
 
-    class Texture;
-    using TexturePtr = core::Ptr<Texture>;
+    class DeviceTexture;
+    using TexturePtr = core::Ptr<DeviceTexture>;
 
     class DeviceBuffer;
     using DeviceBufferPtr = core::Ptr<DeviceBuffer>;

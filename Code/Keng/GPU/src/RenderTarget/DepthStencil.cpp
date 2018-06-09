@@ -1,14 +1,14 @@
 #include "DepthStencil.h"
 #include "Device.h"
 #include "Keng/GraphicsCommon/DepthStencilParameters.h"
-#include "Resource/Texture/Texture.h"
+#include "Resource/Texture/DeviceTexture.h"
 
 namespace keng::graphics::gpu
 {
     DepthStencil::DepthStencil(Device& device, const DepthStencilParameters& parameters, ITexture& texture) {
         CallAndRethrowM + [&] {
             m_device = &device;
-            m_texture = &dynamic_cast<Texture&>(texture);
+            m_texture = &dynamic_cast<DeviceTexture&>(texture);
             m_dsv = m_texture->GetView<ResourceViewType::DepthStencil>(parameters.format);
         };
     }

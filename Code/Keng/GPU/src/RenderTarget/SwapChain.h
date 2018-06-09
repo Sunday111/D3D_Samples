@@ -15,9 +15,9 @@ namespace keng::graphics::gpu
         ~SwapChain();
 
         virtual void Present() override;
-        Texture& GetCurrentTexture();
-        const Texture& GetCurrentTexture() const;
-        void CopyFromTexture(const Texture& texture);
+        DeviceTexture& GetCurrentTexture();
+        const DeviceTexture& GetCurrentTexture() const;
+        void CopyFromTexture(const DeviceTexture& texture);
 
     private:
         ComPtr<ID3D11Texture2D> GetBackBuffer(size_t index) const;

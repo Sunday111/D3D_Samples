@@ -1,7 +1,7 @@
 #include "Device.h"
 #include "SwapChain.h"
 #include "Keng/WindowSystem/IWindow.h"
-#include "Resource/Texture/Texture.h"
+#include "Resource/Texture/DeviceTexture.h"
 #include "DepthStencil.h"
 #include "Keng/GraphicsCommon/WindowRenderTargetParameters.h"
 #include "RenderTarget/WindowRenderTarget.h"
@@ -47,7 +47,7 @@ namespace keng::graphics::gpu
 
     void WindowRenderTarget::CopyFrom(const ITexture& abstract) {
         CallAndRethrowM + [&] {
-            auto from = static_cast<const Texture&>(abstract);
+            auto from = static_cast<const DeviceTexture&>(abstract);
             m_swapChain->CopyFromTexture(from);
         };
     }

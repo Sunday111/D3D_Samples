@@ -1,5 +1,5 @@
 #include "Device.h"
-#include "Resource/Texture/Texture.h"
+#include "Resource/Texture/DeviceTexture.h"
 #include "Resource/Texture/TextureView.h"
 #include "DepthStencil.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
@@ -11,7 +11,7 @@ namespace keng::graphics::gpu
     TextureRenderTarget::TextureRenderTarget(Device& device, const TextureRenderTargetParameters&, ITexture& texture) {
         CallAndRethrowM + [&] {
             m_device = &device;
-            m_texture = &dynamic_cast<Texture&>(texture);
+            m_texture = &dynamic_cast<DeviceTexture&>(texture);
         };
     }
 

@@ -7,7 +7,7 @@
 
 #include "keng/GPU/DeviceParameters.h"
 #include "keng/GPU/Resource/TextureParameters.h"
-#include "Resource/Texture/Texture.h"
+#include "Resource/Texture/DeviceTexture.h"
 
 #include "RenderTarget/SwapChain.h"
 #include "Keng/GraphicsCommon/SwapChainParameters.h"

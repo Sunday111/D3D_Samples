@@ -2,7 +2,7 @@
 #include "Device.h"
 #include "Keng/WindowSystem/IWindow.h"
 #include "EnumConverter.h"
-#include "Resource/Texture/Texture.h"
+#include "Resource/Texture/DeviceTexture.h"
 #include "Keng/GraphicsCommon/SwapChainParameters.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 
@@ -41,11 +41,11 @@ namespace keng::graphics::gpu
         m_swapchain->Present(0, 0);
     }
 
-    Texture& SwapChain::GetCurrentTexture() {
+    DeviceTexture& SwapChain::GetCurrentTexture() {
         return *m_currentTexture;
     }
 
-    const Texture& SwapChain::GetCurrentTexture() const {
+    const DeviceTexture& SwapChain::GetCurrentTexture() const {
         return *m_currentTexture;
     }
 
@@ -58,7 +58,7 @@ namespace keng::graphics::gpu
         };
     }
 
-    void SwapChain::CopyFromTexture(const Texture& texture) {
+    void SwapChain::CopyFromTexture(const DeviceTexture& texture) {
         return CallAndRethrowM + [&] {
             texture.CopyTo(GetCurrentTexture());
         };

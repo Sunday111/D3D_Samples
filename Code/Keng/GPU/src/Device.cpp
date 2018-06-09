@@ -15,7 +15,7 @@
 #include "RenderTarget/DepthStencil.h"
 #include "RenderTarget/SwapChain.h"
 #include "Resource/Buffer/DeviceBuffer.h"
-#include "Resource/Texture/Texture.h"
+#include "Resource/Texture/DeviceTexture.h"
 #include "Shader/Shader.h"
 
 namespace keng::graphics::gpu

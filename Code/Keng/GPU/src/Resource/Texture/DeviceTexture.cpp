@@ -1,4 +1,4 @@
-#include "Resource/Texture/Texture.h"
+#include "Resource/Texture/DeviceTexture.h"
 #include "Device.h"
 #include "EnumConverter.h"
 #include "Keng/GPU/Resource/TextureParameters.h"
@@ -75,19 +75,19 @@ namespace keng::graphics::gpu
         }
     }
 
-    IDevicePtr Texture::GetDevice() const {
+    IDevicePtr DeviceTexture::GetDevice() const {
         return GetDevicePrivate();
     }
 
-    DevicePtr Texture::GetDevicePrivate() const {
+    DevicePtr DeviceTexture::GetDevicePrivate() const {
         return m_device;
     }
 
-    ComPtr<ID3D11Texture2D> Texture::GetTexture() const {
+    ComPtr<ID3D11Texture2D> DeviceTexture::GetTexture() const {
         return m_texture;
     }
 
-    Texture::Texture(Device& device, const TextureParameters& params) {
+    DeviceTexture::DeviceTexture(Device& device, const TextureParameters& params) {
         m_device = &device;
         m_params = params;
         auto rawDevice = m_device->GetDevice();
@@ -108,7 +108,7 @@ namespace keng::graphics::gpu
         };
     }
 
-    Texture::Texture(Device& device, ComPtr<ID3D11Texture2D> texture) {
+    DeviceTexture::DeviceTexture(Device& device, ComPtr<ID3D11Texture2D> texture) {
         CallAndRethrowM + [&] {
             edt::ThrowIfFailed(texture != nullptr, "trying to initialize with null handle");
             m_device = &device;
@@ -116,25 +116,25 @@ namespace keng::graphics::gpu
         };
     }
 
-    Texture::~Texture() = default;
+    DeviceTexture::~DeviceTexture() = default;
 
-    FragmentFormat Texture::GetFormat() const {
+    FragmentFormat DeviceTexture::GetFormat() const {
         return m_params.format;
     }
 
-    void Texture::AssignToPipeline(const ShaderType& shaderType, size_t slot) {
+    void DeviceTexture::AssignToPipeline(const ShaderType& shaderType, size_t slot) {
         auto srv = GetView<ResourceViewType::ShaderResource>();
         m_device->SetShaderResource(edt::CheckedCast<uint32_t>(slot), shaderType, srv->GetView());
     }
 
-    void Texture::CopyTo(ITexture& abstract) const {
+    void DeviceTexture::CopyTo(ITexture& abstract) const {
         CallAndRethrowM + [&] {
-            auto& casted = static_cast<Texture&>(abstract);
+            auto& casted = static_cast<DeviceTexture&>(abstract);
             CopyTo(*casted.m_texture);
         };
     }
 
-    void Texture::SetData(edt::DenseArrayView<const uint8_t> data) {
+    void DeviceTexture::SetData(edt::DenseArrayView<const uint8_t> data) {
         CallAndRethrowM + [&] {
             auto fragmentsCount = GetWidth() * GetHeight();
             auto bytesCount = fragmentsCount * ComputeBytesPerPixel(m_params.format);
@@ -147,17 +147,17 @@ namespace keng::graphics::gpu
         };
     }
 
-    void Texture::CopyTo(ID3D11Texture2D& to) const {
+    void DeviceTexture::CopyTo(ID3D11Texture2D& to) const {
         CallAndRethrowM + [&] {
             m_device->GetContext()->CopyResource(&to, m_texture.Get());
         };
     }
 
-    size_t Texture::GetWidth() const {
+    size_t DeviceTexture::GetWidth() const {
         return m_params.width;
     }
 
-    size_t Texture::GetHeight() const {
+    size_t DeviceTexture::GetHeight() const {
         return m_params.height;
     }
 }

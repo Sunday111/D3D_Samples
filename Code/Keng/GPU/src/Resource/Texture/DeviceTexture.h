@@ -9,13 +9,13 @@
 
 namespace keng::graphics::gpu
 {
-    class Texture :
+    class DeviceTexture :
         public core::RefCountImpl<ITexture>
     {
     public:
-        Texture(Device& device, const TextureParameters& params);
-        Texture(Device& device, ComPtr<ID3D11Texture2D> texture);
-        ~Texture();
+        DeviceTexture(Device& device, const TextureParameters& params);
+        DeviceTexture(Device& device, ComPtr<ID3D11Texture2D> texture);
+        ~DeviceTexture();
 
         // ITexture
         virtual FragmentFormat GetFormat() const override;
