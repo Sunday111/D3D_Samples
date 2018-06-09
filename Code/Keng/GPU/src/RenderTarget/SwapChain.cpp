@@ -25,6 +25,9 @@ namespace keng::graphics::gpu
             scd.Windowed = TRUE;                                                                    // windowed/full-screen mode
             scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
             WinAPI<char>::ThrowIfError(factory->CreateSwapChain(device.GetDevice().Get(), &scd, m_swapchain.Receive()));
+
+            auto rawTexture = GetBackBuffer(0);
+            m_currentTexture = TexturePtr::MakeInstance(*m_device, rawTexture);
         };
     }
 
@@ -38,16 +41,15 @@ namespace keng::graphics::gpu
         m_swapchain->Present(0, 0);
     }
 
-    TexturePtr SwapChain::GetCurrentTexture() {
-        if (!m_currentTexture) {
-            auto rawTexture = GetBackBuffer(0);
-            m_currentTexture = TexturePtr::MakeInstance(*m_device, rawTexture);
-        }
-
-        return m_currentTexture;
+    Texture& SwapChain::GetCurrentTexture() {
+        return *m_currentTexture;
     }
 
-    ComPtr<ID3D11Texture2D> SwapChain::GetBackBuffer(size_t index) {
+    const Texture& SwapChain::GetCurrentTexture() const {
+        return *m_currentTexture;
+    }
+
+    ComPtr<ID3D11Texture2D> SwapChain::GetBackBuffer(size_t index) const {
         return CallAndRethrowM + [&] {
             ComPtr<ID3D11Texture2D> backBuffer;
             WinAPI<char>::ThrowIfError(m_swapchain->GetBuffer(edt::CheckedCast<uint32_t>(index), __uuidof(ID3D11Texture2D), (void**)backBuffer.Receive()));
@@ -56,9 +58,9 @@ namespace keng::graphics::gpu
         };
     }
 
-    void SwapChain::CopyFromTexture(const TexturePtr& texture) {
+    void SwapChain::CopyFromTexture(const Texture& texture) {
         return CallAndRethrowM + [&] {
-            texture->CopyTo(GetCurrentTexture());
+            texture.CopyTo(GetCurrentTexture());
         };
     }
 }

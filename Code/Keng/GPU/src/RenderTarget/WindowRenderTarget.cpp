@@ -28,7 +28,7 @@ namespace keng::graphics::gpu
     }
 
     void WindowRenderTarget::AssignToPipeline(const IDepthStencilPtr& depthStencil) {
-        auto rtv = m_swapChain->GetCurrentTexture()->GetView<ResourceViewType::RenderTarget>();
+        auto rtv = m_swapChain->GetCurrentTexture().GetView<ResourceViewType::RenderTarget>();
         core::Ptr<TextureView<ResourceViewType::DepthStencil>> dsv;
         if (depthStencil) {
             auto castedDepthStencil = std::dynamic_pointer_cast<DepthStencil>(depthStencil);
@@ -41,13 +41,13 @@ namespace keng::graphics::gpu
     }
 
     void WindowRenderTarget::Clear(const float(&flatColor)[4]) {
-        auto rtv = m_swapChain->GetCurrentTexture()->GetView<ResourceViewType::RenderTarget>();
+        auto rtv = m_swapChain->GetCurrentTexture().GetView<ResourceViewType::RenderTarget>();
         m_device->GetContext()->ClearRenderTargetView(rtv->GetView(), flatColor);
     }
 
-    void WindowRenderTarget::CopyFrom(const ITexturePtr& abstract) {
+    void WindowRenderTarget::CopyFrom(const ITexture& abstract) {
         CallAndRethrowM + [&] {
-            auto from = std::static_pointer_cast<Texture>(abstract);
+            auto from = static_cast<const Texture&>(abstract);
             m_swapChain->CopyFromTexture(from);
         };
     }

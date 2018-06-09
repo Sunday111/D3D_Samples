@@ -37,7 +37,7 @@ namespace keng::graphics::gpu
         };
     }
 
-    ITexturePtr TextureRenderTarget::GetTexture() const {
-        return m_texture;
+    ITexture& TextureRenderTarget::GetTexture() const {
+        return *m_texture;
     }
 }

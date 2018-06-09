@@ -20,13 +20,13 @@ namespace keng::graphics::gpu
         // ITexture
         virtual FragmentFormat GetFormat() const override;
         virtual void AssignToPipeline(const ShaderType& shaderType, size_t slot) override;
-        virtual void CopyTo(ITexturePtr) override;
+        virtual void CopyTo(ITexture&) const override;
         virtual void SetData(edt::DenseArrayView<const uint8_t> data) override;
         virtual size_t GetWidth() const override;
         virtual size_t GetHeight() const override;
         virtual IDevicePtr GetDevice() const override;
 
-        void CopyTo(const ComPtr<ID3D11Texture2D>& to);
+        void CopyTo(ID3D11Texture2D& to) const;
         DevicePtr GetDevicePrivate() const;
 
         ComPtr<ID3D11Texture2D> GetTexture() const;

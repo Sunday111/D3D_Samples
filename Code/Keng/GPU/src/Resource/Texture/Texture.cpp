@@ -127,10 +127,10 @@ namespace keng::graphics::gpu
         m_device->SetShaderResource(edt::CheckedCast<uint32_t>(slot), shaderType, srv->GetView());
     }
 
-    void Texture::CopyTo(ITexturePtr abstract){
+    void Texture::CopyTo(ITexture& abstract) const {
         CallAndRethrowM + [&] {
-            auto to = std::static_pointer_cast<Texture>(abstract);
-            CopyTo(to->m_texture);
+            auto& casted = static_cast<Texture&>(abstract);
+            CopyTo(*casted.m_texture);
         };
     }
 
@@ -147,9 +147,9 @@ namespace keng::graphics::gpu
         };
     }
 
-    void Texture::CopyTo(const ComPtr<ID3D11Texture2D>& to) {
+    void Texture::CopyTo(ID3D11Texture2D& to) const {
         CallAndRethrowM + [&] {
-            m_device->GetContext()->CopyResource(to.Get(), m_texture.Get());
+            m_device->GetContext()->CopyResource(&to, m_texture.Get());
         };
     }
 

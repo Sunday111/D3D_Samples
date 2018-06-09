@@ -12,7 +12,7 @@ namespace keng::graphics::gpu
         ~TextureRenderTarget();
         virtual void AssignToPipeline(const IDepthStencilPtr& depthStencil) override;
         virtual void Clear(const float(&flatColor)[4]) override;
-        virtual ITexturePtr GetTexture() const override;
+        virtual ITexture& GetTexture() const override;
     private:
         DevicePtr m_device;
         TexturePtr m_texture;

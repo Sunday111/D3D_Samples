@@ -15,11 +15,12 @@ namespace keng::graphics::gpu
         ~SwapChain();
 
         virtual void Present() override;
-        TexturePtr GetCurrentTexture();
-        void CopyFromTexture(const TexturePtr& texture);
+        Texture& GetCurrentTexture();
+        const Texture& GetCurrentTexture() const;
+        void CopyFromTexture(const Texture& texture);
 
     private:
-        ComPtr<ID3D11Texture2D> GetBackBuffer(size_t index);
+        ComPtr<ID3D11Texture2D> GetBackBuffer(size_t index) const;
 
         DevicePtr m_device;
         TexturePtr m_currentTexture;

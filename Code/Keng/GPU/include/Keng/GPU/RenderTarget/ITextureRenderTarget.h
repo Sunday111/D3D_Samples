@@ -7,6 +7,6 @@ namespace keng::graphics::gpu
     class ITextureRenderTarget : public IRenderTarget
     {
     public:
-        virtual ITexturePtr GetTexture() const = 0;
+        virtual ITexture& GetTexture() const = 0;
     };
 }
