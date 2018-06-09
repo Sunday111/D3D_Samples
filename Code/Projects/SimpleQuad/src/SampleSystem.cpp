@@ -13,7 +13,7 @@
 #include "Keng/GPU/RenderTarget/IDepthStencil.h"
 #include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
 #include "Keng/GPU/DeviceBufferMapper.h"
-#include "Keng/Graphics/ViewportParameters.h"
+#include "Keng/GraphicsCommon/ViewportParameters.h"
 #include "Keng/GPU/ScopedAnnotation.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
@@ -153,7 +153,7 @@ namespace simple_quad_sample
             window->GetClientSize(&w, &h);
 
             {// Initialize viewport
-                gpu::ViewportParameters v{};
+                ViewportParameters v{};
                 v.Position.rx() = 0.f;
                 v.Position.ry() = 0.f;
                 v.Size.rx() = edt::CheckedCast<float>(w);
@@ -175,7 +175,7 @@ namespace simple_quad_sample
                 rtTextureParams.format = gpu::FragmentFormat::R8_G8_B8_A8_UNORM;
                 rtTextureParams.width = w;
                 rtTextureParams.height = h;
-                rtTextureParams.usage = gpu::TextureUsage::ShaderResource | gpu::TextureUsage::RenderTarget;
+                rtTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::RenderTarget;
                 texture_rt_params.renderTarget = m_graphicsSystem->CreateTexture(rtTextureParams)->GetApiTexture();
                 m_textureRT = api_device->CreateTextureRenderTarget(texture_rt_params);
             }
@@ -186,7 +186,7 @@ namespace simple_quad_sample
                 dsTextureParams.format = gpu::FragmentFormat::R24_G8_TYPELESS;
                 dsTextureParams.width = w;
                 dsTextureParams.height = h;
-                dsTextureParams.usage = gpu::TextureUsage::ShaderResource | gpu::TextureUsage::DepthStencil;
+                dsTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::DepthStencil;
 
                 depthStencilParams.format = gpu::FragmentFormat::D24_UNORM_S8_UINT;
                 depthStencilParams.texture = m_graphicsSystem->CreateTexture(dsTextureParams)->GetApiTexture();

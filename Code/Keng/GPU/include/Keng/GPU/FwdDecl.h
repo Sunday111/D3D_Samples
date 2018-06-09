@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Keng/WindowSystem/FwdDecl.h"
+#include "Keng/GraphicsCommon/FwdDecl.h"
 
 namespace keng::graphics::gpu
 {
@@ -39,7 +40,6 @@ namespace keng::graphics::gpu
     using ISamplerPtr = core::Ptr<ISampler>;
 
     class SamplerParameters;
-    class ViewportParameters;
 
     class IAnnotation;
     using IAnnotationPtr = core::Ptr<IAnnotation>;

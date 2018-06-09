@@ -24,7 +24,7 @@ namespace keng::graphics
             gpu::TextureParameters textureParameters{};
             textureParameters.width = m_parameters.width;
             textureParameters.height = m_parameters.height;
-            textureParameters.usage = gpu::TextureUsage::ShaderResource;
+            textureParameters.usage = TextureUsage::ShaderResource;
             textureParameters.format = gpu::FragmentFormat::R8_UNORM;
             textureParameters.cpuAccessFlags = gpu::CpuAccessFlags::Write;
 

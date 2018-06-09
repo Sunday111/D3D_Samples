@@ -16,7 +16,7 @@
 #include "Keng/GPU/RenderTarget/IDepthStencil.h"
 #include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
 #include "Keng/GPU/DeviceBufferMapper.h"
-#include "Keng/Graphics/ViewportParameters.h"
+#include "Keng/GraphicsCommon/ViewportParameters.h"
 #include "Keng/GPU/SamplerParameters.h"
 #include "Keng/GPU/PipelineInput/ISampler.h"
 #include "Keng/GPU/ScopedAnnotation.h"
@@ -188,7 +188,7 @@ namespace render_text_sample
             window->GetClientSize(&w, &h);
 
             {// Initialize viewport
-                gpu::ViewportParameters v{};
+                ViewportParameters v{};
                 v.Position.rx() = 0.f;
                 v.Position.ry() = 0.f;
                 v.Size.rx() = edt::CheckedCast<float>(w);
@@ -210,7 +210,7 @@ namespace render_text_sample
                 dsTextureParams.format = gpu::FragmentFormat::R24_G8_TYPELESS;
                 dsTextureParams.width = w;
                 dsTextureParams.height = h;
-                dsTextureParams.usage = gpu::TextureUsage::ShaderResource | gpu::TextureUsage::DepthStencil;
+                dsTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::DepthStencil;
 
                 depthStencilParams.format = gpu::FragmentFormat::D24_UNORM_S8_UINT;
                 depthStencilParams.texture = m_graphicsSystem->CreateTexture(dsTextureParams)->GetApiTexture();
@@ -372,18 +372,18 @@ namespace render_text_sample
 
             {// Create container sampler
                 gpu::SamplerParameters samplerParams{};
-                samplerParams.addressU = gpu::TextureAddressMode::Clamp;
-                samplerParams.addressV = gpu::TextureAddressMode::Clamp;
-                samplerParams.addressW = gpu::TextureAddressMode::Clamp;
+                samplerParams.addressU = TextureAddressMode::Clamp;
+                samplerParams.addressV = TextureAddressMode::Clamp;
+                samplerParams.addressW = TextureAddressMode::Clamp;
                 samplerParams.filter = gpu::FilteringMode::Anisotropic;
                 m_containerSampler = api_device->CreateSampler(samplerParams);
             }
 
             {// Create text sampler
                 gpu::SamplerParameters samplerParams{};
-                samplerParams.addressU = gpu::TextureAddressMode::Clamp;
-                samplerParams.addressV = gpu::TextureAddressMode::Clamp;
-                samplerParams.addressW = gpu::TextureAddressMode::Clamp;
+                samplerParams.addressU = TextureAddressMode::Clamp;
+                samplerParams.addressV = TextureAddressMode::Clamp;
+                samplerParams.addressW = TextureAddressMode::Clamp;
                 samplerParams.filter = gpu::FilteringMode::Bilinear;
                 m_textSampler = api_device->CreateSampler(samplerParams);
             }

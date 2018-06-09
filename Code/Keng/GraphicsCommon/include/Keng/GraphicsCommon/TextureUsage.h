@@ -2,7 +2,7 @@
 
 #include "EverydayTools/EnumFlag.h"
 
-namespace keng::graphics::gpu
+namespace keng::graphics
 {
     enum class TextureUsage
     {

@@ -11,7 +11,7 @@
 
 #include "Keng/GPU/RenderTarget/SwapChainParameters.h"
 #include "RenderTarget/SwapChain.h"
-#include "Keng/Graphics/ViewportParameters.h"
+#include "Keng/GraphicsCommon/ViewportParameters.h"
 
 #include "Shader/Shader.h"
 
