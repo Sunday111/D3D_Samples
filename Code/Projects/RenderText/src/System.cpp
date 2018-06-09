@@ -209,7 +209,7 @@ namespace render_text_sample
                 dsTextureParams.format = FragmentFormat::R24_G8_TYPELESS;
                 dsTextureParams.width = w;
                 dsTextureParams.height = h;
-                dsTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::DepthStencil;
+                dsTextureParams.bindFlags = DeviceBufferBindFlags::ShaderResource | DeviceBufferBindFlags::DepthStencil;
 
                 depthStencilParams.format = FragmentFormat::D24_UNORM_S8_UINT;
                 auto depthStencilTexture = m_graphicsSystem->CreateTexture(dsTextureParams)->GetApiTexture();

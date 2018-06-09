@@ -2,6 +2,8 @@
 
 #include "FwdDecl.h"
 #include "d3d11.h"
+#include "Keng/GraphicsCommon/DeviceBufferBindFlags.h"
+#include "Keng/GraphicsCommon/DeviceBufferUsage.h"
 #include "Keng/GraphicsCommon/FragmentFormat.h"
 #include "Keng/GraphicsCommon/TextureAddressMode.h"
 #include "Keng/GraphicsCommon/PrimitiveTopology.h"
@@ -22,4 +24,10 @@ namespace keng::graphics::gpu
 
     CpuAccessFlags ConvertCpuAccessFlags(UINT flags);
     UINT ConvertCpuAccessFlags(const CpuAccessFlags& flags);
+
+    UINT ConvertDeviceBufferBindFlags(const DeviceBufferBindFlags& flags);
+    DeviceBufferBindFlags ConvertDeviceBufferBindFlags(UINT flags);
+
+    D3D11_USAGE ConvertDeviceBufferUsage(const DeviceBufferUsage& flags);
+    DeviceBufferUsage ConvertDeviceBufferUsage(D3D11_USAGE flags);
 }

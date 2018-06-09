@@ -45,7 +45,7 @@ namespace keng::graphics
             DeviceTextureParameters params {};
             params.width = edt::CheckedCast<size_t>(w);
             params.height = edt::CheckedCast<size_t>(h);
-            params.usage = TextureUsage::ShaderResource;
+            params.bindFlags = DeviceBufferBindFlags::ShaderResource;
             params.format = FragmentFormat::R8_G8_B8_A8_UNORM;
             params.data = img_data.get();
             return device->CreateTexture(params);

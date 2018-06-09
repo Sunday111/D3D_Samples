@@ -10,7 +10,6 @@ namespace keng::graphics
     enum class PrimitiveTopology;
     enum class ShaderType;
     enum class TextureAddressMode;
-    enum class TextureUsage;
 
     class DepthStencilParameters;
     class DeviceBufferParameters;

@@ -176,7 +176,7 @@ namespace simple_quad_sample
                 rtTextureParams.format = FragmentFormat::R8_G8_B8_A8_UNORM;
                 rtTextureParams.width = w;
                 rtTextureParams.height = h;
-                rtTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::RenderTarget;
+                rtTextureParams.bindFlags = DeviceBufferBindFlags::ShaderResource | DeviceBufferBindFlags::RenderTarget;
                 auto renderTragetTexture = m_graphicsSystem->CreateTexture(rtTextureParams)->GetApiTexture();
                 m_textureRT = api_device->CreateTextureRenderTarget(texture_rt_params, *renderTragetTexture);
             }
@@ -187,7 +187,7 @@ namespace simple_quad_sample
                 dsTextureParams.format = FragmentFormat::R24_G8_TYPELESS;
                 dsTextureParams.width = w;
                 dsTextureParams.height = h;
-                dsTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::DepthStencil;
+                dsTextureParams.bindFlags = DeviceBufferBindFlags::ShaderResource | DeviceBufferBindFlags::DepthStencil;
 
                 depthStencilParams.format = FragmentFormat::D24_UNORM_S8_UINT;
                 auto depthStencilTexture = m_graphicsSystem->CreateTexture(dsTextureParams)->GetApiTexture();

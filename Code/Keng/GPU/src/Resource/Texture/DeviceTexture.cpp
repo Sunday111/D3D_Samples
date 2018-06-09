@@ -8,33 +8,7 @@ namespace keng::graphics::gpu
 {
     namespace
     {
-        template<TextureUsage flag>
-        bool FlagIsSet(TextureUsage flags) {
-            return (flags & flag) != TextureUsage::None;
-        }
-
-        UINT MakeBindFlags(TextureUsage flags) {
-            return CallAndRethrowM + [&] {
-                // Check for confilected flags:
-                if (FlagIsSet<TextureUsage::RenderTarget>(flags) &&
-                    FlagIsSet<TextureUsage::DepthStencil>(flags)) {
-                    throw std::runtime_error("Could not be render target and depth stencil at the same time");
-                }
-                UINT result = 0;
-                if (FlagIsSet<TextureUsage::RenderTarget>(flags)) {
-                    result |= D3D11_BIND_RENDER_TARGET;
-                }
-                if (FlagIsSet<TextureUsage::DepthStencil>(flags)) {
-                    result |= D3D11_BIND_DEPTH_STENCIL;
-                }
-                if (FlagIsSet<TextureUsage::ShaderResource>(flags)) {
-                    result |= D3D11_BIND_SHADER_RESOURCE;
-                }
-                return result;
-            };
-        }
-
-        D3D11_TEXTURE2D_DESC MakeTextureDescription(size_t w, size_t h, FragmentFormat format, TextureUsage usage, CpuAccessFlags cpuAccess) {
+        D3D11_TEXTURE2D_DESC MakeTextureDescription(size_t w, size_t h, FragmentFormat format, DeviceBufferBindFlags usage, CpuAccessFlags cpuAccess) {
             return CallAndRethrowM + [&] {
                 D3D11_TEXTURE2D_DESC d{};
                 d.Width = edt::CheckedCast<uint32_t>(w);
@@ -44,7 +18,7 @@ namespace keng::graphics::gpu
                 d.Format = ConvertTextureFormat(format);
                 d.SampleDesc.Count = 1;
                 d.Usage = D3D11_USAGE_DEFAULT;
-                d.BindFlags = MakeBindFlags(usage);
+                d.BindFlags = ConvertDeviceBufferBindFlags(usage);
                 d.CPUAccessFlags = ConvertCpuAccessFlags(cpuAccess);
 
                 if ((cpuAccess & CpuAccessFlags::Write) != CpuAccessFlags::None) {
@@ -93,7 +67,7 @@ namespace keng::graphics::gpu
         auto rawDevice = m_device->GetDevice();
 
         CallAndRethrowM + [&] {
-            auto desc = MakeTextureDescription(params.width, params.height, params.format, params.usage, params.cpuAccessFlags);
+            auto desc = MakeTextureDescription(params.width, params.height, params.format, params.bindFlags, params.cpuAccessFlags);
             HRESULT hres = S_OK;
             if (params.data) {
                 D3D11_SUBRESOURCE_DATA subresource {};

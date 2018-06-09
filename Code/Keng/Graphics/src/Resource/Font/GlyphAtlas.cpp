@@ -24,7 +24,7 @@ namespace keng::graphics
             DeviceTextureParameters textureParameters{};
             textureParameters.width = m_parameters.width;
             textureParameters.height = m_parameters.height;
-            textureParameters.usage = TextureUsage::ShaderResource;
+            textureParameters.bindFlags = DeviceBufferBindFlags::ShaderResource;
             textureParameters.format = FragmentFormat::R8_UNORM;
             textureParameters.cpuAccessFlags = CpuAccessFlags::Write;
 
