@@ -12,8 +12,9 @@ namespace keng::graphics
     enum class TextureAddressMode;
     enum class TextureUsage;
 
-    class DeviceBufferParameters;
     class DepthStencilParameters;
+    class DeviceBufferParameters;
+    class DeviceShaderParameters;
     class SamplerParameters;
     class SwapChainParameters;
     class DeviceTextureParameters;

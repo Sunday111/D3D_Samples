@@ -46,7 +46,6 @@ namespace keng::graphics::gpu
     class IInputLayout;
     using IInputLayoutPtr = core::Ptr<IInputLayout>;
 
-    class ShaderParameters;
-    class IShader;
-    using IShaderPtr = core::Ptr<IShader>;
+    class IDeviceShader;
+    using IShaderPtr = core::Ptr<IDeviceShader>;
 }

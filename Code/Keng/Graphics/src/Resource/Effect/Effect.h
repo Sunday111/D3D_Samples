@@ -4,7 +4,7 @@
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "Resource/Shader/Shader.h"
 #include "Keng/GPU/PipelineInput/IInputLayout.h"
-#include "Keng/GPU/Shader/IShader.h"
+#include "Keng/GPU/Shader/IDeviceShader.h"
 
 namespace keng::graphics
 {

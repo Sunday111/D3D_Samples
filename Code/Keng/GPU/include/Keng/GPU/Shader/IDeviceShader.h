@@ -6,7 +6,7 @@
 
 namespace keng::graphics::gpu
 {
-    class IShader : public core::IRefCountObject
+    class IDeviceShader : public core::IRefCountObject
     {
     public:
         virtual ShaderType GetShaderType() const = 0;
@@ -14,13 +14,13 @@ namespace keng::graphics::gpu
     };
 
     template<ShaderType type>
-    class IShaderT : public IShader
+    class IShaderT : public IDeviceShader
     {
 
     };
 
     template<>
-    class IShaderT<ShaderType::Vertex> : public IShader
+    class IShaderT<ShaderType::Vertex> : public IDeviceShader
     {
     public:
         virtual IInputLayoutPtr MakeDefaultInputLayout() = 0;

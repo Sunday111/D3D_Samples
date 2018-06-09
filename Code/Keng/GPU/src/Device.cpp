@@ -70,7 +70,7 @@ namespace keng::graphics::gpu
         };
     }
 
-    IShaderPtr Device::CreateShader(const ShaderType& type, const ShaderParameters & parameters) {
+    IShaderPtr Device::CreateShader(const ShaderType& type, const DeviceShaderParameters & parameters) {
         return CallAndRethrowM + [&] {
             auto ver = ShaderVersion::_5_0;
             IShaderPtr result;

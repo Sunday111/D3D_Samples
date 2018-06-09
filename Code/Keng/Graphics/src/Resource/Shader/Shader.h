@@ -2,7 +2,7 @@
 
 #include "FwdDecl.h"
 #include "EverydayTools/Array/ArrayView.h"
-#include "Keng/GPU/Shader/IShader.h"
+#include "Keng/GPU/Shader/IDeviceShader.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/ResourceSystem/IResource.h"
 #include "WinWrappers/ComPtr.h"

@@ -7,5 +7,5 @@
 
 namespace keng::graphics::gpu
 {
-    ComPtr<ID3DBlob> CompileShaderToBlob(const ShaderType& shaderType, ShaderVersion shaderVersion, const ShaderParameters& parameters);
+    ComPtr<ID3DBlob> CompileShaderToBlob(const ShaderType& shaderType, ShaderVersion shaderVersion, const DeviceShaderParameters& parameters);
 }

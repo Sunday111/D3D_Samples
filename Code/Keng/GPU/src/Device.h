@@ -24,7 +24,7 @@ namespace keng::graphics::gpu
         virtual ISwapChainPtr CreateSwapChain(const SwapChainParameters& params, window_system::IWindow& window) override;
         virtual ISamplerPtr CreateSampler(const SamplerParameters& params) override;
         virtual ITexturePtr CreateTexture(const DeviceTextureParameters& params) override;
-        virtual IShaderPtr CreateShader(const ShaderType& type, const ShaderParameters& parameters) override;
+        virtual IShaderPtr CreateShader(const ShaderType& type, const DeviceShaderParameters& parameters) override;
         virtual IDeviceBufferPtr CreateDeviceBuffer(const DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) override;
         virtual void SetTopology(const PrimitiveTopology& topo) override;
         virtual void Draw(size_t vertices, size_t offset) override;

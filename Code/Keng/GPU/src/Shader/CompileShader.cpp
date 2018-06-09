@@ -1,14 +1,14 @@
 #include "CompileShader.h"
-#include "EverydayTools/Exception/CallAndRethrow.h"
 #include "d3dcompiler.h"
+#include "EverydayTools/Exception/CallAndRethrow.h"
+#include "Keng/GraphicsCommon/DeviceShaderParameters.h"
 #include "WinWrappers/WinWrappers.h"
-#include "Keng/GPU/Shader/ShaderParameters.h"
 #include <string_view>
 #include <vector>
 
 namespace keng::graphics::gpu
 {
-    ComPtr<ID3DBlob> CompileShaderToBlob(const ShaderType& shaderType, ShaderVersion shaderVersion, const ShaderParameters& parameters)
+    ComPtr<ID3DBlob> CompileShaderToBlob(const ShaderType& shaderType, ShaderVersion shaderVersion, const DeviceShaderParameters& parameters)
     {
         return CallAndRethrowM + [&] {
             std::string_view code(parameters.code);

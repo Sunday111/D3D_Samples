@@ -1,13 +1,13 @@
 #include "ShaderFabric.h"
-#include "Resource/ShaderTemplate/ShaderTemplate.h"
-#include "EverydayTools/Array/ArrayViewVector.h"
 #include <vector>
-#include "yasli/STL.h"
-#include "Keng/Base/Serialization/SerializeMandatory.h"
+#include "Device.h"
+#include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
-#include "Device.h"
-#include "Keng/GPU/Shader/ShaderParameters.h"
+#include "Keng/Base/Serialization/SerializeMandatory.h"
+#include "Keng/GraphicsCommon/DeviceShaderParameters.h"
+#include "Resource/ShaderTemplate/ShaderTemplate.h"
+#include "yasli/STL.h"
 
 namespace keng::graphics
 {
@@ -37,7 +37,7 @@ namespace keng::graphics
         DevicePtr device;
         ShaderTemplatePtr shaderTemplate;
         std::string_view entryPoint;
-        std::vector<gpu::ShaderDefinition> definitions;
+        std::vector<DeviceShaderDefinition> definitions;
 
         resource::IResourcePtr Compile() {
             switch (shaderTemplate->type) {
@@ -55,7 +55,7 @@ namespace keng::graphics
         template<ShaderType st>
         core::Ptr<Shader<st>> Compile() {
             auto result = core::Ptr<Shader<st>>::MakeInstance();
-            gpu::ShaderParameters sp;
+            DeviceShaderParameters sp;
             sp.code = shaderTemplate->code.data();
             sp.definitions = edt::MakeArrayView(definitions);
             sp.entry_point = entryPoint.data();
@@ -87,7 +87,7 @@ namespace keng::graphics
             shaderCompiler.entryPoint = info.entryPoint;
             shaderCompiler.definitions.reserve(info.definitions.size());
             for (auto& def : info.definitions) {
-                shaderCompiler.definitions.push_back(gpu::ShaderDefinition {
+                shaderCompiler.definitions.push_back(DeviceShaderDefinition{
                     def.name.data(), def.value.data()
                 });
             }

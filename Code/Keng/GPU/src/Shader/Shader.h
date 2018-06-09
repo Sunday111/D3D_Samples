@@ -1,7 +1,7 @@
 #pragma once
 
 #include "d3dcompiler.h"
-#include "Keng/GPU/Shader/IShader.h"
+#include "Keng/GPU/Shader/IDeviceShader.h"
 #include "WinWrappers/ComPtr.h"
 #include "WinWrappers/WinWrappers.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
@@ -103,7 +103,7 @@ namespace keng::graphics::gpu::shader_details
         using Traits = shader_details::ShaderTraits<shaderType>;
         using Interface = typename Traits::Interface;
 
-        ShaderBase(Device& device, ShaderVersion version, const ShaderParameters& parameters) {
+        ShaderBase(Device& device, ShaderVersion version, const DeviceShaderParameters& parameters) {
             CallAndRethrowM + [&] {
                 m_device = &device;
                 Compile(parameters, version);
@@ -125,7 +125,7 @@ namespace keng::graphics::gpu::shader_details
         ComPtr<Interface> m_shader;
 
     private:
-        void Compile(const ShaderParameters& parameters, ShaderVersion version) {
+        void Compile(const DeviceShaderParameters& parameters, ShaderVersion version) {
             CallAndRethrowM + [&] {
                 m_bytecode = CompileShaderToBlob(shaderType, version, parameters);
             };
