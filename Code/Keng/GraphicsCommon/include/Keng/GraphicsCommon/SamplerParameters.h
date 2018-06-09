@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Keng/GPU/FilteringMode.h"
+#include "Keng/GraphicsCommon/FilteringMode.h"
 #include "Keng/GraphicsCommon/TextureAddressMode.h"
 
-namespace keng::graphics::gpu
+namespace keng::graphics
 {
     class SamplerParameters
     {

@@ -39,8 +39,6 @@ namespace keng::graphics::gpu
     class ISampler;
     using ISamplerPtr = core::Ptr<ISampler>;
 
-    class SamplerParameters;
-
     class IAnnotation;
     using IAnnotationPtr = core::Ptr<IAnnotation>;
 

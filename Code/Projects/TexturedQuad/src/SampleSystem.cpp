@@ -14,7 +14,7 @@
 #include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
 #include "Keng/GPU/DeviceBufferMapper.h"
 #include "Keng/GraphicsCommon/ViewportParameters.h"
-#include "Keng/GPU/SamplerParameters.h"
+#include "Keng/GraphicsCommon/SamplerParameters.h"
 #include "Keng/GPU/PipelineInput/ISampler.h"
 #include "Keng/GPU/ScopedAnnotation.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
@@ -241,11 +241,11 @@ namespace textured_quad_sample
             }
 
             {// Create sampler
-                gpu::SamplerParameters samplerParams{};
+                SamplerParameters samplerParams{};
                 samplerParams.addressU = TextureAddressMode::Clamp;
                 samplerParams.addressV = TextureAddressMode::Clamp;
                 samplerParams.addressW = TextureAddressMode::Clamp;
-                samplerParams.filter = gpu::FilteringMode::Anisotropic;
+                samplerParams.filter = FilteringMode::Anisotropic;
                 m_sampler = api_device->CreateSampler(samplerParams);
             }
         };

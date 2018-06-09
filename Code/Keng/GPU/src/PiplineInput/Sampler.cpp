@@ -4,7 +4,7 @@
 #include "Device.h"
 #include "WinWrappers/WinWrappers.h"
 #include "EnumConverter.h"
-#include "Keng/GPU/SamplerParameters.h"
+#include "Keng/GraphicsCommon/SamplerParameters.h"
 
 namespace keng::graphics::gpu
 {

@@ -4,7 +4,7 @@
 #include "d3d11.h"
 #include "Keng/GPU/FragmentFormat.h"
 #include "Keng/GraphicsCommon/TextureAddressMode.h"
-#include "Keng/GPU/FilteringMode.h"
+#include "Keng/GraphicsCommon/FilteringMode.h"
 #include "Keng/GPU/PrimitiveTopology.h"
 #include "Keng/GPU/CpuAccessFlags.h"
 

@@ -17,7 +17,7 @@
 #include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
 #include "Keng/GPU/DeviceBufferMapper.h"
 #include "Keng/GraphicsCommon/ViewportParameters.h"
-#include "Keng/GPU/SamplerParameters.h"
+#include "Keng/GraphicsCommon/SamplerParameters.h"
 #include "Keng/GPU/PipelineInput/ISampler.h"
 #include "Keng/GPU/ScopedAnnotation.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
@@ -371,20 +371,20 @@ namespace render_text_sample
             }
 
             {// Create container sampler
-                gpu::SamplerParameters samplerParams{};
+                SamplerParameters samplerParams{};
                 samplerParams.addressU = TextureAddressMode::Clamp;
                 samplerParams.addressV = TextureAddressMode::Clamp;
                 samplerParams.addressW = TextureAddressMode::Clamp;
-                samplerParams.filter = gpu::FilteringMode::Anisotropic;
+                samplerParams.filter = FilteringMode::Anisotropic;
                 m_containerSampler = api_device->CreateSampler(samplerParams);
             }
 
             {// Create text sampler
-                gpu::SamplerParameters samplerParams{};
+                SamplerParameters samplerParams{};
                 samplerParams.addressU = TextureAddressMode::Clamp;
                 samplerParams.addressV = TextureAddressMode::Clamp;
                 samplerParams.addressW = TextureAddressMode::Clamp;
-                samplerParams.filter = gpu::FilteringMode::Bilinear;
+                samplerParams.filter = FilteringMode::Bilinear;
                 m_textSampler = api_device->CreateSampler(samplerParams);
             }
 
