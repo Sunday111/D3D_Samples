@@ -104,7 +104,7 @@ namespace simple_quad_sample
                     m_textureRT->AssignToPipeline(m_depthStencil);
                     m_effect->AssignToPipeline();
                     m_vertexBuffer->AssignToPipeline(vbAssignParams);
-                    api_device->SetTopology(gpu::PrimitiveTopology::TriangleStrip);
+                    api_device->SetTopology(PrimitiveTopology::TriangleStrip);
                     m_constantBuffer->AssignToPipeline(cbAssignParams);
                     api_device->Draw(4, 0);
                 });

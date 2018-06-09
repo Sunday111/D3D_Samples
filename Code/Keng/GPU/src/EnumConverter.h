@@ -5,7 +5,7 @@
 #include "Keng/GraphicsCommon/FragmentFormat.h"
 #include "Keng/GraphicsCommon/TextureAddressMode.h"
 #include "Keng/GraphicsCommon/FilteringMode.h"
-#include "Keng/GPU/PrimitiveTopology.h"
+#include "Keng/GraphicsCommon/PrimitiveTopology.h"
 #include "Keng/GPU/CpuAccessFlags.h"
 
 namespace keng::graphics::gpu

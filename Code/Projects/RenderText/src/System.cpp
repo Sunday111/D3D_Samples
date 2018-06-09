@@ -263,7 +263,7 @@ namespace render_text_sample
                 params.usage = gpu::DeviceBufferUsage::Dynamic;
                 params.bindFlags = gpu::DeviceBufferBindFlags::VertexBuffer;
                 params.accessFlags = gpu::DeviceAccessFlags::Write;
-                params.topology = gpu::PrimitiveTopology::TriangleStrip;
+                params.topology = PrimitiveTopology::TriangleStrip;
                 m_containerQuad.Initialize(*m_graphicsSystem, params, edt::MakeArrayView(vertices));
             }
             
@@ -353,7 +353,7 @@ namespace render_text_sample
                 params.usage = gpu::DeviceBufferUsage::Dynamic;
                 params.bindFlags = gpu::DeviceBufferBindFlags::VertexBuffer;
                 params.accessFlags = gpu::DeviceAccessFlags::Write;
-                params.topology = gpu::PrimitiveTopology::TriangleList;
+                params.topology = PrimitiveTopology::TriangleList;
                 m_textQuads.Initialize(*m_graphicsSystem, params, edt::MakeArrayView(vertices));
             }
 

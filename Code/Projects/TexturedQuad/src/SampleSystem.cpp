@@ -94,7 +94,7 @@ namespace textured_quad_sample
                     m_textureRT->AssignToPipeline(m_depthStencil);
                     m_effect->AssignToPipeline();
                     m_vertexBuffer->AssignToPipeline(vbAssignParams);
-                    m_graphicsSystem->GetDevice()->GetApiDevice()->SetTopology(gpu::PrimitiveTopology::TriangleStrip);
+                    m_graphicsSystem->GetDevice()->GetApiDevice()->SetTopology(PrimitiveTopology::TriangleStrip);
                     m_constantBuffer->AssignToPipeline(cbAssignParams);
                     m_sampler->AssignToPipeline(gpu::ShaderType::Fragment, 0);
                     m_texture->GetApiTexture()->AssignToPipeline(gpu::ShaderType::Fragment, 0);

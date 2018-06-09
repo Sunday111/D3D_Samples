@@ -3,7 +3,7 @@
 #include "EverydayTools/Geom/Vector.h"
 #include "Keng/Graphics/FwdDecl.h"
 #include "Keng/Core/ISystem.h"
-#include "Keng/GPU/PrimitiveTopology.h"
+#include "Keng/GraphicsCommon/PrimitiveTopology.h"
 #include "Keng/GPU/Resource/IDeviceBuffer.h"
 #include "Keng/Graphics/IGraphicsSystem.h"
 
@@ -18,7 +18,7 @@ namespace render_text_sample
     class PrimitiveBufferParameters
     {
     public:
-        keng::graphics::gpu::PrimitiveTopology topology = keng::graphics::gpu::PrimitiveTopology::TriangleList;
+        keng::graphics::PrimitiveTopology topology = keng::graphics::PrimitiveTopology::TriangleList;
         keng::graphics::gpu::DeviceBufferUsage usage = keng::graphics::gpu::DeviceBufferUsage::Default;
         keng::graphics::gpu::DeviceBufferBindFlags bindFlags = keng::graphics::gpu::DeviceBufferBindFlags::None;
         keng::graphics::gpu::DeviceAccessFlags accessFlags = keng::graphics::gpu::DeviceAccessFlags::None;
@@ -66,7 +66,7 @@ namespace render_text_sample
 
     private:
         size_t m_verticesCount;
-        keng::graphics::gpu::PrimitiveTopology m_topo;
+        keng::graphics::PrimitiveTopology m_topo;
         keng::graphics::gpu::IDeviceBufferPtr m_vertices;
     };
 

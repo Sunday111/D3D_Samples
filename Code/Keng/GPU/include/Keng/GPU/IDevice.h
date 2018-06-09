@@ -3,7 +3,7 @@
 #include "Keng/Core/IRefCountObject.h"
 #include "Keng/GPU/FwdDecl.h"
 #include "Keng/GPU/Shader/ShaderType.h"
-#include "Keng/GPU/PrimitiveTopology.h"
+#include "Keng/GraphicsCommon/PrimitiveTopology.h"
 #include "EverydayTools/Array/ArrayView.h"
 
 namespace keng::graphics::gpu
