@@ -3,7 +3,7 @@
 #include "Keng/GPU/FwdDecl.h"
 #include "Keng/GPU/IAnnotation.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class ScopedAnnotation
     {

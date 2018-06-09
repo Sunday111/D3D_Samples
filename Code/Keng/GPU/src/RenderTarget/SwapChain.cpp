@@ -6,7 +6,7 @@
 #include "Keng/GPU/RenderTarget/SwapChainParameters.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     SwapChain::SwapChain(Device& device, const SwapChainParameters& params) {
         CallAndRethrowM + [&] {

@@ -5,7 +5,7 @@
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     // Uses RAII to guarantee safe map
     class DeviceBufferMapper

@@ -6,7 +6,7 @@
 #include "Resource/Texture/TextureView.h"
 #include "Keng/GPU/Resource/TextureParameters.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class Texture :
         public core::RefCountImpl<ITexture>

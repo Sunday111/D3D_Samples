@@ -1,6 +1,6 @@
 #pragma once
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     enum class TextureAddressMode
     {

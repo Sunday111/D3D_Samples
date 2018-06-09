@@ -5,7 +5,7 @@
 #include "WinWrappers/ComPtr.h"
 #include "ShaderVersion.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     ComPtr<ID3DBlob> CompileShaderToBlob(ShaderType shaderType, ShaderVersion shaderVersion, const ShaderParameters& parameters);
 }

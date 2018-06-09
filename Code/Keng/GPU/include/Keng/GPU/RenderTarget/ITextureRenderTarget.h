@@ -2,9 +2,8 @@
 
 #include "Keng/GPU/RenderTarget/IRenderTarget.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
-
     class ITextureRenderTarget : public IRenderTarget
     {
     public:

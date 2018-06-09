@@ -6,7 +6,7 @@
 #include "EnumConverter.h"
 #include "Keng/GPU/SamplerParameters.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     Sampler::Sampler(Device& device, const SamplerParameters& params) {
         CallAndRethrowM + [&] {

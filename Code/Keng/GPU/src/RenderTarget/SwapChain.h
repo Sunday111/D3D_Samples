@@ -5,7 +5,7 @@
 #include "WinWrappers/ComPtr.h"
 #include "Keng/GPU/RenderTarget/ISwapChain.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class SwapChain :
         public core::RefCountImpl<ISwapChain>

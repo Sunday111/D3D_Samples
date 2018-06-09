@@ -5,7 +5,7 @@
 #include "Keng/GPU/Resource/ITexture.h"
 #include "Resource/Texture/TextureView.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class DepthStencil :
         public core::RefCountImpl<IDepthStencil>

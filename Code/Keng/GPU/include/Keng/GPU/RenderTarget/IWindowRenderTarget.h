@@ -2,7 +2,7 @@
 
 #include "Keng/GPU/RenderTarget/IRenderTarget.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class IWindowRenderTarget : public IRenderTarget
     {

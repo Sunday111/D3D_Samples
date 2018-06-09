@@ -27,7 +27,7 @@
 #include "EnumConverter.h"
 #include "Keng/Core/IApplication.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     namespace
     {

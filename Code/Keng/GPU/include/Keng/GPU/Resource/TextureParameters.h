@@ -4,7 +4,7 @@
 #include "Keng/GPU/FragmentFormat.h"
 #include "Keng/GPU/CpuAccessFlags.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class TextureParameters
     {

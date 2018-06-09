@@ -7,7 +7,7 @@
 #include "RenderTarget/WindowRenderTarget.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     WindowRenderTarget::WindowRenderTarget(Device& device, const WindowRenderTargetParameters& params)
     {

@@ -8,7 +8,7 @@
 #include "WinWrappers/WinWrappers.h"
 #include "EnumConverter.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     enum class ResourceViewType
     {

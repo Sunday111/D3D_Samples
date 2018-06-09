@@ -4,7 +4,7 @@
 #include "Keng/GPU/FragmentFormat.h"
 #include <cstdint>
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class SwapChainParameters
     {

@@ -3,7 +3,7 @@
 #include "Keng/GPU/FilteringMode.h"
 #include "Keng/Graphics/TextureAddressMode.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class SamplerParameters
     {

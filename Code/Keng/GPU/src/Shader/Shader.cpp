@@ -3,7 +3,7 @@
 #include "Device.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     IInputLayoutPtr VertexShader::MakeDefaultInputLayout() {
         return CallAndRethrowM + [&] {

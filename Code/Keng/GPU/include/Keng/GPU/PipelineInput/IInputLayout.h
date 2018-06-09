@@ -2,7 +2,7 @@
 
 #include "Keng/Core/IRefCountObject.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class IInputLayout : public core::IRefCountObject
     {

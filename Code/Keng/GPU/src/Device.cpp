@@ -17,7 +17,7 @@
 #include "Resource/Texture/Texture.h"
 #include "Shader/Shader.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     Device::Device(const DeviceParameters& params) {
         CallAndRethrowM + [&] {

@@ -1,7 +1,7 @@
 #include "EnumConverter.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     DXGI_FORMAT ConvertTextureFormat(FragmentFormat from) {
         return CallAndRethrowM + [&] {
@@ -56,10 +56,10 @@ namespace keng::gpu
     D3D11_FILTER ConvertFilteringMode(FilteringMode from) {
         return CallAndRethrowM + [&] {
             switch (from) {
-            case keng::gpu::FilteringMode::Nearest:     return D3D11_FILTER_MIN_MAG_MIP_POINT;
-            case keng::gpu::FilteringMode::Bilinear:    return D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
-            case keng::gpu::FilteringMode::Trilinear:   return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-            case keng::gpu::FilteringMode::Anisotropic: return D3D11_FILTER_ANISOTROPIC;
+            case FilteringMode::Nearest:     return D3D11_FILTER_MIN_MAG_MIP_POINT;
+            case FilteringMode::Bilinear:    return D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
+            case FilteringMode::Trilinear:   return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+            case FilteringMode::Anisotropic: return D3D11_FILTER_ANISOTROPIC;
             default: throw std::runtime_error("This filtering mode is not implemented here");
             }
         };

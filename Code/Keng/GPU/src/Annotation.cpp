@@ -1,7 +1,7 @@
 #include "Annotation.h"
 #include "Device.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     Annotation::Annotation(Device& device) {
         m_device = &device;

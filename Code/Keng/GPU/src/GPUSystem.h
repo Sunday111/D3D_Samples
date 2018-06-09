@@ -5,7 +5,7 @@
 #include "Keng/GPU/IGPUSystem.h"
 #include "Device.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class GPUSystem : public core::RefCountImpl<IGPUSystem>
     {

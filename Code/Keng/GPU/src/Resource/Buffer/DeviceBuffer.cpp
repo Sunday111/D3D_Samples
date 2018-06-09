@@ -3,7 +3,7 @@
 #include "WinWrappers/WinWrappers.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     namespace
     {

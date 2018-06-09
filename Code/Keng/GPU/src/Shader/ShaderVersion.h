@@ -2,7 +2,7 @@
 
 #include "Keng/GPU/Shader/ShaderType.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     enum class ShaderVersion
     {

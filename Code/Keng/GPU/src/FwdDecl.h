@@ -2,7 +2,7 @@
 
 #include "Keng/GPU/FwdDecl.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class DepthStencil;
     using DepthStencilPtr = core::Ptr<DepthStencil>;

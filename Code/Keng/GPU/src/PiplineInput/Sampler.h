@@ -5,7 +5,7 @@
 #include "FwdDecl.h"
 #include "Keng/GPU/PipelineInput/ISampler.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class Sampler : public core::RefCountImpl<ISampler>
     {

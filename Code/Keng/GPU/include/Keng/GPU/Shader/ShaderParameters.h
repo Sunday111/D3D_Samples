@@ -2,7 +2,7 @@
 
 #include "EverydayTools/Array/ArrayView.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class ShaderDefinition
     {

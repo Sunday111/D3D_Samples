@@ -2,7 +2,7 @@
 
 #include "Keng/GPU/Resource/ITexture.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class TextureRenderTargetParameters
     {

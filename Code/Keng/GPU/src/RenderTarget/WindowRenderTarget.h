@@ -3,7 +3,7 @@
 #include "FwdDecl.h"
 #include "Keng/GPU/RenderTarget/IWindowRenderTarget.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class WindowRenderTarget :
         public core::RefCountImpl<IWindowRenderTarget>

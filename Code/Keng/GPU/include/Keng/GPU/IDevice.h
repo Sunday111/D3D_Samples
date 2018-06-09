@@ -6,7 +6,7 @@
 #include "Keng/GPU/PrimitiveTopology.h"
 #include "EverydayTools/Array/ArrayView.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class IDevice : public core::IRefCountObject
     {

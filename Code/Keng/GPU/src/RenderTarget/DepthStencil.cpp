@@ -3,7 +3,7 @@
 #include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
 #include "Resource/Texture/Texture.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     DepthStencil::DepthStencil(Device& device, const DepthStencilParameters& p) {
         CallAndRethrowM + [&] {

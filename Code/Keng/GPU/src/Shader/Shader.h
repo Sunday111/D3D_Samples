@@ -9,7 +9,7 @@
 #include "Device.h"
 #include "CompileShader.h"
 
-namespace keng::gpu::shader_details
+namespace keng::graphics::gpu::shader_details
 {
     template<typename Interface>
     using CreateShaderMethodType = HRESULT(ID3D11Device::*)(const void*, SIZE_T, ID3D11ClassLinkage*, Interface**);
@@ -142,7 +142,7 @@ namespace keng::gpu::shader_details
     };
 }
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     template<ShaderType shaderType>
     class Shader : public shader_details::ShaderBase<shaderType>

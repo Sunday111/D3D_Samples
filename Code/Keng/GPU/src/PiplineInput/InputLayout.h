@@ -5,7 +5,7 @@
 #include "WinWrappers/ComPtr.h"
 #include "Device.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class InputLayout : public core::RefCountImpl<IInputLayout>
     {

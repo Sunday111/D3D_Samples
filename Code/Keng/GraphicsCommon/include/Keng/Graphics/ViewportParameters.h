@@ -2,7 +2,7 @@
 
 #include "EverydayTools\Geom\Vector.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class ViewportParameters
     {

@@ -4,7 +4,7 @@
 #include "EverydayTools/EnumFlag.h"
 #include <cstdint>
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     enum class DepthStencilClearFlags
     {

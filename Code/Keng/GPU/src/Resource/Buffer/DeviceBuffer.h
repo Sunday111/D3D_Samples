@@ -4,7 +4,7 @@
 #include "d3d11.h"
 #include "WinWrappers/ComPtr.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class DeviceBuffer : public core::RefCountImpl<IDeviceBuffer>
     {

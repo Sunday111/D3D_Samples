@@ -5,7 +5,7 @@
 #include "EverydayTools/Array/ArrayView.h"
 #include "Keng/GPU/Shader/ShaderType.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class Device;
 

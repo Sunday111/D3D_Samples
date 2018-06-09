@@ -2,7 +2,7 @@
 
 #include "Keng/WindowSystem/FwdDecl.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class DepthStencilParameters;
     class IDepthStencil;

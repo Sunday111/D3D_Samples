@@ -10,7 +10,7 @@
 #include "Resource/Texture/TextureView.h"
 #include "EverydayTools/Array/ArrayView.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class Device :
         public core::RefCountImpl<IDevice>

@@ -5,7 +5,7 @@
 #include "Keng/GPU/Shader/ShaderType.h"
 #include "EverydayTools/Array/ArrayView.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class ITexture : public core::IRefCountObject
     {

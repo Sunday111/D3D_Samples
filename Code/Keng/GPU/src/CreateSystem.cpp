@@ -3,6 +3,6 @@
 extern "C"
 {
     void __declspec(dllexport) __cdecl CreateSystem(void** result) {
-        *result = new keng::gpu::GPUSystem();
+        *result = new keng::graphics::gpu::GPUSystem();
     }
 }

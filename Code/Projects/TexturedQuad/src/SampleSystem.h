@@ -20,14 +20,14 @@ namespace textured_quad_sample
 
     protected:
         keng::graphics::IEffectPtr m_effect;
-        keng::gpu::IDeviceBufferPtr m_constantBuffer;
-        keng::gpu::IDeviceBufferPtr m_vertexBuffer;
-        keng::gpu::ITextureRenderTargetPtr m_textureRT;
+        keng::graphics::gpu::IDeviceBufferPtr m_constantBuffer;
+        keng::graphics::gpu::IDeviceBufferPtr m_vertexBuffer;
+        keng::graphics::gpu::ITextureRenderTargetPtr m_textureRT;
         keng::graphics::ITexturePtr m_texture;
-        keng::gpu::IDepthStencilPtr m_depthStencil;
-        keng::gpu::IWindowRenderTargetPtr m_windowRT;
-        keng::gpu::ISamplerPtr m_sampler;
-        keng::gpu::IAnnotationPtr m_annotation;
+        keng::graphics::gpu::IDepthStencilPtr m_depthStencil;
+        keng::graphics::gpu::IWindowRenderTargetPtr m_windowRT;
+        keng::graphics::gpu::ISamplerPtr m_sampler;
+        keng::graphics::gpu::IAnnotationPtr m_annotation;
 
         keng::resource::IResourceSystemPtr m_resourceSystem;
         keng::graphics::IGraphicsSystemPtr m_graphicsSystem;

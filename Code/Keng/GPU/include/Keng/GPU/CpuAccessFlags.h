@@ -2,7 +2,7 @@
 
 #include "EverydayTools/EnumFlag.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     enum class CpuAccessFlags
     {

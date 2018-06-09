@@ -2,7 +2,7 @@
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     InputLayout::InputLayout(Device& device, ComPtr<ID3D11InputLayout> layout) :
         m_layout(layout)

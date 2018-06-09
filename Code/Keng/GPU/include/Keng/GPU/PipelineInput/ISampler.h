@@ -3,7 +3,7 @@
 #include "Keng/Core/IRefCountObject.h"
 #include "Keng/GPU/Shader/ShaderType.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class ISampler : public core::IRefCountObject
     {

@@ -2,7 +2,7 @@
 
 #include "Keng/GPU/RenderTarget/ITextureRenderTarget.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class TextureRenderTarget :
         public core::RefCountImpl<ITextureRenderTarget>

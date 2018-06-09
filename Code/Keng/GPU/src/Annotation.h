@@ -5,7 +5,7 @@
 #include "WinWrappers/ComPtr.h"
 #include "d3d11_1.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class Annotation : public core::RefCountImpl<IAnnotation>
     {

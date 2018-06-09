@@ -4,7 +4,7 @@
 #include "Keng/GPU/Shader/ShaderType.h"
 #include "Keng/Core/IRefCountObject.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class IShader : public core::IRefCountObject
     {

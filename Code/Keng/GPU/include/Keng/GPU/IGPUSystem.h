@@ -6,7 +6,7 @@
 #include "Keng/Core/ISystem.h"
 #include "EverydayTools/Array/ArrayView.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     class IGPUSystem : public core::ISystem
     {

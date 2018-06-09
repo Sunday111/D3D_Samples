@@ -18,10 +18,10 @@ namespace render_text_sample
     class PrimitiveBufferParameters
     {
     public:
-        keng::gpu::PrimitiveTopology topology = keng::gpu::PrimitiveTopology::TriangleList;
-        keng::gpu::DeviceBufferUsage usage = keng::gpu::DeviceBufferUsage::Default;
-        keng::gpu::DeviceBufferBindFlags bindFlags = keng::gpu::DeviceBufferBindFlags::None;
-        keng::gpu::DeviceAccessFlags accessFlags = keng::gpu::DeviceAccessFlags::None;
+        keng::graphics::gpu::PrimitiveTopology topology = keng::graphics::gpu::PrimitiveTopology::TriangleList;
+        keng::graphics::gpu::DeviceBufferUsage usage = keng::graphics::gpu::DeviceBufferUsage::Default;
+        keng::graphics::gpu::DeviceBufferBindFlags bindFlags = keng::graphics::gpu::DeviceBufferBindFlags::None;
+        keng::graphics::gpu::DeviceAccessFlags accessFlags = keng::graphics::gpu::DeviceAccessFlags::None;
     };
 
     template<typename T>
@@ -45,7 +45,7 @@ namespace render_text_sample
         }
 
         void AssignToPipeline(size_t slot, keng::graphics::IGraphicsSystemPtr system) {
-            keng::gpu::VertexBufferAssignParameters vbAssignParams{};
+            keng::graphics::gpu::VertexBufferAssignParameters vbAssignParams{};
             vbAssignParams.slot = 0;
             vbAssignParams.stride = sizeof(T);
             m_vertices->AssignToPipeline(vbAssignParams);
@@ -66,8 +66,8 @@ namespace render_text_sample
 
     private:
         size_t m_verticesCount;
-        keng::gpu::PrimitiveTopology m_topo;
-        keng::gpu::IDeviceBufferPtr m_vertices;
+        keng::graphics::gpu::PrimitiveTopology m_topo;
+        keng::graphics::gpu::IDeviceBufferPtr m_vertices;
     };
 
     class System : public keng::core::RefCountImpl<keng::core::ISystem>
@@ -86,22 +86,22 @@ namespace render_text_sample
     protected:
         void LoadParameters(const keng::core::IApplicationPtr& app);
 
-        keng::gpu::IDeviceBufferPtr m_constantBuffer;
+        keng::graphics::gpu::IDeviceBufferPtr m_constantBuffer;
 
         keng::graphics::IEffectPtr m_texturedEffect;
         PrimitiveBuffer<Vertex> m_containerQuad;
         keng::graphics::ITexturePtr m_containerTexture;
-        keng::gpu::ISamplerPtr m_containerSampler;
+        keng::graphics::gpu::ISamplerPtr m_containerSampler;
 
         keng::graphics::IEffectPtr m_textEffect;
         PrimitiveBuffer<Vertex> m_textQuads;
         keng::graphics::ITexturePtr m_atlasTexture;
-        keng::gpu::ISamplerPtr m_textSampler;
+        keng::graphics::gpu::ISamplerPtr m_textSampler;
         keng::graphics::IFontPtr m_font;
 
-        keng::gpu::IDepthStencilPtr m_depthStencil;
-        keng::gpu::IWindowRenderTargetPtr m_windowRT;
-        keng::gpu::IAnnotationPtr m_annotation;
+        keng::graphics::gpu::IDepthStencilPtr m_depthStencil;
+        keng::graphics::gpu::IWindowRenderTargetPtr m_windowRT;
+        keng::graphics::gpu::IAnnotationPtr m_annotation;
 
         keng::resource::IResourceSystemPtr m_resourceSystem;
         keng::graphics::IGraphicsSystemPtr m_graphicsSystem;

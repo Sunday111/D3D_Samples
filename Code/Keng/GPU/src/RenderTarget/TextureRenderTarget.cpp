@@ -6,7 +6,7 @@
 #include "Keng/GPU/RenderTarget/TextureRenderTargetParameters.h"
 #include "TextureRenderTarget.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     TextureRenderTarget::TextureRenderTarget(Device& device, const TextureRenderTargetParameters& params) {
         CallAndRethrowM + [&] {

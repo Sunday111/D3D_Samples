@@ -1,7 +1,7 @@
 #include "ShaderVersion.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 
-namespace keng::gpu
+namespace keng::graphics::gpu
 {
     const char* ShaderTypeToShaderTarget(ShaderType shaderType, ShaderVersion shaderVersion) {
         return CallAndRethrowM + [&] {
