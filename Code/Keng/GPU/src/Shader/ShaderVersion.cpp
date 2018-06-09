@@ -1,9 +1,10 @@
 #include "ShaderVersion.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
+#include "Keng/GraphicsCommon/ShaderType.h"
 
 namespace keng::graphics::gpu
 {
-    const char* ShaderTypeToShaderTarget(ShaderType shaderType, ShaderVersion shaderVersion) {
+    const char* ShaderTypeToShaderTarget(const ShaderType& shaderType, ShaderVersion shaderVersion) {
         return CallAndRethrowM + [&] {
             switch (shaderVersion) {
             case ShaderVersion::_5_0:

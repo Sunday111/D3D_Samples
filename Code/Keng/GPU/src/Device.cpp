@@ -3,6 +3,7 @@
 #include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
 #include "Keng/GPU/RenderTarget/TextureRenderTargetParameters.h"
 #include "Keng/GPU/RenderTarget/WindowRenderTargetParameters.h"
+#include "Keng/GraphicsCommon/ShaderType.h"
 #include "Keng/GraphicsCommon/ViewportParameters.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
@@ -69,7 +70,7 @@ namespace keng::graphics::gpu
         };
     }
 
-    IShaderPtr Device::CreateShader(ShaderType type, const ShaderParameters & parameters) {
+    IShaderPtr Device::CreateShader(const ShaderType& type, const ShaderParameters & parameters) {
         return CallAndRethrowM + [&] {
             auto ver = ShaderVersion::_5_0;
             IShaderPtr result;
@@ -93,7 +94,7 @@ namespace keng::graphics::gpu
         };
     }
     
-    void Device::SetTopology(PrimitiveTopology topo) {
+    void Device::SetTopology(const PrimitiveTopology& topo) {
         GetContext()->IASetPrimitiveTopology(ConvertTopology(topo));
     }
 

@@ -122,7 +122,7 @@ namespace keng::graphics::gpu
         return m_params.format;
     }
 
-    void Texture::AssignToPipeline(ShaderType shaderType, size_t slot) {
+    void Texture::AssignToPipeline(const ShaderType& shaderType, size_t slot) {
         auto srv = GetView<ResourceViewType::ShaderResource>();
         m_device->SetShaderResource(edt::CheckedCast<uint32_t>(slot), shaderType, srv->GetView());
     }

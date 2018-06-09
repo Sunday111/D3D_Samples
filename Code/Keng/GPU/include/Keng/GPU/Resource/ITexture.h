@@ -2,7 +2,6 @@
 
 #include "Keng/GPU/FwdDecl.h"
 #include "Keng/GraphicsCommon/FragmentFormat.h"
-#include "Keng/GraphicsCommon/ShaderType.h"
 #include "EverydayTools/Array/ArrayView.h"
 
 namespace keng::graphics::gpu
@@ -11,7 +10,7 @@ namespace keng::graphics::gpu
     {
     public:
         virtual FragmentFormat GetFormat() const = 0;
-        virtual void AssignToPipeline(ShaderType shaderType, size_t slot) = 0;
+        virtual void AssignToPipeline(const ShaderType& shaderType, size_t slot) = 0;
         virtual void CopyTo(ITexturePtr) = 0;
         virtual void SetData(edt::DenseArrayView<const uint8_t> data) = 0;
         virtual size_t GetWidth() const = 0;

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "FwdDecl.h"
-#include "Keng/GraphicsCommon/PrimitiveTopology.h"
 #include "Keng/GPU/IGPUSystem.h"
 #include "Device.h"
 

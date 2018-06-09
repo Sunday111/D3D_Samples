@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keng/GraphicsCommon/ShaderType.h"
+#include "FwdDecl.h"
 
 namespace keng::graphics::gpu
 {
@@ -11,5 +11,5 @@ namespace keng::graphics::gpu
         _4_0,
     };
 
-    const char* ShaderTypeToShaderTarget(ShaderType shaderType, ShaderVersion shaderVersion);
+    const char* ShaderTypeToShaderTarget(const ShaderType& shaderType, ShaderVersion shaderVersion);
 }

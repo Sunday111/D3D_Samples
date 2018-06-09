@@ -2,6 +2,7 @@
 
 #include "FwdDecl.h"
 #include <algorithm>
+#include <vector>
 #include "Keng/GPU/Resource/ITexture.h"
 #include "Resource/Texture/TextureView.h"
 #include "Keng/GPU/Resource/TextureParameters.h"
@@ -18,7 +19,7 @@ namespace keng::graphics::gpu
 
         // ITexture
         virtual FragmentFormat GetFormat() const override;
-        virtual void AssignToPipeline(ShaderType shaderType, size_t slot) override;
+        virtual void AssignToPipeline(const ShaderType& shaderType, size_t slot) override;
         virtual void CopyTo(ITexturePtr) override;
         virtual void SetData(edt::DenseArrayView<const uint8_t> data) override;
         virtual size_t GetWidth() const override;

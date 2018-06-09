@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Keng/GPU/Shader/ShaderParameters.h"
 #include "d3d11_1.h"
 #include "WinWrappers/ComPtr.h"
 #include "ShaderVersion.h"
+#include "FwdDecl.h"
 
 namespace keng::graphics::gpu
 {
-    ComPtr<ID3DBlob> CompileShaderToBlob(ShaderType shaderType, ShaderVersion shaderVersion, const ShaderParameters& parameters);
+    ComPtr<ID3DBlob> CompileShaderToBlob(const ShaderType& shaderType, ShaderVersion shaderVersion, const ShaderParameters& parameters);
 }

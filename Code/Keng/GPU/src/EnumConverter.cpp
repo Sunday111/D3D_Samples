@@ -1,9 +1,10 @@
 #include "EnumConverter.h"
+#include "Keng/GraphicsCommon/FilteringMode.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 
 namespace keng::graphics::gpu
 {
-    DXGI_FORMAT ConvertTextureFormat(FragmentFormat from) {
+    DXGI_FORMAT ConvertTextureFormat(const FragmentFormat& from) {
         return CallAndRethrowM + [&] {
             switch (from) {
             case FragmentFormat::R8_UNORM: return DXGI_FORMAT_R8_UNORM;
@@ -16,7 +17,7 @@ namespace keng::graphics::gpu
         };
     }
 
-    FragmentFormat ConvertTextureFormat(DXGI_FORMAT from) {
+    FragmentFormat ConvertTextureFormat(const DXGI_FORMAT& from) {
         return CallAndRethrowM + [&] {
             switch (from) {
             case DXGI_FORMAT_R8_UNORM: return FragmentFormat::R8_UNORM;
@@ -29,7 +30,7 @@ namespace keng::graphics::gpu
         };
     }
 
-    D3D11_TEXTURE_ADDRESS_MODE ConvertAddressMode(TextureAddressMode from) {
+    D3D11_TEXTURE_ADDRESS_MODE ConvertAddressMode(const TextureAddressMode& from) {
         return CallAndRethrowM + [&] {
             switch (from) {
             case TextureAddressMode::Border: return D3D11_TEXTURE_ADDRESS_BORDER;
@@ -41,7 +42,7 @@ namespace keng::graphics::gpu
         };
     }
 
-    TextureAddressMode ConvertAddressMode(D3D11_TEXTURE_ADDRESS_MODE from) {
+    TextureAddressMode ConvertAddressMode(const D3D11_TEXTURE_ADDRESS_MODE& from) {
         return CallAndRethrowM + [&] {
             switch (from) {
             case D3D11_TEXTURE_ADDRESS_BORDER: return  TextureAddressMode::Border;
@@ -53,7 +54,7 @@ namespace keng::graphics::gpu
         };
     }
 
-    D3D11_FILTER ConvertFilteringMode(FilteringMode from) {
+    D3D11_FILTER ConvertFilteringMode(const FilteringMode& from) {
         return CallAndRethrowM + [&] {
             switch (from) {
             case FilteringMode::Nearest:     return D3D11_FILTER_MIN_MAG_MIP_POINT;
@@ -65,7 +66,7 @@ namespace keng::graphics::gpu
         };
     }
 
-    PrimitiveTopology ConvertTopology(D3D_PRIMITIVE_TOPOLOGY from) {
+    PrimitiveTopology ConvertTopology(const D3D_PRIMITIVE_TOPOLOGY& from) {
         return CallAndRethrowM + [&] {
             switch (from) {
             case D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST: return PrimitiveTopology::TriangleList;
@@ -75,7 +76,7 @@ namespace keng::graphics::gpu
         };
     }
 
-    D3D_PRIMITIVE_TOPOLOGY ConvertTopology(PrimitiveTopology from) {
+    D3D_PRIMITIVE_TOPOLOGY ConvertTopology(const PrimitiveTopology& from) {
         return CallAndRethrowM + [&] {
             switch (from) {
             case PrimitiveTopology::TriangleList: return D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -96,7 +97,7 @@ namespace keng::graphics::gpu
         return result;
     }
 
-    UINT ConvertCpuAccessFlags(CpuAccessFlags flags) {
+    UINT ConvertCpuAccessFlags(const CpuAccessFlags& flags) {
         UINT result = 0;
         if ((flags & CpuAccessFlags::Read) != CpuAccessFlags::None) {
             result |= D3D10_CPU_ACCESS_READ;

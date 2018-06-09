@@ -3,7 +3,6 @@
 #include "FwdDecl.h"
 #include "Keng/FileSystem/FwdDecl.h"
 #include "Keng/Graphics/IGraphicsListener.h"
-#include "Keng/GraphicsCommon/PrimitiveTopology.h"
 #include "Keng/Graphics/IGraphicsSystem.h"
 #include "Keng/GPU/IGPUSystem.h"
 #include "Keng/GPU/IDevice.h"
