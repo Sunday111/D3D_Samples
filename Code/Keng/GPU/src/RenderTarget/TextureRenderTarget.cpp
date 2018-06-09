@@ -8,10 +8,10 @@
 
 namespace keng::graphics::gpu
 {
-    TextureRenderTarget::TextureRenderTarget(Device& device, const TextureRenderTargetParameters& params) {
+    TextureRenderTarget::TextureRenderTarget(Device& device, const TextureRenderTargetParameters&, ITexture& texture) {
         CallAndRethrowM + [&] {
             m_device = &device;
-            m_texture = std::dynamic_pointer_cast<Texture>(params.renderTarget);
+            m_texture = &dynamic_cast<Texture&>(texture);
         };
     }
 

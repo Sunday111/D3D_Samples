@@ -44,20 +44,20 @@ namespace keng::graphics::gpu
         };
     }
 
-    IWindowRenderTargetPtr Device::CreateWindowRenderTarget(const WindowRenderTargetParameters& params) {
-        return WindowRenderTargetPtr::MakeInstance(*this, params);
+    IWindowRenderTargetPtr Device::CreateWindowRenderTarget(const WindowRenderTargetParameters& params, window_system::IWindow& window) {
+        return WindowRenderTargetPtr::MakeInstance(*this, params, window);
     }
 
-    ITextureRenderTargetPtr Device::CreateTextureRenderTarget(const TextureRenderTargetParameters& params) {
-        return TextureRenderTargetPtr::MakeInstance(*this, params);
+    ITextureRenderTargetPtr Device::CreateTextureRenderTarget(const TextureRenderTargetParameters& params, ITexture& texture) {
+        return TextureRenderTargetPtr::MakeInstance(*this, params, texture);
     }
 
-    IDepthStencilPtr Device::CreateDepthStencil(const DepthStencilParameters& params) {
-        return DepthStencilPtr::MakeInstance(*this, params);
+    IDepthStencilPtr Device::CreateDepthStencil(const DepthStencilParameters& params, ITexture& texture) {
+        return DepthStencilPtr::MakeInstance(*this, params, texture);
     }
 
-    ISwapChainPtr Device::CreateSwapChain(const SwapChainParameters& params) {
-        return SwapChainPtr::MakeInstance(*this, params);
+    ISwapChainPtr Device::CreateSwapChain(const SwapChainParameters& params, window_system::IWindow& window) {
+        return SwapChainPtr::MakeInstance(*this, params, window);
     }
 
     ISamplerPtr Device::CreateSampler(const SamplerParameters& params) {

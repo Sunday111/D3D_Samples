@@ -11,7 +11,7 @@ namespace keng::graphics::gpu
         public core::RefCountImpl<ISwapChain>
     {
     public:
-        SwapChain(Device& device, const SwapChainParameters& params);
+        SwapChain(Device& device, const SwapChainParameters& params, window_system::IWindow& window);
         ~SwapChain();
 
         virtual void Present() override;

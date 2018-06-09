@@ -18,10 +18,10 @@ namespace keng::graphics::gpu
         Device(const DeviceParameters& parameters);
 
         // IDevice
-        virtual IWindowRenderTargetPtr CreateWindowRenderTarget(const WindowRenderTargetParameters& params) override;
-        virtual ITextureRenderTargetPtr CreateTextureRenderTarget(const TextureRenderTargetParameters& params) override;
-        virtual IDepthStencilPtr CreateDepthStencil(const DepthStencilParameters& params) override;
-        virtual ISwapChainPtr CreateSwapChain(const SwapChainParameters& params) override;
+        virtual IWindowRenderTargetPtr CreateWindowRenderTarget(const WindowRenderTargetParameters& params, window_system::IWindow& window) override;
+        virtual ITextureRenderTargetPtr CreateTextureRenderTarget(const TextureRenderTargetParameters&, ITexture&) override;
+        virtual IDepthStencilPtr CreateDepthStencil(const DepthStencilParameters&, ITexture&) override;
+        virtual ISwapChainPtr CreateSwapChain(const SwapChainParameters& params, window_system::IWindow& window) override;
         virtual ISamplerPtr CreateSampler(const SamplerParameters& params) override;
         virtual ITexturePtr CreateTexture(const TextureParameters& params) override;
         virtual IShaderPtr CreateShader(const ShaderType& type, const ShaderParameters& parameters) override;

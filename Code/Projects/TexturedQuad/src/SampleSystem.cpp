@@ -157,9 +157,8 @@ namespace textured_quad_sample
             {// Create window render target
                 gpu::WindowRenderTargetParameters window_rt_params;
                 window_rt_params.swapChain.format = FragmentFormat::R8_G8_B8_A8_UNORM;
-                window_rt_params.swapChain.window = window;
                 window_rt_params.swapChain.buffers = 2;
-                m_windowRT = api_device->CreateWindowRenderTarget(window_rt_params);
+                m_windowRT = api_device->CreateWindowRenderTarget(window_rt_params, *window);
             }
 
             {// Create texture render target
@@ -169,8 +168,8 @@ namespace textured_quad_sample
                 rtTextureParams.width = w;
                 rtTextureParams.height = h;
                 rtTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::RenderTarget;
-                texture_rt_params.renderTarget = m_graphicsSystem->CreateTexture(rtTextureParams)->GetApiTexture();
-                m_textureRT = api_device->CreateTextureRenderTarget(texture_rt_params);
+                auto renderTargetTexture = m_graphicsSystem->CreateTexture(rtTextureParams)->GetApiTexture();
+                m_textureRT = api_device->CreateTextureRenderTarget(texture_rt_params, *renderTargetTexture);
             }
 
             {// Create depth stencil
@@ -182,8 +181,8 @@ namespace textured_quad_sample
                 dsTextureParams.usage = TextureUsage::ShaderResource | TextureUsage::DepthStencil;
 
                 depthStencilParams.format = FragmentFormat::D24_UNORM_S8_UINT;
-                depthStencilParams.texture = m_graphicsSystem->CreateTexture(dsTextureParams)->GetApiTexture();
-                m_depthStencil = api_device->CreateDepthStencil(depthStencilParams);
+                auto depthStencilTexture = m_graphicsSystem->CreateTexture(dsTextureParams)->GetApiTexture();
+                m_depthStencil = api_device->CreateDepthStencil(depthStencilParams, *depthStencilTexture);
             }
 
             m_texture = std::static_pointer_cast<ITexture>(m_resourceSystem->GetResource("Assets/Textures/container.json", m_graphicsSystem->GetDevice()));

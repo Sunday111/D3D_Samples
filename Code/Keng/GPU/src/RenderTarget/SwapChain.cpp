@@ -8,7 +8,7 @@
 
 namespace keng::graphics::gpu
 {
-    SwapChain::SwapChain(Device& device, const SwapChainParameters& params) {
+    SwapChain::SwapChain(Device& device, const SwapChainParameters& params, window_system::IWindow& window) {
         CallAndRethrowM + [&] {
             m_device = &device;
             ComPtr<IDXGIFactory> factory;
@@ -20,7 +20,7 @@ namespace keng::graphics::gpu
             scd.BufferDesc.Width = edt::CheckedCast<uint32_t>(params.width);
             scd.BufferDesc.Height = edt::CheckedCast<uint32_t>(params.height);
             scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;                                      // how swap chain is to be used
-            scd.OutputWindow = (HWND)params.window->GetNativeHandle();                              // the window to be used
+            scd.OutputWindow = (HWND)window.GetNativeHandle();                                      // the window to be used
             scd.SampleDesc.Count = 1;                                                               // how many multisamples
             scd.Windowed = TRUE;                                                                    // windowed/full-screen mode
             scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;

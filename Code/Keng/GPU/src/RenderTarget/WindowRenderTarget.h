@@ -9,7 +9,7 @@ namespace keng::graphics::gpu
         public core::RefCountImpl<IWindowRenderTarget>
     {
     public:
-        WindowRenderTarget(Device& device, const WindowRenderTargetParameters& params);
+        WindowRenderTarget(Device& device, const WindowRenderTargetParameters& params, window_system::IWindow& window);
         virtual void AssignToPipeline(const IDepthStencilPtr& depthStencil) override;
         virtual void Clear(const float(&flatColor)[4]) override;
         virtual void CopyFrom(const ITexturePtr&) override;

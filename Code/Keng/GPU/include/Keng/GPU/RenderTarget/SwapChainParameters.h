@@ -13,6 +13,5 @@ namespace keng::graphics::gpu
         size_t height = 0;
         size_t buffers = 1;
         FragmentFormat format = FragmentFormat::R8_G8_B8_A8_UNORM;
-        window_system::IWindow* window;
     };
 }

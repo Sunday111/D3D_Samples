@@ -9,10 +9,10 @@
 
 namespace keng::graphics::gpu
 {
-    WindowRenderTarget::WindowRenderTarget(Device& device, const WindowRenderTargetParameters& params)
+    WindowRenderTarget::WindowRenderTarget(Device& device, const WindowRenderTargetParameters& params, window_system::IWindow& window)
     {
         m_device = &device;
-        m_swapChain = SwapChainPtr::MakeInstance(device, params.swapChain);
+        m_swapChain = SwapChainPtr::MakeInstance(device, params.swapChain, window);
 
 
         D3D11_BLEND_DESC desc{};

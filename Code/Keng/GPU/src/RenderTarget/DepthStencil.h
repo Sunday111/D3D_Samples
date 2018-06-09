@@ -11,7 +11,7 @@ namespace keng::graphics::gpu
         public core::RefCountImpl<IDepthStencil>
     {
     public:
-        DepthStencil(Device& device, const DepthStencilParameters&);
+        DepthStencil(Device& device, const DepthStencilParameters&, ITexture&);
         ~DepthStencil();
         virtual void Clear(DepthStencilClearFlags flags, float depth, uint8_t stencil) override;
         core::Ptr<TextureView<ResourceViewType::DepthStencil>> GetView() const;

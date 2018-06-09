@@ -8,7 +8,7 @@ namespace keng::graphics::gpu
         public core::RefCountImpl<ITextureRenderTarget>
     {
     public:
-        TextureRenderTarget(Device& device, const TextureRenderTargetParameters& params);
+        TextureRenderTarget(Device& device, const TextureRenderTargetParameters& params, ITexture& texture);
         ~TextureRenderTarget();
         virtual void AssignToPipeline(const IDepthStencilPtr& depthStencil) override;
         virtual void Clear(const float(&flatColor)[4]) override;

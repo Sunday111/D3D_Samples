@@ -9,6 +9,5 @@ namespace keng::graphics::gpu
     {
     public:
         FragmentFormat format;
-        ITexturePtr texture;
     };
 }

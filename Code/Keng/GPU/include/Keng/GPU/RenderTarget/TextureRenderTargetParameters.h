@@ -6,7 +6,5 @@ namespace keng::graphics::gpu
 {
     class TextureRenderTargetParameters
     {
-    public:
-        ITexturePtr renderTarget;
     };
 }

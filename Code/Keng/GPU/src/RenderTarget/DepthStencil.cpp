@@ -5,11 +5,11 @@
 
 namespace keng::graphics::gpu
 {
-    DepthStencil::DepthStencil(Device& device, const DepthStencilParameters& p) {
+    DepthStencil::DepthStencil(Device& device, const DepthStencilParameters& parameters, ITexture& texture) {
         CallAndRethrowM + [&] {
             m_device = &device;
-            m_texture = std::dynamic_pointer_cast<Texture>(p.texture);
-            m_dsv = m_texture->GetView<ResourceViewType::DepthStencil>(p.format);
+            m_texture = &dynamic_cast<Texture&>(texture);
+            m_dsv = m_texture->GetView<ResourceViewType::DepthStencil>(parameters.format);
         };
     }
     DepthStencil::~DepthStencil() = default;
