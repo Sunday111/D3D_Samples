@@ -3,7 +3,7 @@
 #include "Resource/Texture/TextureView.h"
 #include "DepthStencil.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
-#include "Keng/GPU/RenderTarget/TextureRenderTargetParameters.h"
+#include "Keng/GraphicsCommon/TextureRenderTargetParameters.h"
 #include "TextureRenderTarget.h"
 
 namespace keng::graphics::gpu

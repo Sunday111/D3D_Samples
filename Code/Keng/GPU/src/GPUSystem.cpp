@@ -9,8 +9,8 @@
 #include "keng/GPU/Resource/TextureParameters.h"
 #include "Resource/Texture/Texture.h"
 
-#include "Keng/GPU/RenderTarget/SwapChainParameters.h"
 #include "RenderTarget/SwapChain.h"
+#include "Keng/GraphicsCommon/SwapChainParameters.h"
 #include "Keng/GraphicsCommon/ViewportParameters.h"
 
 #include "Shader/Shader.h"

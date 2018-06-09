@@ -3,7 +3,7 @@
 #include "Keng/WindowSystem/IWindow.h"
 #include "Resource/Texture/Texture.h"
 #include "DepthStencil.h"
-#include "Keng/GPU/RenderTarget/WindowRenderTargetParameters.h"
+#include "Keng/GraphicsCommon/WindowRenderTargetParameters.h"
 #include "RenderTarget/WindowRenderTarget.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 

@@ -2,32 +2,32 @@
 #include "EverydayTools/Delegate.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Exception/CheckedCast.h"
+#include "Keng/Base/Serialization/SerializeMandatory.h"
+#include "Keng/Base/Serialization/openarchivejson.h"
 #include "Keng/Core/IApplication.h"
+#include "Keng/FileSystem/OpenFileParameters.h"
+#include "Keng/FileSystem/ReadFileToBuffer.h"
+#include "Keng/Graphics/IDevice.h"
 #include "Keng/Graphics/Resource/Font/IFont.h"
 #include "Keng/Graphics/Resource/Font/GlyphInfo.h"
 #include "Keng/Graphics/Resource/Font/GlyphParameters.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
-#include "Keng/GPU/Resource/TextureParameters.h"
-#include "Keng/GPU/RenderTarget/IWindowRenderTarget.h"
-#include "Keng/GPU/RenderTarget/WindowRenderTargetParameters.h"
-#include "Keng/GPU/RenderTarget/ITextureRenderTarget.h"
-#include "Keng/GPU/RenderTarget/TextureRenderTargetParameters.h"
-#include "Keng/GPU/RenderTarget/IDepthStencil.h"
-#include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
 #include "Keng/GPU/DeviceBufferMapper.h"
-#include "Keng/GraphicsCommon/ViewportParameters.h"
-#include "Keng/GraphicsCommon/SamplerParameters.h"
 #include "Keng/GPU/PipelineInput/ISampler.h"
+#include "Keng/GPU/RenderTarget/IWindowRenderTarget.h"
+#include "Keng/GPU/RenderTarget/ITextureRenderTarget.h"
+#include "Keng/GPU/RenderTarget/IDepthStencil.h"
+#include "Keng/GPU/Resource/TextureParameters.h"
 #include "Keng/GPU/ScopedAnnotation.h"
+#include "Keng/GraphicsCommon/DepthStencilParameters.h"
+#include "Keng/GraphicsCommon/ViewportParameters.h"
+#include "Keng/GraphicsCommon/WindowRenderTargetParameters.h"
+#include "Keng/GraphicsCommon/SamplerParameters.h"
+#include "Keng/GraphicsCommon/TextureRenderTargetParameters.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
-#include "Keng/Graphics/IDevice.h"
-#include "Keng/Base/Serialization/SerializeMandatory.h"
-#include "Keng/FileSystem/OpenFileParameters.h"
-#include "Keng/FileSystem/ReadFileToBuffer.h"
-#include "Keng/Base/Serialization/openarchivejson.h"
 
 namespace render_text_sample
 {
@@ -197,14 +197,14 @@ namespace render_text_sample
             }
 
             {// Create window render target
-                gpu::WindowRenderTargetParameters window_rt_params;
+                WindowRenderTargetParameters window_rt_params;
                 window_rt_params.swapChain.format = FragmentFormat::R8_G8_B8_A8_UNORM;
                 window_rt_params.swapChain.buffers = 2;
                 m_windowRT = api_device->CreateWindowRenderTarget(window_rt_params, *window);
             }
 
             {// Create depth stencil
-                gpu::DepthStencilParameters depthStencilParams{};
+                DepthStencilParameters depthStencilParams{};
                 gpu::TextureParameters dsTextureParams{};
                 dsTextureParams.format = FragmentFormat::R24_G8_TYPELESS;
                 dsTextureParams.width = w;

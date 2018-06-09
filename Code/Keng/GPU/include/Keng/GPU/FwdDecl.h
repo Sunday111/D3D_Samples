@@ -5,22 +5,18 @@
 
 namespace keng::graphics::gpu
 {
-    class DepthStencilParameters;
     class IDepthStencil;
     using IDepthStencilPtr = core::Ptr<IDepthStencil>;
 
-    class SwapChainParameters;
     class ISwapChain;
     using ISwapChainPtr = core::Ptr<ISwapChain>;
 
     class IRenderTarget;
     using IRenderTargetPtr = core::Ptr<IRenderTarget>;
 
-    class TextureRenderTargetParameters;
     class ITextureRenderTarget;
     using ITextureRenderTargetPtr = core::Ptr<ITextureRenderTarget>;
 
-    class WindowRenderTargetParameters;
     class IWindowRenderTarget;
     using IWindowRenderTargetPtr = core::Ptr<IWindowRenderTarget>;
 

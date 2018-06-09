@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Keng/GPU/FwdDecl.h"
+#include "Keng/GraphicsCommon/FwdDecl.h"
 #include "Keng/GraphicsCommon/FragmentFormat.h"
 #include <cstdint>
 
-namespace keng::graphics::gpu
+namespace keng::graphics
 {
     class SwapChainParameters
     {

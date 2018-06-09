@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Keng/GPU/FwdDecl.h"
-#include "Keng/GPU/RenderTarget/SwapChainParameters.h"
+#include "Keng/GraphicsCommon/FwdDecl.h"
+#include "Keng/GraphicsCommon/SwapChainParameters.h"
 
-namespace keng::graphics::gpu
+namespace keng::graphics
 {
     class WindowRenderTargetParameters
     {

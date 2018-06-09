@@ -1,6 +1,6 @@
 #include "DepthStencil.h"
 #include "Device.h"
-#include "Keng/GPU/RenderTarget/DepthStencilParameters.h"
+#include "Keng/GraphicsCommon/DepthStencilParameters.h"
 #include "Resource/Texture/Texture.h"
 
 namespace keng::graphics::gpu

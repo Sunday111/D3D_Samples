@@ -9,6 +9,10 @@ namespace keng::graphics
     enum class TextureAddressMode;
     enum class TextureUsage;
 
+    class DepthStencilParameters;
     class SamplerParameters;
+    class SwapChainParameters;
+    class TextureRenderTargetParameters;
     class ViewportParameters;
+    class WindowRenderTargetParameters;
 }
