@@ -64,7 +64,7 @@ namespace keng::graphics::gpu
         return SamplerPtr::MakeInstance(*this, params);
     }
 
-    ITexturePtr Device::CreateTexture(const TextureParameters& params) {
+    ITexturePtr Device::CreateTexture(const DeviceTextureParameters& params) {
         return CallAndRethrowM + [&] {
             return TexturePtr::MakeInstance(*this, params);
         };

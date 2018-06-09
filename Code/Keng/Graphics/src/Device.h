@@ -19,8 +19,8 @@ namespace keng::graphics
         virtual gpu::IDevicePtr GetApiDevice() override;
         // ~IDevice
 
-        TexturePtr CreateTexture(const gpu::TextureParameters& parameters);
-        TexturePtr CreateRuntimeTexture(const gpu::TextureParameters& parameters, resource::IResourceSystem& resourceSystem);
+        TexturePtr CreateTexture(const DeviceTextureParameters& parameters);
+        TexturePtr CreateRuntimeTexture(const DeviceTextureParameters& parameters, resource::IResourceSystem& resourceSystem);
 
         gpu::IDevicePtr m_impl;
     };

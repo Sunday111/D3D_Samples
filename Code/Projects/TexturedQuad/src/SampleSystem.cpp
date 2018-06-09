@@ -3,9 +3,16 @@
 #include "EverydayTools/Exception/CheckedCast.h"
 #include "EverydayTools/Geom/Vector.h"
 #include "Keng/Core/IApplication.h"
+#include "Keng/GPU/PipelineInput/ISampler.h"
+#include "Keng/GPU/DeviceBufferMapper.h"
+#include "Keng/GPU/RenderTarget/IWindowRenderTarget.h"
+#include "Keng/GPU/RenderTarget/ITextureRenderTarget.h"
+#include "Keng/GPU/RenderTarget/IDepthStencil.h"
+#include "Keng/GPU/ScopedAnnotation.h"
 #include "Keng/GraphicsCommon/DepthStencilParameters.h"
 #include "Keng/GraphicsCommon/PrimitiveTopology.h"
 #include "Keng/GraphicsCommon/SamplerParameters.h"
+#include "Keng/GraphicsCommon/DeviceTextureParameters.h"
 #include "Keng/GraphicsCommon/TextureRenderTargetParameters.h"
 #include "Keng/GraphicsCommon/ViewportParameters.h"
 #include "Keng/GraphicsCommon/WindowRenderTargetParameters.h"
@@ -13,13 +20,6 @@
 #include "Keng/Graphics/IGraphicsSystem.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
-#include "Keng/GPU/PipelineInput/ISampler.h"
-#include "Keng/GPU/DeviceBufferMapper.h"
-#include "Keng/GPU/RenderTarget/IWindowRenderTarget.h"
-#include "Keng/GPU/RenderTarget/ITextureRenderTarget.h"
-#include "Keng/GPU/RenderTarget/IDepthStencil.h"
-#include "Keng/GPU/Resource/TextureParameters.h"
-#include "Keng/GPU/ScopedAnnotation.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindowSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
@@ -163,7 +163,7 @@ namespace textured_quad_sample
 
             {// Create texture render target
                 TextureRenderTargetParameters texture_rt_params{};
-                gpu::TextureParameters rtTextureParams{};
+                DeviceTextureParameters rtTextureParams{};
                 rtTextureParams.format = FragmentFormat::R8_G8_B8_A8_UNORM;
                 rtTextureParams.width = w;
                 rtTextureParams.height = h;
@@ -174,7 +174,7 @@ namespace textured_quad_sample
 
             {// Create depth stencil
                 DepthStencilParameters depthStencilParams{};
-                gpu::TextureParameters dsTextureParams{};
+                DeviceTextureParameters dsTextureParams{};
                 dsTextureParams.format = FragmentFormat::R24_G8_TYPELESS;
                 dsTextureParams.width = w;
                 dsTextureParams.height = h;

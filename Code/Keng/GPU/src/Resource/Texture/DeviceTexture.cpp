@@ -1,7 +1,7 @@
 #include "Resource/Texture/DeviceTexture.h"
 #include "Device.h"
 #include "EnumConverter.h"
-#include "Keng/GPU/Resource/TextureParameters.h"
+#include "Keng/GraphicsCommon/DeviceTextureParameters.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 
 namespace keng::graphics::gpu
@@ -87,7 +87,7 @@ namespace keng::graphics::gpu
         return m_texture;
     }
 
-    DeviceTexture::DeviceTexture(Device& device, const TextureParameters& params) {
+    DeviceTexture::DeviceTexture(Device& device, const DeviceTextureParameters& params) {
         m_device = &device;
         m_params = params;
         auto rawDevice = m_device->GetDevice();

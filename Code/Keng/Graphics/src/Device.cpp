@@ -14,7 +14,7 @@ namespace keng::graphics
         return m_impl;
     }
 
-    TexturePtr Device::CreateTexture(const gpu::TextureParameters& parameters) {
+    TexturePtr Device::CreateTexture(const DeviceTextureParameters& parameters) {
         return CallAndRethrowM + [&] {
             auto apitexture = m_impl->CreateTexture(parameters);
             auto texture = TexturePtr::MakeInstance(*apitexture);
@@ -22,7 +22,7 @@ namespace keng::graphics
         };
     }
 
-    TexturePtr Device::CreateRuntimeTexture(const gpu::TextureParameters& parameters, resource::IResourceSystem& resourceSystem) {
+    TexturePtr Device::CreateRuntimeTexture(const DeviceTextureParameters& parameters, resource::IResourceSystem& resourceSystem) {
         return CallAndRethrowM + [&] {
             auto texture = CreateTexture(parameters);
             IDevicePtr devicePtr = this;

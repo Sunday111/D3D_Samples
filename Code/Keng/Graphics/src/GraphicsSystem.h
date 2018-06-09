@@ -24,7 +24,7 @@ namespace keng::graphics
 
         // IGraphicsSystem
         virtual IDevicePtr GetDevice() override;
-        virtual ITexturePtr CreateTexture(const gpu::TextureParameters& params) override;
+        virtual ITexturePtr CreateTexture(const DeviceTextureParameters& params) override;
 
     private:
         bool m_fullscreen = false;

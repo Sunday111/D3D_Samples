@@ -12,6 +12,7 @@ namespace keng::graphics
     class DepthStencilParameters;
     class SamplerParameters;
     class SwapChainParameters;
+    class DeviceTextureParameters;
     class TextureRenderTargetParameters;
     class ViewportParameters;
     class WindowRenderTargetParameters;

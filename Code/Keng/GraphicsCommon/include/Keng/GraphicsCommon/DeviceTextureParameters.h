@@ -2,11 +2,11 @@
 
 #include "Keng/GraphicsCommon/TextureUsage.h"
 #include "Keng/GraphicsCommon/FragmentFormat.h"
-#include "Keng/GPU/CpuAccessFlags.h"
+#include "Keng/GraphicsCommon/CpuAccessFlags.h"
 
-namespace keng::graphics::gpu
+namespace keng::graphics
 {
-    class TextureParameters
+    class DeviceTextureParameters
     {
     public:
         size_t width = 0;

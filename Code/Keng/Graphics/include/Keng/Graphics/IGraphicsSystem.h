@@ -11,6 +11,6 @@ namespace keng::graphics
     public:
         static const char* SystemName() { return "KengGraphics"; }
         virtual IDevicePtr GetDevice() = 0;
-        virtual ITexturePtr CreateTexture(const gpu::TextureParameters& params) = 0;
+        virtual ITexturePtr CreateTexture(const DeviceTextureParameters& params) = 0;
     };
 }

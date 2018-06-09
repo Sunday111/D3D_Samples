@@ -1,12 +1,12 @@
 #include "GlyphAtlas.h"
 #include "Device.h"
-#include "Keng/GPU/Resource/TextureParameters.h"
-#include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/Graphics/Resource/ITexture.h"
-#include "Resource/Texture/Texture.h"
-#include "Keng/ResourceSystem/IResource.h"
-#include "Font.h"
 #include "Keng/Graphics/Resource/Font/GlyphParameters.h"
+#include "Keng/GraphicsCommon/DeviceTextureParameters.h"
+#include "Keng/ResourceSystem/IResource.h"
+#include "Keng/ResourceSystem/IResourceSystem.h"
+#include "Resource/Texture/Texture.h"
+#include "Font.h"
 
 #include <fstream>
 
@@ -21,12 +21,12 @@ namespace keng::graphics
             m_cpuTexture.reset(new uint8_t[textureSize]);
             std::memset(m_cpuTexture.get(), 0, textureSize);
 
-            gpu::TextureParameters textureParameters{};
+            DeviceTextureParameters textureParameters{};
             textureParameters.width = m_parameters.width;
             textureParameters.height = m_parameters.height;
             textureParameters.usage = TextureUsage::ShaderResource;
             textureParameters.format = FragmentFormat::R8_UNORM;
-            textureParameters.cpuAccessFlags = gpu::CpuAccessFlags::Write;
+            textureParameters.cpuAccessFlags = CpuAccessFlags::Write;
 
             m_texture = device.CreateRuntimeTexture(textureParameters, *font.GetResourceSystem());
         };

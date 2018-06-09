@@ -9,7 +9,6 @@
 #include "Keng/Core/IApplication.h"
 #include "Keng/FileSystem/ReadFileToBuffer.h"
 #include "Keng/GPU/DeviceParameters.h"
-#include "Keng/GPU/Resource/TextureParameters.h"
 #include "Keng/Graphics/Resource/IEffect.h"
 #include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
@@ -121,7 +120,7 @@ namespace keng::graphics
         return m_device;
     }
 
-    ITexturePtr GraphicsSystem::CreateTexture(const gpu::TextureParameters& params) {
+    ITexturePtr GraphicsSystem::CreateTexture(const DeviceTextureParameters& params) {
         return m_device->CreateRuntimeTexture(params, *m_resourceSystem);
     }
 

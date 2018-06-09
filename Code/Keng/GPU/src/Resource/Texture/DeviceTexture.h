@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <vector>
 #include "Keng/GPU/Resource/ITexture.h"
+#include "Keng/GraphicsCommon/DeviceTextureParameters.h"
 #include "Resource/Texture/TextureView.h"
-#include "Keng/GPU/Resource/TextureParameters.h"
 
 namespace keng::graphics::gpu
 {
@@ -13,7 +13,7 @@ namespace keng::graphics::gpu
         public core::RefCountImpl<ITexture>
     {
     public:
-        DeviceTexture(Device& device, const TextureParameters& params);
+        DeviceTexture(Device& device, const DeviceTextureParameters& params);
         DeviceTexture(Device& device, ComPtr<ID3D11Texture2D> texture);
         ~DeviceTexture();
 
@@ -71,6 +71,6 @@ namespace keng::graphics::gpu
 
         DevicePtr m_device;
         ComPtr<ID3D11Texture2D> m_texture;
-        TextureParameters m_params;
+        DeviceTextureParameters m_params;
     };
 }

@@ -23,7 +23,7 @@ namespace keng::graphics::gpu
         virtual IDepthStencilPtr CreateDepthStencil(const DepthStencilParameters&, ITexture&) override;
         virtual ISwapChainPtr CreateSwapChain(const SwapChainParameters& params, window_system::IWindow& window) override;
         virtual ISamplerPtr CreateSampler(const SamplerParameters& params) override;
-        virtual ITexturePtr CreateTexture(const TextureParameters& params) override;
+        virtual ITexturePtr CreateTexture(const DeviceTextureParameters& params) override;
         virtual IShaderPtr CreateShader(const ShaderType& type, const ShaderParameters& parameters) override;
         virtual IDeviceBufferPtr CreateDeviceBuffer(const DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) override;
         virtual void SetTopology(const PrimitiveTopology& topo) override;

@@ -20,7 +20,6 @@ namespace keng::graphics::gpu
     class IWindowRenderTarget;
     using IWindowRenderTargetPtr = core::Ptr<IWindowRenderTarget>;
 
-    class TextureParameters;
     class ITexture;
     using ITexturePtr = core::Ptr<ITexture>;
 

@@ -4,7 +4,7 @@
 #include "Resource/Texture/Texture.h"
 #include "yasli/STL.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
-#include "Keng/GPU/Resource/TextureParameters.h"
+#include "Keng/GraphicsCommon/DeviceTextureParameters.h"
 #include "Device.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -42,7 +42,7 @@ namespace keng::graphics
             int w, h, n;
             img_data.reset(stbi_load(info.file.data(), &w, &h, &n, 4));
 
-            gpu::TextureParameters params {};
+            DeviceTextureParameters params {};
             params.width = edt::CheckedCast<size_t>(w);
             params.height = edt::CheckedCast<size_t>(h);
             params.usage = TextureUsage::ShaderResource;
