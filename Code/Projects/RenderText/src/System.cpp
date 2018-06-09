@@ -105,14 +105,14 @@ namespace render_text_sample
                             gpu::ConstantBufferAssignParameters cbAssignParams{};
                             cbAssignParams.slot = 0;
                             cbAssignParams.stride = sizeof(CB);
-                            cbAssignParams.shaderType = gpu::ShaderType::Vertex;
+                            cbAssignParams.shaderType = ShaderType::Vertex;
                             m_constantBuffer->AssignToPipeline(cbAssignParams);
                         });
 
                         Annotate(m_annotation, L"Setup effect", [&] {
                             m_texturedEffect->AssignToPipeline();
-                            m_containerSampler->AssignToPipeline(gpu::ShaderType::Fragment, 0);
-                            m_containerTexture->GetApiTexture()->AssignToPipeline(gpu::ShaderType::Fragment, 0);
+                            m_containerSampler->AssignToPipeline(ShaderType::Fragment, 0);
+                            m_containerTexture->GetApiTexture()->AssignToPipeline(ShaderType::Fragment, 0);
                         });
 
                         api_device->Draw(m_containerQuad.GetVerticesCount(), 0);
@@ -134,14 +134,14 @@ namespace render_text_sample
                             gpu::ConstantBufferAssignParameters cbAssignParams{};
                             cbAssignParams.slot = 0;
                             cbAssignParams.stride = sizeof(CB);
-                            cbAssignParams.shaderType = gpu::ShaderType::Vertex;
+                            cbAssignParams.shaderType = ShaderType::Vertex;
                             m_constantBuffer->AssignToPipeline(cbAssignParams);
                         });
 
                         Annotate(m_annotation, L"Setup effect", [&] {
                             m_textEffect->AssignToPipeline();
-                            m_textSampler->AssignToPipeline(gpu::ShaderType::Fragment, 0);
-                            m_atlasTexture->GetApiTexture()->AssignToPipeline(gpu::ShaderType::Fragment, 0);
+                            m_textSampler->AssignToPipeline(ShaderType::Fragment, 0);
+                            m_atlasTexture->GetApiTexture()->AssignToPipeline(ShaderType::Fragment, 0);
                         });
 
                         api_device->Draw(m_textQuads.GetVerticesCount(), 0);

@@ -97,7 +97,7 @@ namespace simple_quad_sample
                     gpu::ConstantBufferAssignParameters cbAssignParams{};
                     cbAssignParams.slot = 0;
                     cbAssignParams.stride = sizeof(CB);
-                    cbAssignParams.shaderType = gpu::ShaderType::Vertex;
+                    cbAssignParams.shaderType = ShaderType::Vertex;
 
                     m_textureRT->Clear(clearColor);
                     m_depthStencil->Clear(gpu::DepthStencilClearFlags::ClearDepth | gpu::DepthStencilClearFlags::ClearStencil, 1.0f, 0);

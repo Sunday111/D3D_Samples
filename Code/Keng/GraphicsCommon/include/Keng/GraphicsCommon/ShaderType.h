@@ -2,7 +2,7 @@
 
 #include "yasli/Enum.h"
 
-namespace keng::graphics::gpu
+namespace keng::graphics
 {
     enum class ShaderType
     {

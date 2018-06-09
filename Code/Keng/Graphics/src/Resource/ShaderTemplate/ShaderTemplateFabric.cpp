@@ -24,7 +24,7 @@ namespace keng::graphics
                     SerializeMandatory(ar, type, "type");
                     SerializeMandatory(ar, filename, "file");
                 }
-                gpu::ShaderType type;
+                ShaderType type;
                 std::string filename;
             };
 

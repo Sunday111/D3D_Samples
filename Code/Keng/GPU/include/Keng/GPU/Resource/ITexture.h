@@ -2,7 +2,7 @@
 
 #include "Keng/GPU/FwdDecl.h"
 #include "Keng/GraphicsCommon/FragmentFormat.h"
-#include "Keng/GPU/Shader/ShaderType.h"
+#include "Keng/GraphicsCommon/ShaderType.h"
 #include "EverydayTools/Array/ArrayView.h"
 
 namespace keng::graphics::gpu

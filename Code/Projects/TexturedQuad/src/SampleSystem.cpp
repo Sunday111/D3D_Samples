@@ -87,7 +87,7 @@ namespace textured_quad_sample
                     gpu::ConstantBufferAssignParameters cbAssignParams{};
                     cbAssignParams.slot = 0;
                     cbAssignParams.stride = sizeof(CB);
-                    cbAssignParams.shaderType = gpu::ShaderType::Vertex;
+                    cbAssignParams.shaderType = ShaderType::Vertex;
 
                     m_textureRT->Clear(clearColor);
                     m_depthStencil->Clear(gpu::DepthStencilClearFlags::ClearDepth | gpu::DepthStencilClearFlags::ClearStencil, 1.0f, 0);
@@ -96,8 +96,8 @@ namespace textured_quad_sample
                     m_vertexBuffer->AssignToPipeline(vbAssignParams);
                     m_graphicsSystem->GetDevice()->GetApiDevice()->SetTopology(PrimitiveTopology::TriangleStrip);
                     m_constantBuffer->AssignToPipeline(cbAssignParams);
-                    m_sampler->AssignToPipeline(gpu::ShaderType::Fragment, 0);
-                    m_texture->GetApiTexture()->AssignToPipeline(gpu::ShaderType::Fragment, 0);
+                    m_sampler->AssignToPipeline(ShaderType::Fragment, 0);
+                    m_texture->GetApiTexture()->AssignToPipeline(ShaderType::Fragment, 0);
                     api_device->Draw(4, 0);
                 });
 

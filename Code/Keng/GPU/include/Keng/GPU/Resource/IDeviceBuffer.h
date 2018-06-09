@@ -3,7 +3,7 @@
 #include "Keng/GPU/FwdDecl.h"
 #include "EverydayTools/EnumFlag.h"
 #include "EverydayTools/Array/ArrayView.h"
-#include "Keng/GPU/Shader/ShaderType.h"
+#include "Keng/GraphicsCommon/ShaderType.h"
 
 namespace keng::graphics::gpu
 {

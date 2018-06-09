@@ -9,7 +9,7 @@
 
 namespace keng::graphics
 {
-    template<gpu::ShaderType shaderType>
+    template<ShaderType shaderType>
     class Shader : public core::RefCountImpl<resource::IResource>
     {
     public:

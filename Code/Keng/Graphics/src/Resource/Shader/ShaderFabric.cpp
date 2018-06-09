@@ -41,18 +41,18 @@ namespace keng::graphics
 
         resource::IResourcePtr Compile() {
             switch (shaderTemplate->type) {
-            case gpu::ShaderType::Vertex:
-                return Compile<gpu::ShaderType::Vertex>();
+            case ShaderType::Vertex:
+                return Compile<ShaderType::Vertex>();
 
-            case gpu::ShaderType::Fragment:
-                return Compile<gpu::ShaderType::Fragment>();
+            case ShaderType::Fragment:
+                return Compile<ShaderType::Fragment>();
 
             default:
                 throw std::runtime_error("Not implemented for this shader type here");
             }
         }
 
-        template<gpu::ShaderType st>
+        template<ShaderType st>
         core::Ptr<Shader<st>> Compile() {
             auto result = core::Ptr<Shader<st>>::MakeInstance();
             gpu::ShaderParameters sp;

@@ -22,8 +22,8 @@ namespace keng::graphics
         virtual void AssignToPipeline() override;
 
         gpu::IInputLayoutPtr m_inputLayout;
-        core::Ptr<Shader<gpu::ShaderType::Vertex>> vs;
-        core::Ptr<Shader<gpu::ShaderType::Fragment>> fs;
+        core::Ptr<Shader<ShaderType::Vertex>> vs;
+        core::Ptr<Shader<ShaderType::Fragment>> fs;
     };
 
 }

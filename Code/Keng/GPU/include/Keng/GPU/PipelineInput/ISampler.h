@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Keng/Core/IRefCountObject.h"
-#include "Keng/GPU/Shader/ShaderType.h"
+#include "Keng/GraphicsCommon/ShaderType.h"
 
 namespace keng::graphics::gpu
 {

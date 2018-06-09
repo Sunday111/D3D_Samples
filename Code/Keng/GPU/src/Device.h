@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Keng/GPU/FwdDecl.h"
-#include "Keng/GPU/Shader/ShaderType.h"
+#include "Keng/GraphicsCommon/ShaderType.h"
 #include "Keng/GPU/IDevice.h"
 #include "Keng/Core/IRefCountObject.h"
 #include "WinWrappers/ComPtr.h"
