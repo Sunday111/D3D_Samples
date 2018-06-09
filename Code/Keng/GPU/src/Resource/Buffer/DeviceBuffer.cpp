@@ -56,12 +56,12 @@ namespace keng::graphics::gpu
             };
         }
         
-        UINT ConvertD3D(DeviceAccessFlags flags) {
+        UINT ConvertD3D(CpuAccessFlags flags) {
             return CallAndRethrowM + [&] {
-                EnumFlagConverter<DeviceAccessFlags, UINT> c(flags);
-                c.ConvertFlag(DeviceAccessFlags::Write, D3D11_CPU_ACCESS_WRITE);
-                c.ConvertFlag(DeviceAccessFlags::Read, D3D11_CPU_ACCESS_READ);
-                static_assert((size_t)DeviceAccessFlags::Last == 3, "Changed enumeration? Fix here!");
+                EnumFlagConverter<CpuAccessFlags, UINT> c(flags);
+                c.ConvertFlag(CpuAccessFlags::Write, D3D11_CPU_ACCESS_WRITE);
+                c.ConvertFlag(CpuAccessFlags::Read, D3D11_CPU_ACCESS_READ);
+                static_assert((size_t)CpuAccessFlags::Last == 4, "Changed enumeration? Fix here!");
                 return c.to;
             };
         }

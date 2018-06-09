@@ -259,9 +259,9 @@ namespace render_text_sample
                 /////////////////////////////////////////////////////////////////////
 
                 PrimitiveBufferParameters params;
-                params.usage = gpu::DeviceBufferUsage::Dynamic;
-                params.bindFlags = gpu::DeviceBufferBindFlags::VertexBuffer;
-                params.accessFlags = gpu::DeviceAccessFlags::Write;
+                params.usage = DeviceBufferUsage::Dynamic;
+                params.bindFlags = DeviceBufferBindFlags::VertexBuffer;
+                params.accessFlags = CpuAccessFlags::Write;
                 params.topology = PrimitiveTopology::TriangleStrip;
                 m_containerQuad.Initialize(*m_graphicsSystem, params, edt::MakeArrayView(vertices));
             }
@@ -349,9 +349,9 @@ namespace render_text_sample
                 }
 
                 PrimitiveBufferParameters params;
-                params.usage = gpu::DeviceBufferUsage::Dynamic;
-                params.bindFlags = gpu::DeviceBufferBindFlags::VertexBuffer;
-                params.accessFlags = gpu::DeviceAccessFlags::Write;
+                params.usage = DeviceBufferUsage::Dynamic;
+                params.bindFlags = DeviceBufferBindFlags::VertexBuffer;
+                params.accessFlags = CpuAccessFlags::Write;
                 params.topology = PrimitiveTopology::TriangleList;
                 m_textQuads.Initialize(*m_graphicsSystem, params, edt::MakeArrayView(vertices));
             }
@@ -361,11 +361,11 @@ namespace render_text_sample
                 edt::geom::Vector<float, 3> t {};
                 constantBufferInitData.transform = MakeTranslationMatrix(t);
 
-                gpu::DeviceBufferParameters params;
+                DeviceBufferParameters params{};
                 params.size = sizeof(constantBufferInitData);
-                params.usage = gpu::DeviceBufferUsage::Dynamic;
-                params.bindFlags = gpu::DeviceBufferBindFlags::ConstantBuffer;
-                params.accessFlags = gpu::DeviceAccessFlags::Write;
+                params.usage = DeviceBufferUsage::Dynamic;
+                params.bindFlags = DeviceBufferBindFlags::ConstantBuffer;
+                params.accessFlags = CpuAccessFlags::Write;
                 m_constantBuffer = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
             }
 

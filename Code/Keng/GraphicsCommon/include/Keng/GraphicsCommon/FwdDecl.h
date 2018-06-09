@@ -2,6 +2,9 @@
 
 namespace keng::graphics
 {
+    enum class CpuAccessFlags;
+    enum class DeviceBufferBindFlags;
+    enum class DeviceBufferUsage;
     enum class FilteringMode;
     enum class FragmentFormat;
     enum class PrimitiveTopology;
@@ -9,6 +12,7 @@ namespace keng::graphics
     enum class TextureAddressMode;
     enum class TextureUsage;
 
+    class DeviceBufferParameters;
     class DepthStencilParameters;
     class SamplerParameters;
     class SwapChainParameters;

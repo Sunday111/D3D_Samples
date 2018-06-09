@@ -23,7 +23,6 @@ namespace keng::graphics::gpu
     class ITexture;
     using ITexturePtr = core::Ptr<ITexture>;
 
-    class DeviceBufferParameters;
     class IDeviceBuffer;
     using IDeviceBufferPtr = core::Ptr<IDeviceBuffer>;
 

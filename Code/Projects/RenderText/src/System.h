@@ -6,6 +6,7 @@
 #include "Keng/GraphicsCommon/PrimitiveTopology.h"
 #include "Keng/GPU/Resource/IDeviceBuffer.h"
 #include "Keng/Graphics/IGraphicsSystem.h"
+#include "Keng/GraphicsCommon/DeviceBufferParameters.h"
 
 namespace render_text_sample
 {
@@ -19,9 +20,9 @@ namespace render_text_sample
     {
     public:
         keng::graphics::PrimitiveTopology topology = keng::graphics::PrimitiveTopology::TriangleList;
-        keng::graphics::gpu::DeviceBufferUsage usage = keng::graphics::gpu::DeviceBufferUsage::Default;
-        keng::graphics::gpu::DeviceBufferBindFlags bindFlags = keng::graphics::gpu::DeviceBufferBindFlags::None;
-        keng::graphics::gpu::DeviceAccessFlags accessFlags = keng::graphics::gpu::DeviceAccessFlags::None;
+        keng::graphics::DeviceBufferUsage usage = keng::graphics::DeviceBufferUsage::Default;
+        keng::graphics::DeviceBufferBindFlags bindFlags = keng::graphics::DeviceBufferBindFlags::None;
+        keng::graphics::CpuAccessFlags accessFlags = keng::graphics::CpuAccessFlags::None;
     };
 
     template<typename T>
@@ -35,7 +36,7 @@ namespace render_text_sample
             m_topo = params.topology;
             m_verticesCount = data.GetSize();
 
-            gpu::DeviceBufferParameters deviceBufferParams;
+            DeviceBufferParameters deviceBufferParams{};
             deviceBufferParams.size = GetBytesCount();
             deviceBufferParams.usage = params.usage;
             deviceBufferParams.bindFlags = params.bindFlags;

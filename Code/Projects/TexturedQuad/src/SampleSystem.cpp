@@ -10,6 +10,7 @@
 #include "Keng/GPU/RenderTarget/IDepthStencil.h"
 #include "Keng/GPU/ScopedAnnotation.h"
 #include "Keng/GraphicsCommon/DepthStencilParameters.h"
+#include "Keng/GraphicsCommon/DeviceBufferParameters.h"
 #include "Keng/GraphicsCommon/PrimitiveTopology.h"
 #include "Keng/GraphicsCommon/SamplerParameters.h"
 #include "Keng/GraphicsCommon/DeviceTextureParameters.h"
@@ -219,11 +220,11 @@ namespace textured_quad_sample
                 vertices[3].pos.rw() = +1.00f; /**/                              /**/
                 /////////////////////////////////////////////////////////////////////
 
-                gpu::DeviceBufferParameters params;
+                DeviceBufferParameters params{};
                 params.size = sizeof(vertices);
-                params.usage = gpu::DeviceBufferUsage::Dynamic;
-                params.bindFlags = gpu::DeviceBufferBindFlags::VertexBuffer;
-                params.accessFlags = gpu::DeviceAccessFlags::Write;
+                params.usage = DeviceBufferUsage::Dynamic;
+                params.bindFlags = DeviceBufferBindFlags::VertexBuffer;
+                params.accessFlags = CpuAccessFlags::Write;
                 m_vertexBuffer = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
             }
 
@@ -232,11 +233,11 @@ namespace textured_quad_sample
                 edt::geom::Vector<float, 3> t {};
                 constantBufferInitData.transform = MakeTranslationMatrix(t);
 
-                gpu::DeviceBufferParameters params;
+                DeviceBufferParameters params{};
                 params.size = sizeof(constantBufferInitData);
-                params.usage = gpu::DeviceBufferUsage::Dynamic;
-                params.bindFlags = gpu::DeviceBufferBindFlags::ConstantBuffer;
-                params.accessFlags = gpu::DeviceAccessFlags::Write;
+                params.usage = DeviceBufferUsage::Dynamic;
+                params.bindFlags = DeviceBufferBindFlags::ConstantBuffer;
+                params.accessFlags = CpuAccessFlags::Write;
                 m_constantBuffer = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
             }
 
