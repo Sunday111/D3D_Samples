@@ -107,8 +107,10 @@ namespace keng::graphics::gpu
     D3D_PRIMITIVE_TOPOLOGY ConvertTopology(const PrimitiveTopology& from) {
         return CallAndRethrowM + [&] {
             switch (from) {
-            case PrimitiveTopology::TriangleList: return D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-            case PrimitiveTopology::TriangleStrip: return D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+            case PrimitiveTopology::LineList:       return D3D10_PRIMITIVE_TOPOLOGY_LINELIST;
+            case PrimitiveTopology::LineStrip:      return D3D10_PRIMITIVE_TOPOLOGY_LINESTRIP;
+            case PrimitiveTopology::TriangleList:   return D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+            case PrimitiveTopology::TriangleStrip:  return D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
             default: throw std::runtime_error("This topology is not implemented here");
             }
         };
