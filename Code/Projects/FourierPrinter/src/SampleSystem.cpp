@@ -272,38 +272,37 @@ namespace simple_quad_sample
                 ComputeFourierSeriesCoefficientsA(coefficientsCount, integrationPrecision, std::back_inserter(an), sampledFunction);
                 ComputeFourierSeriesCoefficientsB(coefficientsCount, integrationPrecision, std::back_inserter(bn), sampledFunction);
 
-				{// Draw restored function components
+                {// Draw restored function components
+                    auto makeConstantBuffer = []() {
+                        SimpleModel::CB cb;
+                        edt::geom::Vector<float, 3> scale {};
+                        scale.Fill(1.0f / (pi<float> * 2.0f));
+                        edt::geom::Vector<float, 3> translation { +0.5f, +0.5f, 0.0f };
+                        cb.transform = MakeScaleMatrix(scale) * MakeTranslationMatrix(translation);
+                        return cb;
+                    };
 
-					auto makeConstantBuffer = []() {
-						SimpleModel::CB cb;
-						edt::geom::Vector<float, 3> scale {};
-						scale.Fill(1.0f / (pi<float> * 2.0f));
-						edt::geom::Vector<float, 3> translation { +0.5f, +0.5f, 0.0f };
-						cb.transform = MakeScaleMatrix(scale) * MakeTranslationMatrix(translation);
-						return cb;
-					};
+                    // Prepare constant buffer which will be the same for all components
+                    const auto cb = makeConstantBuffer();
 
-					// Prepare constant buffer which will be the same for all components
-					const auto cb = makeConstantBuffer();
+                    const v4f sinColor { 0.0f, 1.0f, 0.0f, 1.0f };
+                    const v4f cosColor { 1.0f, 0.0f, 0.0f, 1.0f };
 
-					const v4f sinColor { 0.0f, 1.0f, 0.0f, 1.0f };
-					const v4f cosColor { 0.0f, 1.0f, 1.0f, 1.0f };
+                    auto makeComponentModel = [&](float coefficient, size_t n, v4f color, float(*realFunction)(float)) {
+                        if (std::abs(coefficient) < 0.05) {
+                            return;
+                        }
+                        auto function =  [coefficient, realFunction, n, a0](float arg) {
+                            return a0 + coefficient * realFunction(arg * n);
+                        };
+                        MakeFunctionModel(function, cb, signalArgumentBegin, signalArgumentRange, signalSamplesCount, color);
+                    };
 
-					auto makeComponentModel = [&](float coefficient, size_t n, v4f color, float(*realFunction)(float)) {
-						if (std::abs(coefficient) < 0.05) {
-							return;
-						}
-						auto function =  [coefficient, realFunction, n](float arg) {
-							return coefficient * realFunction(arg * n);
-						};
-						MakeFunctionModel(function, cb, signalArgumentBegin, signalArgumentRange, signalSamplesCount, color);
-					};
-
-					for (size_t coefficientIndex = 0; coefficientIndex < coefficientsCount; ++coefficientIndex) {
-						makeComponentModel(an[coefficientIndex], coefficientIndex, sinColor, std::sin);
-						makeComponentModel(bn[coefficientIndex], coefficientIndex, sinColor, std::cos);
-					}
-				}
+                    for (size_t coefficientIndex = 0; coefficientIndex < coefficientsCount; ++coefficientIndex) {
+                        makeComponentModel(an[coefficientIndex], coefficientIndex, sinColor, std::sin);
+                        makeComponentModel(bn[coefficientIndex], coefficientIndex, sinColor, std::cos);
+                    }
+                }
 
                 {// Draw sampled function
                     const v4f sampledColor {1.0f, 0.0f, 0.0f, 1.0f};
