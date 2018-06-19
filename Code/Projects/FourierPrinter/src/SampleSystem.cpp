@@ -24,11 +24,28 @@
 
 #include "FourierSeries.h"
 #include "SampledFunction.h"
+#include "WaveBuffer.h"
 
 namespace simple_quad_sample
 {
     namespace
     {
+        class Settings
+        {
+        public:
+            static constexpr bool SignalFromFile = true;
+            static constexpr auto TargetFile = "D:\\Sounds\\WAV\\me.wav";
+            static constexpr bool InterpolateSampledFunction = false;
+            static constexpr size_t CoefficientsCount = 8182;
+            static constexpr size_t DrawingSamplesCount = 1024;
+            static constexpr size_t IntegrationPrecision = 44100;
+            static size_t samplesCount;
+            static size_t sampleRate;
+        };
+
+        size_t Settings::samplesCount = 0;
+        size_t Settings::sampleRate = 0;
+
         template<typename T>
         edt::geom::Matrix<T, 4, 4> MakeTranslationMatrix(edt::geom::Vector<T, 3> vec) {
             auto m = edt::geom::Matrix<float, 4, 4>::Identity();
@@ -49,6 +66,59 @@ namespace simple_quad_sample
             m.At(2, 2) = scale.Elem(2);
 
             return m;
+        }
+
+        template<typename T>
+        std::function<float(float)> TargetFunctionMaker(std::shared_ptr<const WaveBuffer> buffer, float argumentBegin, float argumentRange) {
+            auto byteView = buffer->GetData();
+            assert((byteView.GetSize() % sizeof(T)) == 0);
+            const size_t samplesCount = byteView.GetSize() / sizeof(T);
+            Settings::samplesCount = samplesCount;
+            edt::DenseArrayView<const T> samplesView(reinterpret_cast<const T*>(byteView.GetData()), samplesCount);
+            return [samplesView, buffer, argumentBegin, argumentRange](float argument) {
+                auto parameter = (argument - argumentBegin) / argumentRange;
+                const auto dirtyIndex = static_cast<size_t>(samplesView.GetSize() * parameter);
+                auto index = std::min(dirtyIndex, samplesView.GetSize() - 1);
+                const auto sample = samplesView[index];
+                return static_cast<float>(sample);
+            };
+        };
+
+        std::function<float(float)> GetTargetFunction(float argumentBegin, float argumentRange) {
+            return CallAndRethrowM + [&] () -> std::function<float(float)> {
+                if constexpr (Settings::SignalFromFile) {
+                    auto soundBuffer = std::make_shared<WaveBuffer>(Settings::TargetFile);
+                    using Maker = std::function<float(float)> (*)(std::shared_ptr<const WaveBuffer>, float, float);
+                    Settings::sampleRate = soundBuffer->GetSampleRate();
+
+                    Maker maker = nullptr;
+                    switch (soundBuffer->GetBitsPerSample()) {
+                    case 8:
+                        maker = TargetFunctionMaker<int8_t>;
+                        break;
+                    case 16:
+                        maker = TargetFunctionMaker<int16_t>;
+                        break;
+                    case 32:
+                        maker = TargetFunctionMaker<int32_t>;
+                        break;
+                    }
+
+                    edt::ThrowIfFailed(maker, "Unknown sample size: ", soundBuffer->GetChannelsCount());
+                    return maker(soundBuffer, argumentBegin, argumentRange);
+                }
+                else
+                {
+                    const size_t signalSamplesCount = 1024;
+
+                    std::vector<float> an, bn;
+                    auto original_function = [](float x) {
+                        return std::sin(x);
+                    };
+
+                    return MakeSampledFunction<Settings::InterpolateSampledFunction>(argumentBegin, argumentRange, signalSamplesCount, original_function);
+                }
+            };
         }
     }
 
@@ -146,6 +216,21 @@ namespace simple_quad_sample
             // Generate vertices for sampled function drawing
             std::vector<SimpleModel::Vertex> vertices;
             const float dx = argumentRange / samplesCount;
+
+            vertices.push_back(
+                SimpleModel::Vertex{
+                    { pi<float>,    0,    0.0f, 1.0f },
+                    { 1.0f, 0.0f, 1.0f, 1.0f }
+                }
+            );
+
+            vertices.push_back(
+                SimpleModel::Vertex{
+                    { -pi<float>,    0,    0.0f, 1.0f },
+                    { 1.0f, 0.0f, 1.0f, 1.0f }
+                }
+            );
+
             for (size_t sampleIndex = 0; sampleIndex < samplesCount; ++sampleIndex) {
                 auto x = argumentBegin + dx * sampleIndex;
                 auto y = function(x);
@@ -257,20 +342,15 @@ namespace simple_quad_sample
                     sampledFunctionModel.effect->InitDefaultInputLayout();
                 }
 
-                const size_t coefficientsCount = 512;
-                const size_t signalSamplesCount = 1024;
-                const size_t integrationPrecision = 1024;
-                const edt::geom::Vector<float, 2> sampledFunctionRange { -pi<float>, pi<float> };
+                const size_t coefficientsCount = Settings::CoefficientsCount;
+                const size_t drawingSamplesCount = Settings::DrawingSamplesCount;
+                const size_t integrationPrecision = Settings::IntegrationPrecision;
 
                 std::vector<float> an, bn;
-                auto original_function = [](float x) {
-                    return 2 * std::sin(x) * std::cos(3 * x);
-                };
-
-                auto sampledFunction = MakeSampledFunction(signalArgumentBegin, signalArgumentRange, signalSamplesCount, original_function);
-                auto a0 = ComputeFourierSeriesCoefficientA0(signalSamplesCount, sampledFunction);
-                ComputeFourierSeriesCoefficientsA(coefficientsCount, integrationPrecision, std::back_inserter(an), sampledFunction);
-                ComputeFourierSeriesCoefficientsB(coefficientsCount, integrationPrecision, std::back_inserter(bn), sampledFunction);
+                auto signalFunction = GetTargetFunction(signalArgumentBegin, signalArgumentRange);
+                auto a0 = ComputeFourierSeriesCoefficientA0(integrationPrecision, signalFunction);
+                ComputeFourierSeriesCoefficientsA(coefficientsCount, integrationPrecision, std::back_inserter(an), signalFunction);
+                ComputeFourierSeriesCoefficientsB(coefficientsCount, integrationPrecision, std::back_inserter(bn), signalFunction);
 
                 {// Draw restored function components
                     auto makeConstantBuffer = []() {
@@ -288,36 +368,84 @@ namespace simple_quad_sample
                     const v4f sinColor { 0.0f, 1.0f, 0.0f, 1.0f };
                     const v4f cosColor { 1.0f, 0.0f, 0.0f, 1.0f };
 
-                    auto makeComponentModel = [&](float coefficient, size_t n, v4f color, float(*realFunction)(float)) {
+                    auto makeComponentModel = [&](std::vector<float>& coefficients , size_t n, v4f color, float(*realFunction)(float)) {
+                        float coefficient = coefficients[n];
                         if (std::abs(coefficient) < 0.05) {
                             return;
                         }
                         auto function =  [coefficient, realFunction, n, a0](float arg) {
                             return a0 + coefficient * realFunction(arg * n);
                         };
-                        MakeFunctionModel(function, cb, signalArgumentBegin, signalArgumentRange, signalSamplesCount, color);
+                        MakeFunctionModel(function, cb, signalArgumentBegin, signalArgumentRange, drawingSamplesCount, color);
                     };
 
                     for (size_t coefficientIndex = 0; coefficientIndex < coefficientsCount; ++coefficientIndex) {
-                        makeComponentModel(an[coefficientIndex], coefficientIndex, sinColor, std::sin);
-                        makeComponentModel(bn[coefficientIndex], coefficientIndex, sinColor, std::cos);
+                        makeComponentModel(an, coefficientIndex, sinColor, std::sin);
+                        makeComponentModel(bn, coefficientIndex, cosColor, std::cos);
                     }
                 }
 
-                {// Draw sampled function
+                // Make restored function
+                auto restoredFunction = RestoreFromFourierCoefficients(coefficientsCount, std::move(an), std::move(bn), a0);
+
+                auto computeRange = [&](auto& function) {
+                    auto min = std::numeric_limits<float>::max();
+                    auto max = std::numeric_limits<float>::min();
+                    for (size_t sampleIndex = 0; sampleIndex < drawingSamplesCount; ++sampleIndex) {
+                        auto arg = signalArgumentBegin + sampleIndex * signalArgumentRange / drawingSamplesCount;
+                        auto value = function(arg);
+                        min = std::min(min, value);
+                        max = std::max(max, value);
+                    }
+
+                    return max - min;
+                };
+
+                {// Draw sampled and restored functions
                     const v4f sampledColor {1.0f, 0.0f, 0.0f, 1.0f};
                     SimpleModel::CB cb;
-                    edt::geom::Vector<float, 3> scale {};
-                    scale.Fill(1.0f / (pi<float> * 2.0f));
+                    edt::geom::Vector<float, 3> scale {
+                        0.9f / (pi<float> * 2.0f),
+                        0.9f / computeRange(signalFunction),
+                        1.0f
+                    };
                     edt::geom::Vector<float, 3> translation { -0.5f, +0.5f, 0.0f };
                     cb.transform = MakeScaleMatrix(scale) * MakeTranslationMatrix(translation);
-                    MakeFunctionModel(sampledFunction, cb, signalArgumentBegin, signalArgumentRange, signalSamplesCount, sampledColor);
+                    MakeFunctionModel(signalFunction, cb, signalArgumentBegin, signalArgumentRange, drawingSamplesCount, sampledColor);
 
                     const v4f restoredColor {1.0f, 1.0f, 0.0f, 1.0f};
-                    auto restoredFunction = RestoreFromFourierCoefficients(coefficientsCount, std::move(an), std::move(bn), a0);
                     translation.ry() += 0.01f;
+                    scale = edt::geom::Vector<float, 3> {
+                        0.9f / (pi<float> * 2.0f),
+                        0.9f / computeRange(restoredFunction),
+                        1.0f
+                    };
                     cb.transform = MakeScaleMatrix(scale) * MakeTranslationMatrix(translation);
-                    MakeFunctionModel(restoredFunction, cb, signalArgumentBegin, signalArgumentRange, signalSamplesCount, restoredColor);
+                    MakeFunctionModel(restoredFunction, cb, signalArgumentBegin, signalArgumentRange, drawingSamplesCount, restoredColor);
+                }
+
+                // Save
+                {
+                    using ToType = int32_t;
+                    auto saveSamplesCount = Settings::samplesCount;
+                    const size_t channelsCount = 1;
+                    const size_t bitsPerSample = sizeof(ToType) * 8;
+                    std::vector<ToType> data;
+                
+                    for (size_t sampleIndex = 0; sampleIndex < saveSamplesCount; ++sampleIndex) {
+                        auto arg = signalArgumentBegin + sampleIndex * signalArgumentRange / saveSamplesCount;
+                        auto value = restoredFunction(arg);
+
+                        if constexpr (!Settings::SignalFromFile) {
+                            value *= std::numeric_limits<ToType>::max();
+                        }
+
+                        value = std::min<float>(std::numeric_limits<ToType>::max(), value);
+                        data.push_back(static_cast<ToType>(value));
+                    }
+                
+                    WaveBuffer wavBuffer(channelsCount, bitsPerSample, Settings::sampleRate, data.data(), data.size() * sizeof(ToType));
+                    wavBuffer.SaveToFile("D:\\Sounds\\WAV\\me_restored.wav");
                 }
             }
         };
