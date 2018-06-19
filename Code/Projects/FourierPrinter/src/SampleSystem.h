@@ -9,18 +9,22 @@
 
 namespace simple_quad_sample
 {
+    using v3f = edt::geom::Vector<float, 3>;
+    using v4f = edt::geom::Vector<float, 4>;
+    using m4f = edt::geom::Matrix<float, 4, 4>;
+
     class SimpleModel
     {
     public:
         struct Vertex
         {
-            edt::geom::Vector<float, 4> pos;
-            edt::geom::Vector<float, 4> col;
+            v4f pos;
+            v4f col;
         };
         
         struct CB
         {
-            edt::geom::Matrix<float, 4, 4> transform;
+            m4f transform;
         };
 
     public:
@@ -47,7 +51,7 @@ namespace simple_quad_sample
 
     protected:
         void MakeFunctionModel(const std::function<float(float)>& function, const SimpleModel::CB& cb,
-            float argumentBegin, float argumentRange, size_t samplesCount);
+            float argumentBegin, float argumentRange, size_t samplesCount, const v4f& color);
 
     protected:
         std::vector<SimpleModel> m_models;
