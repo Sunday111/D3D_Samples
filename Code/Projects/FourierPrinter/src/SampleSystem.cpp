@@ -204,63 +204,45 @@ namespace simple_quad_sample
             }
 
             {
-                const size_t coefficients_count = 512;
-                const size_t signal_samples_count = 1024;
-                const size_t integration_precision = 1024;
+                const size_t coefficientsCount = 512;
+                const size_t signalSamplesCount = 1024;
+                const size_t integrationPrecision = 1024;
+                const float signalArgumentBegin = -pi<float>;
+                const float signalArgumentRange = 2 * pi<float>;
+                const edt::geom::Vector<float, 2> sampledFunctionRange { -pi<float>, pi<float> };
 
-                std::vector<double> an, bn;
-                auto original_function = [](double x)
-                {
-                    return
-                        2 * std::sin(x) *
-                        std::cos(3 * x)
-                        ;
+                std::vector<float> an, bn;
+                auto original_function = [](float x) {
+                    return 2 * std::sin(x) * std::cos(3 * x);
                 };
-                auto sampled_function = MakeSampledFunction(signal_samples_count, -pi<double>, pi<double>, original_function);
-                auto a0 = ComputeFourierSeriesCoefficientA0<double>(signal_samples_count, sampled_function);
-                ComputeFourierSeriesCoefficientsA<double>(coefficients_count, integration_precision, std::back_inserter(an), sampled_function);
-                ComputeFourierSeriesCoefficientsB<double>(coefficients_count, integration_precision, std::back_inserter(bn), sampled_function);
-            }
 
-            {// Create vertex buffer
-                Vertex vertices[5];
+                auto sampledFunction = MakeSampledFunction(signalArgumentBegin, signalArgumentRange, signalSamplesCount, original_function);
+                auto a0 = ComputeFourierSeriesCoefficientA0(signalSamplesCount, sampledFunction);
+                ComputeFourierSeriesCoefficientsA(coefficientsCount, integrationPrecision, std::back_inserter(an), sampledFunction);
+                ComputeFourierSeriesCoefficientsB(coefficientsCount, integrationPrecision, std::back_inserter(bn), sampledFunction);
 
-                //      POSITION               ////         COLOR               
-                /////////////////////////////////////////////////////////////////////
-                vertices[0].pos.rx() = -0.50f; /**/ vertices[0].col.rx() = 0.0f; /**/
-                vertices[0].pos.ry() = -0.50f; /**/ vertices[0].col.ry() = 0.0f; /**/
-                vertices[0].pos.rz() = +0.00f; /**/ vertices[0].col.rz() = 1.0f; /**/
-                vertices[0].pos.rw() = +1.00f; /**/ vertices[0].col.rw() = 1.0f; /**/
-                /////////////////////////////////////////////////////////////////////
-                vertices[1].pos.rx() = -0.50f; /**/ vertices[1].col.rx() = 1.0f; /**/
-                vertices[1].pos.ry() = +0.50f; /**/ vertices[1].col.ry() = 0.0f; /**/
-                vertices[1].pos.rz() = +0.00f; /**/ vertices[1].col.rz() = 0.0f; /**/
-                vertices[1].pos.rw() = +1.00f; /**/ vertices[1].col.rw() = 1.0f; /**/
-                /////////////////////////////////////////////////////////////////////
-                vertices[2].pos.rx() = +0.50f; /**/ vertices[2].col.rx() = 0.0f; /**/
-                vertices[2].pos.ry() = +0.50f; /**/ vertices[2].col.ry() = 1.0f; /**/
-                vertices[2].pos.rz() = +0.00f; /**/ vertices[2].col.rz() = 0.0f; /**/
-                vertices[2].pos.rw() = +1.00f; /**/ vertices[2].col.rw() = 1.0f; /**/
-                /////////////////////////////////////////////////////////////////////
-                vertices[3].pos.rx() = +0.50f; /**/ vertices[3].col.rx() = 0.0f; /**/
-                vertices[3].pos.ry() = -0.50f; /**/ vertices[3].col.ry() = 1.0f; /**/
-                vertices[3].pos.rz() = +0.00f; /**/ vertices[3].col.rz() = 0.0f; /**/
-                vertices[3].pos.rw() = +1.00f; /**/ vertices[3].col.rw() = 1.0f; /**/
-                /////////////////////////////////////////////////////////////////////
-                vertices[4].pos.rx() = -0.50f; /**/ vertices[4].col.rx() = 0.0f; /**/
-                vertices[4].pos.ry() = -0.50f; /**/ vertices[4].col.ry() = 0.0f; /**/
-                vertices[4].pos.rz() = +0.00f; /**/ vertices[4].col.rz() = 1.0f; /**/
-                vertices[4].pos.rw() = +1.00f; /**/ vertices[4].col.rw() = 1.0f; /**/
-                /////////////////////////////////////////////////////////////////////
+                // Generate vertices for sampled function drawing
+                std::vector<Vertex> vertices;
+                const auto dx = signalArgumentRange / signalSamplesCount;
+                for (size_t sampleIndex = 0; sampleIndex < signalSamplesCount; ++sampleIndex) {
+                    auto x = signalArgumentBegin + dx * sampleIndex;
+                    auto y = sampledFunction(x);
+                    
+                    Vertex vertex {
+                        { x, y, 0.f, 1.f },
+                        { 1.0f, 1.0f, 0.0f, 1.0f }
+                    };
+                    vertices.push_back(vertex);
+                }
 
                 DeviceBufferParameters params{};
-                params.size = sizeof(vertices);
+                params.size = vertices.size() * sizeof(Vertex);
                 params.usage = DeviceBufferUsage::Dynamic;
                 params.bindFlags = DeviceBufferBindFlags::VertexBuffer;
                 params.accessFlags = CpuAccessFlags::Write;
-                m_vertexBuffer.vertices = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
+                m_vertexBuffer.vertices = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)vertices.data(), params.size));
                 m_vertexBuffer.topology = PrimitiveTopology::LineStrip;
-                m_vertexBuffer.elementsCount = sizeof(vertices) / sizeof(vertices[0]);
+                m_vertexBuffer.elementsCount = vertices.size();
             }
 
             {// Create constant buffer

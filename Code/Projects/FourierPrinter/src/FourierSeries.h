@@ -17,8 +17,8 @@ T ComputeInteral(T min, T max, size_t precision, Function&& function) {
     return result;
 }
 
-template<typename T, typename Function>
-T ComputeFourierSeriesCoefficientA0(size_t precision, Function&& function) {
+template<typename T>
+T ComputeFourierSeriesCoefficientA0(size_t precision, const std::function<T(T)>& function) {
     return ComputeInteral(-pi<T>, pi<T>, precision, function) / pi<T>;
 }
 
@@ -40,16 +40,16 @@ T ComputeFourierSeriesCoefficientBN(size_t n, size_t precision, Function&& funct
     return integral / pi<T>;
 }
 
-template<typename T, typename Function, typename OutIt>
-void ComputeFourierSeriesCoefficientsA(size_t count, size_t precision, OutIt output, Function& function)
+template<typename T, typename OutIt>
+void ComputeFourierSeriesCoefficientsA(size_t count, size_t precision, OutIt output, const std::function<T(T)>& function)
 {
     std::generate_n(output, count, [&, i = 1]() mutable {
         return ComputeFourierSeriesCoefficientAN<T>(i++, precision, function);
     });
 }
 
-template<typename T, typename Function, typename OutIt>
-void ComputeFourierSeriesCoefficientsB(size_t count, size_t precision, OutIt output, Function& function)
+template<typename T, typename OutIt>
+void ComputeFourierSeriesCoefficientsB(size_t count, size_t precision, OutIt output, const std::function<T(T)>& function)
 {
     std::generate_n(output, count, [&, i = 1]() mutable {
         return ComputeFourierSeriesCoefficientBN<T>(i++, precision, function);
