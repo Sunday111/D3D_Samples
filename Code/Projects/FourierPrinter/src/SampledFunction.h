@@ -10,7 +10,7 @@ template<typename T, typename Function>
 std::function<T(T)> MakeSampledFunction(T startArg, T range, size_t samples_count, Function&& function)
 {
     const auto delta = range / samples_count;
-    std::vector<double> samples;
+    std::vector<T> samples;
 
     for (size_t sample_index = 0; sample_index < samples_count; ++sample_index) {
         const auto arg = startArg + delta * sample_index;

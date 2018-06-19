@@ -1,6 +1,5 @@
 #include "SampleSystem.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
-#include "EverydayTools/Geom/Vector.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 #include "Keng/Core/IApplication.h"
 #include "Keng/GPU/DeviceBufferMapper.h"
@@ -30,34 +29,24 @@ namespace simple_quad_sample
 {
     namespace
     {
-        struct Vertex
-        {
-            edt::geom::Vector<float, 4> pos;
-            edt::geom::Vector<float, 4> col;
-        };
-
-        struct CB
-        {
-            edt::geom::Matrix<float, 4, 4> transform;
-        };
-
-        template<typename T>
-        edt::geom::Matrix<T, 4, 4> MakeIdentityMatrix() {
-            edt::geom::Matrix<T, 4, 4> m{};
-            m.At(0, 0) = T(1);
-            m.At(1, 1) = T(1);
-            m.At(2, 2) = T(1);
-            m.At(3, 3) = T(1);
-            return m;
-        }
-
         template<typename T>
         edt::geom::Matrix<T, 4, 4> MakeTranslationMatrix(edt::geom::Vector<T, 3> vec) {
-            auto m = MakeIdentityMatrix<T>();
+            auto m = edt::geom::Matrix<float, 4, 4>::Identity();
 
             m.At(3, 0) = vec.Elem(0);
             m.At(3, 1) = vec.Elem(1);
             m.At(3, 2) = vec.Elem(2);
+
+            return m;
+        }
+
+        template<typename T>
+        edt::geom::Matrix<T, 4, 4> MakeScaleMatrix(edt::geom::Vector<T, 3> scale) {
+            auto m = edt::geom::Matrix<float, 4, 4>::Identity();
+
+            m.At(0, 0) = scale.Elem(0);
+            m.At(1, 1) = scale.Elem(1);
+            m.At(2, 2) = scale.Elem(2);
 
             return m;
         }
@@ -83,36 +72,36 @@ namespace simple_quad_sample
                 constexpr float delta_angle = 0.001f;
                 angle += delta_angle;
 
-                Annotate(m_annotation, L"Move triangle", [&] {
-                    gpu::DeviceBufferMapper mapper;
-                    m_constantBuffer->MakeMapper(mapper);
-                    auto cbView = mapper.GetTypedView<CB>();
-                    edt::geom::Vector<float, 3> t;
-                    t.rx() = std::sin(angle);
-                    t.ry() = 0.f;
-                    t.rz() = 0.f;
-                    cbView[0].transform = MakeTranslationMatrix(t);
-                });
+                //Annotate(m_annotation, L"Move sampled function", [&] {
+                //    gpu::DeviceBufferMapper mapper;
+                //    m_constantBuffer->MakeMapper(mapper);
+                //    auto cbView = mapper.GetTypedView<CB>();
+                //    edt::geom::Vector<float, 3> t;
+                //    t.Fill(1.0f / (pi<float> * 2.0f));
+                //    cbView[0].transform = MakeScaleMatrix(t);
+                //});
+                m_textureRT->Clear(clearColor);
+                m_depthStencil->Clear(gpu::DepthStencilClearFlags::ClearDepth | gpu::DepthStencilClearFlags::ClearStencil, 1.0f, 0);
+                m_textureRT->AssignToPipeline(m_depthStencil);
 
-                Annotate(m_annotation, L"Draw lines", [&] {
-                    gpu::VertexBufferAssignParameters vbAssignParams{};
-                    vbAssignParams.slot = 0;
-                    vbAssignParams.stride = sizeof(Vertex);
-
-                    gpu::ConstantBufferAssignParameters cbAssignParams{};
-                    cbAssignParams.slot = 0;
-                    cbAssignParams.stride = sizeof(CB);
-                    cbAssignParams.shaderType = ShaderType::Vertex;
-
-                    m_textureRT->Clear(clearColor);
-                    m_depthStencil->Clear(gpu::DepthStencilClearFlags::ClearDepth | gpu::DepthStencilClearFlags::ClearStencil, 1.0f, 0);
-                    m_textureRT->AssignToPipeline(m_depthStencil);
-                    m_vertexBuffer.effect->AssignToPipeline();
-                    m_vertexBuffer.vertices->AssignToPipeline(vbAssignParams);
-                    api_device->SetTopology(m_vertexBuffer.topology);
-                    m_constantBuffer->AssignToPipeline(cbAssignParams);
-                    api_device->Draw(m_vertexBuffer.elementsCount, 0);
-                });
+                for (auto& model : m_models) {
+                    Annotate(m_annotation, L"Draw lines", [&] {
+                        gpu::VertexBufferAssignParameters vbAssignParams {};
+                        vbAssignParams.slot = 0;
+                        vbAssignParams.stride = sizeof(SimpleModel::Vertex);
+                        
+                        gpu::ConstantBufferAssignParameters cbAssignParams {};
+                        cbAssignParams.slot = 0;
+                        cbAssignParams.stride = sizeof(SimpleModel::CB);
+                        cbAssignParams.shaderType = ShaderType::Vertex;
+                        
+                        model.effect->AssignToPipeline();
+                        model.vertices->AssignToPipeline(vbAssignParams);
+                        api_device->SetTopology(model.topology);
+                        model.constantBuffer->AssignToPipeline(cbAssignParams);
+                        api_device->Draw(model.elementsCount, 0);
+                    });
+                }
 
                 Annotate(m_annotation, L"Copy texture to swap chain texture", [&] {
                     m_windowRT->CopyFrom(m_textureRT->GetTexture());
@@ -138,6 +127,62 @@ namespace simple_quad_sample
         if (delegate.Invoke(keng::resource::IResourceSystem::SystemName())) return true;
         if (delegate.Invoke(keng::window_system::IWindowSystem::SystemName())) return true;
         return false;
+    }
+
+    void SampleSystem::MakeFunctionModel(const std::function<float(float)>& function, const SimpleModel::CB& cb,
+        float argumentBegin, float argumentRange, size_t samplesCount)
+    {
+        using namespace keng;
+        using namespace graphics;
+        using namespace resource;
+        using namespace window_system;
+        
+        CallAndRethrowM + [&] {
+            SimpleModel m;
+
+            // Generate vertices for sampled function drawing
+            std::vector<SimpleModel::Vertex> vertices;
+            const float dx = argumentRange / samplesCount;
+            for (size_t sampleIndex = 0; sampleIndex < samplesCount; ++sampleIndex) {
+                auto x = argumentBegin + dx * sampleIndex;
+                auto y = function(x);
+                
+                SimpleModel::Vertex vertex {
+                    { x,    y,    0.0f, 1.0f },
+                    { 1.0f, 1.0f, 0.0f, 1.0f }
+                };
+                vertices.push_back(vertex);
+            }
+            
+            {// Read and compile shaders
+                std::string_view effectName = "Assets/Effects/FlatColor.json";
+                m.effect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName.data(), m_graphicsSystem->GetDevice()));
+                m.effect->InitDefaultInputLayout();
+            }
+            
+            {// Device vertex buffer for sampled function lines
+                DeviceBufferParameters params {};
+                params.size = vertices.size() * sizeof(SimpleModel::Vertex);
+                params.usage = DeviceBufferUsage::Dynamic;
+                params.bindFlags = DeviceBufferBindFlags::VertexBuffer;
+                params.accessFlags = CpuAccessFlags::Write;
+                m.vertices = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)vertices.data(), params.size));
+                m.topology = PrimitiveTopology::LineStrip;
+                m.elementsCount = vertices.size();
+            }
+            
+            {// Device constant buffer for sampled function lines
+                DeviceBufferParameters params {};
+                params.size = sizeof(cb);
+                params.usage = DeviceBufferUsage::Dynamic;
+                params.bindFlags = DeviceBufferBindFlags::ConstantBuffer;
+                params.accessFlags = CpuAccessFlags::Write;
+                m.constantBuffer = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&cb, sizeof(cb)));
+            }
+            
+            m.topology = graphics::PrimitiveTopology::LineStrip;
+            m_models.push_back(std::move(m));
+        };
     }
 
     void SampleSystem::Initialize(const keng::core::IApplicationPtr& app) {
@@ -197,18 +242,21 @@ namespace simple_quad_sample
                 m_depthStencil = api_device->CreateDepthStencil(depthStencilParams, *depthStencilTexture);
             }
 
-            {// Read and compile shaders
-                std::string_view effectName = "Assets/Effects/FlatColor.json";
-                m_vertexBuffer.effect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName.data(), m_graphicsSystem->GetDevice()));
-                m_vertexBuffer.effect->InitDefaultInputLayout();
-            }
+            const float signalArgumentBegin = -pi<float>;
+            const float signalArgumentRange = 2 * pi<float>;
 
             {
+                SimpleModel sampledFunctionModel;
+
+                {// Read and compile shaders
+                    std::string_view effectName = "Assets/Effects/FlatColor.json";
+                    sampledFunctionModel.effect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName.data(), m_graphicsSystem->GetDevice()));
+                    sampledFunctionModel.effect->InitDefaultInputLayout();
+                }
+
                 const size_t coefficientsCount = 512;
                 const size_t signalSamplesCount = 1024;
                 const size_t integrationPrecision = 1024;
-                const float signalArgumentBegin = -pi<float>;
-                const float signalArgumentRange = 2 * pi<float>;
                 const edt::geom::Vector<float, 2> sampledFunctionRange { -pi<float>, pi<float> };
 
                 std::vector<float> an, bn;
@@ -221,41 +269,19 @@ namespace simple_quad_sample
                 ComputeFourierSeriesCoefficientsA(coefficientsCount, integrationPrecision, std::back_inserter(an), sampledFunction);
                 ComputeFourierSeriesCoefficientsB(coefficientsCount, integrationPrecision, std::back_inserter(bn), sampledFunction);
 
-                // Generate vertices for sampled function drawing
-                std::vector<Vertex> vertices;
-                const auto dx = signalArgumentRange / signalSamplesCount;
-                for (size_t sampleIndex = 0; sampleIndex < signalSamplesCount; ++sampleIndex) {
-                    auto x = signalArgumentBegin + dx * sampleIndex;
-                    auto y = sampledFunction(x);
-                    
-                    Vertex vertex {
-                        { x, y, 0.f, 1.f },
-                        { 1.0f, 1.0f, 0.0f, 1.0f }
-                    };
-                    vertices.push_back(vertex);
+                {// Draw sampled function
+                    SimpleModel::CB cb;
+                    edt::geom::Vector<float, 3> scale;
+                    scale.Fill(1.0f / (pi<float> * 2.0f));
+                    edt::geom::Vector<float, 3> translation {};
+                    cb.transform = MakeScaleMatrix(scale) * MakeTranslationMatrix(translation);
+                    MakeFunctionModel(sampledFunction, cb, signalArgumentBegin, signalArgumentRange, signalSamplesCount);
+
+                    auto restoredFunction = RestoreFromFourierCoefficients(coefficientsCount, std::move(an), std::move(bn), a0);
+                    translation.ry() = 0.2f;
+                    cb.transform = MakeScaleMatrix(scale) * MakeTranslationMatrix(translation);
+                    MakeFunctionModel(restoredFunction, cb, signalArgumentBegin, signalArgumentRange, signalSamplesCount);
                 }
-
-                DeviceBufferParameters params{};
-                params.size = vertices.size() * sizeof(Vertex);
-                params.usage = DeviceBufferUsage::Dynamic;
-                params.bindFlags = DeviceBufferBindFlags::VertexBuffer;
-                params.accessFlags = CpuAccessFlags::Write;
-                m_vertexBuffer.vertices = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)vertices.data(), params.size));
-                m_vertexBuffer.topology = PrimitiveTopology::LineStrip;
-                m_vertexBuffer.elementsCount = vertices.size();
-            }
-
-            {// Create constant buffer
-                CB constantBufferInitData;
-                edt::geom::Vector<float, 3> t {};
-                constantBufferInitData.transform = MakeTranslationMatrix(t);
-
-                DeviceBufferParameters params{};
-                params.size = sizeof(constantBufferInitData);
-                params.usage = DeviceBufferUsage::Dynamic;
-                params.bindFlags = DeviceBufferBindFlags::ConstantBuffer;
-                params.accessFlags = CpuAccessFlags::Write;
-                m_constantBuffer = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
             }
         };
     }
