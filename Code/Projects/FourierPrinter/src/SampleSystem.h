@@ -5,6 +5,16 @@
 
 namespace simple_quad_sample
 {
+    class VertexBuffer
+    {
+    public:
+        size_t elementsCount = 0;
+        keng::graphics::PrimitiveTopology topology;
+        keng::graphics::IEffectPtr effect;
+        keng::graphics::gpu::IDeviceBufferPtr vertices;
+        keng::graphics::gpu::IDeviceBufferPtr m_constantBuffer;
+    };
+
     class SampleSystem : public keng::core::RefCountImpl<keng::core::ISystem>
     {
     public:
@@ -19,9 +29,8 @@ namespace simple_quad_sample
         virtual bool ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const override;
 
     protected:
-        keng::graphics::IEffectPtr m_effect;
+        VertexBuffer m_vertexBuffer;
         keng::graphics::gpu::IDeviceBufferPtr m_constantBuffer;
-        keng::graphics::gpu::IDeviceBufferPtr m_vertexBuffer;
         keng::graphics::gpu::ITextureRenderTargetPtr m_textureRT;
         keng::graphics::gpu::IDepthStencilPtr m_depthStencil;
         keng::graphics::gpu::IWindowRenderTargetPtr m_windowRT;

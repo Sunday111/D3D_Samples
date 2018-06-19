@@ -23,6 +23,9 @@
 #include "Keng/WindowSystem/IWindowSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
 
+#include "FourierSeries.h"
+#include "SampledFunction.h"
+
 namespace simple_quad_sample
 {
     namespace
@@ -104,11 +107,11 @@ namespace simple_quad_sample
                     m_textureRT->Clear(clearColor);
                     m_depthStencil->Clear(gpu::DepthStencilClearFlags::ClearDepth | gpu::DepthStencilClearFlags::ClearStencil, 1.0f, 0);
                     m_textureRT->AssignToPipeline(m_depthStencil);
-                    m_effect->AssignToPipeline();
-                    m_vertexBuffer->AssignToPipeline(vbAssignParams);
-                    api_device->SetTopology(PrimitiveTopology::LineStrip);
+                    m_vertexBuffer.effect->AssignToPipeline();
+                    m_vertexBuffer.vertices->AssignToPipeline(vbAssignParams);
+                    api_device->SetTopology(m_vertexBuffer.topology);
                     m_constantBuffer->AssignToPipeline(cbAssignParams);
-                    api_device->Draw(5, 0);
+                    api_device->Draw(m_vertexBuffer.elementsCount, 0);
                 });
 
                 Annotate(m_annotation, L"Copy texture to swap chain texture", [&] {
@@ -196,8 +199,27 @@ namespace simple_quad_sample
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/FlatColor.json";
-                m_effect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName.data(), m_graphicsSystem->GetDevice()));
-                m_effect->InitDefaultInputLayout();
+                m_vertexBuffer.effect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName.data(), m_graphicsSystem->GetDevice()));
+                m_vertexBuffer.effect->InitDefaultInputLayout();
+            }
+
+            {
+                const size_t coefficients_count = 512;
+                const size_t signal_samples_count = 1024;
+                const size_t integration_precision = 1024;
+
+                std::vector<double> an, bn;
+                auto original_function = [](double x)
+                {
+                    return
+                        2 * std::sin(x) *
+                        std::cos(3 * x)
+                        ;
+                };
+                auto sampled_function = MakeSampledFunction(signal_samples_count, -pi<double>, pi<double>, original_function);
+                auto a0 = ComputeFourierSeriesCoefficientA0<double>(signal_samples_count, sampled_function);
+                ComputeFourierSeriesCoefficientsA<double>(coefficients_count, integration_precision, std::back_inserter(an), sampled_function);
+                ComputeFourierSeriesCoefficientsB<double>(coefficients_count, integration_precision, std::back_inserter(bn), sampled_function);
             }
 
             {// Create vertex buffer
@@ -236,7 +258,9 @@ namespace simple_quad_sample
                 params.usage = DeviceBufferUsage::Dynamic;
                 params.bindFlags = DeviceBufferBindFlags::VertexBuffer;
                 params.accessFlags = CpuAccessFlags::Write;
-                m_vertexBuffer = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
+                m_vertexBuffer.vertices = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
+                m_vertexBuffer.topology = PrimitiveTopology::LineStrip;
+                m_vertexBuffer.elementsCount = sizeof(vertices) / sizeof(vertices[0]);
             }
 
             {// Create constant buffer
