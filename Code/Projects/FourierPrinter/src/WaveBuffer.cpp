@@ -82,7 +82,7 @@ WaveBuffer::WaveBuffer(std::istream& input) {
     };
 }
 
-WaveBuffer::WaveBuffer(size_t channelsCount, size_t bitsPerSample, size_t sampleRate, void* data, size_t dataSize) :
+WaveBuffer::WaveBuffer(size_t channelsCount, size_t bitsPerSample, size_t sampleRate, const void* data, size_t dataSize) :
 	m_channelsCount(channelsCount),
 	m_bitsPerSample(bitsPerSample),
 	m_sampleRate(sampleRate),

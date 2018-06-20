@@ -16,7 +16,7 @@ public:
     WaveBuffer(std::istream& input);
 	WaveBuffer(
 		size_t channelsCount, size_t bitsPerSample, size_t sampleRate,
-		void* data, size_t dataSize);
+		const void* data, size_t dataSize);
 	WaveBuffer(
 		size_t channelsCount, size_t bitsPerSample, size_t sampleRate,
 		std::unique_ptr<uint8_t[]>&& data, size_t dataSize);
@@ -39,3 +39,9 @@ private:
 	size_t m_dataSize;
 	std::unique_ptr<uint8_t[]> m_data;
 };
+
+
+template<typename T>
+WaveBuffer MakeWaveBuffer(size_t channelsCount, size_t sampleRate, edt::DenseArrayView<const T> data) {
+	return WaveBuffer(channelsCount, sizeof(T) * 8, sampleRate, data.GetData(), data.GetSize() * sizeof(T));
+}

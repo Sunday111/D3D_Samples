@@ -34,7 +34,8 @@ namespace simple_quad_sample
         {
         public:
             static constexpr bool SignalFromFile = true;
-            static constexpr auto TargetFile = "D:\\Sounds\\WAV\\me.wav";
+            static constexpr auto TargetFile = "D:\\untitled.wav";
+            static constexpr auto OutputFile = "D:\\untitled_restored.wav";
             static constexpr bool InterpolateSampledFunction = false;
             static constexpr size_t CoefficientsCount = 8182;
             static constexpr size_t DrawingSamplesCount = 1024;
@@ -88,6 +89,7 @@ namespace simple_quad_sample
             return CallAndRethrowM + [&] () -> std::function<float(float)> {
                 if constexpr (Settings::SignalFromFile) {
                     auto soundBuffer = std::make_shared<WaveBuffer>(Settings::TargetFile);
+                    edt::ThrowIfFailed(soundBuffer->GetChannelsCount() == 1, "Only mono sounds supported");
                     using Maker = std::function<float(float)> (*)(std::shared_ptr<const WaveBuffer>, float, float);
                     Settings::sampleRate = soundBuffer->GetSampleRate();
 
@@ -353,10 +355,15 @@ namespace simple_quad_sample
                 ComputeFourierSeriesCoefficientsB(coefficientsCount, integrationPrecision, std::back_inserter(bn), signalFunction);
 
                 {// Draw restored function components
-                    auto makeConstantBuffer = []() {
+                    auto minCoeffiecient = std::min(*std::min_element(an.begin(), an.end()), *std::min_element(bn.begin(), bn.end()));
+                    auto maxCoeffiecient = std::max(*std::max_element(an.begin(), an.end()), *std::max_element(bn.begin(), bn.end()));
+                    auto makeConstantBuffer = [&]() {
                         SimpleModel::CB cb;
-                        edt::geom::Vector<float, 3> scale {};
-                        scale.Fill(1.0f / (pi<float> * 2.0f));
+                        edt::geom::Vector<float, 3> scale {
+                            1.0f / (pi<float> * 2.0f),
+                            1.0f / (maxCoeffiecient - minCoeffiecient),
+                            1.0f
+                        };
                         edt::geom::Vector<float, 3> translation { +0.5f, +0.5f, 0.0f };
                         cb.transform = MakeScaleMatrix(scale) * MakeTranslationMatrix(translation);
                         return cb;
@@ -444,8 +451,9 @@ namespace simple_quad_sample
                         data.push_back(static_cast<ToType>(value));
                     }
                 
-                    WaveBuffer wavBuffer(channelsCount, bitsPerSample, Settings::sampleRate, data.data(), data.size() * sizeof(ToType));
-                    wavBuffer.SaveToFile("D:\\Sounds\\WAV\\me_restored.wav");
+                    edt::DenseArrayView<const ToType> bufferView = edt::MakeArrayView(data);
+                    auto waveBuffer = MakeWaveBuffer(channelsCount, Settings::sampleRate, bufferView);
+                    waveBuffer.SaveToFile(Settings::OutputFile);
                 }
             }
         };
