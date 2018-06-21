@@ -1,11 +1,13 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <ostream>
 #include <istream>
 #include <string_view>
 
 #include "EverydayTools/Array/ArrayView.h"
+#include "EverydayTools/Math/Clamp.h"
 
 class WaveBuffer
 {
@@ -40,6 +42,23 @@ private:
     std::unique_ptr<uint8_t[]> m_data;
 };
 
+template<typename T, typename Sample>
+WaveBuffer MakeWaveBuffer(size_t channelsCount, size_t sampleRate, T argumentBegin, T argumentRange, size_t samplesCount, const std::function<T(T)>& function) {
+    std::unique_ptr<uint8_t[]> data;
+    const size_t sampleSize = sizeof(Sample);
+    const size_t bytesCount = sampleSize * samplesCount;
+    data.reset(new uint8_t[bytesCount]);
+    edt::DenseArrayView<Sample> samplesView(reinterpret_cast<Sample*>(data.get()), samplesCount);
+    const float deltaArgument = argumentRange / samplesCount;
+    for (size_t sampleIndex = 0; sampleIndex < samplesCount; ++sampleIndex) {
+        auto argument = argumentBegin + sampleIndex * deltaArgument;
+        auto value = function(argument);
+        auto sample = edt::math::ClampToAnotherTypeBounds<Sample>(value);
+        Sample casted = static_cast<Sample>(sample);
+        samplesView[sampleIndex] = casted;
+    }
+    return WaveBuffer(1, sampleSize * 8, sampleRate, std::move(data), bytesCount);
+}
 
 template<typename T>
 WaveBuffer MakeWaveBuffer(size_t channelsCount, size_t sampleRate, edt::DenseArrayView<const T> data) {

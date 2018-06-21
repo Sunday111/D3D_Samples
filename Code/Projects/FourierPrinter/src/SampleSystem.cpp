@@ -26,27 +26,37 @@
 #include "RangedFunction.h"
 #include "SampledFunction.h"
 #include "WaveRangedFunction.h"
+#include "EverydayTools/Functional/Wrap.h"
 
 namespace simple_quad_sample
 {
     namespace
     {
-        class Settings
+        class FromFunctionSettings
         {
         public:
-            static constexpr bool SignalFromFile = true;
+            static constexpr size_t samplesCount = 1024;
+            static constexpr size_t sampleRate = 44100;
+            using Sample = int32_t;
+
+            static float TargetFunction(float x) {
+                auto k = std::numeric_limits<Sample>::max() - 10;
+                auto val = std::sin(x);
+                return val * k;
+            };
+        };
+
+        class Settings : public FromFunctionSettings
+        {
+        public:
+            static constexpr bool SignalFromFile = false;
             static constexpr auto TargetFile = "D:\\untitled.wav";
             static constexpr auto OutputFile = "D:\\untitled_restored.wav";
             static constexpr bool InterpolateSampledFunction = false;
             static constexpr size_t CoefficientsCount = 8182;
             static constexpr size_t DrawingSamplesCount = 1024;
             static constexpr size_t IntegrationPrecision = 44100;
-            static size_t samplesCount;
-            static size_t sampleRate;
         };
-
-        size_t Settings::samplesCount = 0;
-        size_t Settings::sampleRate = 0;
 
         template<typename T>
         edt::geom::Matrix<T, 4, 4> MakeTranslationMatrix(edt::geom::Vector<T, 3> vec) {
@@ -70,28 +80,30 @@ namespace simple_quad_sample
             return m;
         }
 
-        std::function<float(float)> GetTargetFunction(float argumentBegin, float argumentRange) {
-            return CallAndRethrowM + [&] () -> std::function<float(float)> {
+        WaveRangedFunction<float, true> GetTargetFunction(float argumentBegin, float argumentRange) {
+            return CallAndRethrowM + [&] {
+                std::shared_ptr<WaveBuffer> soundBuffer;
+
                 if constexpr (Settings::SignalFromFile) {
-                    auto soundBuffer = std::make_shared<WaveBuffer>(Settings::TargetFile);
-                    edt::ThrowIfFailed(soundBuffer->GetChannelsCount() == 1, "Only mono sounds supported");
-                    WaveRangedFunction<float, true> fn(argumentBegin, argumentBegin + argumentRange, soundBuffer);
-                    Settings::samplesCount = fn.GetSamplesCount();
-                    Settings::sampleRate = soundBuffer->GetSampleRate();
-                    return fn;
+                    soundBuffer = std::make_shared<WaveBuffer>(Settings::TargetFile);
+                } else {
+                    soundBuffer = std::make_shared<WaveBuffer>(MakeWaveBuffer<float, typename Settings::Sample>(
+                        1, Settings::sampleRate, argumentBegin, argumentRange, Settings::samplesCount, Settings::TargetFunction));
                 }
-                else
-                {
-                    const size_t signalSamplesCount = 1024;
 
-                    std::vector<float> an, bn;
-                    auto original_function = [](float x) {
-                        return std::sin(x);
-                    };
-
-                    return MakeSampledFunction<Settings::InterpolateSampledFunction>(argumentBegin, argumentRange, signalSamplesCount, original_function);
-                }
+                edt::ThrowIfFailed(soundBuffer->GetChannelsCount() == 1, "Only mono sounds supported");
+                WaveRangedFunction<float, true> fn(argumentBegin, argumentBegin + argumentRange, soundBuffer);
+                return fn;
             };
+        }
+
+        template<typename T>
+        std::function<T(T)> WrapClamped(T min, T max, const std::function<T(T)>& fn) {
+            return edt::WrapFunction(fn, [min, max](T val) {
+                val = std::min(max, val);
+                val = std::max(min, val);
+                return val;
+            });
         }
     }
 
@@ -321,9 +333,9 @@ namespace simple_quad_sample
 
                 std::vector<float> an, bn;
                 auto signalFunction = GetTargetFunction(signalArgumentBegin, signalArgumentRange);
-                auto a0 = ComputeFourierSeriesCoefficientA0(integrationPrecision, signalFunction);
-                ComputeFourierSeriesCoefficientsA(coefficientsCount, integrationPrecision, std::back_inserter(an), signalFunction);
-                ComputeFourierSeriesCoefficientsB(coefficientsCount, integrationPrecision, std::back_inserter(bn), signalFunction);
+                auto a0 = ComputeFourierSeriesCoefficientA0<float>(integrationPrecision, signalFunction);
+                ComputeFourierSeriesCoefficientsA<float>(coefficientsCount, integrationPrecision, std::back_inserter(an), signalFunction);
+                ComputeFourierSeriesCoefficientsB<float>(coefficientsCount, integrationPrecision, std::back_inserter(bn), signalFunction);
 
                 {// Draw restored function components
                     auto minCoeffiecient = std::min(*std::min_element(an.begin(), an.end()), *std::min_element(bn.begin(), bn.end()));
@@ -364,11 +376,14 @@ namespace simple_quad_sample
                 }
 
                 // Make restored function
-                auto restoredFunction = RestoreFromFourierCoefficients(coefficientsCount, std::move(an), std::move(bn), a0);
+                auto rawRestoredFunction = RestoreFromFourierCoefficients(coefficientsCount, std::move(an), std::move(bn), a0);
+                auto restoredFunction = WrapClamped(
+                    static_cast<float>(std::numeric_limits<Settings::Sample>::lowest()),
+                    static_cast<float>(std::numeric_limits<Settings::Sample>::max()), rawRestoredFunction);
 
                 auto computeRange = [&](auto& function) {
                     auto min = std::numeric_limits<float>::max();
-                    auto max = std::numeric_limits<float>::min();
+                    auto max = std::numeric_limits<float>::lowest();
                     for (size_t sampleIndex = 0; sampleIndex < drawingSamplesCount; ++sampleIndex) {
                         auto arg = signalArgumentBegin + sampleIndex * signalArgumentRange / drawingSamplesCount;
                         auto value = function(arg);
@@ -404,26 +419,8 @@ namespace simple_quad_sample
 
                 // Save
                 {
-                    using ToType = int32_t;
-                    auto saveSamplesCount = Settings::samplesCount;
-                    const size_t channelsCount = 1;
-                    const size_t bitsPerSample = sizeof(ToType) * 8;
-                    std::vector<ToType> data;
-                
-                    for (size_t sampleIndex = 0; sampleIndex < saveSamplesCount; ++sampleIndex) {
-                        auto arg = signalArgumentBegin + sampleIndex * signalArgumentRange / saveSamplesCount;
-                        auto value = restoredFunction(arg);
-
-                        if constexpr (!Settings::SignalFromFile) {
-                            value *= std::numeric_limits<ToType>::max();
-                        }
-
-                        value = std::min<float>(std::numeric_limits<ToType>::max(), value);
-                        data.push_back(static_cast<ToType>(value));
-                    }
-                
-                    edt::DenseArrayView<const ToType> bufferView = edt::MakeArrayView(data);
-                    auto waveBuffer = MakeWaveBuffer(channelsCount, Settings::sampleRate, bufferView);
+                    auto waveBuffer = MakeWaveBuffer<float, typename Settings::Sample>(1, Settings::sampleRate,
+                        signalArgumentBegin, signalArgumentRange, signalFunction.GetSamplesCount(), restoredFunction);
                     waveBuffer.SaveToFile(Settings::OutputFile);
                 }
             }

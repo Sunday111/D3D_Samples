@@ -92,7 +92,10 @@ public:
     {
         return m_samples.GetSize();
     }
-    
+
+    const WaveBuffer& GetWaveBuffer() const {
+        return *m_waveBuffer;
+    }
 private:
     template<typename Sample>
     static T GenericConverter(const uint8_t& sample) {
