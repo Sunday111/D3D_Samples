@@ -23,8 +23,9 @@
 #include "Keng/WindowSystem/IWindow.h"
 
 #include "FourierSeries.h"
+#include "RangedFunction.h"
 #include "SampledFunction.h"
-#include "WaveBuffer.h"
+#include "WaveRangedFunction.h"
 
 namespace simple_quad_sample
 {
@@ -69,45 +70,15 @@ namespace simple_quad_sample
             return m;
         }
 
-        template<typename T>
-        std::function<float(float)> TargetFunctionMaker(std::shared_ptr<const WaveBuffer> buffer, float argumentBegin, float argumentRange) {
-            auto byteView = buffer->GetData();
-            assert((byteView.GetSize() % sizeof(T)) == 0);
-            const size_t samplesCount = byteView.GetSize() / sizeof(T);
-            Settings::samplesCount = samplesCount;
-            edt::DenseArrayView<const T> samplesView(reinterpret_cast<const T*>(byteView.GetData()), samplesCount);
-            return [samplesView, buffer, argumentBegin, argumentRange](float argument) {
-                auto parameter = (argument - argumentBegin) / argumentRange;
-                const auto dirtyIndex = static_cast<size_t>(samplesView.GetSize() * parameter);
-                auto index = std::min(dirtyIndex, samplesView.GetSize() - 1);
-                const auto sample = samplesView[index];
-                return static_cast<float>(sample);
-            };
-        };
-
         std::function<float(float)> GetTargetFunction(float argumentBegin, float argumentRange) {
             return CallAndRethrowM + [&] () -> std::function<float(float)> {
                 if constexpr (Settings::SignalFromFile) {
                     auto soundBuffer = std::make_shared<WaveBuffer>(Settings::TargetFile);
                     edt::ThrowIfFailed(soundBuffer->GetChannelsCount() == 1, "Only mono sounds supported");
-                    using Maker = std::function<float(float)> (*)(std::shared_ptr<const WaveBuffer>, float, float);
+                    WaveRangedFunction<float, true> fn(argumentBegin, argumentBegin + argumentRange, soundBuffer);
+                    Settings::samplesCount = fn.GetSamplesCount();
                     Settings::sampleRate = soundBuffer->GetSampleRate();
-
-                    Maker maker = nullptr;
-                    switch (soundBuffer->GetBitsPerSample()) {
-                    case 8:
-                        maker = TargetFunctionMaker<int8_t>;
-                        break;
-                    case 16:
-                        maker = TargetFunctionMaker<int16_t>;
-                        break;
-                    case 32:
-                        maker = TargetFunctionMaker<int32_t>;
-                        break;
-                    }
-
-                    edt::ThrowIfFailed(maker, "Unknown sample size: ", soundBuffer->GetChannelsCount());
-                    return maker(soundBuffer, argumentBegin, argumentRange);
+                    return fn;
                 }
                 else
                 {

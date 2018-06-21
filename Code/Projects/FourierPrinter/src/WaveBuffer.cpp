@@ -8,36 +8,36 @@
 
 namespace
 {
-	struct WavFile
-	{
-		struct
-		{
-			char chunkId[4];
-			uint32_t chunkSize;
-			char format[4];
-		} riff;
+    struct WavFile
+    {
+        struct
+        {
+            char chunkId[4];
+            uint32_t chunkSize;
+            char format[4];
+        } riff;
 
-		struct
-		{
-			char subchunk1Id[4];
-			uint32_t subchunk1Size;
-			uint16_t audioFormat;
-			uint16_t numChannels;
-			uint32_t sampleRate;
-			uint32_t byteRate;
-			uint16_t blockAlign;
-			uint16_t bitsPerSample;
-		} format;
+        struct
+        {
+            char subchunk1Id[4];
+            uint32_t subchunk1Size;
+            uint16_t audioFormat;
+            uint16_t numChannels;
+            uint32_t sampleRate;
+            uint32_t byteRate;
+            uint16_t blockAlign;
+            uint16_t bitsPerSample;
+        } format;
 
-		struct
-		{
-			char subchunk2Id[4];
-			uint32_t subchunk2Size;
-			std::unique_ptr<uint8_t[]> data;
-		} data;
-	};
+        struct
+        {
+            char subchunk2Id[4];
+            uint32_t subchunk2Size;
+            std::unique_ptr<uint8_t[]> data;
+        } data;
+    };
 
-	WavFile ReadWavFile(std::istream& file) {
+    WavFile ReadWavFile(std::istream& file) {
         return CallAndRethrowM + [&] {
             WavFile result;
 
@@ -83,10 +83,10 @@ WaveBuffer::WaveBuffer(std::istream& input) {
 }
 
 WaveBuffer::WaveBuffer(size_t channelsCount, size_t bitsPerSample, size_t sampleRate, const void* data, size_t dataSize) :
-	m_channelsCount(channelsCount),
-	m_bitsPerSample(bitsPerSample),
-	m_sampleRate(sampleRate),
-	m_dataSize(dataSize)
+    m_channelsCount(channelsCount),
+    m_bitsPerSample(bitsPerSample),
+    m_sampleRate(sampleRate),
+    m_dataSize(dataSize)
 {
     CallAndRethrowM + [&] {
         m_data.reset(new uint8_t[m_dataSize]);
@@ -95,13 +95,13 @@ WaveBuffer::WaveBuffer(size_t channelsCount, size_t bitsPerSample, size_t sample
 }
 
 WaveBuffer::WaveBuffer(
-	size_t channelsCount, size_t bitsPerSample, size_t sampleRate,
-	std::unique_ptr<uint8_t[]>&& data, size_t dataSize) :
-	m_channelsCount(channelsCount),
-	m_bitsPerSample(bitsPerSample),
-	m_sampleRate(sampleRate),
-	m_dataSize(dataSize),
-	m_data(std::move(data))
+    size_t channelsCount, size_t bitsPerSample, size_t sampleRate,
+    std::unique_ptr<uint8_t[]>&& data, size_t dataSize) :
+    m_channelsCount(channelsCount),
+    m_bitsPerSample(bitsPerSample),
+    m_sampleRate(sampleRate),
+    m_dataSize(dataSize),
+    m_data(std::move(data))
 {}
 
 void WaveBuffer::SaveToFile(std::string_view filename) const
