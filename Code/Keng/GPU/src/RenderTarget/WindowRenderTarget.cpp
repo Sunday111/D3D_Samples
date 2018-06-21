@@ -14,7 +14,6 @@ namespace keng::graphics::gpu
         m_device = &device;
         m_swapChain = SwapChainPtr::MakeInstance(device, params.swapChain, window);
 
-
         D3D11_BLEND_DESC desc{};
         desc.RenderTarget[0].BlendEnable = true;
         desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;

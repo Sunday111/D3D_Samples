@@ -1,4 +1,4 @@
-#include "SampleSystem.h"
+﻿#include "SampleSystem.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 #include "Keng/Core/IApplication.h"
@@ -49,11 +49,11 @@ namespace simple_quad_sample
         class Settings : public FromFunctionSettings
         {
         public:
-            static constexpr bool SignalFromFile = false;
-            static constexpr auto TargetFile = "D:\\untitled.wav";
-            static constexpr auto OutputFile = "D:\\untitled_restored.wav";
+            static constexpr bool SignalFromFile = true;
+            static constexpr auto TargetFile = "D:\\Sounds\\WAV\\me.wav";
+            static constexpr auto OutputFile = "D:\\Sounds\\WAV\\me_r.wav";
             static constexpr bool InterpolateSampledFunction = false;
-            static constexpr size_t CoefficientsCount = 8182;
+            static constexpr size_t CoefficientsCount = 256;
             static constexpr size_t DrawingSamplesCount = 1024;
             static constexpr size_t IntegrationPrecision = 44100;
         };
@@ -340,11 +340,12 @@ namespace simple_quad_sample
                 {// Draw restored function components
                     auto minCoeffiecient = std::min(*std::min_element(an.begin(), an.end()), *std::min_element(bn.begin(), bn.end()));
                     auto maxCoeffiecient = std::max(*std::max_element(an.begin(), an.end()), *std::max_element(bn.begin(), bn.end()));
+                    auto coefficientsRange = maxCoeffiecient - minCoeffiecient;
                     auto makeConstantBuffer = [&]() {
                         SimpleModel::CB cb;
                         edt::geom::Vector<float, 3> scale {
                             1.0f / (pi<float> * 2.0f),
-                            1.0f / (maxCoeffiecient - minCoeffiecient),
+                            1.0f / coefficientsRange,
                             1.0f
                         };
                         edt::geom::Vector<float, 3> translation { +0.5f, +0.5f, 0.0f };
@@ -355,12 +356,12 @@ namespace simple_quad_sample
                     // Prepare constant buffer which will be the same for all components
                     const auto cb = makeConstantBuffer();
 
-                    const v4f sinColor { 0.0f, 1.0f, 0.0f, 1.0f };
-                    const v4f cosColor { 1.0f, 0.0f, 0.0f, 1.0f };
+                    const v4f sinColor { 0.0f, 1.0f, 0.0f, 0.2f };
+                    const v4f cosColor { 1.0f, 0.0f, 0.0f, 0.2f };
 
                     auto makeComponentModel = [&](std::vector<float>& coefficients , size_t n, v4f color, float(*realFunction)(float)) {
                         float coefficient = coefficients[n];
-                        if (std::abs(coefficient) < 0.05) {
+                        if (std::abs(coefficient) < maxCoeffiecient * 0.05f) {
                             return;
                         }
                         auto function =  [coefficient, realFunction, n, a0](float arg) {
@@ -419,7 +420,7 @@ namespace simple_quad_sample
 
                 // Save
                 {
-                    auto waveBuffer = MakeWaveBuffer<float, typename Settings::Sample>(1, Settings::sampleRate,
+                    auto waveBuffer = MakeWaveBuffer<float, typename Settings::Sample>(1, signalFunction.GetWaveBuffer().GetSampleRate(),
                         signalArgumentBegin, signalArgumentRange, signalFunction.GetSamplesCount(), restoredFunction);
                     waveBuffer.SaveToFile(Settings::OutputFile);
                 }

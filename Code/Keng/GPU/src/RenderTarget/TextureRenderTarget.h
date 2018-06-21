@@ -16,5 +16,6 @@ namespace keng::graphics::gpu
     private:
         DevicePtr m_device;
         TexturePtr m_texture;
+        ComPtr<ID3D11BlendState> m_blendState;
     };
 }
