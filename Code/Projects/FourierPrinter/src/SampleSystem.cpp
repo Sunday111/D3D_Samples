@@ -50,8 +50,8 @@ namespace simple_quad_sample
         {
         public:
             static constexpr bool SignalFromFile = true;
-            static constexpr auto TargetFile = "D:\\Sounds\\WAV\\me.wav";
-            static constexpr auto OutputFile = "D:\\Sounds\\WAV\\me_r.wav";
+            static constexpr auto TargetFile = "D:\\untitled.wav";
+            static constexpr auto OutputFile = "D:\\untitled_restored.wav";
             static constexpr bool InterpolateSampledFunction = false;
             static constexpr size_t CoefficientsCount = 256;
             static constexpr size_t DrawingSamplesCount = 1024;
