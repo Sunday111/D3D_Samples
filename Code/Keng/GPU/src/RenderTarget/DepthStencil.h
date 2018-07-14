@@ -13,7 +13,7 @@ namespace keng::graphics::gpu
     public:
         DepthStencil(Device& device, const DepthStencilParameters&, ITexture&);
         ~DepthStencil();
-        virtual void Clear(DepthStencilClearFlags flags, float depth, uint8_t stencil) override;
+        virtual void Clear(const DepthStencilClearFlags& flags, float depth, uint8_t stencil) override;
         core::Ptr<TextureView<ResourceViewType::DepthStencil>> GetView() const;
 
     private:

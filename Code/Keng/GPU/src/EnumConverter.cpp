@@ -189,4 +189,24 @@ namespace keng::graphics::gpu
             throw std::runtime_error("Unknown value or not implemented");
         };
     }
+
+    UINT ConvertDepthStencilClearFlags(const DepthStencilClearFlags& flags) {
+        return CallAndRethrowM + [&] {
+            EnumFlagConverter<DepthStencilClearFlags, UINT> c(flags);
+            c.ConvertFlag(DepthStencilClearFlags::ClearDepth, D3D11_CLEAR_DEPTH);
+            c.ConvertFlag(DepthStencilClearFlags::ClearStencil, D3D11_CLEAR_STENCIL);
+            static_assert((size_t)DepthStencilClearFlags::Last == 4, "Changed enumeration? Fix here!");
+            return c.to;
+        };
+    }
+
+    DepthStencilClearFlags ConvertDepthStencilClearFlags(UINT flags) {
+        return CallAndRethrowM + [&] {
+            EnumFlagConverter<UINT, DepthStencilClearFlags> c(flags);
+            c.ConvertFlag(D3D11_CLEAR_DEPTH, DepthStencilClearFlags::ClearDepth);
+            c.ConvertFlag(D3D11_CLEAR_STENCIL, DepthStencilClearFlags::ClearStencil);
+            static_assert((size_t)DepthStencilClearFlags::Last == 4, "Changed enumeration? Fix here!");
+            return c.to;
+        };
+    }
 }

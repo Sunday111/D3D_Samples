@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keng/GraphicsCommon/CpuAccessFlags.h"
+#include "EverydayTools/EnumFlag.h"
 
 namespace keng::graphics
 {
@@ -12,6 +12,6 @@ namespace keng::graphics
         Staging,
         Last
     };
-    
+
     EDT_ENUM_FLAG_OPERATORS(DeviceBufferUsage);
 }

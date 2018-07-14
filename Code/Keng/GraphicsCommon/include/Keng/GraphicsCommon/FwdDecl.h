@@ -3,6 +3,7 @@
 namespace keng::graphics
 {
     enum class CpuAccessFlags;
+    enum class DepthStencilClearFlags;
     enum class DeviceBufferBindFlags;
     enum class DeviceBufferUsage;
     enum class FilteringMode;
