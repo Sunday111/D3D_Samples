@@ -2,6 +2,7 @@
 #include "Device.h"
 #include "Keng/GraphicsCommon/DepthStencilParameters.h"
 #include "Resource/Texture/DeviceTexture.h"
+#include "EnumConverter.h"
 
 namespace keng::graphics::gpu
 {
@@ -14,15 +15,10 @@ namespace keng::graphics::gpu
     }
     DepthStencil::~DepthStencil() = default;
 
-    void DepthStencil::Clear(DepthStencilClearFlags f, float depth, uint8_t stencil) {
+    void DepthStencil::Clear(const DepthStencilClearFlags& f, float depth, uint8_t stencil) {
         CallAndRethrowM + [&] {
-            UINT flags = 0;
-
-            if ((f & DepthStencilClearFlags::ClearDepth) != DepthStencilClearFlags::None) flags |= D3D11_CLEAR_DEPTH;
-            if ((f & DepthStencilClearFlags::ClearStencil) != DepthStencilClearFlags::None) flags |= D3D11_CLEAR_STENCIL;
-
-            if (flags) {
-                m_device->GetContext()->ClearDepthStencilView(m_dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
+            if (auto flags = ConvertDepthStencilClearFlags(f)) {
+                m_device->GetContext()->ClearDepthStencilView(m_dsv->GetView(), flags, depth, stencil);
             }
         };
     }

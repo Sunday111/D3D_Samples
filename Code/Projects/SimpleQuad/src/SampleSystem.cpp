@@ -8,6 +8,7 @@
 #include "Keng/GPU/RenderTarget/IWindowRenderTarget.h"
 #include "Keng/GPU/RenderTarget/ITextureRenderTarget.h"
 #include "Keng/GPU/RenderTarget/IDepthStencil.h"
+#include "Keng/GraphicsCommon/DepthStencilClearFlags.h"
 #include "Keng/GraphicsCommon/DepthStencilParameters.h"
 #include "Keng/GraphicsCommon/DeviceBufferParameters.h"
 #include "Keng/GraphicsCommon/PrimitiveTopology.h"
@@ -102,7 +103,7 @@ namespace simple_quad_sample
                     cbAssignParams.shaderType = ShaderType::Vertex;
 
                     m_textureRT->Clear(clearColor);
-                    m_depthStencil->Clear(gpu::DepthStencilClearFlags::ClearDepth | gpu::DepthStencilClearFlags::ClearStencil, 1.0f, 0);
+                    m_depthStencil->Clear(DepthStencilClearFlags::ClearDepth | DepthStencilClearFlags::ClearStencil, 1.0f, 0);
                     m_textureRT->AssignToPipeline(m_depthStencil);
                     m_effect->AssignToPipeline();
                     m_vertexBuffer->AssignToPipeline(vbAssignParams);

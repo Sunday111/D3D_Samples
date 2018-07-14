@@ -13,6 +13,7 @@
 #include "Keng/Graphics/Resource/Font/GlyphParameters.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
+#include "Keng/GraphicsCommon/DepthStencilClearFlags.h"
 #include "Keng/GPU/DeviceBufferMapper.h"
 #include "Keng/GPU/PipelineInput/ISampler.h"
 #include "Keng/GPU/RenderTarget/IWindowRenderTarget.h"
@@ -84,7 +85,7 @@ namespace render_text_sample
                 Annotate(m_annotation, L"Draw", [&] {
                     Annotate(m_annotation, L"Clear", [&] {
                         m_windowRT->Clear(clearColor);
-                        m_depthStencil->Clear(gpu::DepthStencilClearFlags::ClearDepth | gpu::DepthStencilClearFlags::ClearStencil, 1.0f, 0);
+                        m_depthStencil->Clear(DepthStencilClearFlags::ClearDepth | DepthStencilClearFlags::ClearStencil, 1.0f, 0);
                         m_windowRT->AssignToPipeline(m_depthStencil);
                     });
 
@@ -118,7 +119,7 @@ namespace render_text_sample
                         api_device->Draw(m_containerQuad.GetVerticesCount(), 0);
                     });
 
-                    m_depthStencil->Clear(gpu::DepthStencilClearFlags::ClearDepth | gpu::DepthStencilClearFlags::ClearStencil, 1.0f, 0);
+                    m_depthStencil->Clear(DepthStencilClearFlags::ClearDepth | DepthStencilClearFlags::ClearStencil, 1.0f, 0);
 
                     Annotate(m_annotation, L"Draw text", [&] {
                         Annotate(m_annotation, L"Edit constant buffer", [&] {

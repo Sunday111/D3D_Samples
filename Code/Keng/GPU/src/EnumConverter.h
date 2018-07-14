@@ -2,6 +2,7 @@
 
 #include "FwdDecl.h"
 #include "d3d11.h"
+#include "Keng/GraphicsCommon/DepthStencilClearFlags.h"
 #include "Keng/GraphicsCommon/DeviceBufferBindFlags.h"
 #include "Keng/GraphicsCommon/DeviceBufferUsage.h"
 #include "Keng/GraphicsCommon/FragmentFormat.h"
@@ -30,4 +31,7 @@ namespace keng::graphics::gpu
 
     D3D11_USAGE ConvertDeviceBufferUsage(const DeviceBufferUsage& flags);
     DeviceBufferUsage ConvertDeviceBufferUsage(D3D11_USAGE flags);
+
+    UINT ConvertDepthStencilClearFlags(const DepthStencilClearFlags& flags);
+    DepthStencilClearFlags ConvertDepthStencilClearFlags(UINT flags);
 }
