@@ -6,8 +6,8 @@
 #include <istream>
 #include <string_view>
 
+#include "EverydayTools/Algorithm/Clamp.h"
 #include "EverydayTools/Array/ArrayView.h"
-#include "EverydayTools/Math/Clamp.h"
 
 class WaveBuffer
 {
@@ -53,7 +53,7 @@ WaveBuffer MakeWaveBuffer(size_t channelsCount, size_t sampleRate, T argumentBeg
     for (size_t sampleIndex = 0; sampleIndex < samplesCount; ++sampleIndex) {
         auto argument = argumentBegin + sampleIndex * deltaArgument;
         auto value = function(argument);
-        auto sample = edt::math::ClampToAnotherTypeBounds<Sample>(value);
+        auto sample = edt::ClampToAnotherTypeBounds<Sample>(value);
         Sample casted = static_cast<Sample>(sample);
         samplesView[sampleIndex] = casted;
     }
