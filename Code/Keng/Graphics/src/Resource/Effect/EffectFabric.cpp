@@ -3,6 +3,7 @@
 #include "Resource/Effect/Effect.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
 #include "yasli/STL.h"
+#include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 
 namespace keng::graphics

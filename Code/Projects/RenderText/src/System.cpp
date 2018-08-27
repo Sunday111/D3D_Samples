@@ -71,7 +71,7 @@ namespace render_text_sample
 
         return CallAndRethrowM + [&] {
             return Annotate(m_annotation, L"Frame", [&] {
-                auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
+                auto api_device = GetSystem<graphics::IGraphicsSystem>().GetDevice()->GetApiDevice();
 
                 float clearColor[4]{
                     0.0f, 0.2f, 0.4f, 1.0f
@@ -100,7 +100,7 @@ namespace render_text_sample
                         });
 
                         Annotate(m_annotation, L"Assign buffers", [&] {
-                            m_containerQuad.AssignToPipeline(0, m_graphicsSystem);
+                            m_containerQuad.AssignToPipeline(0, GetSystem<graphics::IGraphicsSystem>());
 
                             gpu::ConstantBufferAssignParameters cbAssignParams{};
                             cbAssignParams.slot = 0;
@@ -129,7 +129,7 @@ namespace render_text_sample
                         });
 
                         Annotate(m_annotation, L"Assign buffers", [&] {
-                            m_textQuads.AssignToPipeline(0, m_graphicsSystem);
+                            m_textQuads.AssignToPipeline(0, GetSystem<graphics::IGraphicsSystem>());
 
                             gpu::ConstantBufferAssignParameters cbAssignParams{};
                             cbAssignParams.slot = 0;
@@ -177,15 +177,12 @@ namespace render_text_sample
         using namespace window_system;
 
         CallAndRethrowM + [&] {
-            m_resourceSystem = app->FindSystem<IResourceSystem>();
-            m_graphicsSystem = app->FindSystem<IGraphicsSystem>();
-            m_windowSystem = app->FindSystem<IWindowSystem>();
-            m_fileSystem = app->FindSystem<filesystem::IFileSystem>();
-
-            auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
+            StoreDependencies(*app);
+            auto device = GetSystem<graphics::IGraphicsSystem>().GetDevice();
+            auto api_device = device->GetApiDevice();
             m_annotation = api_device->CreateAnnotation();
 
-            auto window = m_windowSystem->GetWindow();
+            auto window = GetSystem<window_system::IWindowSystem>().GetWindow();
             size_t w, h;
             window->GetClientSize(&w, &h);
 
@@ -214,23 +211,23 @@ namespace render_text_sample
                 dsTextureParams.bindFlags = DeviceBufferBindFlags::ShaderResource | DeviceBufferBindFlags::DepthStencil;
 
                 depthStencilParams.format = FragmentFormat::D24_UNORM_S8_UINT;
-                auto depthStencilTexture = m_graphicsSystem->CreateTexture(dsTextureParams)->GetApiTexture();
+                auto depthStencilTexture = GetSystem<graphics::IGraphicsSystem>().CreateTexture(dsTextureParams)->GetApiTexture();
                 m_depthStencil = api_device->CreateDepthStencil(depthStencilParams, *depthStencilTexture);
             }
 
-            m_containerTexture = std::static_pointer_cast<ITexture>(m_resourceSystem->GetResource("Assets/Textures/container.json", m_graphicsSystem->GetDevice()));
+            m_containerTexture = std::static_pointer_cast<ITexture>(GetSystem<resource::IResourceSystem>().GetResource("Assets/Textures/container.json", device));
 
-            m_font = std::static_pointer_cast<IFont>(m_resourceSystem->GetResource("Assets/Fonts/OpenSans.json"));
+            m_font = std::static_pointer_cast<IFont>(GetSystem<resource::IResourceSystem>().GetResource("Assets/Fonts/OpenSans.json"));
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Textured.json";
-                m_texturedEffect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName.data(), m_graphicsSystem->GetDevice()));
+                m_texturedEffect = std::static_pointer_cast<IEffect>(GetSystem<resource::IResourceSystem>().GetResource(effectName.data(), device));
                 m_texturedEffect->InitDefaultInputLayout();
             }
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Text.json";
-                m_textEffect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName.data(), m_graphicsSystem->GetDevice()));
+                m_textEffect = std::static_pointer_cast<IEffect>(GetSystem<resource::IResourceSystem>().GetResource(effectName.data(), device));
                 m_textEffect->InitDefaultInputLayout();
             }
 
@@ -265,7 +262,7 @@ namespace render_text_sample
                 params.bindFlags = DeviceBufferBindFlags::VertexBuffer;
                 params.accessFlags = CpuAccessFlags::Write;
                 params.topology = PrimitiveTopology::TriangleStrip;
-                m_containerQuad.Initialize(*m_graphicsSystem, params, edt::MakeArrayView(vertices));
+                m_containerQuad.Initialize(GetSystem<graphics::IGraphicsSystem>(), params, edt::MakeArrayView(vertices));
             }
             
             {// Create text vertex buffer
@@ -347,7 +344,7 @@ namespace render_text_sample
 
                     edt::Delegate<void(const AtlasGlyphInfo&)> delegate;
                     delegate.Bind(onRequest);
-                    m_font->RequestGlyphsInfo(edt::MakeArrayView(unicodes), *m_graphicsSystem->GetDevice(), glyphParams, delegate);
+                    m_font->RequestGlyphsInfo(edt::MakeArrayView(unicodes), *device, glyphParams, delegate);
                 }
 
                 PrimitiveBufferParameters params;
@@ -355,7 +352,7 @@ namespace render_text_sample
                 params.bindFlags = DeviceBufferBindFlags::VertexBuffer;
                 params.accessFlags = CpuAccessFlags::Write;
                 params.topology = PrimitiveTopology::TriangleList;
-                m_textQuads.Initialize(*m_graphicsSystem, params, edt::MakeArrayView(vertices));
+                m_textQuads.Initialize(GetSystem<graphics::IGraphicsSystem>(), params, edt::MakeArrayView(vertices));
             }
 
             {// Create common constant buffer
@@ -368,7 +365,7 @@ namespace render_text_sample
                 params.usage = DeviceBufferUsage::Dynamic;
                 params.bindFlags = DeviceBufferBindFlags::ConstantBuffer;
                 params.accessFlags = CpuAccessFlags::Write;
-                m_constantBuffer = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
+                m_constantBuffer = api_device->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
             }
 
             {// Create container sampler
@@ -415,7 +412,7 @@ namespace render_text_sample
                 std::string filename = "Configs/";
                 filename += GetSystemName();
                 filename += ".json";
-                auto buffer = ReadFileToBuffer(*m_fileSystem, filename.data());
+                auto buffer = ReadFileToBuffer(GetSystem<IFileSystem>(), filename.data());
                 yasli::JSONIArchive ar;
                 OpenArchiveJSON(edt::DenseArrayView<uint8_t>(buffer.first.get(), buffer.second), ar);
                 SerializeMandatory(ar, params, "");

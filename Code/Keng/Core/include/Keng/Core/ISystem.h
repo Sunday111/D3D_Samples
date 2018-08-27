@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Keng/Core/FwdDecl.h"
-#include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Delegate.h"
 
 namespace keng::core

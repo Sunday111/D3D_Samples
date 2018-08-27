@@ -1,5 +1,7 @@
 #pragma once
 
+#include "EverydayTools/Exception/CallAndRethrow.h"
+#include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "Keng/Base/Serialization/Serialization.h"
 #include "yasli/Archive.h"
 

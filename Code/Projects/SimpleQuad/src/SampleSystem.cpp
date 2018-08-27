@@ -71,7 +71,7 @@ namespace simple_quad_sample
 
         return CallAndRethrowM + [&] {
             return Annotate(m_annotation, L"Frame", [&] {
-                auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
+                auto api_device = GetSystem<IGraphicsSystem>().GetDevice()->GetApiDevice();
 
                 float clearColor[4]{
                     0.0f, 0.2f, 0.4f, 1.0f
@@ -145,13 +145,12 @@ namespace simple_quad_sample
         using namespace window_system;
 
         CallAndRethrowM + [&] {
-            m_resourceSystem = app->FindSystem<resource::IResourceSystem>();
-            m_graphicsSystem = app->FindSystem<graphics::IGraphicsSystem>();
-            auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
-            m_windowSystem = app->FindSystem<window_system::IWindowSystem>();
+            StoreDependencies(*app);
+            auto graphics_device = GetSystem<IGraphicsSystem>().GetDevice();
+            auto api_device = graphics_device->GetApiDevice();
+            auto window = GetSystem<IWindowSystem>().GetWindow();
             m_annotation = api_device->CreateAnnotation();
 
-            auto window = m_windowSystem->GetWindow();
             size_t w, h;
             window->GetClientSize(&w, &h);
 
@@ -178,7 +177,7 @@ namespace simple_quad_sample
                 rtTextureParams.width = w;
                 rtTextureParams.height = h;
                 rtTextureParams.bindFlags = DeviceBufferBindFlags::ShaderResource | DeviceBufferBindFlags::RenderTarget;
-                auto renderTragetTexture = m_graphicsSystem->CreateTexture(rtTextureParams)->GetApiTexture();
+                auto renderTragetTexture = GetSystem<IGraphicsSystem>().CreateTexture(rtTextureParams)->GetApiTexture();
                 m_textureRT = api_device->CreateTextureRenderTarget(texture_rt_params, *renderTragetTexture);
             }
 
@@ -191,13 +190,13 @@ namespace simple_quad_sample
                 dsTextureParams.bindFlags = DeviceBufferBindFlags::ShaderResource | DeviceBufferBindFlags::DepthStencil;
 
                 depthStencilParams.format = FragmentFormat::D24_UNORM_S8_UINT;
-                auto depthStencilTexture = m_graphicsSystem->CreateTexture(dsTextureParams)->GetApiTexture();
+                auto depthStencilTexture = GetSystem<IGraphicsSystem>().CreateTexture(dsTextureParams)->GetApiTexture();
                 m_depthStencil = api_device->CreateDepthStencil(depthStencilParams, *depthStencilTexture);
             }
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/FlatColor.json";
-                m_effect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName.data(), m_graphicsSystem->GetDevice()));
+                m_effect = std::static_pointer_cast<IEffect>(GetSystem<IResourceSystem>().GetResource(effectName.data(), graphics_device));
                 m_effect->InitDefaultInputLayout();
             }
 
@@ -232,7 +231,7 @@ namespace simple_quad_sample
                 params.usage = DeviceBufferUsage::Dynamic;
                 params.bindFlags = DeviceBufferBindFlags::VertexBuffer;
                 params.accessFlags = CpuAccessFlags::Write;
-                m_vertexBuffer = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
+                m_vertexBuffer = api_device->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
             }
 
             {// Create constant buffer
@@ -245,7 +244,7 @@ namespace simple_quad_sample
                 params.usage = DeviceBufferUsage::Dynamic;
                 params.bindFlags = DeviceBufferBindFlags::ConstantBuffer;
                 params.accessFlags = CpuAccessFlags::Write;
-                m_constantBuffer = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
+                m_constantBuffer = api_device->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
             }
         };
     }

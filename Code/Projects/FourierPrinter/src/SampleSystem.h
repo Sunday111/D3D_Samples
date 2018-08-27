@@ -6,6 +6,7 @@
 #include "EverydayTools/Geom/Vector.h"
 #include "Keng/Graphics/FwdDecl.h"
 #include "Keng/Core/ISystem.h"
+#include "Keng/Core/DependencyStorage.h"
 
 namespace simple_quad_sample
 {
@@ -35,7 +36,12 @@ namespace simple_quad_sample
         keng::graphics::gpu::IDeviceBufferPtr constantBuffer;
     };
 
-    class SampleSystem : public keng::core::RefCountImpl<keng::core::ISystem>
+    class SampleSystem :
+        public keng::core::RefCountImpl<keng::core::ISystem>,
+        public keng::core::DependenciesContainer<
+            keng::resource::IResourceSystem,
+            keng::graphics::IGraphicsSystem,
+            keng::window_system::IWindowSystem>
     {
     public:
         SampleSystem();
@@ -59,9 +65,5 @@ namespace simple_quad_sample
         keng::graphics::gpu::IDepthStencilPtr m_depthStencil;
         keng::graphics::gpu::IWindowRenderTargetPtr m_windowRT;
         keng::graphics::gpu::IAnnotationPtr m_annotation;
-
-        keng::resource::IResourceSystemPtr m_resourceSystem;
-        keng::graphics::IGraphicsSystemPtr m_graphicsSystem;
-        keng::window_system::IWindowSystemPtr m_windowSystem;
     };
 }

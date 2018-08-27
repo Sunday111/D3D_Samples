@@ -1,5 +1,6 @@
 #include "GlyphAtlas.h"
 #include "Device.h"
+#include "EverydayTools/Exception/CallAndRethrow.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Keng/Graphics/Resource/Font/GlyphParameters.h"
 #include "Keng/GraphicsCommon/DeviceTextureParameters.h"

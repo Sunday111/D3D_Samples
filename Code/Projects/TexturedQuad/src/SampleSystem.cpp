@@ -63,7 +63,8 @@ namespace textured_quad_sample
 
         return CallAndRethrowM + [&] {
             return Annotate(m_annotation, L"Frame", [&] {
-                auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
+                auto graphics_device = GetSystem<IGraphicsSystem>().GetDevice();
+                auto api_device = graphics_device->GetApiDevice();
                 float clearColor[4]{
                     0.0f, 0.2f, 0.4f, 1.0f
                 };
@@ -97,7 +98,7 @@ namespace textured_quad_sample
                     m_textureRT->AssignToPipeline(m_depthStencil);
                     m_effect->AssignToPipeline();
                     m_vertexBuffer->AssignToPipeline(vbAssignParams);
-                    m_graphicsSystem->GetDevice()->GetApiDevice()->SetTopology(PrimitiveTopology::TriangleStrip);
+                    api_device->SetTopology(PrimitiveTopology::TriangleStrip);
                     m_constantBuffer->AssignToPipeline(cbAssignParams);
                     m_sampler->AssignToPipeline(ShaderType::Fragment, 0);
                     m_texture->GetApiTexture()->AssignToPipeline(ShaderType::Fragment, 0);
@@ -137,13 +138,12 @@ namespace textured_quad_sample
         using namespace window_system;
 
         CallAndRethrowM + [&] {
-            m_resourceSystem = app->FindSystem<IResourceSystem>();
-            m_graphicsSystem = app->FindSystem<IGraphicsSystem>();
-            m_windowSystem = app->FindSystem<IWindowSystem>();
-            auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
+            StoreDependencies(*app);
+            auto graphics_device = GetSystem<IGraphicsSystem>().GetDevice();
+            auto api_device = graphics_device->GetApiDevice();
             m_annotation = api_device->CreateAnnotation();
 
-            auto window = m_windowSystem->GetWindow();
+            auto window = GetSystem<IWindowSystem>().GetWindow();
             size_t w, h;
             window->GetClientSize(&w, &h);
 
@@ -170,7 +170,7 @@ namespace textured_quad_sample
                 rtTextureParams.width = w;
                 rtTextureParams.height = h;
                 rtTextureParams.bindFlags = DeviceBufferBindFlags::ShaderResource | DeviceBufferBindFlags::RenderTarget;
-                auto renderTargetTexture = m_graphicsSystem->CreateTexture(rtTextureParams)->GetApiTexture();
+                auto renderTargetTexture = GetSystem<IGraphicsSystem>().CreateTexture(rtTextureParams)->GetApiTexture();
                 m_textureRT = api_device->CreateTextureRenderTarget(texture_rt_params, *renderTargetTexture);
             }
 
@@ -183,15 +183,15 @@ namespace textured_quad_sample
                 dsTextureParams.bindFlags = DeviceBufferBindFlags::ShaderResource | DeviceBufferBindFlags::DepthStencil;
 
                 depthStencilParams.format = FragmentFormat::D24_UNORM_S8_UINT;
-                auto depthStencilTexture = m_graphicsSystem->CreateTexture(dsTextureParams)->GetApiTexture();
+                auto depthStencilTexture = GetSystem<IGraphicsSystem>().CreateTexture(dsTextureParams)->GetApiTexture();
                 m_depthStencil = api_device->CreateDepthStencil(depthStencilParams, *depthStencilTexture);
             }
 
-            m_texture = std::static_pointer_cast<ITexture>(m_resourceSystem->GetResource("Assets/Textures/container.json", m_graphicsSystem->GetDevice()));
+            m_texture = std::static_pointer_cast<ITexture>(GetSystem<IResourceSystem>().GetResource("Assets/Textures/container.json", graphics_device));
 
             {// Read and compile shaders
                 std::string_view effectName = "Assets/Effects/Textured.json";
-                m_effect = std::static_pointer_cast<IEffect>(m_resourceSystem->GetResource(effectName.data(), m_graphicsSystem->GetDevice()));
+                m_effect = std::static_pointer_cast<IEffect>(GetSystem<IResourceSystem>().GetResource(effectName.data(), graphics_device));
                 m_effect->InitDefaultInputLayout();
             }
 
@@ -226,7 +226,7 @@ namespace textured_quad_sample
                 params.usage = DeviceBufferUsage::Dynamic;
                 params.bindFlags = DeviceBufferBindFlags::VertexBuffer;
                 params.accessFlags = CpuAccessFlags::Write;
-                m_vertexBuffer = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
+                m_vertexBuffer = api_device->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&vertices, sizeof(vertices)));
             }
 
             {// Create constant buffer
@@ -239,7 +239,7 @@ namespace textured_quad_sample
                 params.usage = DeviceBufferUsage::Dynamic;
                 params.bindFlags = DeviceBufferBindFlags::ConstantBuffer;
                 params.accessFlags = CpuAccessFlags::Write;
-                m_constantBuffer = m_graphicsSystem->GetDevice()->GetApiDevice()->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
+                m_constantBuffer = api_device->CreateDeviceBuffer(params, edt::DenseArrayView<uint8_t>((uint8_t*)&constantBufferInitData, sizeof(constantBufferInitData)));
             }
 
             {// Create sampler

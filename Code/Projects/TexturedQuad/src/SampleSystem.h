@@ -1,11 +1,17 @@
 #pragma once
 
 #include "Keng/Graphics/FwdDecl.h"
+#include "Keng/Core/DependencyStorage.h"
 #include "Keng/Core/ISystem.h"
 
 namespace textured_quad_sample
 {
-    class SampleSystem : public keng::core::RefCountImpl<keng::core::ISystem>
+    class SampleSystem :
+        public keng::core::RefCountImpl<keng::core::ISystem>,
+        public keng::core::DependenciesContainer<
+            keng::resource::IResourceSystem,
+            keng::graphics::IGraphicsSystem,
+            keng::window_system::IWindowSystem>
     {
     public:
         SampleSystem();
@@ -28,9 +34,5 @@ namespace textured_quad_sample
         keng::graphics::gpu::IWindowRenderTargetPtr m_windowRT;
         keng::graphics::gpu::ISamplerPtr m_sampler;
         keng::graphics::gpu::IAnnotationPtr m_annotation;
-
-        keng::resource::IResourceSystemPtr m_resourceSystem;
-        keng::graphics::IGraphicsSystemPtr m_graphicsSystem;
-        keng::window_system::IWindowSystemPtr m_windowSystem;
     };
 }

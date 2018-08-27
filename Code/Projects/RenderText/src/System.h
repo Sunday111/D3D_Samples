@@ -2,6 +2,7 @@
 
 #include "EverydayTools/Geom/Vector.h"
 #include "Keng/Graphics/FwdDecl.h"
+#include "Keng/Core/DependencyStorage.h"
 #include "Keng/Core/ISystem.h"
 #include "Keng/FileSystem/FwdDecl.h"
 #include "Keng/GraphicsCommon/PrimitiveTopology.h"
@@ -46,12 +47,12 @@ namespace render_text_sample
                 edt::DenseArrayView<uint8_t>((uint8_t*)data.GetData(), deviceBufferParams.size));
         }
 
-        void AssignToPipeline(size_t slot, keng::graphics::IGraphicsSystemPtr system) {
+        void AssignToPipeline(size_t slot, keng::graphics::IGraphicsSystem& system) {
             keng::graphics::gpu::VertexBufferAssignParameters vbAssignParams{};
             vbAssignParams.slot = 0;
             vbAssignParams.stride = sizeof(T);
             m_vertices->AssignToPipeline(vbAssignParams);
-            system->GetDevice()->GetApiDevice()->SetTopology(m_topo);
+            system.GetDevice()->GetApiDevice()->SetTopology(m_topo);
         }
 
         size_t GetVerticesCount() const {
@@ -72,7 +73,13 @@ namespace render_text_sample
         keng::graphics::gpu::IDeviceBufferPtr m_vertices;
     };
 
-    class System : public keng::core::RefCountImpl<keng::core::ISystem>
+    class System :
+        public keng::core::RefCountImpl<keng::core::ISystem>,
+        public keng::core::DependenciesContainer<
+            keng::filesystem::IFileSystem,
+            keng::resource::IResourceSystem,
+            keng::graphics::IGraphicsSystem,
+            keng::window_system::IWindowSystem>
     {
     public:
         System();
@@ -104,10 +111,5 @@ namespace render_text_sample
         keng::graphics::gpu::IDepthStencilPtr m_depthStencil;
         keng::graphics::gpu::IWindowRenderTargetPtr m_windowRT;
         keng::graphics::gpu::IAnnotationPtr m_annotation;
-
-        keng::filesystem::IFileSystemPtr m_fileSystem;
-        keng::resource::IResourceSystemPtr m_resourceSystem;
-        keng::graphics::IGraphicsSystemPtr m_graphicsSystem;
-        keng::window_system::IWindowSystemPtr m_windowSystem;
     };
 }
