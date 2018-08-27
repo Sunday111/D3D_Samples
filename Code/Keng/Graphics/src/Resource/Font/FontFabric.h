@@ -2,6 +2,7 @@
 
 #include "FwdDecl.h"
 #include "Resource/Font/FreeType/FwdDecl.h"
+#include "Keng/FileSystem/FwdDecl.h"
 #include "Keng/ResourceSystem/IResourceFabric.h"
 
 namespace keng::graphics
@@ -10,7 +11,7 @@ namespace keng::graphics
         public core::RefCountImpl<resource::IResourceFabric>
     {
     public:
-        FontFabric();
+        FontFabric(const filesystem::IFileSystemPtr& fileSystem);
         ~FontFabric();
 
         virtual const char* GetNodeName() const override;
@@ -19,5 +20,6 @@ namespace keng::graphics
 
     private:
         free_type::LibraryPtr m_library;
+        filesystem::IFileSystemPtr m_fileSystem;
     };
 }

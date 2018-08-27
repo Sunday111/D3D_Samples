@@ -45,7 +45,7 @@ namespace keng::graphics
             bool deviceMultithreading = false;
         };
 
-        SystemParams ReadDefaultParams() {
+        SystemParams ReadDefaultParams(filesystem::IFileSystem& filesystem) {
             return CallAndRethrowM + [&] {
                 struct ConfigFile
                 {
@@ -70,7 +70,7 @@ namespace keng::graphics
                     };
                     edt::Delegate<void(FileView)> delegate;
                     delegate.Bind(onFileRead);
-                    filesystem::HandleFileData(filename, delegate);
+                    filesystem::HandleFileData(filesystem, filename, delegate);
                 } catch (...) {
                 }
 
@@ -89,10 +89,11 @@ namespace keng::graphics
 
             {// Find systems
                 m_resourceSystem = m_app->FindSystem<resource::IResourceSystem>();
+                m_filesystem = m_app->FindSystem<filesystem::IFileSystem>();
                 m_api = m_app->FindSystem<gpu::IGPUSystem>();
             }
 
-            auto params = ReadDefaultParams();
+            auto params = ReadDefaultParams(*m_filesystem);
 
             {// Initialize device
                 gpu::DeviceParameters deviceParams;
@@ -104,7 +105,7 @@ namespace keng::graphics
 
             {// Register resource fabrics
                 ResourceFabricRegisterer fabricRegisterer;
-                fabricRegisterer.Register(m_resourceSystem);
+                fabricRegisterer.Register(*app);
             }
         };
     }

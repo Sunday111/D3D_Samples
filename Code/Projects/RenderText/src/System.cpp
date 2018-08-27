@@ -34,7 +34,6 @@ namespace render_text_sample
 {
     namespace
     {
-
         struct CB
         {
             edt::geom::Matrix<float, 4, 4> transform;
@@ -181,6 +180,8 @@ namespace render_text_sample
             m_resourceSystem = app->FindSystem<IResourceSystem>();
             m_graphicsSystem = app->FindSystem<IGraphicsSystem>();
             m_windowSystem = app->FindSystem<IWindowSystem>();
+            m_fileSystem = app->FindSystem<filesystem::IFileSystem>();
+
             auto api_device = m_graphicsSystem->GetDevice()->GetApiDevice();
             m_annotation = api_device->CreateAnnotation();
 
@@ -414,7 +415,7 @@ namespace render_text_sample
                 std::string filename = "Configs/";
                 filename += GetSystemName();
                 filename += ".json";
-                auto buffer = ReadFileToBuffer(filename.data());
+                auto buffer = ReadFileToBuffer(*m_fileSystem, filename.data());
                 yasli::JSONIArchive ar;
                 OpenArchiveJSON(edt::DenseArrayView<uint8_t>(buffer.first.get(), buffer.second), ar);
                 SerializeMandatory(ar, params, "");

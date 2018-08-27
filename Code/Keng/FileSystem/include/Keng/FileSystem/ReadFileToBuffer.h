@@ -11,11 +11,10 @@
 
 namespace keng::filesystem
 {
-    inline std::pair<std::unique_ptr<uint8_t>, size_t> ReadFileToBuffer(const char* filename) {
+    inline std::pair<std::unique_ptr<uint8_t>, size_t> ReadFileToBuffer(filesystem::IFileSystem& filesystem, const char* filename) {
         return CallAndRethrowM + [&] {
             OpenFileParameters openFileParameters{};
             openFileParameters.accessFlags |= FileAccessFlags::Read;
-            auto& filesystem = core::IGlobalEnvironment::Instance().GetGlobalSystem<filesystem::IFileSystem>();
             auto file = filesystem.GetFile(filename, openFileParameters);
             std::pair<std::unique_ptr<uint8_t>, size_t> result;
             auto size = file->GetSize();
@@ -27,12 +26,12 @@ namespace keng::filesystem
         };
     }
 
-    inline void HandleFileData(const char* filename, edt::Delegate<void(edt::DenseArrayView<const uint8_t>)> delegate) {
+    inline void HandleFileData(filesystem::IFileSystem& filesystem, const char* filename, edt::Delegate<void(edt::DenseArrayView<const uint8_t>)> delegate) {
         CallAndRethrowM + [&] {
             size_t size;
             std::unique_ptr<uint8_t> buffer;
 
-            std::tie(buffer, size) = ReadFileToBuffer(filename);
+            std::tie(buffer, size) = ReadFileToBuffer(filesystem, filename);
             delegate.Invoke(edt::DenseArrayView<const uint8_t>(buffer.get(), size));
         };
     }

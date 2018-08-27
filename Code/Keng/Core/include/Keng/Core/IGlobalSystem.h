@@ -7,7 +7,6 @@ namespace keng::core
     class IGlobalSystem : public ISystem
     {
     public:
-        virtual void AssignId(size_t id) = 0;
         virtual ~IGlobalSystem() = default;
     };
 }

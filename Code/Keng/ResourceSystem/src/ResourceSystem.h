@@ -43,9 +43,12 @@ namespace keng::resource
         virtual void AddRuntimeResource(const IResourcePtr& resource, const IDevicePtr& device) override;
         virtual void RegisterResourceFabric(const IResourceFabricPtr& fabric) override;
         virtual void UnregisterFabric(const IResourceFabricPtr& fabric) override;
+        // ~IResource system
 
         IResourceFabricPtr GetFabric(const std::string& resourceType);
         DeviceResources& GetDeviceResources(const IDevicePtr& device);
+
+        filesystem::IFileSystem& GetFileSystem();
 
     protected:
         SystemParams ReadDefaultParams();

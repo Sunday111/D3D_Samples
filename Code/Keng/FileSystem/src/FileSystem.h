@@ -23,9 +23,6 @@ namespace keng::filesystem
         virtual const char* GetSystemName() const override;
         virtual bool ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const override;
 
-        // IGlobalSystem
-        virtual void AssignId(size_t id) override;
-
         // IFileSystem
         virtual IFilePtr GetFile(const char* filename, const OpenFileParameters& params) override;
     };

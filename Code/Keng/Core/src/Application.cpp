@@ -138,7 +138,7 @@ namespace keng::core
         });
 
         IApplicationPtr thisPtr(this);
-        for (auto& module : m_modules) {
+        for (const ModulePtr& module : m_modules) {
             module->GetSystem()->Initialize(thisPtr);
         }
     }

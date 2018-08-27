@@ -12,9 +12,13 @@
 
 namespace keng::graphics
 {
-    FontFabric::FontFabric() :
-        m_library(free_type::LibraryPtr::MakeInstance())
+    FontFabric::FontFabric(const filesystem::IFileSystemPtr& fileSystem) :
+        m_library(free_type::LibraryPtr::MakeInstance()),
+        m_fileSystem(fileSystem)
     {
+        CallAndRethrowM + [&] {
+            edt::ThrowIfFailed(fileSystem != nullptr, "Filesystem is nullptr");
+        };
     }
 
     FontFabric::~FontFabric() = default;
@@ -54,7 +58,7 @@ namespace keng::graphics
             };
             edt::Delegate<void(FileView)> delegate;
             delegate.Bind(onFileRead);
-            filesystem::HandleFileData(info.file.data(), delegate);
+            filesystem::HandleFileData(*m_fileSystem, info.file.data(), delegate);
 
             return result;
         };

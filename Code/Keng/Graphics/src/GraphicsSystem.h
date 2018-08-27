@@ -33,5 +33,6 @@ namespace keng::graphics
 
         resource::IResourceSystemPtr m_resourceSystem;
         gpu::IGPUSystemPtr m_api;
+        keng::filesystem::IFileSystemPtr m_filesystem;
     };
 }

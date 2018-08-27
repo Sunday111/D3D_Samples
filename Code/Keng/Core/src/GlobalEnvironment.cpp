@@ -22,7 +22,6 @@ namespace keng::core
         std::lock_guard<std::mutex>l(m_mutex);
         CallAndRethrowM + [&] {
             auto system = std::dynamic_pointer_cast<IGlobalSystem>(module->GetSystem());
-            system->AssignId(m_modules.size());
             m_modules.push_back(module);
         };
     }
@@ -49,8 +48,7 @@ namespace keng::core
         }
 
         assert(!m_applications.empty());
-        if(!m_applications.empty())
-        {
+        if(!m_applications.empty()) {
             auto it = std::find_if(m_applications.begin(), m_applications.end(), [app](const ApplicationPtr& p) {
                 return p.Get() == app;
             });
@@ -61,6 +59,7 @@ namespace keng::core
             }
         }
     }
+
     ISystemPtr GlobalEnvironment::TryGetSystem(std::string_view name) {
         std::lock_guard<std::mutex>l(m_mutex);
         for (auto& module : m_modules) {

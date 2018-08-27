@@ -11,10 +11,5 @@ namespace keng::core
 
         virtual IGlobalSystem& GetGlobalSystem(size_t id) = 0;
         virtual ~IGlobalEnvironment() = default;
-
-        template<typename T>
-        static inline T& GetGlobalSystem() {
-            return static_cast<T&>(Instance().GetGlobalSystem(T::GetGlobalSystemId()));
-        }
     };
 }

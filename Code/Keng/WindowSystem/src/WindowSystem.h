@@ -6,7 +6,7 @@
 #include "WinWrappers/WinWrappers.h"
 #include "Keng/Core/ISystem.h"
 #include "Keng/Base/Serialization/Serialization.h"
-#include "Keng/FileSystem/IFileSystem.h"
+#include "Keng/FileSystem/FwdDecl.h"
 
 namespace yasli
 {
@@ -48,9 +48,6 @@ namespace keng::window_system
         virtual void Shutdown() override;
 
     protected:
-        std::vector<std::string> m_dependencies;
-
-    private:
         std::unique_ptr<MainWindowClass<TChar>> m_windowClass;
         std::unique_ptr<MainWindow<TChar>> m_window;
     };

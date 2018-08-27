@@ -3,6 +3,7 @@
 #include "EverydayTools/Geom/Vector.h"
 #include "Keng/Graphics/FwdDecl.h"
 #include "Keng/Core/ISystem.h"
+#include "Keng/FileSystem/FwdDecl.h"
 #include "Keng/GraphicsCommon/PrimitiveTopology.h"
 #include "Keng/GPU/Resource/IDeviceBuffer.h"
 #include "Keng/Graphics/IGraphicsSystem.h"
@@ -104,6 +105,7 @@ namespace render_text_sample
         keng::graphics::gpu::IWindowRenderTargetPtr m_windowRT;
         keng::graphics::gpu::IAnnotationPtr m_annotation;
 
+        keng::filesystem::IFileSystemPtr m_fileSystem;
         keng::resource::IResourceSystemPtr m_resourceSystem;
         keng::graphics::IGraphicsSystemPtr m_graphicsSystem;
         keng::window_system::IWindowSystemPtr m_windowSystem;

@@ -137,7 +137,7 @@ namespace keng::resource
                 edt::Delegate<void(FileView)> delegate;
                 delegate.Bind(onFileRead);
 
-                filesystem::HandleFileData(filename, delegate);
+                filesystem::HandleFileData(*m_filesystem, filename, delegate);
             } catch (...) {
             }
 
@@ -163,4 +163,10 @@ namespace keng::resource
             return false;
         };
     }
+
+    keng::filesystem::IFileSystem& ResourceSystem::GetFileSystem()
+    {
+        return *m_filesystem;
+    }
+
 }
