@@ -177,17 +177,6 @@ namespace simple_quad_sample
 
     }
 
-    const char* SampleSystem::GetSystemName() const {
-        return "SimpleQuad";
-    }
-
-    bool SampleSystem::ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const {
-        if (delegate.Invoke(keng::graphics::IGraphicsSystem::SystemName())) return true;
-        if (delegate.Invoke(keng::resource::IResourceSystem::SystemName())) return true;
-        if (delegate.Invoke(keng::window_system::IWindowSystem::SystemName())) return true;
-        return false;
-    }
-
     void SampleSystem::MakeFunctionModel(const std::function<float(float)>& function, const SimpleModel::CB& cb,
         float argumentBegin, float argumentRange, size_t samplesCount, const v4f& color)
     {

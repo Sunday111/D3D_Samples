@@ -1,14 +1,15 @@
 #pragma once
 
-#include "Keng/Graphics/FwdDecl.h"
-#include "Keng/Core/DependencyStorage.h"
-#include "Keng/Core/ISystem.h"
+#include "Keng/Core/System.h"
+#include "Keng/Graphics/IGraphicsSystem.h"
+#include "Keng/WindowSystem/IWindowSystem.h"
+#include "Keng/ResourceSystem/IResourceSystem.h"
 
 namespace simple_quad_sample
 {
     class SampleSystem :
-        public keng::core::RefCountImpl<keng::core::ISystem>,
-        public keng::core::DependenciesContainer<
+        public keng::core::System<
+            SampleSystem,
             keng::resource::IResourceSystem,
             keng::graphics::IGraphicsSystem,
             keng::window_system::IWindowSystem>
@@ -18,11 +19,10 @@ namespace simple_quad_sample
         ~SampleSystem();
 
         // ISystem
+        static const char* SystemName() { return "SimpleQuadSystem"; }
         virtual void Initialize(const keng::core::IApplicationPtr& app) override;
         virtual bool Update() override;
         virtual void Shutdown() override;
-        virtual const char* GetSystemName() const override;
-        virtual bool ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const override;
 
     protected:
         keng::graphics::IEffectPtr m_effect;

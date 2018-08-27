@@ -1,14 +1,15 @@
 #pragma once
 
 #include "EverydayTools/Geom/Vector.h"
-#include "Keng/Graphics/FwdDecl.h"
-#include "Keng/Core/DependencyStorage.h"
-#include "Keng/Core/ISystem.h"
-#include "Keng/FileSystem/FwdDecl.h"
-#include "Keng/GraphicsCommon/PrimitiveTopology.h"
+
+#include "Keng/Core/System.h"
+#include "Keng/ResourceSystem/IResourceSystem.h"
+#include "Keng/FileSystem/IFileSystem.h"
 #include "Keng/GPU/Resource/IDeviceBuffer.h"
 #include "Keng/Graphics/IGraphicsSystem.h"
 #include "Keng/GraphicsCommon/DeviceBufferParameters.h"
+#include "Keng/GraphicsCommon/PrimitiveTopology.h"
+#include "Keng/WindowSystem/IWindowSystem.h"
 
 namespace render_text_sample
 {
@@ -74,8 +75,8 @@ namespace render_text_sample
     };
 
     class System :
-        public keng::core::RefCountImpl<keng::core::ISystem>,
-        public keng::core::DependenciesContainer<
+        public keng::core::System<
+            render_text_sample::System,
             keng::filesystem::IFileSystem,
             keng::resource::IResourceSystem,
             keng::graphics::IGraphicsSystem,
@@ -86,11 +87,10 @@ namespace render_text_sample
         ~System();
 
         // ISystem
+        static const char* SystemName() { return "RenderTextSample"; }
         virtual void Initialize(const keng::core::IApplicationPtr& app) override;
         virtual bool Update() override;
         virtual void Shutdown() override;
-        virtual const char* GetSystemName() const override;
-        virtual bool ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const override;
 
     protected:
         void LoadParameters(const keng::core::IApplicationPtr& app);

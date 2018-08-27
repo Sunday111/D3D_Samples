@@ -19,11 +19,8 @@
 #include "Keng/GraphicsCommon/ViewportParameters.h"
 #include "Keng/GraphicsCommon/WindowRenderTargetParameters.h"
 #include "Keng/Graphics/IDevice.h"
-#include "Keng/Graphics/IGraphicsSystem.h"
 #include "Keng/Graphics/Resource/ITexture.h"
 #include "Keng/Graphics/Resource/IEffect.h"
-#include "Keng/ResourceSystem/IResourceSystem.h"
-#include "Keng/WindowSystem/IWindowSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
 
 namespace textured_quad_sample
@@ -118,17 +115,6 @@ namespace textured_quad_sample
 
     void SampleSystem::Shutdown() {
 
-    }
-
-    const char* SampleSystem::GetSystemName() const {
-        return "TexturedQuad";
-    }
-
-    bool SampleSystem::ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const {
-        if (delegate.Invoke(keng::graphics::IGraphicsSystem::SystemName())) return true;
-        if (delegate.Invoke(keng::resource::IResourceSystem::SystemName())) return true;
-        if (delegate.Invoke(keng::window_system::IWindowSystem::SystemName())) return true;
-        return false;
     }
 
     void SampleSystem::Initialize(const keng::core::IApplicationPtr& app) {

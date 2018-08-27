@@ -26,8 +26,6 @@
 #include "Keng/GraphicsCommon/SamplerParameters.h"
 #include "Keng/GraphicsCommon/DeviceTextureParameters.h"
 #include "Keng/GraphicsCommon/TextureRenderTargetParameters.h"
-#include "Keng/ResourceSystem/IResourceSystem.h"
-#include "Keng/WindowSystem/IWindowSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
 
 namespace render_text_sample
@@ -157,17 +155,6 @@ namespace render_text_sample
 
     void System::Shutdown() {
 
-    }
-
-    const char* System::GetSystemName() const {
-        return "RenderText";
-    }
-
-    bool System::ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const {
-        if (delegate.Invoke(keng::graphics::IGraphicsSystem::SystemName())) return true;
-        if (delegate.Invoke(keng::resource::IResourceSystem::SystemName())) return true;
-        if (delegate.Invoke(keng::window_system::IWindowSystem::SystemName())) return true;
-        return false;
     }
 
     void System::Initialize(const keng::core::IApplicationPtr& app) {

@@ -4,9 +4,11 @@
 #include <vector>
 
 #include "EverydayTools/Geom/Vector.h"
-#include "Keng/Graphics/FwdDecl.h"
-#include "Keng/Core/ISystem.h"
-#include "Keng/Core/DependencyStorage.h"
+
+#include "Keng/Core/System.h"
+#include "Keng/Graphics/IGraphicsSystem.h"
+#include "Keng/ResourceSystem/IResourceSystem.h"
+#include "Keng/WindowSystem/IWindowSystem.h"
 
 namespace simple_quad_sample
 {
@@ -37,8 +39,8 @@ namespace simple_quad_sample
     };
 
     class SampleSystem :
-        public keng::core::RefCountImpl<keng::core::ISystem>,
-        public keng::core::DependenciesContainer<
+        public keng::core::System<
+            SampleSystem,
             keng::resource::IResourceSystem,
             keng::graphics::IGraphicsSystem,
             keng::window_system::IWindowSystem>
@@ -48,11 +50,10 @@ namespace simple_quad_sample
         ~SampleSystem();
 
         // ISystem
+        static const char* SystemName() { return "FourierPrinter"; }
         virtual void Initialize(const keng::core::IApplicationPtr& app) override;
         virtual bool Update() override;
         virtual void Shutdown() override;
-        virtual const char* GetSystemName() const override;
-        virtual bool ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const override;
         // ~ISystem
 
     protected:
