@@ -74,9 +74,8 @@ namespace render_text_sample
         keng::graphics::gpu::IDeviceBufferPtr m_vertices;
     };
 
-    class System :
-        public keng::core::System<
-            render_text_sample::System,
+    class System : public keng::core::System<
+            keng::core::ISystem, render_text_sample::System,
             keng::filesystem::IFileSystem,
             keng::resource::IResourceSystem,
             keng::graphics::IGraphicsSystem,

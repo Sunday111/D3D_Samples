@@ -4,10 +4,12 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
+
 #include "DeviceResources.h"
-#include "Keng/ResourceSystem/IResourceSystem.h"
+#include "Keng/Core/System.h"
 #include "Keng/Base/Serialization/Serialization.h"
-#include "Keng/FileSystem/FwdDecl.h"
+#include "Keng/FileSystem/IFileSystem.h"
+#include "Keng/ResourceSystem/IResourceSystem.h"
 
 namespace keng::resource
 {
@@ -23,15 +25,17 @@ namespace keng::resource
 
     using DeviceResourcesPtr = std::unique_ptr<DeviceResources>;
 
-    class ResourceSystem : public core::RefCountImpl<IResourceSystem>
+    class ResourceSystem : public core::System
+    <
+        IResourceSystem, ResourceSystem,
+        filesystem::IFileSystem
+    >
     {
     public:
         ResourceSystem();
         ~ResourceSystem();
 
         // ISystem
-        virtual const char* GetSystemName() const override;
-        virtual bool ForEachDependency(const edt::Delegate<bool(const char* systemName)>& delegate) const override;
         virtual void Initialize(const core::IApplicationPtr& app) override;
         virtual bool Update() override;
         virtual void Shutdown() override;
@@ -58,6 +62,5 @@ namespace keng::resource
 
         std::vector<DeviceResourcesPtr> m_devicesResources;
         std::unordered_map<std::string, IResourceFabricPtr> m_fabrics;
-        filesystem::IFileSystemPtr m_filesystem;
     };
 }

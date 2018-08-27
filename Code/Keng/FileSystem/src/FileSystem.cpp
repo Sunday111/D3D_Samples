@@ -26,15 +26,6 @@ namespace keng::filesystem
 
     }
 
-    const char* FileSystem::GetSystemName() const {
-        return SystemName();
-    }
-
-    bool FileSystem::ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const {
-        UnusedVar(delegate);
-        return false;
-    }
-
     IFilePtr FileSystem::GetFile(const char* filename, const OpenFileParameters& params) {
         return CallAndRethrowM + [&] {
             return FilePtr::MakeInstance(filename, params);

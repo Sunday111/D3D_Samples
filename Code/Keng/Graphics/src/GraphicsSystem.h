@@ -1,23 +1,30 @@
 #pragma once
 
 #include "FwdDecl.h"
-#include "Keng/FileSystem/FwdDecl.h"
+#include "Keng/Core/System.h"
+#include "Keng/FileSystem/IFileSystem.h"
 #include "Keng/Graphics/IGraphicsListener.h"
 #include "Keng/Graphics/IGraphicsSystem.h"
 #include "Keng/GPU/IGPUSystem.h"
-#include "Keng/GPU/IDevice.h"
+#include "Keng/ResourceSystem/IResourceSystem.h"
+#include "Keng/WindowSystem/IWindowSystem.h"
 
 namespace keng::graphics
 {
-    class GraphicsSystem : public core::RefCountImpl<IGraphicsSystem>
+    class GraphicsSystem : public core::System
+    <
+        IGraphicsSystem, GraphicsSystem,
+        keng::filesystem::IFileSystem,
+        keng::graphics::gpu::IGPUSystem,
+        keng::resource::IResourceSystem,
+        keng::window_system::IWindowSystem
+    >
     {
     public:
         GraphicsSystem();
         ~GraphicsSystem();
 
         // ISystem
-        virtual const char* GetSystemName() const override;
-        virtual bool ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const override;
         virtual void Initialize(const core::IApplicationPtr& app) override;
         virtual bool Update() override;
         virtual void Shutdown() override;
@@ -30,9 +37,5 @@ namespace keng::graphics
         bool m_fullscreen = false;
         core::IApplicationPtr m_app;
         DevicePtr m_device;
-
-        resource::IResourceSystemPtr m_resourceSystem;
-        gpu::IGPUSystemPtr m_api;
-        keng::filesystem::IFileSystemPtr m_filesystem;
     };
 }

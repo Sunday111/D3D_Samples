@@ -1,6 +1,8 @@
 #pragma once
+
 #include "FwdDecl.h"
 #include "Keng/FileSystem/IFileSystem.h"
+#include "Keng/Core/System.h"
 
 namespace keng::filesystem
 {
@@ -10,7 +12,7 @@ namespace keng::filesystem
         IFilePtr file;
     };
 
-    class FileSystem : public core::RefCountImpl<IFileSystem>
+    class FileSystem : public core::System<IFileSystem, FileSystem>
     {
     public:
         FileSystem();
@@ -20,8 +22,6 @@ namespace keng::filesystem
         virtual void Initialize(const core::IApplicationPtr& app) override;
         virtual bool Update() override;
         virtual void Shutdown() override;
-        virtual const char* GetSystemName() const override;
-        virtual bool ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const override;
 
         // IFileSystem
         virtual IFilePtr GetFile(const char* filename, const OpenFileParameters& params) override;

@@ -9,7 +9,7 @@ namespace keng::core
 {
     namespace impl
     {
-        template<typename Head, typename... Tail>
+        template<typename Head = void, typename... Tail>
         class GetPointersTuple
         {
         public:
@@ -24,8 +24,15 @@ namespace keng::core
         public:
             using Type = std::tuple<Ptr<Head>>;
         };
-    }
 
+        template<>
+        class GetPointersTuple<void>
+        {
+        public:
+            using Type = std::tuple<>;
+        };
+    }
+        
     template<typename... Dependencies>
     class DependenciesContainer
     {
@@ -35,12 +42,12 @@ namespace keng::core
                 (StoreDependency<Dependencies>(app), ...);
             };
         }
-
+    
         template<typename T>
         T& GetSystem() {
             return *std::get<Ptr<T>>(m_storage);
         }
-
+    
     private:
         template<typename T>
         void StoreDependency(IApplication& app) {

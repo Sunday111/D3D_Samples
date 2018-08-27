@@ -93,27 +93,6 @@ namespace keng::window_system
         ar(WindowTitle, "title");
     }
 
-    const char* WindowSystem::GetSystemName() const {
-        return SystemName();
-    }
-
-    bool WindowSystem::ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const {
-        return CallAndRethrowM + [&]() -> bool {
-            std::string_view dependencies[] =
-            {
-                filesystem::IFileSystem::SystemName()
-            };
-
-            for (auto& systemName : dependencies) {
-                if (delegate.Invoke(systemName.data())) {
-                    return true;
-                }
-            }
-
-            return false;
-        };
-    }
-
     IWindow* WindowSystem::GetWindow() {
         return m_window.get();
     }

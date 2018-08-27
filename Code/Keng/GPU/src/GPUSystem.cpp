@@ -3,7 +3,6 @@
 #include "Keng/Base/Serialization/OpenArchiveJSON.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
 #include "Keng/WindowSystem/IWindow.h"
-#include "Keng/WindowSystem/IWindowSystem.h"
 
 #include "keng/GPU/DeviceParameters.h"
 #include "Resource/Texture/DeviceTexture.h"
@@ -67,26 +66,5 @@ namespace keng::graphics::gpu
     core::Ptr<IDevice> GPUSystem::CreateDevice(const DeviceParameters& parameters)
     {
         return DevicePtr::MakeInstance(parameters);
-    }
-
-    const char* GPUSystem::GetSystemName() const {
-        return SystemName();
-    }
-
-    bool GPUSystem::ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const {
-        return CallAndRethrowM + [&]() -> bool {
-            std::string_view dependencies[] =
-            {
-                window_system::IWindowSystem::SystemName()
-            };
-
-            for (auto& systemName : dependencies) {
-                if (delegate.Invoke(systemName.data())) {
-                    return true;
-                }
-            }
-
-            return false;
-        };
     }
 }

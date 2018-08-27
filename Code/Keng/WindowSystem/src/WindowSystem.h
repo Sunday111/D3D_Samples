@@ -1,12 +1,12 @@
 ﻿#pragma once
 
-#include "Keng/WindowSystem/IWindowSystem.h"
 #include <string>
+#include "Keng/Base/Serialization/Serialization.h"
+#include "Keng/Core/System.h"
+#include "Keng/FileSystem/IFileSystem.h"
+#include "Keng/WindowSystem/IWindowSystem.h"
 #include "MainWindow.h"
 #include "WinWrappers/WinWrappers.h"
-#include "Keng/Core/ISystem.h"
-#include "Keng/Base/Serialization/Serialization.h"
-#include "Keng/FileSystem/FwdDecl.h"
 
 namespace yasli
 {
@@ -15,7 +15,11 @@ namespace yasli
 
 namespace keng::window_system
 {
-    class WindowSystem : public core::RefCountImpl<window_system::IWindowSystem>
+    class WindowSystem : public core::System
+    <
+        IWindowSystem, WindowSystem,
+        filesystem::IFileSystem
+    >
     {
     public:
         using TChar = char;
@@ -41,8 +45,6 @@ namespace keng::window_system
         virtual IWindow* GetWindow() override;
 
         // ISystem
-        virtual const char* GetSystemName() const override;
-        virtual bool ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const override;
         virtual void Initialize(const core::IApplicationPtr& app) override;
         virtual bool Update() override;
         virtual void Shutdown() override;

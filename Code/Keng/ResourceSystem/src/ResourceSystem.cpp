@@ -27,8 +27,7 @@ namespace keng::resource
 
     void ResourceSystem::Initialize(const core::IApplicationPtr& app) {
         CallAndRethrowM + [&] {
-            m_filesystem = app->FindSystem<filesystem::IFileSystem>();
-            edt::ThrowIfFailed(m_filesystem != nullptr, "Resource system needs filesystem!");
+            StoreDependencies(*app);
             m_parameters = ReadDefaultParams();
         };
     }
@@ -137,7 +136,7 @@ namespace keng::resource
                 edt::Delegate<void(FileView)> delegate;
                 delegate.Bind(onFileRead);
 
-                filesystem::HandleFileData(*m_filesystem, filename, delegate);
+                filesystem::HandleFileData(GetSystem<filesystem::IFileSystem>(), filename, delegate);
             } catch (...) {
             }
 
@@ -145,28 +144,9 @@ namespace keng::resource
         };
     }
 
-    const char* ResourceSystem::GetSystemName() const {
-        return SystemName();
-    }
-
-    bool ResourceSystem::ForEachDependency(const edt::Delegate<bool(const char* systemName)>& delegate) const {
-        return CallAndRethrowM + [&]() -> bool {
-            std::string_view dependencies[] =
-            {
-                filesystem::IFileSystem::SystemName()
-            };
-
-            for (auto dependency : dependencies) {
-                if (delegate.Invoke(dependency.data())) return true;
-            }
-
-            return false;
-        };
-    }
-
     keng::filesystem::IFileSystem& ResourceSystem::GetFileSystem()
     {
-        return *m_filesystem;
+        return GetSystem<filesystem::IFileSystem>();
     }
 
 }

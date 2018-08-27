@@ -10,9 +10,7 @@
 #include "Keng/FileSystem/ReadFileToBuffer.h"
 #include "Keng/GPU/DeviceParameters.h"
 #include "Keng/Graphics/Resource/IEffect.h"
-#include "Keng/ResourceSystem/IResourceSystem.h"
 #include "Keng/WindowSystem/IWindow.h"
-#include "Keng/WindowSystem/IWindowSystem.h"
 
 #include "Resource/Effect/Effect.h"
 #include "Resource/Texture/Texture.h"
@@ -86,20 +84,15 @@ namespace keng::graphics
     void GraphicsSystem::Initialize(const core::IApplicationPtr& app) {
         CallAndRethrowM + [&] {
             m_app = app;
+            StoreDependencies(*app);
 
-            {// Find systems
-                m_resourceSystem = m_app->FindSystem<resource::IResourceSystem>();
-                m_filesystem = m_app->FindSystem<filesystem::IFileSystem>();
-                m_api = m_app->FindSystem<gpu::IGPUSystem>();
-            }
-
-            auto params = ReadDefaultParams(*m_filesystem);
+            auto params = ReadDefaultParams(GetSystem<filesystem::IFileSystem>());
 
             {// Initialize device
                 gpu::DeviceParameters deviceParams;
                 deviceParams.debugDevice = params.debugDevice;
                 deviceParams.noDeviceMultithreading = !params.deviceMultithreading;
-                auto apiDevice = m_api->CreateDevice(deviceParams);
+                auto apiDevice = GetSystem<gpu::IGPUSystem>().CreateDevice(deviceParams);
                 m_device = DevicePtr::MakeInstance(*apiDevice);
             }
 
@@ -122,29 +115,6 @@ namespace keng::graphics
     }
 
     ITexturePtr GraphicsSystem::CreateTexture(const DeviceTextureParameters& params) {
-        return m_device->CreateRuntimeTexture(params, *m_resourceSystem);
-    }
-
-    const char* GraphicsSystem::GetSystemName() const {
-        return SystemName();
-    }
-
-    bool GraphicsSystem::ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const {
-        return CallAndRethrowM + [&]() -> bool {
-            std::string_view dependencies[] =
-            {
-                resource::IResourceSystem::SystemName(),
-                window_system::IWindowSystem::SystemName(),
-                gpu::IGPUSystem::SystemName()
-            };
-
-            for (auto& systemName : dependencies) {
-                if (delegate.Invoke(systemName.data())) {
-                    return true;
-                }
-            }
-
-            return false;
-        };
+        return m_device->CreateRuntimeTexture(params, GetSystem<resource::IResourceSystem>());
     }
 }

@@ -1,20 +1,20 @@
 #pragma once
 
 #include "FwdDecl.h"
+#include "Keng/Core/System.h"
 #include "Keng/GPU/IGPUSystem.h"
-#include "Device.h"
+#include "Keng/WindowSystem/IWindowSystem.h"
 
 namespace keng::graphics::gpu
 {
-    class GPUSystem : public core::RefCountImpl<IGPUSystem>
+    class GPUSystem : public core::System<IGPUSystem, GPUSystem,
+        window_system::IWindowSystem>
     {
     public:
         GPUSystem();
         ~GPUSystem();
 
         // ISystem
-        virtual const char* GetSystemName() const override;
-        virtual bool ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const override;
         virtual void Initialize(const core::IApplicationPtr& app) override;
         virtual bool Update() override;
         virtual void Shutdown() override;
@@ -23,6 +23,6 @@ namespace keng::graphics::gpu
         virtual core::Ptr<IDevice> CreateDevice(const DeviceParameters&) override;
 
     private:
-        core::Ptr<Device> m_device;
+        DevicePtr m_device;
     };
 }

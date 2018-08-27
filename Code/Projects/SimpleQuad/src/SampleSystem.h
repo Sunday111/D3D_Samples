@@ -7,9 +7,8 @@
 
 namespace simple_quad_sample
 {
-    class SampleSystem :
-        public keng::core::System<
-            SampleSystem,
+    class SampleSystem : public keng::core::System<
+            keng::core::ISystem, SampleSystem,
             keng::resource::IResourceSystem,
             keng::graphics::IGraphicsSystem,
             keng::window_system::IWindowSystem>
