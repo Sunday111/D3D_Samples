@@ -14,11 +14,6 @@ namespace keng::graphics::gpu
         GPUSystem();
         ~GPUSystem();
 
-        // ISystem
-        virtual void Initialize(const core::IApplicationPtr& app) override;
-        virtual bool Update() override;
-        virtual void Shutdown() override;
-
         // IGPUSystem
         virtual core::Ptr<IDevice> CreateDevice(const DeviceParameters&) override;
 

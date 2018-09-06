@@ -36,9 +36,7 @@ namespace keng::resource
         ~ResourceSystem();
 
         // ISystem
-        virtual void Initialize(const core::IApplicationPtr& app) override;
-        virtual bool Update() override;
-        virtual void Shutdown() override;
+        virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const  keng::core::SystemEvent&) override;
 
         // IResource system
         virtual IResourcePtr GetResource(const char* filename) override;
@@ -56,6 +54,12 @@ namespace keng::resource
 
     protected:
         SystemParams ReadDefaultParams();
+
+    private:
+    
+		void Initialize(const core::IApplicationPtr& app);
+		bool Update();
+		void Shutdown();
 
     private:
         SystemParams m_parameters;

@@ -52,19 +52,9 @@ namespace keng::graphics::gpu
 
     GPUSystem::~GPUSystem() = default;
 
-    void GPUSystem::Initialize(const core::IApplicationPtr& app) {
-        UnusedVar(app);
-    }
-
-    bool GPUSystem::Update() {
-        return true;
-    }
-
-    void GPUSystem::Shutdown() {
-    }
-
     core::Ptr<IDevice> GPUSystem::CreateDevice(const DeviceParameters& parameters)
     {
         return DevicePtr::MakeInstance(parameters);
     }
+
 }

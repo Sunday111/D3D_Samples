@@ -17,7 +17,7 @@ namespace keng::core
     class IApplication : public IRefCountObject
     {
     public:
-        virtual bool Update() = 0;
+        virtual void Update() = 0;
         virtual void Run() = 0;
         virtual void Initialize(const ApplicationStartupParameters& params) = 0;
         virtual void Shutdown() = 0;

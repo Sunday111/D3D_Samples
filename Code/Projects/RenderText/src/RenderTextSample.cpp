@@ -1,10 +1,11 @@
-#include "System.h"
+#include "RenderTextSample.h"
 #include "EverydayTools/Delegate.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
 #include "Keng/Base/Serialization/openarchivejson.h"
 #include "Keng/Core/IApplication.h"
+#include "Keng/Core/SystemEvent.h"
 #include "Keng/FileSystem/OpenFileParameters.h"
 #include "Keng/FileSystem/ReadFileToBuffer.h"
 #include "Keng/Graphics/IDevice.h"
@@ -59,11 +60,11 @@ namespace render_text_sample
         }
     }
 
-    System::System() = default;
+    RenderTextSample::RenderTextSample() = default;
 
-    System::~System() = default;
+    RenderTextSample::~RenderTextSample() = default;
 
-    bool System::Update() {
+    bool RenderTextSample::Update() {
         using namespace keng;
         using namespace graphics;
 
@@ -153,11 +154,7 @@ namespace render_text_sample
         };
     }
 
-    void System::Shutdown() {
-
-    }
-
-    void System::Initialize(const keng::core::IApplicationPtr& app) {
+    void RenderTextSample::Initialize(const keng::core::IApplicationPtr& app) {
         using namespace keng;
         using namespace graphics;
         using namespace resource;
@@ -387,7 +384,21 @@ namespace render_text_sample
         bool vSync = false;
     };
 
-    void System::LoadParameters(const keng::core::IApplicationPtr& app) {
+    void RenderTextSample::OnSystemEvent(const keng::core::IApplicationPtr& app, const keng::core::SystemEvent& e) {
+        return CallAndRethrowM + [&] {
+            switch (e)
+            {
+            case keng::core::SystemEvent::Initialize:
+                Initialize(app);
+                break;
+            case keng::core::SystemEvent::Update:
+                Update();
+                break;
+            }
+        };
+    }
+
+    void RenderTextSample::LoadParameters(const keng::core::IApplicationPtr& app) {
         CallAndRethrowM + [&] {
             using namespace keng;
             using namespace filesystem;

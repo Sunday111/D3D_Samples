@@ -1,7 +1,8 @@
-﻿#include "SampleSystem.h"
+﻿#include "FourierPrinterSystem.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 #include "Keng/Core/IApplication.h"
+#include "Keng/Core/SystemEvent.h"
 #include "Keng/GPU/DeviceBufferMapper.h"
 #include "Keng/GPU/ScopedAnnotation.h"
 #include "Keng/GPU/RenderTarget/IWindowRenderTarget.h"
@@ -108,11 +109,11 @@ namespace simple_quad_sample
         }
     }
 
-    SampleSystem::SampleSystem() = default;
+    FourierPrinterSystem::FourierPrinterSystem() = default;
 
-    SampleSystem::~SampleSystem() = default;
+    FourierPrinterSystem::~FourierPrinterSystem() = default;
 
-    bool SampleSystem::Update() {
+    bool FourierPrinterSystem::Update() {
         using namespace keng;
         using namespace graphics;
 
@@ -173,11 +174,21 @@ namespace simple_quad_sample
         };
     }
 
-    void SampleSystem::Shutdown() {
-
+    void FourierPrinterSystem::OnSystemEvent(const keng::core::IApplicationPtr& app, const keng::core::SystemEvent& e) {
+        return CallAndRethrowM + [&] {
+            switch (e)
+            {
+            case keng::core::SystemEvent::Initialize:
+                Initialize(app);
+                break;
+            case keng::core::SystemEvent::Update:
+                Update();
+                break;
+            }
+        };
     }
 
-    void SampleSystem::MakeFunctionModel(const std::function<float(float)>& function, const SimpleModel::CB& cb,
+    void FourierPrinterSystem::MakeFunctionModel(const std::function<float(float)>& function, const SimpleModel::CB& cb,
         float argumentBegin, float argumentRange, size_t samplesCount, const v4f& color)
     {
         using namespace keng;
@@ -251,7 +262,7 @@ namespace simple_quad_sample
         };
     }
 
-    void SampleSystem::Initialize(const keng::core::IApplicationPtr& app) {
+    void FourierPrinterSystem::Initialize(const keng::core::IApplicationPtr& app) {
         using namespace keng;
         using namespace graphics;
         using namespace resource;

@@ -19,7 +19,7 @@ namespace keng::core {
         using Period = std::chrono::nanoseconds;
 
         // IApplication
-        virtual bool Update() override;
+        virtual void Update() override;
         virtual void Initialize(const ApplicationStartupParameters& params) override;
         virtual void Run() override;
         virtual void Shutdown() override;
@@ -29,10 +29,14 @@ namespace keng::core {
     private:
         void LoadModule(std::string_view name);
         void LoadDependencies();
-        bool UpdateSystems();
+        void UpdateSystems();
+		void FreeModules();
+		void NotifyAll(const SystemEvent&);
+		void NotifyAllReversed(const SystemEvent&);
 
     private:
         bool m_vSync = false;
+        bool m_quiting = false;
         FrameRateCounter<Period> m_fpsCounter;
         std::vector<ModulePtr> m_modules;
     };

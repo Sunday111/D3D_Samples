@@ -7,6 +7,7 @@
 #include "Keng/Base/Serialization/OpenArchiveJSON.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
 #include "Keng/Core/IApplication.h"
+#include "Keng/Core/SystemEvent.h"
 #include "Keng/FileSystem/ReadFileToBuffer.h"
 #include "Keng/GPU/DeviceParameters.h"
 #include "Keng/Graphics/Resource/IEffect.h"
@@ -103,13 +104,6 @@ namespace keng::graphics
         };
     }
 
-    bool GraphicsSystem::Update() {
-        return true;
-    }
-
-    void GraphicsSystem::Shutdown() {
-    }
-
     IDevicePtr GraphicsSystem::GetDevice() {
         return m_device;
     }
@@ -117,4 +111,15 @@ namespace keng::graphics
     ITexturePtr GraphicsSystem::CreateTexture(const DeviceTextureParameters& params) {
         return m_device->CreateRuntimeTexture(params, GetSystem<resource::IResourceSystem>());
     }
+
+	void GraphicsSystem::OnSystemEvent(const keng::core::IApplicationPtr& app, const keng::core::SystemEvent& e)
+	{
+		switch (e)
+		{
+		case keng::core::SystemEvent::Initialize:
+			Initialize(app);
+			break;
+		}
+	}
+
 }

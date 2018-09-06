@@ -25,13 +25,14 @@ namespace keng::graphics
         ~GraphicsSystem();
 
         // ISystem
-        virtual void Initialize(const core::IApplicationPtr& app) override;
-        virtual bool Update() override;
-        virtual void Shutdown() override;
+        virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const  keng::core::SystemEvent&) override;
 
         // IGraphicsSystem
         virtual IDevicePtr GetDevice() override;
         virtual ITexturePtr CreateTexture(const DeviceTextureParameters& params) override;
+
+    private:
+        void Initialize(const core::IApplicationPtr& app);
 
     private:
         bool m_fullscreen = false;
