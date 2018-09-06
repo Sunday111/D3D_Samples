@@ -27,7 +27,8 @@ namespace keng::core
             auto module = ModulePtr::MakeInstance(name);
             if (module->IsGlobalModule()) {
                 GlobalEnvironment::PrivateInstance().RegisterModule(module);
-            } else {
+            }
+            else {
                 m_modules.push_back(ModulePtr::MakeInstance(name));
             }
         };
@@ -62,10 +63,10 @@ namespace keng::core
         } while (addedNewSystem);
     }
 
-	void Application::UpdateSystems() {
-		return CallAndRethrowM + [&] {
-			NotifyAll(SystemEvent::Update);
-		};
+    void Application::UpdateSystems() {
+        return CallAndRethrowM + [&] {
+            NotifyAll(SystemEvent::Update);
+        };
     }
 
     void Application::Initialize(const ApplicationStartupParameters& params) {
@@ -131,8 +132,8 @@ namespace keng::core
             return dependencyFound;
         });
 
-		NotifyAll(SystemEvent::Initialize);
-		NotifyAll(SystemEvent::PostInitialize);
+        NotifyAll(SystemEvent::Initialize);
+        NotifyAll(SystemEvent::PostInitialize);
     }
 
     void Application::Update() {
@@ -148,7 +149,8 @@ namespace keng::core
                     //std::this_thread::sleep_for(sleep); <-- so slow!
                     Sleep(sleep);
                 }
-            } else {
+            }
+            else {
                 UpdateSystems();
             }
         };
@@ -156,12 +158,12 @@ namespace keng::core
 
     void Application::Run() {
         CallAndRethrowM + [&] {
-			while (!m_quiting)
-			{
-				Update();
-			};
+            while (!m_quiting)
+            {
+                Update();
+            };
 
-			FreeModules();
+            FreeModules();
         };
     }
 
@@ -184,40 +186,40 @@ namespace keng::core
     }
 
     void Application::Shutdown() {
-		m_quiting = true;
+        m_quiting = true;
     }
 
-	void Application::FreeModules() {
-		NotifyAllReversed(SystemEvent::Shutdown);
+    void Application::FreeModules() {
+        NotifyAllReversed(SystemEvent::Shutdown);
 
-		while (!m_modules.empty()) {
-			//assert(m_modules.back()->GetSystem()->GetReferencesCount() == 1);
-			m_modules.pop_back();
-		}
+        while (!m_modules.empty()) {
+            //assert(m_modules.back()->GetSystem()->GetReferencesCount() == 1);
+            m_modules.pop_back();
+        }
 
-		GlobalEnvironment::PrivateInstance().DestroyApplication(this);
-	}
+        GlobalEnvironment::PrivateInstance().DestroyApplication(this);
+    }
 
-	void Application::NotifyAll(const SystemEvent& event) {
-		CallAndRethrowM + [&] {
-			IApplicationPtr app(this);
-			for (auto& module : m_modules) {
-				if (auto& system = module->GetSystem()) {
-					system->OnSystemEvent(app, event);
-				}
-			}
-		};
-	}
+    void Application::NotifyAll(const SystemEvent& event) {
+        CallAndRethrowM + [&] {
+            IApplicationPtr app(this);
+            for (auto& module : m_modules) {
+                if (auto& system = module->GetSystem()) {
+                    system->OnSystemEvent(app, event);
+                }
+            }
+        };
+    }
 
-	void Application::NotifyAllReversed(const SystemEvent& event) {
-		CallAndRethrowM + [&] {
-			IApplicationPtr app(this);
-			for (auto iModule = m_modules.rbegin(); iModule != m_modules.rend(); ++iModule) {
-				if (auto& system = (*iModule)->GetSystem()) {
-					system->OnSystemEvent(app, event);
-				}
-			}
-		};
-	}
+    void Application::NotifyAllReversed(const SystemEvent& event) {
+        CallAndRethrowM + [&] {
+            IApplicationPtr app(this);
+            for (auto iModule = m_modules.rbegin(); iModule != m_modules.rend(); ++iModule) {
+                if (auto& system = (*iModule)->GetSystem()) {
+                    system->OnSystemEvent(app, event);
+                }
+            }
+        };
+    }
 
 }

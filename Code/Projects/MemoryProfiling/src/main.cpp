@@ -3,7 +3,9 @@
 USE_KENG_MEMORY_MANAGER
 #endif
 
+#include "Keng/Core/IApplication.h"
 #include "Keng/Core/ISystem.h"
+#include "Keng/Core/SystemEvent.h"
 #include "EverydayTools/UnusedVar.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
@@ -21,12 +23,28 @@ using namespace core;
 class System : public RefCountImpl<ISystem>
 {
 public:
-    virtual void Initialize(const keng::core::IApplicationPtr&) override {
+    using SystemEvent = keng::core::SystemEvent;
+
+    virtual void OnSystemEvent(const keng::core::IApplicationPtr& app, const SystemEvent& e) {
+        return CallAndRethrowM + [&] {
+            switch (e)
+            {
+            case SystemEvent::Initialize:
+                Initialize();
+                break;
+            case SystemEvent::Update:
+                Update(app);
+                break;
+            }
+        };
+    }
+
+    void Initialize() {
         srand(105);
     }
 
-    virtual bool Update() override {
-        return CallAndRethrowM + [&] {
+    void Update(const keng::core::IApplicationPtr& app) {
+        CallAndRethrowM + [&] {
             auto t0 = std::chrono::high_resolution_clock::now();
 
             for (int frame = 0; frame < 50000; ++frame)
@@ -63,12 +81,8 @@ public:
             stream << "    Duration: " << duration << "ms" << std::endl;
             stream << std::endl;
 
-            return false;
+            app->Shutdown();
         };
-    }
-
-    virtual void Shutdown() override {
-
     }
 
     virtual const char* GetSystemName() const override {

@@ -74,26 +74,27 @@ namespace render_text_sample
         keng::graphics::gpu::IDeviceBufferPtr m_vertices;
     };
 
-    class System : public keng::core::System<
-            keng::core::ISystem, render_text_sample::System,
+    class RenderTextSample : public keng::core::System<
+            keng::core::ISystem, render_text_sample::RenderTextSample,
             keng::filesystem::IFileSystem,
             keng::resource::IResourceSystem,
             keng::graphics::IGraphicsSystem,
             keng::window_system::IWindowSystem>
     {
     public:
-        System();
-        ~System();
+        RenderTextSample();
+        ~RenderTextSample();
 
         // ISystem
         static const char* SystemName() { return "RenderTextSample"; }
-        virtual void Initialize(const keng::core::IApplicationPtr& app) override;
-        virtual bool Update() override;
-        virtual void Shutdown() override;
+        virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const keng::core::SystemEvent& e) override;
 
-    protected:
+    private:
+        void Initialize(const keng::core::IApplicationPtr& app);
+        bool Update();
         void LoadParameters(const keng::core::IApplicationPtr& app);
 
+    private:
         keng::graphics::gpu::IDeviceBufferPtr m_constantBuffer;
 
         keng::graphics::IEffectPtr m_texturedEffect;

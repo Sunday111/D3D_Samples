@@ -65,7 +65,7 @@ namespace keng::window_system
         };
     }
 
-    bool WindowSystem::Update() {
+    void WindowSystem::Update(const core::IApplicationPtr& app) {
         return CallAndRethrowM + [&] {
             MSG msg;
             if (WA::PeekMessage_(&msg, nullptr, 0, 0, PM_REMOVE)) {
@@ -73,10 +73,9 @@ namespace keng::window_system
                 TranslateMessage(&msg);
                 WA::DispatchMessage_(&msg);
                 if (msg.message == WM_QUIT) {
-                    return false;
+                    app->Shutdown();
                 }
             }
-            return true;
         };
     }
 
@@ -102,7 +101,7 @@ namespace keng::window_system
 				Initialize(app);
 				break;
 			case core::SystemEvent::Update:
-				Update();
+				Update(app);
 				break;
 			}
 		};

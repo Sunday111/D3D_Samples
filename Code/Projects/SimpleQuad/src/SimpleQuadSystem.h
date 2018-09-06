@@ -7,23 +7,26 @@
 
 namespace simple_quad_sample
 {
-    class SampleSystem : public keng::core::System<
-            keng::core::ISystem, SampleSystem,
+    class SimpleQuadSystem : public keng::core::System<
+            keng::core::ISystem, SimpleQuadSystem,
             keng::resource::IResourceSystem,
             keng::graphics::IGraphicsSystem,
             keng::window_system::IWindowSystem>
     {
     public:
-        SampleSystem();
-        ~SampleSystem();
+        SimpleQuadSystem();
+        ~SimpleQuadSystem();
 
         // ISystem
         static const char* SystemName() { return "SimpleQuadSystem"; }
-        virtual void Initialize(const keng::core::IApplicationPtr& app) override;
-        virtual bool Update() override;
-        virtual void Shutdown() override;
+        virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const keng::core::SystemEvent& e) override;
 
-    protected:
+    private:
+        void Initialize(const keng::core::IApplicationPtr& app);
+        bool Update();
+        void Shutdown();
+
+    private:
         keng::graphics::IEffectPtr m_effect;
         keng::graphics::gpu::IDeviceBufferPtr m_constantBuffer;
         keng::graphics::gpu::IDeviceBufferPtr m_vertexBuffer;

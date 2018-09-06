@@ -51,16 +51,18 @@ namespace simple_quad_sample
 
         // ISystem
         static const char* SystemName() { return "FourierPrinter"; }
-        virtual void Initialize(const keng::core::IApplicationPtr& app) override;
-        virtual bool Update() override;
-        virtual void Shutdown() override;
+        virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const keng::core::SystemEvent& e) override;
         // ~ISystem
 
     protected:
         void MakeFunctionModel(const std::function<float(float)>& function, const SimpleModel::CB& cb,
             float argumentBegin, float argumentRange, size_t samplesCount, const v4f& color);
 
-    protected:
+    private:
+        void Initialize(const keng::core::IApplicationPtr& app);
+        bool Update();
+
+    private:
         std::vector<SimpleModel> m_models;
         keng::graphics::gpu::ITextureRenderTargetPtr m_textureRT;
         keng::graphics::gpu::IDepthStencilPtr m_depthStencil;

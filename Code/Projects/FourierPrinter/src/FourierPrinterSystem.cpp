@@ -2,6 +2,7 @@
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Exception/CheckedCast.h"
 #include "Keng/Core/IApplication.h"
+#include "Keng/Core/SystemEvent.h"
 #include "Keng/GPU/DeviceBufferMapper.h"
 #include "Keng/GPU/ScopedAnnotation.h"
 #include "Keng/GPU/RenderTarget/IWindowRenderTarget.h"
@@ -173,8 +174,18 @@ namespace simple_quad_sample
         };
     }
 
-    void FourierPrinterSystem::Shutdown() {
-
+    void FourierPrinterSystem::OnSystemEvent(const keng::core::IApplicationPtr& app, const keng::core::SystemEvent& e) {
+        return CallAndRethrowM + [&] {
+            switch (e)
+            {
+            case keng::core::SystemEvent::Initialize:
+                Initialize(app);
+                break;
+            case keng::core::SystemEvent::Update:
+                Update();
+                break;
+            }
+        };
     }
 
     void FourierPrinterSystem::MakeFunctionModel(const std::function<float(float)>& function, const SimpleModel::CB& cb,

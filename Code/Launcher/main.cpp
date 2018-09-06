@@ -94,9 +94,7 @@ namespace {
                 params.modulesToLoad = edt::MakeArrayView(rawNames);
 
                 app->Initialize(params);
-                app->Run();
-                app->Shutdown();
-                
+                app->Run();                
 
                 return 0;
             };

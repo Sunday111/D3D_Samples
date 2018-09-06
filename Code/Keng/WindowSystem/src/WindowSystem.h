@@ -50,7 +50,7 @@ namespace keng::window_system
     private:
         // ISystem
         void Initialize(const core::IApplicationPtr& app);
-        bool Update();
+        void Update(const core::IApplicationPtr& app);
 
     private:
         std::unique_ptr<MainWindowClass<TChar>> m_windowClass;
