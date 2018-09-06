@@ -38,16 +38,16 @@ namespace simple_quad_sample
         keng::graphics::gpu::IDeviceBufferPtr constantBuffer;
     };
 
-    class SampleSystem :
+    class FourierPrinterSystem :
         public keng::core::System<
-            keng::core::ISystem, SampleSystem,
+            keng::core::ISystem, FourierPrinterSystem,
             keng::resource::IResourceSystem,
             keng::graphics::IGraphicsSystem,
             keng::window_system::IWindowSystem>
     {
     public:
-        SampleSystem();
-        ~SampleSystem();
+        FourierPrinterSystem();
+        ~FourierPrinterSystem();
 
         // ISystem
         static const char* SystemName() { return "FourierPrinter"; }

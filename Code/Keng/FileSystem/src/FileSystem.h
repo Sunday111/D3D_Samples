@@ -18,11 +18,6 @@ namespace keng::filesystem
         FileSystem();
         ~FileSystem();
 
-        // ISystem
-        virtual void Initialize(const core::IApplicationPtr& app) override;
-        virtual bool Update() override;
-        virtual void Shutdown() override;
-
         // IFileSystem
         virtual IFilePtr GetFile(const char* filename, const OpenFileParameters& params) override;
     };

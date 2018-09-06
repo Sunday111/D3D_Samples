@@ -1,9 +1,11 @@
+#include <algorithm>
+
 #include "Application.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
 #include "EverydayTools/Exception/ThrowIfFailed.h"
 #include "Keng/Core/ISystem.h"
+#include "Keng/Core/SystemEvent.h"
 #include "WinWrappers/WinWrappers.h"
-#include <algorithm>
 #include "WinWrappers/WinWrappers.h"
 #include "Keng/Core/ISystem.h"
 #include "GlobalEnvironment.h"
@@ -60,18 +62,10 @@ namespace keng::core
         } while (addedNewSystem);
     }
 
-    bool Application::UpdateSystems() {
-        return CallAndRethrowM + [&] {
-            bool finished = false;
-            for (auto& module : m_modules) {
-                if (auto& system = module->GetSystem()) {
-                    if (!system->Update()) {
-                        finished = true;
-                    }
-                }
-            }
-            return !finished;
-        };
+	void Application::UpdateSystems() {
+		return CallAndRethrowM + [&] {
+			NotifyAll(SystemEvent::Update);
+		};
     }
 
     void Application::Initialize(const ApplicationStartupParameters& params) {
@@ -137,18 +131,16 @@ namespace keng::core
             return dependencyFound;
         });
 
-        IApplicationPtr thisPtr(this);
-        for (const ModulePtr& module : m_modules) {
-            module->GetSystem()->Initialize(thisPtr);
-        }
+		NotifyAll(SystemEvent::Initialize);
+		NotifyAll(SystemEvent::PostInitialize);
     }
 
-    bool Application::Update() {
+    void Application::Update() {
         return CallAndRethrowM + [&] {
             if (m_vSync) {
                 using namespace std::chrono;
                 auto t0 = high_resolution_clock::now();
-                auto retVal = UpdateSystems();
+                UpdateSystems();
                 auto t1 = high_resolution_clock::now();
                 auto average = m_fpsCounter.CalcAverageTick(t1 - t0);
                 auto sleep = m_fpsCounter.GetDesiredFrameDuration() - average;
@@ -156,16 +148,20 @@ namespace keng::core
                     //std::this_thread::sleep_for(sleep); <-- so slow!
                     Sleep(sleep);
                 }
-                return retVal;
             } else {
-                return UpdateSystems();
+                UpdateSystems();
             }
         };
     }
 
     void Application::Run() {
         CallAndRethrowM + [&] {
-            while (Update());
+			while (!m_quiting)
+			{
+				Update();
+			};
+
+			FreeModules();
         };
     }
 
@@ -188,16 +184,40 @@ namespace keng::core
     }
 
     void Application::Shutdown() {
-        for (auto it = m_modules.rbegin(); it != m_modules.rend(); ++it) {
-            (*it)->GetSystem()->Shutdown();
-        }
-
-        while (!m_modules.empty()) {
-            //assert(m_modules.back()->GetSystem()->GetReferencesCount() == 1);
-            m_modules.pop_back();
-        }
-
-        GlobalEnvironment::PrivateInstance().DestroyApplication(this);
+		m_quiting = true;
     }
+
+	void Application::FreeModules() {
+		NotifyAllReversed(SystemEvent::Shutdown);
+
+		while (!m_modules.empty()) {
+			//assert(m_modules.back()->GetSystem()->GetReferencesCount() == 1);
+			m_modules.pop_back();
+		}
+
+		GlobalEnvironment::PrivateInstance().DestroyApplication(this);
+	}
+
+	void Application::NotifyAll(const SystemEvent& event) {
+		CallAndRethrowM + [&] {
+			IApplicationPtr app(this);
+			for (auto& module : m_modules) {
+				if (auto& system = module->GetSystem()) {
+					system->OnSystemEvent(app, event);
+				}
+			}
+		};
+	}
+
+	void Application::NotifyAllReversed(const SystemEvent& event) {
+		CallAndRethrowM + [&] {
+			IApplicationPtr app(this);
+			for (auto iModule = m_modules.rbegin(); iModule != m_modules.rend(); ++iModule) {
+				if (auto& system = (*iModule)->GetSystem()) {
+					system->OnSystemEvent(app, event);
+				}
+			}
+		};
+	}
 
 }

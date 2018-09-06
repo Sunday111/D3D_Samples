@@ -1,6 +1,7 @@
 #include "WindowSystem.h"
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "Keng/Core/IApplication.h"
+#include "Keng/Core/SystemEvent.h"
 #include "Keng/Base/Serialization/SerializeMandatory.h"
 #include "keng/Base/Serialization/OpenArchiveJSON.h"
 #include "Keng/FileSystem/ReadFileToBuffer.h"
@@ -79,10 +80,6 @@ namespace keng::window_system
         };
     }
 
-    void WindowSystem::Shutdown() {
-
-    }
-
     MainWindow<WindowSystem::TChar>* WindowSystem::GetWindow() const {
         return m_window.get();
     }
@@ -96,4 +93,19 @@ namespace keng::window_system
     IWindow* WindowSystem::GetWindow() {
         return m_window.get();
     }
+
+	void WindowSystem::OnSystemEvent(const keng::core::IApplicationPtr& app, const keng::core::SystemEvent& e) {
+		CallAndRethrowM + [&] {
+			switch (e)
+			{
+			case core::SystemEvent::Initialize:
+				Initialize(app);
+				break;
+			case core::SystemEvent::Update:
+				Update();
+				break;
+			}
+		};
+	}
+
 }

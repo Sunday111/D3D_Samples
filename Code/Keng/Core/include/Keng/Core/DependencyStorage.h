@@ -39,6 +39,7 @@ namespace keng::core
     public:
         void StoreDependencies(IApplication& app) {
             CallAndRethrowM + [&] {
+                UnusedVar(app);
                 (StoreDependency<Dependencies>(app), ...);
             };
         }

@@ -6,6 +6,7 @@
 #include "Keng/Base/Serialization/SerializeMandatory.h"
 #include "Keng/FileSystem/ReadFileToBuffer.h"
 #include "Keng/Core/IApplication.h"
+#include "Keng/Core/SystemEvent.h"
 
 #include "EverydayTools/Array/ArrayViewVector.h"
 #include "EverydayTools/Exception/CallAndRethrow.h"
@@ -148,5 +149,23 @@ namespace keng::resource
     {
         return GetSystem<filesystem::IFileSystem>();
     }
+
+	void ResourceSystem::OnSystemEvent(const keng::core::IApplicationPtr& app, const keng::core::SystemEvent& e)
+	{
+		CallAndRethrowM + [&] {
+			switch (e)
+			{
+			case core::SystemEvent::Initialize:
+				Initialize(app);
+				break;
+			case core::SystemEvent::Update:
+				Update();
+				break;
+			case core::SystemEvent::Shutdown:
+				Shutdown();
+				break;
+			}
+		};
+	}
 
 }

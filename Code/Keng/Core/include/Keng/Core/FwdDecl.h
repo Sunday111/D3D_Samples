@@ -14,4 +14,6 @@ namespace keng::core
 
     class IApplication;
     using IApplicationPtr = core::Ptr<IApplication>;
+
+    enum class SystemEvent;
 }

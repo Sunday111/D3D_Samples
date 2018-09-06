@@ -22,5 +22,6 @@ add_keng_module(GPU)
 add_keng_module(Graphics)
 add_keng_module(GraphicsCommon)
 add_keng_module(WindowSystem)
+add_keng_module(Reflection)
 
 set(found_projects ${added_subdirectories} PARENT_SCOPE)

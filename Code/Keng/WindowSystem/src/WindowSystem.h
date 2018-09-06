@@ -41,15 +41,18 @@ namespace keng::window_system
 
         MainWindow<TChar>* GetWindow() const;
 
+        // ISystem
+        virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const  keng::core::SystemEvent&) override;
+
         // IWindowSystem
         virtual IWindow* GetWindow() override;
 
+    private:
         // ISystem
-        virtual void Initialize(const core::IApplicationPtr& app) override;
-        virtual bool Update() override;
-        virtual void Shutdown() override;
+        void Initialize(const core::IApplicationPtr& app);
+        bool Update();
 
-    protected:
+    private:
         std::unique_ptr<MainWindowClass<TChar>> m_windowClass;
         std::unique_ptr<MainWindow<TChar>> m_window;
     };
