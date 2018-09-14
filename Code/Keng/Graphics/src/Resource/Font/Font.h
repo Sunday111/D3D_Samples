@@ -17,8 +17,8 @@ namespace keng::graphics
         ~Font();
 
         // IFont
-        virtual AtlasGlyphInfo RequestGlyphInfo(uint32_t unicode, IDevice&, const GlyphParameters&) override;
-        virtual void RequestGlyphsInfo(edt::DenseArrayView<const uint32_t> unicodes, IDevice&, const GlyphParameters&, edt::Delegate<void(const AtlasGlyphInfo&)> delegate) override;
+        virtual AtlasGlyphInfo RequestGlyphInfo(uint32_t unicode, IDevice&, const GlyphParameters&) override final;
+        virtual void RequestGlyphsInfo(edt::DenseArrayView<const uint32_t> unicodes, IDevice&, const GlyphParameters&, edt::Delegate<void(const AtlasGlyphInfo&)> delegate) override final;
 
         free_type::FacePtr GetFace() const;
         resource::IResourceSystemPtr GetResourceSystem() const;

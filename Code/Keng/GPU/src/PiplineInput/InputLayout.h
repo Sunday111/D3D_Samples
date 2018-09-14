@@ -13,7 +13,7 @@ namespace keng::graphics::gpu
         InputLayout(Device& device, ComPtr<ID3D11InputLayout> layout);
 
         // InputLayout
-        virtual void AssignToPipeline() override;
+        virtual void AssignToPipeline() override final;
         // InputLayout
 
         ComPtr<ID3D11InputLayout> GetLayout() const;

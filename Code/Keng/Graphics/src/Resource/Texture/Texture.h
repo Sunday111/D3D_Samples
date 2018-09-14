@@ -13,7 +13,7 @@ namespace keng::graphics
         Texture(gpu::ITexture& impl);
         ~Texture();
 
-        virtual gpu::ITexturePtr GetApiTexture() override;
+        virtual gpu::ITexturePtr GetApiTexture() override final;
 
         gpu::ITexturePtr m_impl;
     };

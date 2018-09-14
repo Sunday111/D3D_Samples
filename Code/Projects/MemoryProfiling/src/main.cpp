@@ -85,11 +85,11 @@ public:
         };
     }
 
-    virtual const char* GetSystemName() const override {
+    virtual const char* GetSystemName() const override final {
         return "MemoryProfiling";
     }
 
-    virtual bool ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const override {
+    virtual bool ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const override final {
         UnusedVar(delegate);
         return false;
     }

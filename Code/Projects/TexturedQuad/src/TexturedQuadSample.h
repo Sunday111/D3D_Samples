@@ -19,7 +19,7 @@ namespace textured_quad_sample
 
         // ISystem
         static const char* SystemName() { return "TexturedQuadSystem"; }
-        virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const keng::core::SystemEvent& e) override;
+        virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const keng::core::SystemEvent& e) override final;
 
     private:
         void Initialize(const keng::core::IApplicationPtr& app);

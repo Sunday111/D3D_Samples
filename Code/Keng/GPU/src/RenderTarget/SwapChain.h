@@ -14,7 +14,7 @@ namespace keng::graphics::gpu
         SwapChain(Device& device, const SwapChainParameters& params, window_system::IWindow& window);
         ~SwapChain();
 
-        virtual void Present() override;
+        virtual void Present() override final;
         DeviceTexture& GetCurrentTexture();
         const DeviceTexture& GetCurrentTexture() const;
         void CopyFromTexture(const DeviceTexture& texture);

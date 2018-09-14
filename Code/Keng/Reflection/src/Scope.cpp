@@ -6,25 +6,33 @@
 namespace keng::reflection
 {
 	IScope& Scope::AddScope(const ScopeParameters& scopeParameters) {
-		return CallAndRethrowM + [&] {
+		return CallAndRethrowM + [&] () -> IScope& {
 			if constexpr (PreventDuplicatedNames) {
 				const Scope* duplicate = FindChildByName(scopeParameters.name, false);
 				edt::ThrowIfFailed(duplicate == nullptr, "Name duplicate!");
 			}
-
 			auto it = LowerBound(scopeParameters.guid);
 			edt::ThrowIfFailed(it == m_children.end() || (it->GetGUID() != scopeParameters.guid), "GUID duplicate!");
-
-			m_children.emplace_back(scopeParameters);
-
-			return m_children.back();
+			return m_children.emplace_back(scopeParameters);
 		};
 	}
 
-	IScope* Scope::FindChild(const edt::GUID& guid) const {
-		return CallAndRethrowM + [&] {
+	const IScope* Scope::FindChild(const edt::GUID& guid) const {
+		return CallAndRethrowM + [&] () -> const IScope* {
+			auto it = LowerBound(guid);
+			if (it == m_children.end() || (it->GetGUID() != guid)) {
+				return &(*it);
+			}
 
+			return nullptr;
 		};
+	}
+
+	IScope* Scope::FindChild(const edt::GUID& guid) {
+		// Reuse const version
+		auto const_this = const_cast<const Scope*>(this);
+		const IScope* const_child = const_this->FindChild(guid);
+		return const_cast<IScope*>(const_child);
 	}
 
 	const edt::GUID& Scope::GetGUID() const {

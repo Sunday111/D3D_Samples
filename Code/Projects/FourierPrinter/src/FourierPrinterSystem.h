@@ -51,7 +51,7 @@ namespace simple_quad_sample
 
         // ISystem
         static const char* SystemName() { return "FourierPrinter"; }
-        virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const keng::core::SystemEvent& e) override;
+        virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const keng::core::SystemEvent& e) override final;
         // ~ISystem
 
     protected:

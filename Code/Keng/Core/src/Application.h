@@ -19,12 +19,12 @@ namespace keng::core {
         using Period = std::chrono::nanoseconds;
 
         // IApplication
-        virtual void Update() override;
-        virtual void Initialize(const ApplicationStartupParameters& params) override;
-        virtual void Run() override;
-        virtual void Shutdown() override;
-        virtual ISystemPtr FindSystem(const char* name) const override;
-        virtual void SetVSync(bool value) override;
+        virtual void Update() override final;
+        virtual void Initialize(const ApplicationStartupParameters& params) override final;
+        virtual void Run() override final;
+        virtual void Shutdown() override final;
+        virtual ISystemPtr FindSystem(const char* name) const override final;
+        virtual void SetVSync(bool value) override final;
 
     private:
         void LoadModule(std::string_view name);

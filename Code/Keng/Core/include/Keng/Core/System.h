@@ -11,11 +11,11 @@ namespace keng::core
         public DependenciesContainer<Dependencies...>
     {
     public:
-        virtual const char* GetSystemName() const override {
+        virtual const char* GetSystemName() const override final {
             return Final::SystemName();
         }
 
-        virtual bool ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const override {
+        virtual bool ForEachDependency(const edt::Delegate<bool(const char*)>& delegate) const override final {
             return CallAndRethrowM + [&]() -> bool {
                 UnusedVar(delegate);
                 return (delegate.Invoke(Dependencies::SystemName()) || ... || false);

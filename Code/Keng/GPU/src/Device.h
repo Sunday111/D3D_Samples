@@ -18,20 +18,20 @@ namespace keng::graphics::gpu
         Device(const DeviceParameters& parameters);
 
         // IDevice
-        virtual IWindowRenderTargetPtr CreateWindowRenderTarget(const WindowRenderTargetParameters& params, window_system::IWindow& window) override;
-        virtual ITextureRenderTargetPtr CreateTextureRenderTarget(const TextureRenderTargetParameters&, ITexture&) override;
-        virtual IDepthStencilPtr CreateDepthStencil(const DepthStencilParameters&, ITexture&) override;
-        virtual ISwapChainPtr CreateSwapChain(const SwapChainParameters& params, window_system::IWindow& window) override;
-        virtual ISamplerPtr CreateSampler(const SamplerParameters& params) override;
-        virtual ITexturePtr CreateTexture(const DeviceTextureParameters& params) override;
-        virtual IShaderPtr CreateShader(const ShaderType& type, const DeviceShaderParameters& parameters) override;
-        virtual IDeviceBufferPtr CreateDeviceBuffer(const DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) override;
-        virtual void SetTopology(const PrimitiveTopology& topo) override;
-        virtual void Draw(size_t vertices, size_t offset) override;
-        virtual void SetViewport(const ViewportParameters&) override;
-        virtual IAnnotationPtr CreateAnnotation() override;
-        void* GetNativeDevice() const override;
-        void* GetNativeContext() const override;
+        virtual IWindowRenderTargetPtr CreateWindowRenderTarget(const WindowRenderTargetParameters& params, window_system::IWindow& window) override final;
+        virtual ITextureRenderTargetPtr CreateTextureRenderTarget(const TextureRenderTargetParameters&, ITexture&) override final;
+        virtual IDepthStencilPtr CreateDepthStencil(const DepthStencilParameters&, ITexture&) override final;
+        virtual ISwapChainPtr CreateSwapChain(const SwapChainParameters& params, window_system::IWindow& window) override final;
+        virtual ISamplerPtr CreateSampler(const SamplerParameters& params) override final;
+        virtual ITexturePtr CreateTexture(const DeviceTextureParameters& params) override final;
+        virtual IShaderPtr CreateShader(const ShaderType& type, const DeviceShaderParameters& parameters) override final;
+        virtual IDeviceBufferPtr CreateDeviceBuffer(const DeviceBufferParameters& params, edt::DenseArrayView<const uint8_t> data) override final;
+        virtual void SetTopology(const PrimitiveTopology& topo) override final;
+        virtual void Draw(size_t vertices, size_t offset) override final;
+        virtual void SetViewport(const ViewportParameters&) override final;
+        virtual IAnnotationPtr CreateAnnotation() override final;
+        void* GetNativeDevice() const override final;
+        void* GetNativeContext() const override final;
         // ~IDevice
 
         const ComPtr<ID3D11Device>& GetDevice() const;

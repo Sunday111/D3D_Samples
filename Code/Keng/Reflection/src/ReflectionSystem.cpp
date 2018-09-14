@@ -1,8 +1,15 @@
 #include "ReflectionSystem.h"
 #include "Keng/Core/SystemEvent.h"
-
+#include "Scope.h"
 namespace keng::reflection
 {
+	static ScopeParameters MakeRootScopeParameters() {
+		return ScopeParameters {
+			"root",
+			edt::GUID::Create("6E69BBCB-B2FC-463E-A695-89EA667E3A1F")
+		};
+	}
+
 	void ReflectionSystem::Initialize(const core::IApplicationPtr& app) {
 		CallAndRethrowM + [&] {
 			StoreDependencies(*app);
@@ -24,8 +31,7 @@ namespace keng::reflection
 
 	void ReflectionSystem::PostInitialize(const core::IApplicationPtr&) {
 		CallAndRethrowM + [&] {
-			IScope* scope = nullptr;
-			ExecuteRegistrationTasks(*scope);
+			ExecuteRegistrationTasks(m_rootScope);
 		};
 	}
 
@@ -42,6 +48,13 @@ namespace keng::reflection
 			}
 		};
 	}
+
+	ReflectionSystem::ReflectionSystem() :
+		m_rootScope(MakeRootScopeParameters())
+	{
+	}
+
+	ReflectionSystem::~ReflectionSystem() = default;
 
 }
 

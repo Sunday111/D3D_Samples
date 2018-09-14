@@ -11,8 +11,8 @@ namespace keng::graphics::gpu
     {
     public:
         Annotation(Device& device);
-        virtual void BeginEvent(const wchar_t*) override;
-        virtual void EndEvent() override;
+        virtual void BeginEvent(const wchar_t*) override final;
+        virtual void EndEvent() override final;
 
     private:
         DevicePtr m_device;

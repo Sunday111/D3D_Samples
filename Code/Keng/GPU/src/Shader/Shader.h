@@ -111,11 +111,11 @@ namespace keng::graphics::gpu::shader_details
             };
         }
 
-        virtual ShaderType GetShaderType() const override {
+        virtual ShaderType GetShaderType() const override final {
             return shaderType;
         }
 
-        virtual void AssignToPipeline() const override {
+        virtual void AssignToPipeline() const override final {
             Traits::Set(m_device->GetContext().Get(), m_shader.Get(), nullptr, 0);
         }
 
@@ -156,7 +156,7 @@ namespace keng::graphics::gpu
     {
     public:
         using shader_details::ShaderBase<ShaderType::Vertex>::ShaderBase;
-        virtual IInputLayoutPtr MakeDefaultInputLayout() override;
+        virtual IInputLayoutPtr MakeDefaultInputLayout() override final;
         void ReflectInputLayout(std::vector<D3D11_INPUT_ELEMENT_DESC>& layouts);
     };
 

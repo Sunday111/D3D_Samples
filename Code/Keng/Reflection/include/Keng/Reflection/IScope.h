@@ -15,7 +15,8 @@ namespace keng::reflection
 	{
 	public:
 		virtual IScope& AddScope(const ScopeParameters& scopeParameters) = 0;
-		virtual IScope* FindChild(const edt::GUID& guid) const = 0;
+		virtual IScope* FindChild(const edt::GUID& guid) = 0;
+		virtual const IScope* FindChild(const edt::GUID& guid) const = 0;
 		virtual const edt::GUID& GetGUID() const = 0;
 		virtual const char* GetName() const = 0;
 		virtual ~IScope() = default;

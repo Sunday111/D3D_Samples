@@ -54,7 +54,7 @@ public:
         };
     }
     
-    virtual T Compute(T argument) const override {
+    virtual T Compute(T argument) const override final {
         return CallAndRethrowM + [&] {
             const T deltaArgument = argument - m_minimalArgument;
             edt::ThrowIfFailed((argument >= m_minimalArgument) && (deltaArgument <= m_argumentRange), "Invalid argument");
@@ -76,11 +76,11 @@ public:
         };
     }
     
-    virtual T GetMinArgument() const override {
+    virtual T GetMinArgument() const override final {
         return m_minimalArgument;
     }
     
-    virtual T GetMaxArgument() const override {
+    virtual T GetMaxArgument() const override final {
         return m_minimalArgument + m_argumentRange;
     }
     

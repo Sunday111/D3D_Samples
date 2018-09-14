@@ -17,11 +17,11 @@ namespace keng::core
     class RefCountImpl : public Base
     {
     public:
-        virtual int AddReference() const override {
+        virtual int AddReference() const override final {
             return ++m_referencesCount;
         }
 
-        virtual int RemoveReference() const override {
+        virtual int RemoveReference() const override final {
             auto result = --m_referencesCount;
             if (result < 1) {
                 delete this;
@@ -29,7 +29,7 @@ namespace keng::core
             return result;
         }
 
-        virtual int GetReferencesCount() const override {
+        virtual int GetReferencesCount() const override final {
             return m_referencesCount;
         }
 

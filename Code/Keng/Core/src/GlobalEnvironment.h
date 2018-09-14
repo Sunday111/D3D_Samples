@@ -16,7 +16,7 @@ namespace keng::core
         GlobalEnvironment();
         ~GlobalEnvironment();
 
-        virtual IGlobalSystem& GetGlobalSystem(size_t id) override;
+        virtual IGlobalSystem& GetGlobalSystem(size_t id) override final;
         void RegisterModule(ModulePtr module);
 
         static GlobalEnvironment& PrivateInstance();

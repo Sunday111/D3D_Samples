@@ -10,10 +10,10 @@ namespace keng::graphics::gpu
     {
     public:
         WindowRenderTarget(Device& device, const WindowRenderTargetParameters& params, window_system::IWindow& window);
-        virtual void AssignToPipeline(const IDepthStencilPtr& depthStencil) override;
-        virtual void Clear(const float(&flatColor)[4]) override;
-        virtual void CopyFrom(const ITexture&) override;
-        virtual void Present() override;
+        virtual void AssignToPipeline(const IDepthStencilPtr& depthStencil) override final;
+        virtual void Clear(const float(&flatColor)[4]) override final;
+        virtual void CopyFrom(const ITexture&) override final;
+        virtual void Present() override final;
 
     private:
         DevicePtr m_device;

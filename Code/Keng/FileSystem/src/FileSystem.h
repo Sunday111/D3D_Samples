@@ -19,6 +19,6 @@ namespace keng::filesystem
         ~FileSystem();
 
         // IFileSystem
-        virtual IFilePtr GetFile(const char* filename, const OpenFileParameters& params) override;
+        virtual IFilePtr GetFile(const char* filename, const OpenFileParameters& params) override final;
     };
 }

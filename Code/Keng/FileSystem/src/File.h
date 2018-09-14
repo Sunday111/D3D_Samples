@@ -13,10 +13,10 @@ namespace keng::filesystem
         ~File();
 
         // IFile
-        virtual size_t TryRead(size_t offset, size_t bytes, edt::DenseArrayView<uint8_t> destination) override;
-        virtual void Read(size_t offset, size_t bytes, edt::DenseArrayView<uint8_t> destination) override;
-        virtual const OpenFileParameters& GetParameters() const override;
-        virtual size_t GetSize() const override;
+        virtual size_t TryRead(size_t offset, size_t bytes, edt::DenseArrayView<uint8_t> destination) override final;
+        virtual void Read(size_t offset, size_t bytes, edt::DenseArrayView<uint8_t> destination) override final;
+        virtual const OpenFileParameters& GetParameters() const override final;
+        virtual size_t GetSize() const override final;
 
     private:
         std::string m_name;

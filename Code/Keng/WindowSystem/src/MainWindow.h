@@ -41,16 +41,16 @@ namespace keng::window_system
         }
 
         //IWindow
-        virtual void Subscribe(IWindowListener* listener) override {
+        virtual void Subscribe(IWindowListener* listener) override final {
             Observable<window_system::MainWindow<TChar>, IWindowListener>::Subscribe(listener);
         }
-        virtual void Unsubscribe(IWindowListener* listener) override {
+        virtual void Unsubscribe(IWindowListener* listener) override final {
             Observable<window_system::MainWindow<TChar>, IWindowListener>::Unsubscribe(listener);
         }
-        virtual void GetClientSize(size_t* w, size_t* h) override {
+        virtual void GetClientSize(size_t* w, size_t* h) override final {
             GetWindowClientSize(w, h);
         }
-        virtual int64_t* GetNativeHandle() override {
+        virtual int64_t* GetNativeHandle() override final {
             return (int64_t*)GetHandle();
         }
     };

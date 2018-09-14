@@ -36,15 +36,15 @@ namespace keng::resource
         ~ResourceSystem();
 
         // ISystem
-        virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const  keng::core::SystemEvent&) override;
+        virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const  keng::core::SystemEvent&) override final;
 
         // IResource system
-        virtual IResourcePtr GetResource(const char* filename) override;
-        virtual IResourcePtr GetResource(const char* filename, const IDevicePtr& device) override;
-        virtual void AddRuntimeResource(const IResourcePtr& resource) override;
-        virtual void AddRuntimeResource(const IResourcePtr& resource, const IDevicePtr& device) override;
-        virtual void RegisterResourceFabric(const IResourceFabricPtr& fabric) override;
-        virtual void UnregisterFabric(const IResourceFabricPtr& fabric) override;
+        virtual IResourcePtr GetResource(const char* filename) override final;
+        virtual IResourcePtr GetResource(const char* filename, const IDevicePtr& device) override final;
+        virtual void AddRuntimeResource(const IResourcePtr& resource) override final;
+        virtual void AddRuntimeResource(const IResourcePtr& resource, const IDevicePtr& device) override final;
+        virtual void RegisterResourceFabric(const IResourceFabricPtr& fabric) override final;
+        virtual void UnregisterFabric(const IResourceFabricPtr& fabric) override final;
         // ~IResource system
 
         IResourceFabricPtr GetFabric(const std::string& resourceType);

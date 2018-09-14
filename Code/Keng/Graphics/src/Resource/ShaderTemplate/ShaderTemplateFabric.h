@@ -9,8 +9,8 @@ namespace keng::graphics
         public core::RefCountImpl<resource::IResourceFabric>
     {
     public:
-        virtual const char* GetNodeName() const override;
-        virtual const char* GetResourceType() const override;
-        virtual resource::IResourcePtr LoadResource(resource::IResourceSystem&, Archive& ar, const resource::IDevicePtr& device) const override;
+        virtual const char* GetNodeName() const override final;
+        virtual const char* GetResourceType() const override final;
+        virtual resource::IResourcePtr LoadResource(resource::IResourceSystem&, Archive& ar, const resource::IDevicePtr& device) const override final;
     };
 }

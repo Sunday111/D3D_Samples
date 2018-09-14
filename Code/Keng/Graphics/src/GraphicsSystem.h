@@ -25,11 +25,11 @@ namespace keng::graphics
         ~GraphicsSystem();
 
         // ISystem
-        virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const  keng::core::SystemEvent&) override;
+        virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const  keng::core::SystemEvent&) override final;
 
         // IGraphicsSystem
-        virtual IDevicePtr GetDevice() override;
-        virtual ITexturePtr CreateTexture(const DeviceTextureParameters& params) override;
+        virtual IDevicePtr GetDevice() override final;
+        virtual ITexturePtr CreateTexture(const DeviceTextureParameters& params) override final;
 
     private:
         void Initialize(const core::IApplicationPtr& app);

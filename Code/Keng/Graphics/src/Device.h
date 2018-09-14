@@ -16,7 +16,7 @@ namespace keng::graphics
         ~Device();
 
         // IDevice
-        virtual gpu::IDevicePtr GetApiDevice() override;
+        virtual gpu::IDevicePtr GetApiDevice() override final;
         // ~IDevice
 
         TexturePtr CreateTexture(const DeviceTextureParameters& parameters);

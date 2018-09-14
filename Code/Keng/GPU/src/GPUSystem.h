@@ -15,7 +15,7 @@ namespace keng::graphics::gpu
         ~GPUSystem();
 
         // IGPUSystem
-        virtual core::Ptr<IDevice> CreateDevice(const DeviceParameters&) override;
+        virtual core::Ptr<IDevice> CreateDevice(const DeviceParameters&) override final;
 
     private:
         DevicePtr m_device;

@@ -5,6 +5,7 @@
 #include "FwdDecl.h"
 #include "Keng/Core/System.h"
 #include "Keng/Reflection/IReflectionSystem.h"
+#include "Scope.h"
 
 namespace keng::reflection
 {
@@ -14,11 +15,14 @@ namespace keng::reflection
 	>
 	{
 	public:
+		ReflectionSystem();
+		~ReflectionSystem();
+
 		// ISystem
-		virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const  keng::core::SystemEvent&) override;
+		virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const  keng::core::SystemEvent&) override final;
 
 		// IReflectionSystem
-		virtual void AddRegistrationTask(RegistrationTask task) override;
+		virtual void AddRegistrationTask(RegistrationTask task) override final;
 
 	private:
 		void Initialize(const core::IApplicationPtr& app);
@@ -26,6 +30,7 @@ namespace keng::reflection
 		void ExecuteRegistrationTasks(IScope& scope);
 
 	private:
+		Scope m_rootScope;
 		std::vector<RegistrationTask> m_registrationTasks;
 	};
 }

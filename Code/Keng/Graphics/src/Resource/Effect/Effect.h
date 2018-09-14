@@ -18,8 +18,8 @@ namespace keng::graphics
         ~Effect();
 
         // IEffect
-        virtual void InitDefaultInputLayout() override;
-        virtual void AssignToPipeline() override;
+        virtual void InitDefaultInputLayout() override final;
+        virtual void AssignToPipeline() override final;
 
         gpu::IInputLayoutPtr m_inputLayout;
         core::Ptr<Shader<ShaderType::Vertex>> vs;

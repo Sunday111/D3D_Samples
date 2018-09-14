@@ -42,10 +42,10 @@ namespace keng::window_system
         MainWindow<TChar>* GetWindow() const;
 
         // ISystem
-        virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const  keng::core::SystemEvent&) override;
+        virtual void OnSystemEvent(const keng::core::IApplicationPtr&, const  keng::core::SystemEvent&) override final;
 
         // IWindowSystem
-        virtual IWindow* GetWindow() override;
+        virtual IWindow* GetWindow() override final;
 
     private:
         // ISystem

@@ -11,7 +11,7 @@ namespace keng::graphics::gpu
     {
     public:
         Sampler(Device& device, const SamplerParameters& params);
-        virtual void AssignToPipeline(const ShaderType& shaderType, size_t index) override;
+        virtual void AssignToPipeline(const ShaderType& shaderType, size_t index) override final;
 
     private:
         DevicePtr m_device;
