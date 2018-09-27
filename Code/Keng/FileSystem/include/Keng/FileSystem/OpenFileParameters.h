@@ -12,11 +12,19 @@ namespace keng::filesystem
         Write = (1 << 1)
     };
 
-    EDT_ENUM_FLAG_OPERATORS(FileAccessFlags);
-
     class OpenFileParameters
     {
     public:
         FileAccessFlags accessFlags = FileAccessFlags::Read;
     };
+}
+
+
+namespace edt
+{
+	template<>
+	struct enable_enum_flags<keng::filesystem::FileAccessFlags>
+	{
+		static constexpr bool value = true;
+	};
 }

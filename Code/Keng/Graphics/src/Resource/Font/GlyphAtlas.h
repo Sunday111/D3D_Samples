@@ -62,8 +62,6 @@ namespace keng::graphics
             }
         }
 
-        EDT_ENUM_FLAG_OPERATORS_CLASS(StateFlag)
-
         using AtlasGlyphsCollection = std::vector<AtlasGlyphData>;
 
         AtlasGlyphData& AddGlyph(const free_type::GlyphParameters& params, AtlasGlyphsCollection::iterator insertIt);
@@ -80,4 +78,13 @@ namespace keng::graphics
         GlyphAtlasParameters m_parameters;
         AtlasGlyphsCollection m_glyphs;
     };
+}
+
+namespace edt
+{
+	template<>
+	struct enable_enum_flags<keng::graphics::GlyphAtlas::StateFlag>
+	{
+		static constexpr bool value = true;
+	};
 }

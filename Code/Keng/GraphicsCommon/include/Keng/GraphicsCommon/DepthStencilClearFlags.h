@@ -11,6 +11,13 @@ namespace keng::graphics
         ClearStencil = (1 << 1),
         Last = (1<<2)
     };
+}
 
-    EDT_ENUM_FLAG_OPERATORS(DepthStencilClearFlags);
+namespace edt
+{
+	template<>
+	struct enable_enum_flags<keng::graphics::DepthStencilClearFlags>
+	{
+		static constexpr bool value = true;
+	};
 }

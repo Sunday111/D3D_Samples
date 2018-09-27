@@ -11,6 +11,13 @@ namespace keng::graphics
         Write = (1 << 1),
         Last = (1 << 2)
     };
+}
 
-    EDT_ENUM_FLAG_OPERATORS(CpuAccessFlags);
+namespace edt
+{
+	template<>
+	struct enable_enum_flags<keng::graphics::CpuAccessFlags>
+	{
+		static constexpr bool value = true;
+	};
 }

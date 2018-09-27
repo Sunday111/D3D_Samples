@@ -16,6 +16,13 @@ namespace keng::graphics
         UnorderedAccess = (1 << 7),
         Last
     };
-    
-    EDT_ENUM_FLAG_OPERATORS(DeviceBufferBindFlags);
+}
+
+namespace edt
+{
+	template<>
+	struct enable_enum_flags<keng::graphics::DeviceBufferBindFlags>
+	{
+		static constexpr bool value = true;
+	};
 }

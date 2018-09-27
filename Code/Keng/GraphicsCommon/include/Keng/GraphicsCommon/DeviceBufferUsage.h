@@ -12,6 +12,13 @@ namespace keng::graphics
         Staging,
         Last
     };
+}
 
-    EDT_ENUM_FLAG_OPERATORS(DeviceBufferUsage);
+namespace edt
+{
+	template<>
+	struct enable_enum_flags<keng::graphics::DeviceBufferUsage>
+	{
+		static constexpr bool value = true;
+	};
 }
