@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Keng/GPU/FwdDecl.h"
-#include "EverydayTools/EnumFlag.h"
+#include "EverydayTools/Bitset/EnumBitset.h"
 #include <cstdint>
 
 namespace keng::graphics::gpu

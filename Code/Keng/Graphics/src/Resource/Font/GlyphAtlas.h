@@ -5,8 +5,8 @@
 #include <memory>
 #include <vector>
 
+#include "EverydayTools/Bitset/EnumBitset.h"
 #include "Resource/Font/FreeType/GlyphInfo.h"
-#include "EverydayTools/EnumFlag.h"
 
 namespace keng::graphics
 {
@@ -83,7 +83,7 @@ namespace keng::graphics
 namespace edt
 {
 	template<>
-	struct enable_enum_flags<keng::graphics::GlyphAtlas::StateFlag>
+	struct enable_enum_bitset<keng::graphics::GlyphAtlas::StateFlag>
 	{
 		static constexpr bool value = true;
 	};

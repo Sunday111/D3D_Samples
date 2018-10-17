@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EverydayTools/EnumFlag.h"
+#include "EverydayTools/Bitset/EnumBitset.h"
 #include "Keng/FileSystem/FwdDecl.h"
 
 namespace keng::filesystem
@@ -23,7 +23,7 @@ namespace keng::filesystem
 namespace edt
 {
 	template<>
-	struct enable_enum_flags<keng::filesystem::FileAccessFlags>
+	struct enable_enum_bitset<keng::filesystem::FileAccessFlags>
 	{
 		static constexpr bool value = true;
 	};

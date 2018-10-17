@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include "VirtualVector.h"
-#include "EverydayTools/Bitset.h"
+#include "EverydayTools/Bitset/Bitset.h"
 
 namespace keng::memory
 {

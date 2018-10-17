@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EverydayTools/EnumFlag.h"
+#include "EverydayTools/Bitset/EnumBitset.h"
 
 namespace keng::graphics
 {
@@ -17,7 +17,7 @@ namespace keng::graphics
 namespace edt
 {
 	template<>
-	struct enable_enum_flags<keng::graphics::DeviceBufferUsage>
+	struct enable_enum_bitset<keng::graphics::DeviceBufferUsage>
 	{
 		static constexpr bool value = true;
 	};
