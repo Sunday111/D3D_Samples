@@ -6,7 +6,9 @@ add_subdirectory(WinWrappers)
 
 ####################################################
 # Google tests
-set(gtest_force_shared_crt ON CACHE BOOL "")
+if(MSVC)
+    set(gtest_force_shared_crt ON CACHE BOOL "")
+endif()
 add_subdirectory(googletest)
 set_target_properties(gtest PROPERTIES FOLDER "Submodules/Tests/gtest")
 set_target_properties(gtest_main PROPERTIES FOLDER "Submodules/Tests/gtest")
