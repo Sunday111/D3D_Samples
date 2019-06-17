@@ -2,10 +2,10 @@
 
 Dependencies:
  - [Google Tests](https://github.com/google/googletest)
- - [EverydayTools](https://github.com/Sunday111/EverydayTools)
- - [EverydayToolsTests](https://github.com/Sunday111/EverydayToolsTests)
- - [WinWrappers](https://github.com/Sunday111/WinWrappers-WinWrappers)
  - [CMakeModules](https://github.com/Sunday111/CMakeModules)
+ - [EverydayTools](https://github.com/Sunday111/EverydayTools)
+ - [CppReflection](https://github.com/Sunday111/CppReflection)
+ - [WinWrappers](https://github.com/Sunday111/WinWrappers-WinWrappers)
  
  Cloning project:
 ```
