@@ -4,12 +4,12 @@
 [submodule "Submodules/EverydayTools"]
 	path = Submodules/EverydayTools
 	url = https://github.com/Sunday111/EverydayTools
-[submodule "Submodules/EverydayToolsTests"]
-	path = Submodules/EverydayToolsTests
-	url = https://github.com/Sunday111/EverydayToolsTests
 [submodule "Submodules/WinWrappers"]
 	path = Submodules/WinWrappers
 	url = https://github.com/Sunday111/WinWrappers-WinWrappers
 [submodule "Submodules/CMakeModules"]
 	path = Submodules/CMakeModules
 	url = https://github.com/Sunday111/CMakeModules
+[submodule "Submodules/CppReflection"]
+	path = Submodules/CppReflection
+	url = https://github.com/Sunday111/CppReflection
