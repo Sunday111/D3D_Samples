@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.5.1)
 
 add_subdirectory(CMakeModules)
 add_subdirectory(Yasli)
-add_subdirectory(WinWrappers)
 
 ####################################################
 # Google tests
@@ -26,6 +25,11 @@ set_target_properties(EverydayToolsTests PROPERTIES FOLDER "Submodules/Tests")
 add_subdirectory(CppReflection)
 set_target_properties(CppReflection PROPERTIES FOLDER "Submodules")
 set_target_properties(CppReflectionTests PROPERTIES FOLDER "Submodules/Tests")
+
+####################################################
+# WinWrappers
+add_subdirectory(WinWrappers)
+set_target_properties(WinWrappersView PROPERTIES FOLDER "Submodules")
 
 ####################################################
 # FreeType fonts library
