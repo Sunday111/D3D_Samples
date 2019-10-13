@@ -1,2 +1,2 @@
 from build_tools import *
-generate_project([])
+generate_project(default_generator, [])

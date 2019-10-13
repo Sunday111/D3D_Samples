@@ -9,9 +9,8 @@ build_tools_dir = os.path.abspath(os.path.join(scripts_dir, os.pardir))
 root_dir = os.path.abspath(os.path.join(build_tools_dir, os.pardir))
 build_dir = os.path.join(root_dir, "build")
 bin_dir = os.path.join(build_dir, "bin")
-generator = "Visual Studio 15 2017 Win64"
+default_generator = "Visual Studio 15 2017 Win64"
 cmake_base_command = ["cmake"]
-cmake_generator_args = ["-G", generator]
 
 def change_dir_noexcept(path):
     try:
@@ -38,8 +37,8 @@ def delete_build():
     if os.path.exists(build_dir) :
         call_in_directory(root_dir, shutil.rmtree, build_dir, ignore_errors=True)
 
-def generate_project(options):
-    command = cmake_generator_args.copy()
+def generate_project(generator, options):
+    command = ["-G", generator]
     command.append(root_dir)
     command.extend(options)
     run_cmake_command(command)
