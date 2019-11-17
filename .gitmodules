@@ -13,3 +13,6 @@
 [submodule "Submodules/CppReflection"]
 	path = Submodules/CppReflection
 	url = https://github.com/Sunday111/CppReflection
+[submodule ".\\Submodules\\ECS"]
+	path = .\\Submodules\\ECS
+	url = https://github.com/Sunday111/ECS
