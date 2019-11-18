@@ -27,6 +27,12 @@ set_target_properties(CppReflection PROPERTIES FOLDER "Submodules")
 set_target_properties(CppReflectionTests PROPERTIES FOLDER "Submodules/Tests")
 
 ####################################################
+# ECS Library
+add_subdirectory(ECS)
+set_target_properties(ECS PROPERTIES FOLDER "Submodules")
+set_target_properties(ECSTests PROPERTIES FOLDER "Submodules/Tests")
+
+####################################################
 # WinWrappers
 add_subdirectory(WinWrappers)
 set_target_properties(WinWrappersView PROPERTIES FOLDER "Submodules")
