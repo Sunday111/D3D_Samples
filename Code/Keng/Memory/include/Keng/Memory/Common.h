@@ -1,15 +1,9 @@
 #pragma once
 
+#include "EverydayTools/Preprocessor/ExpotImport.h"
+
 #ifdef KENG_MEMORY_DLL
-    #ifdef _MSC_VER
-        #define KENG_MEMORY_API __declspec(dllexport)
-    #else
-        static_assert(false, "Unknown compiler");
-    #endif
+    #define KENG_MEMORY_API EXPORT
 #else
-    #ifdef _MSC_VER
-        #define KENG_MEMORY_API __declspec(dllimport)
-    #else
-        static_assert(false, "Unknown compiler");
-    #endif
+    #define KENG_MEMORY_API IMPORT
 #endif

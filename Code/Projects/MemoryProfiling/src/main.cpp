@@ -3,6 +3,8 @@
 USE_KENG_MEMORY_MANAGER
 #endif
 
+#include "EverydayTools/Preprocessor/ExpotImport.h"
+
 #include "Keng/Core/IApplication.h"
 #include "Keng/Core/ISystem.h"
 #include "Keng/Core/SystemEvent.h"
@@ -100,7 +102,7 @@ private:
 
 extern "C"
 {
-    void __declspec(dllexport) __cdecl CreateSystem(void** result) {
+    void EXPORT __cdecl CreateSystem(void** result) {
         *result = new System();
     }
 }

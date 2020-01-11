@@ -1,11 +1,9 @@
 #pragma once
 
-#ifdef _MSC_VER
-    #ifdef KENG_FILESYSTEM_DLL
-        #define KENG_FILESYSTEM_API _declspec(dllexport)
-    #else
-        #define KENG_FILESYSTEM_API _declspec(dllimport)
-    #endif
+#include "EverydayTools/Preprocessor/ExpotImport.h"
+
+#ifdef KENG_FILESYSTEM_DLL
+#define KENG_FILESYSTEM_API EXPORT
 #else
-static_assert(false, "Not supported compiler");
+#define KENG_FILESYSTEM_API IMPORT
 #endif
