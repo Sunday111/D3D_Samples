@@ -28,13 +28,22 @@ def call_in_directory(dir, fn, *args, **kwargs):
     finally:
         change_dir_noexcept(prevWorkingDir)
 
+def zip_args(args):
+    str = ''
+    for arg in args:
+        str += arg
+        str += ' '
+    return str
+
 def run_cmake_command(args):
     command = cmake_base_command.copy()
     command.extend(args)
-    call_in_directory(build_dir, subprocess.check_call, command, stderr=subprocess.STDOUT, shell=True)
+    strcommand = zip_args(command)
+    call_in_directory(build_dir, subprocess.check_call, strcommand, stderr=subprocess.STDOUT, shell=True)
 
 def delete_build():
     if os.path.exists(build_dir) :
+        print('delete ' + build_dir)
         call_in_directory(root_dir, shutil.rmtree, build_dir, ignore_errors=True)
 
 def generate_project(generator, options):
@@ -43,12 +52,14 @@ def generate_project(generator, options):
     command.extend(options)
     run_cmake_command(command)
 
-def build_project(target="ALL_BUILD", config="Release"):
+def build_project(target="", config="Release"):
     command = cmake_base_command.copy()
     command.extend(["--build", build_dir])
-    command.extend(["--target", target])
+    if target != "":
+        command.extend(["--target", target])
     command.extend(["--config", config])
-    call_in_directory(build_dir, subprocess.check_call, command, stderr=subprocess.STDOUT, shell=True)
+    strcommand = zip_args(command)
+    call_in_directory(build_dir, subprocess.check_call, strcommand, stderr=subprocess.STDOUT, shell=True)
 
 def run_executable(name, args = [], runs = 1):
     subprocess_args = [name]
@@ -59,6 +70,11 @@ def run_executable(name, args = [], runs = 1):
 
 def run_launcher(args = [], runs = 1):
     run_executable('Launcher', args, runs)
+
+def run_unit_tests():
+    command = cmake_base_command.copy()
+    command.extend(["--build", build_dir])
+    call_in_directory(build_dir, subprocess.check_call, strcommand, stderr=subprocess.STDOUT, shell=True)
 
 def run_test(name):
     run_executable(name)
